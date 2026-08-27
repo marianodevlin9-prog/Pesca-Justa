@@ -54,5 +54,44 @@
 </head>
 <body>
   <header>
-    <h1>Pesca Just
-    
+    <h1>Pesca Justa</h1>
+    <p>Organize sua pesca embarcada</p>
+    <button onclick="toggleMenu()" 
+            style="background:#333; color:#fff; padding:10px 20px; border:none; cursor:pointer;">
+      Menu
+    </button>
+  </header>
+
+  <nav id="menu">
+    <a href="#">Início</a>
+    <a href="#">Sobre</a>
+    <a href="#">Contato</a>
+  </nav>
+
+  <section>
+    <h2>Bem-vindo ao Pesca Justa</h2>
+    <p>Nosso objetivo é ajudar pescadores a organizar suas saídas de barco de forma prática e eficiente.</p>
+    <div>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Fishing_boat.jpg" alt="Barco de pesca">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Fishermen_boat.jpg" alt="Pescadores no barco">
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Pesca Justa</p>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      if (menu.style.maxHeight === "0px" || menu.style.maxHeight === "") {
+        menu.style.maxHeight = "200px";
+        menu.style.opacity = "1";
+      } else {
+        menu.style.maxHeight = "0";
+        menu.style.opacity = "0";
+      }
+    }
+  </script>
+</body>
+</html>
