@@ -85,14 +85,20 @@
   <!-- Pagamentos -->
   <section id="pagamentos">
     <h2>💳 Pagamentos</h2>
-    <select id="selectPescador" onchange="atualizarResumo()"></select>
+    <select id="selectPescador"></select>
+    <input type="number" id="valorPagamento" placeholder="Digite valor pago">
+    <button onclick="registrarPagamento()">Registrar Pagamento</button>
+
+    <h3>Resumo Individual</h3>
     <p>💰 Deve pagar: R$ <span id="valorDevido">0,00</span></p>
     <p>✅ Já pagou: R$ <span id="valorPago">0,00</span></p>
     <p>🔴 Falta pagar: R$ <span id="valorFalta">0,00</span></p>
     <p>📊 Status: <span id="statusPagamento">Pendente</span></p>
 
-    <input type="number" id="valorPagamento" placeholder="Digite valor pago">
-    <button onclick="registrarPagamento()">Registrar Pagamento</button>
+    <h3>Tabela Geral</h3>
+    <table id="tabelaRateio">
+      <tr><th>Pescador</th><th>Deve pagar</th><th>Já pagou</th><th>Falta pagar</th><th>Status</th></tr>
+    </table>
 
     <h3>Histórico</h3>
     <table id="historicoPagamentos">
@@ -127,18 +133,24 @@
       document.getElementById("valorPendente").innerText = pendente.toFixed(2);
       document.getElementById("rateio").innerText = rateio.toFixed(2);
 
-      const pescadorSelecionado = document.getElementById("selectPescador").value;
-      if(pescadorSelecionado){
-        const pagos = pagamentos.filter(p=>p.nome===pescadorSelecionado)
-                                .reduce((sum,p)=>sum+p.valor,0);
-        const devido = rateio;
-        const falta = devido - pagos;
-        document.getElementById("valorDevido").innerText = devido.toFixed(2);
-        document.getElementById("valorPago").innerText = pagos.toFixed(2);
-        document.getElementById("valorFalta").innerText = falta.toFixed(2);
-        document.getElementById("statusPagamento").innerText = 
-          falta<=0 ? "Pago" : (pagos>0 ? "Parcial" : "Pendente");
-      }
+      atualizarTabelaRateio(rateio);
+    }
+
+    function atualizarTabelaRateio(rateio){
+      const tabela = document.getElementById("tabelaRateio");
+      tabela.innerHTML = "<tr><th>Pescador</th><th>Deve pagar</th><th>Já pagou</th><th>Falta pagar</th><th>Status</th></tr>";
+      participantes.forEach(p=>{
+        const pagos = pagamentos.filter(pg=>pg.nome===p).reduce((sum,pg)=>sum+pg.valor,0);
+        const falta = rateio - pagos;
+        const status = falta<=0 ? "Pago" : (pagos>0 ? "Parcial" : "Pendente");
+        tabela.innerHTML += `<tr>
+          <td>${p}</td>
+          <td>R$ ${rateio.toFixed(2)}</td>
+          <td>R$ ${pagos.toFixed(2)}</td>
+          <td>R$ ${falta.toFixed(2)}</td>
+          <td>${status}</td>
+        </tr>`;
+      });
     }
 
     function atualizarListaParticipantes() {
@@ -157,22 +169,4 @@
       atualizarResumo();
     }
 
-    function adicionarParticipante() {
-      const nome = document.getElementById("novoNome").value;
-      if(nome) {
-        participantes.push(nome);
-        document.getElementById("novoNome").value = "";
-        salvarDados();
-        atualizarListaParticipantes();
-      }
-    }
 
-    function excluirParticipante(i) {
-      participantes.splice(i,1);
-      salvarDados();
-      atualizarListaParticipantes();
-    }
-
-    function realizarSorteio() {
-      const vagas = parseInt(document.getElementById("qtdVagas").value);
-      const sorteados = [...participantes].sort(() => Math.random()-0.5).slice(0,vagas);
