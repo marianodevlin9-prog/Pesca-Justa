@@ -1,926 +1,172 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>🎣 Pesca Justa</title>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #eef5f7;
-  color: #173042;
-}
-
-header {
-  background: #087e8b;
-  color: white;
-  padding: 22px 15px;
-  text-align: center;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 28px;
-}
-
-header p {
-  margin: 8px 0 0;
-}
-
-.container {
-  padding: 15px;
-  max-width: 700px;
-  margin: auto;
-}
-
-.menu {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-button {
-  border: none;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  background: #087e8b;
-  color: white;
-}
-
-button.secundario {
-  background: #dce8eb;
-  color: #173042;
-}
-
-button.vermelho {
-  background: #c94b4b;
-}
-
-.card {
-  background: white;
-  padding: 16px;
-  margin-bottom: 14px;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-input,
-select {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid #cbd8dc;
-  border-radius: 10px;
-  margin: 6px 0 12px;
-  font-size: 16px;
-}
-
-.hidden {
-  display: none;
-}
-
-.item {
-  background: #f3f7f8;
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 8px;
-}
-
-.linha {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.linha button {
-  padding: 8px 10px;
-  font-size: 13px;
-}
-
-.badge {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 15px;
-  font-size: 12px;
-  background: #dff2e5;
-}
-
-.pendente {
-  background: #ffe4d2;
-}
-
-.numero {
-  font-size: 26px;
-  font-weight: bold;
-  margin-top: 8px;
-}
-
-.grid-resumo {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-@media(max-width: 500px) {
-  .grid-resumo {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesca Justa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f0f8ff;
+      color: #333;
+    }
+    header {
+      background: #004d66;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background: #006994;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    section {
+      padding: 30px;
+      border-bottom: 1px solid #ccc;
+    }
+    h2 {
+      color: #004d66;
+    }
+    button {
+      background:#333; 
+      color:#fff; 
+      padding:8px 15px; 
+      border:none; 
+      cursor:pointer;
+      margin:5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    footer {
+      background: #004d66;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 30px;
+    }
+  </style>
 </head>
-
 <body>
-
-<header>
-  <h1>🎣 PESCA JUSTA</h1>
-  <p>Organize sua pescaria de forma simples e justa</p>
-</header>
-
-<div class="container">
-
-<!-- INÍCIO -->
-
-<div id="inicio">
-
-<div class="menu">
-
-<button onclick="abrirTela('participantes')">
-👥 Participantes
-</button>
-
-<button onclick="abrirTela('vagas')">
-🪑 Vagas
-</button>
-
-<button onclick="abrirTela('financeiro')">
-💰 Financeiro
-</button>
-
-<button onclick="abrirTela('rateio')">
-➗ Rateio
-</button>
-
-</div>
-
-<div class="card">
-
-<h3>📅 Pescaria</h3>
-
-<p>
-17 e 18 de outubro de 2026<br>
-⏰ Das 10:00 às 10:00
-</p>
-
-</div>
-
-<div class="grid-resumo">
-
-<div class="card">
-Participantes
-<div class="numero" id="totalParticipantes">0</div>
-</div>
-
-<div class="card">
-Despesas
-<div class="numero" id="totalDespesasResumo">R$ 0,00</div>
-</div>
-
-</div>
-
-</div>
-
-
-<!-- PARTICIPANTES -->
-
-<div id="participantes" class="hidden">
-
-<button class="secundario" onclick="voltar()">
-⬅ Voltar
-</button>
-
-<div class="card">
-
-<h2>👥 Participantes</h2>
-
-<input
-id="nomeParticipante"
-placeholder="Nome do pescador">
-
-<button onclick="adicionarParticipante()">
-➕ Adicionar pescador
-</button>
-
-<div id="listaParticipantes"></div>
-
-</div>
-
-</div>
-
-
-<!-- VAGAS -->
-
-<div id="vagas" class="hidden">
-
-<button class="secundario" onclick="voltar()">
-⬅ Voltar
-</button>
-
-<div class="card">
-
-<h2>🪑 Controle de Vagas</h2>
-
-<p>
-A vaga pertence ao pescador titular.
-Outro pescador pode ocupar temporariamente
-enquanto o titular estiver ausente.
-</p>
-
-<div id="listaVagas"></div>
-
-</div>
-
-</div>
-
-
-<!-- FINANCEIRO -->
-
-<div id="financeiro" class="hidden">
-
-<button class="secundario" onclick="voltar()">
-⬅ Voltar
-</button>
-
-<div class="card">
-
-<h2>💰 Nova despesa</h2>
-
-<input
-id="descricaoDespesa"
-placeholder="Ex.: Barco">
-
-<input
-id="valorDespesa"
-type="number"
-step="0.01"
-placeholder="Valor em R$">
-
-<button onclick="adicionarDespesa()">
-➕ Adicionar despesa
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>📋 Despesas</h2>
-
-<div id="listaDespesas"></div>
-
-<h3 id="totalDespesas"></h3>
-
-</div>
-
-</div>
-
-
-<!-- RATEIO -->
-
-<div id="rateio" class="hidden">
-
-<button class="secundario" onclick="voltar()">
-⬅ Voltar
-</button>
-
-<div class="card">
-
-<h2>➗ Rateio da Pescaria</h2>
-
-<div id="informacoesRateio"></div>
-
-</div>
-
-<div class="card">
-
-<h2>💳 Pagamentos</h2>
-
-<div id="listaPagamentos"></div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-let participantes =
-JSON.parse(localStorage.getItem("pescaParticipantes")) || [];
-
-let despesas =
-JSON.parse(localStorage.getItem("pescaDespesas")) || [];
-
-let vagas =
-JSON.parse(localStorage.getItem("pescaVagas")) || {};
-
-let pagamentos =
-JSON.parse(localStorage.getItem("pescaPagamentos")) || {};
-
-
-/* SALVAR */
-
-function salvarDados() {
-
-localStorage.setItem(
-"pescaParticipantes",
-JSON.stringify(participantes)
-);
-
-localStorage.setItem(
-"pescaDespesas",
-JSON.stringify(despesas)
-);
-
-localStorage.setItem(
-"pescaVagas",
-JSON.stringify(vagas)
-);
-
-localStorage.setItem(
-"pescaPagamentos",
-JSON.stringify(pagamentos)
-);
-
-}
-
-
-/* TROCAR DE TELA */
-
-function abrirTela(tela) {
-
-document.querySelectorAll(".container > div")
-.forEach(function(div) {
-
-div.classList.add("hidden");
-
-});
-
-document
-.getElementById(tela)
-.classList.remove("hidden");
-
-renderizar();
-
-}
-
-
-function voltar() {
-
-document.querySelectorAll(".container > div")
-.forEach(function(div) {
-
-div.classList.add("hidden");
-
-});
-
-document
-.getElementById("inicio")
-.classList.remove("hidden");
-
-renderizar();
-
-}
-
-
-/* PARTICIPANTES */
-
-function adicionarParticipante() {
-
-let nome =
-document
-.getElementById("nomeParticipante")
-.value
-.trim();
-
-if(nome === "") {
-
-alert("Digite o nome do pescador");
-
-return;
-
-}
-
-participantes.push(nome);
-
-document
-.getElementById("nomeParticipante")
-.value = "";
-
-salvarDados();
-
-renderizar();
-
-}
-
-
-function excluirParticipante(indice) {
-
-let nome = participantes[indice];
-
-if(!confirm("Excluir " + nome + "?")) {
-
-return;
-
-}
-
-participantes.splice(indice, 1);
-
-delete pagamentos[nome];
-
-for(let numero in vagas) {
-
-if(vagas[numero].titular === nome) {
-
-vagas[numero].titular = "";
-
-}
-
-if(vagas[numero].temporario === nome) {
-
-vagas[numero].temporario = "";
-
-}
-
-}
-
-salvarDados();
-
-renderizar();
-
-}
-
-
-/* VAGAS */
-
-function definirTitular(numero) {
-
-if(participantes.length === 0) {
-
-alert("Cadastre participantes primeiro.");
-
-return;
-
-}
-
-let lista = participantes.join("\n");
-
-let nome = prompt(
-"Digite o nome do titular:\n\n" + lista,
-vagas[numero]?.titular || ""
-);
-
-if(nome === null) return;
-
-vagas[numero] =
-vagas[numero] || {};
-
-vagas[numero].titular =
-nome.trim();
-
-salvarDados();
-
-renderizar();
-
-}
-
-
-function definirTemporario(numero) {
-
-if(!vagas[numero] ||
-!vagas[numero].titular) {
-
-alert("Defina primeiro o titular da vaga.");
-
-return;
-
-}
-
-let nome = prompt(
-"Digite o nome do ocupante temporário.\nDeixe vazio para o titular retornar:",
-vagas[numero].temporario || ""
-);
-
-if(nome === null) return;
-
-vagas[numero].temporario =
-nome.trim();
-
-salvarDados();
-
-renderizar();
-
-}
-
-
-function liberarVaga(numero) {
-
-if(confirm("Liberar esta vaga?")) {
-
-delete vagas[numero];
-
-salvarDados();
-
-renderizar();
-
-}
-
-}
-
-
-/* FINANCEIRO */
-
-function adicionarDespesa() {
-
-let descricao =
-document
-.getElementById("descricaoDespesa")
-.value
-.trim();
-
-let valor =
-parseFloat(
-document
-.getElementById("valorDespesa")
-.value
-);
-
-if(descricao === "" ||
-isNaN(valor) ||
-valor <= 0) {
-
-alert("Preencha a descrição e o valor.");
-
-return;
-
-}
-
-despesas.push({
-
-descricao: descricao,
-
-valor: valor
-
-});
-
-document
-.getElementById("descricaoDespesa")
-.value = "";
-
-document
-.getElementById("valorDespesa")
-.value = "";
-
-salvarDados();
-
-renderizar();
-
-}
-
-
-function excluirDespesa(indice) {
-
-if(confirm("Excluir esta despesa?")) {
-
-despesas.splice(indice, 1);
-
-salvarDados();
-
-renderizar();
-
-}
-
-}
-
-
-/* PAGAMENTOS */
-
-function alterarPagamento(nome) {
-
-pagamentos[nome] =
-!pagamentos[nome];
-
-salvarDados();
-
-renderizar();
-
-}
-
-
-/* FORMATAR MOEDA */
-
-function dinheiro(valor) {
-
-return Number(valor || 0)
-.toLocaleString(
-"pt-BR",
-{
-style: "currency",
-currency: "BRL"
-}
-);
-
-}
-
-
-/* RENDERIZAR */
-
-function renderizar() {
-
-
-/* RESUMO */
-
-document
-.getElementById("totalParticipantes")
-.innerText =
-participantes.length;
-
-
-let total =
-despesas.reduce(
-function(soma, despesa) {
-
-return soma +
-Number(despesa.valor);
-
-},
-0
-);
-
-
-document
-.getElementById("totalDespesasResumo")
-.innerText =
-dinheiro(total);
-
-
-/* PARTICIPANTES */
-
-let listaParticipantes =
-document
-.getElementById("listaParticipantes");
-
-listaParticipantes.innerHTML = "";
-
-
-participantes.forEach(
-function(nome, indice) {
-
-listaParticipantes.innerHTML +=
-
-"<div class='item linha'>" +
-
-"<span>🎣 " +
-(indice + 1) +
-". <b>" +
-nome +
-"</b></span>" +
-
-"<button class='vermelho' onclick='excluirParticipante(" +
-indice +
-")'>Excluir</button>" +
-
-"</div>";
-
-});
-
-
-/* VAGAS */
-
-let listaVagas =
-document
-.getElementById("listaVagas");
-
-listaVagas.innerHTML = "";
-
-
-for(let i = 1; i <= 12; i++) {
-
-let vaga =
-vagas[i] || {};
-
-let titular =
-vaga.titular || "Disponível";
-
-let temporario =
-vaga.temporario || "";
-
-
-listaVagas.innerHTML +=
-
-"<div class='item'>" +
-
-"<b>🪑 Vaga " +
-i +
-"</b><br><br>" +
-
-"👤 Titular: <b>" +
-titular +
-"</b><br>" +
-
-(
-temporario
-
-?
-
-"🔄 Temporário: <b>" +
-temporario +
-"</b><br>" +
-"<span class='badge pendente'>Titular ausente</span>"
-
-:
-
-vaga.titular
-
-?
-
-"<span class='badge'>Titular presente</span>"
-
-:
-
-"<span class='badge pendente'>Disponível</span>"
-
-)
-
-+
-
-"<br><br>" +
-
-"<button onclick='definirTitular(" +
-i +
-")'>Definir titular</button> " +
-
-"<button class='secundario' onclick='definirTemporario(" +
-i +
-")'>Ocupante temporário</button> " +
-
-"<button class='vermelho' onclick='liberarVaga(" +
-i +
-")'>Liberar</button>" +
-
-"</div>";
-
-}
-
-
-/* DESPESAS */
-
-let listaDespesas =
-document
-.getElementById("listaDespesas");
-
-listaDespesas.innerHTML = "";
-
-
-despesas.forEach(
-function(despesa, indice) {
-
-listaDespesas.innerHTML +=
-
-"<div class='item linha'>" +
-
-"<span>" +
-despesa.descricao +
-"<br><b>" +
-dinheiro(despesa.valor) +
-"</b></span>" +
-
-"<button class='vermelho' onclick='excluirDespesa(" +
-indice +
-")'>Excluir</button>" +
-
-"</div>";
-
-});
-
-
-document
-.getElementById("totalDespesas")
-.innerText =
-"Total: " +
-dinheiro(total);
-
-
-/* RATEIO */
-
-let valorRateio =
-
-participantes.length > 0
-
-?
-
-total / participantes.length
-
-:
-
-0;
-
-
-document
-.getElementById("informacoesRateio")
-.innerHTML =
-
-"👥 Participantes: <b>" +
-participantes.length +
-"</b><br><br>" +
-
-"💰 Total das despesas: <b>" +
-dinheiro(total) +
-"</b><br><br>" +
-
-"➗ Valor por pessoa: <b>" +
-dinheiro(valorRateio) +
-"</b>";
-
-
-/* PAGAMENTOS */
-
-let listaPagamentos =
-document
-.getElementById("listaPagamentos");
-
-listaPagamentos.innerHTML = "";
-
-
-participantes.forEach(
-function(nome) {
-
-let pago =
-pagamentos[nome];
-
-
-listaPagamentos.innerHTML +=
-
-"<div class='item linha'>" +
-
-"<span>" +
-
-"🎣 <b>" +
-nome +
-"</b><br>" +
-
-(
-pago
-
-?
-
-"<span class='badge'>PAGO</span>"
-
-:
-
-"<span class='badge pendente'>PENDENTE</span>"
-
-)
-
-+
-
-"</span>" +
-
-"<button onclick='alterarPagamento(" +
-JSON.stringify(nome) +
-")'>" +
-
-(
-pago
-? "Marcar pendente"
-: "Marcar pago"
-)
-
-+
-
-"</button>" +
-
-"</div>";
-
-});
-
-}
-
-
-/* INICIAR */
-
-renderizar();
-
-</script>
+  <header>
+    <h1>Pesca Justa 🎣</h1>
+    <p>Organize sua pescaria de forma prática e eficiente</p>
+  </header>
+
+  <nav>
+    <a href="#inicio">Início</a>
+    <a href="#participantes">Participantes</a>
+    <a href="#sorteio">Sorteio</a>
+    <a href="#vagas">Vagas</a>
+    <a href="#financeiro">Financeiro</a>
+    <a href="#pagamentos">Pagamentos</a>
+  </nav>
+
+  <!-- Início -->
+  <section id="inicio">
+    <h2>🏠 Início</h2>
+    <p>Resumo da pescaria:</p>
+    <ul>
+      <li>Quantidade de participantes: <span id="qtdParticipantes">0</span></li>
+      <li>Total das despesas: R$ <span id="totalDespesas">0,00</span></li>
+      <li>Total arrecadado: R$ <span id="totalArrecadado">0,00</span></li>
+      <li>Valor pendente: R$ <span id="valorPendente">0,00</span></li>
+      <li>Rateio por pessoa: R$ <span id="rateio">0,00</span></li>
+    </ul>
+  </section>
+
+  <!-- Participantes -->
+  <section id="participantes">
+    <h2>👥 Participantes</h2>
+    <button>Adicionar pescador</button>
+    <button>Editar nome</button>
+    <button>Excluir participante</button>
+    <table>
+      <tr><th>Nome</th></tr>
+      <tr><td>Exemplo Pescador</td></tr>
+    </table>
+  </section>
+
+  <!-- Sorteio -->
+  <section id="sorteio">
+    <h2>🎲 Sorteio</h2>
+    <p>Selecione os pescadores e defina as vagas:</p>
+    <button>REALIZAR SORTEIO</button>
+    <p>Resultado: <span id="resultadoSorteio">Nenhum sorteio realizado</span></p>
+  </section>
+
+  <!-- Vagas -->
+  <section id="vagas">
+    <h2>🪑 Vagas</h2>
+    <table>
+      <tr><th>Vaga</th><th>Titular</th><th>Ocupante Temporário</th></tr>
+      <tr><td>1</td><td>-</td><td>-</td></tr>
+      <tr><td>2</td><td>-</td><td>-</td></tr>
+    </table>
+  </section>
+
+  <!-- Financeiro -->
+  <section id="financeiro">
+    <h2>💰 Financeiro</h2>
+    <h3>📊 Resumo</h3>
+    <ul>
+      <li>Total das despesas: R$ <span>0,00</span></li>
+      <li>Total arrecadado: R$ <span>0,00</span></li>
+      <li>Total pendente: R$ <span>0,00</span></li>
+      <li>Quantidade de pescadores: <span>0</span></li>
+      <li>Rateio por pessoa: R$ <span>0,00</span></li>
+    </ul>
+
+    <h3>🧾 Despesas</h3>
+    <ul>
+      <li>🚤 Barco</li>
+      <li>🦐 Iscas</li>
+      <li>🥩 Alimentação</li>
+      <li>🥤 Bebidas</li>
+      <li>🧊 Gelo</li>
+      <li>📦 Outros</li>
+    </ul>
+  </section>
+
+  <!-- Pagamentos -->
+  <section id="pagamentos">
+    <h2>💳 Pagamentos</h2>
+    <p>Selecione o pescador:</p>
+    <select>
+      <option>Exemplo Pescador</option>
+    </select>
+    <ul>
+      <li>💰 Deve pagar: R$ 0,00</li>
+      <li>✅ Já pagou: R$ 0,00</li>
+      <li>🔴 Falta pagar: R$ 0,00</li>
+      <li>📊 Status: Pendente</li>
+    </ul>
+
+    <h3>Histórico</h3>
+    <table>
+      <tr><th>Data</th><th>Descrição</th><th>Valor</th></tr>
+      <tr><td>01/09/2026</td><td>Sinal</td><td>R$ 100,00</td></tr>
+      <tr><td>15/09/2026</td><td>PIX</td><td>R$ 150,00</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Pesca Justa</p>
+  </footer>
 </body>
 </html>
