@@ -11,6 +11,35 @@
       background: #f0f8ff;
       color: #333;
     }
+    <body>
+  <header>
+    <h1>Pesca Justa</h1>
+    <button onclick="toggleMenu()" 
+            style="background:#333; color:#fff; padding:10px 20px; border:none; cursor:pointer;">
+      Menu
+    </button>
+  </header>
+
+  <nav id="menu" style="opacity:0; max-height:0; overflow:hidden; transition:all 0.5s ease; background:#f0f0ff; padding:20px; text-align:center;">
+    <a href="#" style="margin:10px; color:#333; text-decoration:none;">Início</a>
+    <a href="#" style="margin:10px; color:#333; text-decoration:none;">Sobre</a>
+    <a href="#" style="margin:10px; color:#333; text-decoration:none;">Contato</a>
+  </nav>
+
+  <script>
+  function toggleMenu() {
+    const menu = document.getElementById("menu");
+    if (menu.style.opacity === "0" || menu.style.opacity === "") {
+      menu.style.opacity = "1";
+      menu.style.maxHeight = "200px";
+    } else {
+      menu.style.opacity = "0";
+      menu.style.maxHeight = "0";
+    }
+  }
+  </script>
+</body>
+
     header {
       background: url('https://copilot.microsoft.com/th/id/BCO.74716dfa-c432-47a7-a1e9-36be88d6e4e6.png') no-repeat center center;
       background-size: cover;
