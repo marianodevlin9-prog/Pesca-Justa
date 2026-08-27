@@ -27,7 +27,6 @@
     <a href="#inicio">Início</a>
     <a href="#participantes">Participantes</a>
     <a href="#sorteio">Sorteio</a>
-    <a href="#vagas">Vagas</a>
     <a href="#financeiro">Financeiro</a>
     <a href="#pagamentos">Pagamentos</a>
   </nav>
@@ -62,14 +61,6 @@
     <ul id="resultadoSorteio"></ul>
   </section>
 
-  <!-- Vagas -->
-  <section id="vagas">
-    <h2>🪑 Vagas</h2>
-    <table id="tabelaVagas">
-      <tr><th>Vaga</th><th>Titular</th><th>Ocupante Temporário</th></tr>
-    </table>
-  </section>
-
   <!-- Financeiro -->
   <section id="financeiro">
     <h2>💰 Financeiro</h2>
@@ -89,12 +80,6 @@
     <input type="number" id="valorPagamento" placeholder="Digite valor pago">
     <button onclick="registrarPagamento()">Registrar Pagamento</button>
 
-    <h3>Resumo Individual</h3>
-    <p>💰 Deve pagar: R$ <span id="valorDevido">0,00</span></p>
-    <p>✅ Já pagou: R$ <span id="valorPago">0,00</span></p>
-    <p>🔴 Falta pagar: R$ <span id="valorFalta">0,00</span></p>
-    <p>📊 Status: <span id="statusPagamento">Pendente</span></p>
-
     <h3>Tabela Geral</h3>
     <table id="tabelaRateio">
       <tr><th>Pescador</th><th>Deve pagar</th><th>Já pagou</th><th>Falta pagar</th><th>Status</th></tr>
@@ -111,16 +96,9 @@
   </footer>
 
   <script>
-    let participantes = JSON.parse(localStorage.getItem("participantes")) || [];
-    let despesas = JSON.parse(localStorage.getItem("despesas")) || [];
-    let pagamentos = JSON.parse(localStorage.getItem("pagamentos")) || [];
-
-    function salvarDados() {
-      localStorage.setItem("participantes", JSON.stringify(participantes));
-      localStorage.setItem("despesas", JSON.stringify(despesas));
-      localStorage.setItem("pagamentos", JSON.stringify(pagamentos));
-      atualizarResumo();
-    }
+    let participantes = [];
+    let despesas = [];
+    let pagamentos = [];
 
     function atualizarResumo() {
       const totalDespesas = despesas.reduce((sum,d)=>sum+d.val,0);
@@ -132,6 +110,7 @@
       document.getElementById("totalArrecadado").innerText = totalArrecadado.toFixed(2);
       document.getElementById("valorPendente").innerText = pendente.toFixed(2);
       document.getElementById("rateio").innerText = rateio.toFixed(2);
+      document.getElementById("qtdParticipantes").innerText = participantes.length;
 
       atualizarTabelaRateio(rateio);
     }
@@ -153,6 +132,22 @@
       });
     }
 
+    function adicionarParticipante() {
+      const nome = document.getElementById("novoNome").value;
+      if(nome) {
+        participantes.push(nome);
+        document.getElementById("novoNome").value = "";
+        atualizarListaParticipantes();
+        atualizarResumo();
+      }
+    }
+
+    function excluirParticipante(i) {
+      participantes.splice(i,1);
+      atualizarListaParticipantes();
+      atualizarResumo();
+    }
+
     function atualizarListaParticipantes() {
       const tabela = document.getElementById("listaParticipantes");
       tabela.innerHTML = "<tr><th>Nome</th><th>Ações</th></tr>";
@@ -165,8 +160,27 @@
       participantes.forEach(p => {
         select.innerHTML += `<option>${p}</option>`;
       });
-      document.getElementById("qtdParticipantes").innerText = participantes.length;
-      atualizarResumo();
     }
 
+    function adicionarDespesa() {
+      const desc = document.getElementById("descDespesa").value;
+      const val = parseFloat(document.getElementById("valorDespesa").value);
+      if(desc && val) {
+        despesas.push({desc,val});
+        document.getElementById("descDespesa").value="";
+        document.getElementById("valorDespesa").value="";
+        atualizarListaDespesas();
+        atualizarResumo();
+      }
+    }
 
+    function atualizarListaDespesas() {
+      const tabela = document.getElementById("listaDespesas");
+      tabela.innerHTML = "<tr><th>Descrição</th><th>Valor</th></tr>";
+      despesas.forEach(d => {
+        tabela.innerHTML += `<tr><td>${d.desc}</td><td>R$ ${d.val.toFixed(2)}</td></tr>`;
+      });
+    }
+
+    function registrarPagamento() {
+      const pescador
