@@ -1,1 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
+<title>Pesca Justa 🎣</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #eef4f7;
+  color: #173042;
+}
+
+header {
+  background: #087e8b;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+}
+
+.container {
+  padding: 15px;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+button {
+  background: #087e8b;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 12px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.hidden {
+  display: none;
+}
+
+.item {
+  background: #f3f6f7;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+
+.status {
+  font-size: 13px;
+  color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🎣 PESCA JUSTA</h1>
+<p>Pescaria das 10:00 às 10:00</p>
+</header>
+
+<div class="container">
+
+<div id="inicio">
+
+<div class="menu">
+
+<button onclick="abrir('participantes')">
+👥 Participantes
+</button>
+
+<button onclick="abrir('vagas')">
+🪑 Vagas
+</button>
+
+<button onclick="abrir('financeiro')">
+💰 Financeiro
+</button>
+
+<button onclick="abrir('resumo')">
+📋 Resumo
+</button>
+
+</div>
+
+<div class="card">
+<h3>📅 Pescaria</h3>
+17 e 18 de outubro de 2026<br>
+⏰ Das 10:00 às 10:00
+</div>
+
+</div>
+
+
+<div id="participantes" class="hidden">
+
+<button onclick="voltar()">⬅ Voltar</button>
+
+<div class="card">
+
+<h2>👥 Participantes</h2>
+
+<input id="nome" placeholder="Nome do pescador">
+
+<button onclick="adicionarParticipante()">
+Adicionar pescador
+</button>
+
+<div id="listaParticipantes"></div>
+
+</div>
+
+</div>
+
+
+<div id="vagas" class="hidden">
+
+<button onclick="voltar()">⬅ Voltar</button>
+
+<div class="card">
+
+<h2>🪑 Controle de Vagas</h2>
+
+<p class="status">
+A vaga pertence ao titular.
+Um pescador pode ocupar temporariamente a vaga enquanto o titular estiver ausente.
+</p>
+
+<div id="listaVagas"></div>
+
+</div>
+
+</div>
+
+
+<div id="financeiro" class="hidden">
+
+<button onclick="voltar()">⬅ Voltar</button>
+
+<div class="card">
+
+<h2>💰 Despesas</h2>
+
+<input id="descricao" placeholder="Descrição da despesa">
+
+<input id="valor" type="number" placeholder="Valor">
+
+<button onclick="adicionarDespesa()">
+Adicionar despesa
+</button>
+
+<div id="listaDespesas"></div>
+
+<h3 id="total"></h3>
+
+</div>
+
+</div>
+
+
+<div id="resumo" class="hidden">
+
+<button onclick="voltar()">⬅ Voltar</button>
+
+<div class="card">
+
+<h2>📋 Resumo da Pescaria</h2>
+
+<p id="resumoParticipantes"></p>
+
+<p id="resumoFinanceiro"></p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let participantes =
+JSON.parse(localStorage.getItem("participantes")) || [];
+
+let despesas =
+JSON.parse(localStorage.getItem("despesas")) || [];
+
+function salvar() {
+
+localStorage.setItem(
+"participantes",
+JSON.stringify(participantes)
+);
+
+localStorage.setItem(
+"despesas",
+JSON.stringify(despesas)
+);
+
+}
+
+function abrir(tela) {
+
+document.querySelectorAll(".container > div")
+.forEach(function(elemento) {
+
+elemento.classList.add("hidden");
+
+});
+
+document.getElementById(tela)
+.classList.remove("hidden");
+
+renderizar();
+
+}
+
+function voltar() {
+
+document.querySelectorAll(".container > div")
+.forEach(function(elemento) {
+
+elemento.classList.add("hidden");
+
+});
+
+document.getElementById("inicio")
+.classList.remove("hidden");
+
+}
+
+function adicionarParticipante() {
+
+let nome =
+document.getElementById("nome").value;
+
+if(nome.trim() === "") {
+
+alert("Digite o nome do pescador");
+
+return;
+
+}
+
+participantes.push(nome);
+
+document.getElementById("nome").value = "";
+
+salvar();
+
+renderizar();
+
+}
+
+function adicionarDespesa() {
+
+let descricao =
+document.getElementById("descricao").value;
+
+let valor =
+parseFloat(
+document.getElementById("valor").value
+);
+
+if(descricao === "" || isNaN(valor)) {
+
+alert("Preencha descrição e valor");
+
+return;
+
+}
+
+despesas.push({
+descricao: descricao,
+valor: valor
+});
+
+document.getElementById("descricao").value = "";
+
+document.getElementById("valor").value = "";
+
+salvar();
+
+renderizar();
+
+}
+
+function renderizar() {
+
+let lista =
+document.getElementById("listaParticipantes");
+
+lista.innerHTML = "";
+
+participantes.forEach(function(nome, indice) {
+
+lista.innerHTML +=
+
+"<div class='item'>🎣 " +
+(indice + 1) +
+" - " +
+nome +
+"</div>";
+
+});
+
+
+let vagas =
+document.getElementById("listaVagas");
+
+vagas.innerHTML = "";
+
+for(let i = 1; i <= 12; i++) {
+
+let titular =
+participantes[i - 1] || "Disponível";
+
+vagas.innerHTML +=
+
+"<div class='item'>" +
+"🪑 Vaga " + i +
+"<br><b>" + titular + "</b>" +
+"</div>";
+
+}
+
+
+let listaDespesas =
+document.getElementById("listaDespesas");
+
+listaDespesas.innerHTML = "";
+
+let total = 0;
+
+despesas.forEach(function(despesa) {
+
+total += despesa.valor;
+
+listaDespesas.innerHTML +=
+
+"<div class='item'>" +
+
+despesa.descricao +
+
+" - R$ " +
+
+despesa.valor.toFixed(2) +
+
+"</div>";
+
+});
+
+document.getElementById("total").innerHTML =
+
+"Total: R$ " +
+total.toFixed(2);
+
+
+document.getElementById("resumoParticipantes")
+.innerHTML =
+
+"👥 Participantes: " +
+participantes.length;
+
+
+let rateio =
+
+participantes.length > 0
+
+?
+
+total / participantes.length
+
+:
+
+0;
+
+
+document.getElementById("resumoFinanceiro")
+.innerHTML =
+
+"💰 Total das despesas: R$ " +
+
+total.toFixed(2)
+
++
+
+"<br>➗ Rateio por pessoa: R$ " +
+
+rateio.toFixed(2);
+
+}
+
+renderizar();
+
+</script>
+
+</body>
+</html>
