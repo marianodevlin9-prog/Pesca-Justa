@@ -5,61 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pesca Justa</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f0f8ff;
-      color: #333;
-    }
-    header {
-      background: #004d66;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    nav {
-      background: #006994;
-      padding: 10px;
-      text-align: center;
-    }
-    nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    section {
-      padding: 30px;
-      border-bottom: 1px solid #ccc;
-    }
-    h2 {
-      color: #004d66;
-    }
-    button {
-      background:#333; 
-      color:#fff; 
-      padding:8px 15px; 
-      border:none; 
-      cursor:pointer;
-      margin:5px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-    footer {
-      background: #004d66;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      margin-top: 30px;
-    }
+    body { font-family: Arial, sans-serif; margin:0; background:#f0f8ff; color:#333; }
+    header { background:#004d66; color:white; padding:20px; text-align:center; }
+    nav { background:#006994; padding:10px; text-align:center; }
+    nav a { color:white; margin:0 15px; text-decoration:none; font-weight:bold; }
+    section { padding:30px; border-bottom:1px solid #ccc; }
+    h2 { color:#004d66; }
+    button { background:#333; color:#fff; padding:8px 15px; border:none; cursor:pointer; margin:5px; }
+    table { width:100%; border-collapse:collapse; margin-top:15px; }
+    table, th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+    footer { background:#004d66; color:white; text-align:center; padding:15px; margin-top:30px; }
   </style>
 </head>
 <body>
@@ -80,7 +35,6 @@
   <!-- Início -->
   <section id="inicio">
     <h2>🏠 Início</h2>
-    <p>Resumo da pescaria:</p>
     <ul>
       <li>Quantidade de participantes: <span id="qtdParticipantes">0</span></li>
       <li>Total das despesas: R$ <span id="totalDespesas">0,00</span></li>
@@ -93,80 +47,139 @@
   <!-- Participantes -->
   <section id="participantes">
     <h2>👥 Participantes</h2>
-    <button>Adicionar pescador</button>
-    <button>Editar nome</button>
-    <button>Excluir participante</button>
-    <table>
-      <tr><th>Nome</th></tr>
-      <tr><td>Exemplo Pescador</td></tr>
+    <input type="text" id="novoNome" placeholder="Nome do pescador">
+    <button onclick="adicionarParticipante()">Adicionar</button>
+    <table id="listaParticipantes">
+      <tr><th>Nome</th><th>Ações</th></tr>
     </table>
   </section>
 
   <!-- Sorteio -->
   <section id="sorteio">
     <h2>🎲 Sorteio</h2>
-    <p>Selecione os pescadores e defina as vagas:</p>
-    <button>REALIZAR SORTEIO</button>
-    <p>Resultado: <span id="resultadoSorteio">Nenhum sorteio realizado</span></p>
+    <label>Quantidade de vagas: <input type="number" id="qtdVagas" value="2"></label>
+    <button onclick="realizarSorteio()">REALIZAR SORTEIO</button>
+    <p>Resultado:</p>
+    <ul id="resultadoSorteio"></ul>
   </section>
 
   <!-- Vagas -->
   <section id="vagas">
     <h2>🪑 Vagas</h2>
-    <table>
+    <table id="tabelaVagas">
       <tr><th>Vaga</th><th>Titular</th><th>Ocupante Temporário</th></tr>
-      <tr><td>1</td><td>-</td><td>-</td></tr>
-      <tr><td>2</td><td>-</td><td>-</td></tr>
     </table>
   </section>
 
   <!-- Financeiro -->
   <section id="financeiro">
     <h2>💰 Financeiro</h2>
-    <h3>📊 Resumo</h3>
-    <ul>
-      <li>Total das despesas: R$ <span>0,00</span></li>
-      <li>Total arrecadado: R$ <span>0,00</span></li>
-      <li>Total pendente: R$ <span>0,00</span></li>
-      <li>Quantidade de pescadores: <span>0</span></li>
-      <li>Rateio por pessoa: R$ <span>0,00</span></li>
-    </ul>
-
     <h3>🧾 Despesas</h3>
-    <ul>
-      <li>🚤 Barco</li>
-      <li>🦐 Iscas</li>
-      <li>🥩 Alimentação</li>
-      <li>🥤 Bebidas</li>
-      <li>🧊 Gelo</li>
-      <li>📦 Outros</li>
-    </ul>
+    <input type="text" id="descDespesa" placeholder="Descrição">
+    <input type="number" id="valorDespesa" placeholder="Valor">
+    <button onclick="adicionarDespesa()">Adicionar Despesa</button>
+    <table id="listaDespesas">
+      <tr><th>Descrição</th><th>Valor</th></tr>
+    </table>
   </section>
 
   <!-- Pagamentos -->
   <section id="pagamentos">
     <h2>💳 Pagamentos</h2>
-    <p>Selecione o pescador:</p>
-    <select>
-      <option>Exemplo Pescador</option>
-    </select>
-    <ul>
-      <li>💰 Deve pagar: R$ 0,00</li>
-      <li>✅ Já pagou: R$ 0,00</li>
-      <li>🔴 Falta pagar: R$ 0,00</li>
-      <li>📊 Status: Pendente</li>
-    </ul>
-
-    <h3>Histórico</h3>
-    <table>
-      <tr><th>Data</th><th>Descrição</th><th>Valor</th></tr>
-      <tr><td>01/09/2026</td><td>Sinal</td><td>R$ 100,00</td></tr>
-      <tr><td>15/09/2026</td><td>PIX</td><td>R$ 150,00</td></tr>
+    <select id="selectPescador"></select>
+    <input type="number" id="valorPagamento" placeholder="Valor pago">
+    <button onclick="registrarPagamento()">Registrar Pagamento</button>
+    <table id="historicoPagamentos">
+      <tr><th>Pescador</th><th>Data</th><th>Valor</th></tr>
     </table>
   </section>
 
   <footer>
     <p>&copy; 2026 Pesca Justa</p>
   </footer>
-</body>
-</html>
+
+  <script>
+    let participantes = JSON.parse(localStorage.getItem("participantes")) || [];
+    let despesas = JSON.parse(localStorage.getItem("despesas")) || [];
+    let pagamentos = JSON.parse(localStorage.getItem("pagamentos")) || [];
+
+    function salvarDados() {
+      localStorage.setItem("participantes", JSON.stringify(participantes));
+      localStorage.setItem("despesas", JSON.stringify(despesas));
+      localStorage.setItem("pagamentos", JSON.stringify(pagamentos));
+      atualizarResumo();
+    }
+
+    function atualizarListaParticipantes() {
+      const tabela = document.getElementById("listaParticipantes");
+      tabela.innerHTML = "<tr><th>Nome</th><th>Ações</th></tr>";
+      participantes.forEach((p, i) => {
+        tabela.innerHTML += `<tr><td>${p}</td>
+          <td><button onclick="excluirParticipante(${i})">Excluir</button></td></tr>`;
+      });
+      const select = document.getElementById("selectPescador");
+      select.innerHTML = "";
+      participantes.forEach(p => {
+        select.innerHTML += `<option>${p}</option>`;
+      });
+      document.getElementById("qtdParticipantes").innerText = participantes.length;
+    }
+
+    function adicionarParticipante() {
+      const nome = document.getElementById("novoNome").value;
+      if(nome) {
+        participantes.push(nome);
+        document.getElementById("novoNome").value = "";
+        salvarDados();
+        atualizarListaParticipantes();
+      }
+    }
+
+    function excluirParticipante(i) {
+      participantes.splice(i,1);
+      salvarDados();
+      atualizarListaParticipantes();
+    }
+
+    function realizarSorteio() {
+      const vagas = parseInt(document.getElementById("qtdVagas").value);
+      const sorteados = [...participantes].sort(() => Math.random()-0.5).slice(0,vagas);
+      const lista = document.getElementById("resultadoSorteio");
+      lista.innerHTML = "";
+      sorteados.forEach((s,i) => {
+        lista.innerHTML += `<li>Vaga ${i+1}: ${s}</li>`;
+      });
+      const tabela = document.getElementById("tabelaVagas");
+      tabela.innerHTML = "<tr><th>Vaga</th><th>Titular</th><th>Ocupante Temporário</th></tr>";
+      sorteados.forEach((s,i) => {
+        tabela.innerHTML += `<tr><td>${i+1}</td><td>${s}</td><td>-</td></tr>`;
+      });
+    }
+
+    function adicionarDespesa() {
+      const desc = document.getElementById("descDespesa").value;
+      const val = parseFloat(document.getElementById("valorDespesa").value);
+      if(desc && val) {
+        despesas.push({desc,val});
+        document.getElementById("descDespesa").value="";
+        document.getElementById("valorDespesa").value="";
+        salvarDados();
+        atualizarListaDespesas();
+      }
+    }
+
+    function atualizarListaDespesas() {
+      const tabela = document.getElementById("listaDespesas");
+      tabela.innerHTML = "<tr><th>Descrição</th><th>Valor</th></tr>";
+      let total = 0;
+      despesas.forEach(d => {
+        tabela.innerHTML += `<tr><td>${d.desc}</td><td>R$ ${d.val.toFixed(2)}</td></tr>`;
+        total += d.val;
+      });
+      document.getElementById("totalDespesas").innerText = total.toFixed(2);
+    }
+
+    function registrarPagamento() {
+      const pescador = document.getElementById("selectPescador").value;
+      const valor = parseFloat(document.getElementById("valorPagamento").value);
+      if(pescador
