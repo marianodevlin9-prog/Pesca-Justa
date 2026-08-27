@@ -12,35 +12,37 @@
       color: #333;
     }
     header {
-      background: url('https://copilot.microsoft.com/th/id/BCO.74716dfa-c432-47a7-a1e9-36be88d6e4e6.png') no-repeat center center;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/6/6a/Fishing_boat.jpg') no-repeat center center;
       background-size: cover;
       color: white;
       padding: 60px 20px;
       text-align: center;
     }
+    /* Menu lateral */
     nav {
-      background: #004d66;
-      text-align: center;
-      transition: all 0.5s ease;
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
-      position: fixed;   /* FIXA no topo */
+      height: 100%;
+      width: 0; /* começa fechado */
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      z-index: 1000;     /* garante que fique acima do conteúdo */
+      background-color: #004d66;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 1000;
     }
     nav a {
+      display: block;
       color: white;
-      margin: 0 15px;
+      padding: 15px 25px;
       text-decoration: none;
       font-weight: bold;
-      display: inline-block;
-      padding: 15px 0;
+    }
+    nav a:hover {
+      background: #006994;
     }
     section {
-      padding: 100px 40px 40px; /* espaço extra por causa do menu fixo */
+      padding: 40px;
       text-align: center;
     }
     section img {
@@ -63,16 +65,26 @@
       cursor:pointer;
       margin-top: 20px;
     }
+    /* Botão de fechar dentro do menu */
+    .closebtn {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 30px;
+      color: white;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Pesca Justa</h1>
     <p>Organize sua pesca embarcada</p>
-    <button onclick="toggleMenu()">Menu</button>
+    <button onclick="openMenu()">☰ Menu</button>
   </header>
 
   <nav id="menu">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeMenu()">×</a>
     <a href="#">Início</a>
     <a href="#">Sobre</a>
     <a href="#">Contato</a>
@@ -92,16 +104,4 @@
   </footer>
 
   <script>
-    function toggleMenu() {
-      const menu = document.getElementById("menu");
-      if (menu.style.maxHeight === "0px" || menu.style.maxHeight === "") {
-        menu.style.maxHeight = "200px";
-        menu.style.opacity = "1";
-      } else {
-        menu.style.maxHeight = "0";
-        menu.style.opacity = "0";
-      }
-    }
-  </script>
-</body>
-</html>
+    function openMenu
