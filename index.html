@@ -168,4 +168,11 @@
     }
 
     function excluirParticipante(i) {
-      participantes.splice(i
+      participantes.splice(i,1);
+      salvarDados();
+      atualizarListaParticipantes();
+    }
+
+    function realizarSorteio() {
+      const vagas = parseInt(document.getElementById("qtdVagas").value);
+      const sorteados = [...participantes].sort(() => Math.random()-0.5).slice(0,vagas);
