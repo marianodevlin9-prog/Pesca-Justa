@@ -3,400 +3,679 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expedição de Pescaria - Rodízio 4 Vagas na Popa (18h)</title>
+  <title>Pesca Justa 🎣 - Rodízio & Gestão Financeira</title>
+  
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b5d7a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Pesca Justa">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <style>
+    :root {
+      --primary: #0b5d7a;
+      --primary2: #073e52;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.15);
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --accent: #38bdf8;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* FUNDO MARINHO ILUMINADO (SEM DEPENDER DE IMAGEM EXTERNA QUE BLOQUEIA) */
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
-      background: radial-gradient(circle at top, #0f2b48 0%, #0a192f 60%, #020c1b 100%);
-      color: #f8fafc;
+      background: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.95)), 
+                  url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1920&q=80') center/cover fixed no-repeat;
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    .hero-capa {
-      padding: 40px 20px 20px 20px;
+    /* HEADER HERO */
+    header {
+      background: rgba(7, 62, 82, 0.8);
+      border-bottom: 2px solid var(--accent);
+      color: #fff;
+      padding: 34px 18px;
       text-align: center;
-      background: rgba(15, 23, 42, 0.6);
-      border-bottom: 2px solid #38bdf8;
     }
+    header h1 { margin: 0; font-size: 32px; font-weight: 800; }
+    header p { margin: 8px 0 0; opacity: .9; color: #7dd3fc; }
 
-    .hero-capa h1 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #ffffff;
-      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
-    }
-
-    .hero-capa p { font-size: 1rem; color: #7dd3fc; margin-top: 5px; }
-
-    .container {
-      max-width: 950px;
-      margin: 20px auto;
-      padding: 0 15px;
-      width: 100%;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
+    /* LAYOUT & CARDS */
+    .container { max-width: 1250px; margin: auto; padding: 22px; width: 100%; flex: 1; }
+    .grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+    
     .card {
-      background: #1e293b;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid var(--border);
       border-radius: 14px;
       padding: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      position: relative;
-      z-index: 1;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
 
-    .card h2 {
-      font-size: 1.25rem;
-      color: #38bdf8;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .summary .label { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: bold; }
+    .summary .value { font-size: 24px; font-weight: bold; margin-top: 7px; color: var(--accent); }
 
-    /* FORMULÁRIO E INPUTS */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-    }
-
-    .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-group.full-width { grid-column: 1 / -1; }
-    .form-group label { font-size: 0.85rem; color: #cbd5e1; font-weight: 600; }
-
-    .form-group input {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 10px;
-      color: #f8fafc;
-      font-size: 0.9rem;
+    h2 { margin: 0 0 14px; font-size: 20px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+    h3 { margin: 18px 0 10px; color: #e2e8f0; }
+    
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 150px; }
+    
+    label { font-size: 13px; font-weight: bold; color: #cbd5e1; }
+    input, select {
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 11px;
+      background: rgba(15, 23, 42, 0.8);
+      font-size: 14px;
+      color: #fff;
       outline: none;
-      width: 100%;
     }
+    input:focus, select:focus { border-color: var(--accent); }
 
-    .form-group input:focus { border-color: #38bdf8; }
-
-    .btn-action {
-      margin-top: 12px;
-      background: #0284c7;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-weight: 600;
+    button {
+      height: 40px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 16px;
       cursor: pointer;
-      display: inline-block;
+      background: #0284c7;
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background .2s;
     }
-    .btn-action:hover { background: #0369a1; }
+    button:hover { background: #0369a1; }
+    button.secondary { background: #334155; color: #fff; }
+    button.secondary:hover { background: #475569; }
+    button.danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #f87171; }
+    button.danger:hover { background: var(--danger); color: #fff; }
+    button.small { height: 32px; padding: 0 9px; font-size: 12px; }
 
-    /* PAINEL TIMER */
+    /* TABELAS */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+    th { font-size: 12px; text-transform: uppercase; color: var(--muted); }
+    .actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+
+    /* COMPONENTES DE INTERFACE */
+    .avatar {
+      width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
+      background: #334155; display: inline-flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 12px; border: 1px solid var(--border); color: var(--accent);
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #334155; font-size: 12px; font-weight: bold; }
+    .status-paid { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .status-partial { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+    .status-pending { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid var(--danger); }
+
+    .progress { height: 12px; background: #0f172a; border-radius: 999px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border); }
+    .progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
+
+    /* TIMER DE RODÍZIO */
     .timer-panel {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: center;
-      background: #0f172a;
-      border: 1px solid #0284c7;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 15px 0;
-      gap: 10px;
+      display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
+      background: rgba(15, 23, 42, 0.9); border: 1px solid var(--accent); padding: 16px;
+      border-radius: 10px; margin: 15px 0; gap: 10px;
     }
-
     .timer-box { text-align: center; }
-    .timer-val { font-size: 1.8rem; font-weight: 800; color: #38bdf8; font-family: monospace; }
-    .timer-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
+    .timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
+    .timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
 
-    /* PLANTA DO CONVÉS (DESENHO DO BARCO) */
-    .deck-view {
-      width: 100%;
-      max-width: 420px;
-      min-height: 520px;
-      margin: 15px auto;
-      background: #091322;
-      border: 3px solid #0284c7;
-      border-radius: 160px 160px 25px 25px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 25px 15px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    /* MAPA ANATÔMICO DO BARCO */
+    .boat-wrap { overflow-x: auto; padding-bottom: 8px; }
+    .boat {
+      position: relative; width: 900px; height: 760px; margin: auto;
+      border: 4px solid var(--accent); border-radius: 160px 160px 60px 60px;
+      background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
     }
+    .boat-title { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); font-weight: bold; text-align: center; font-size: 18px; color: var(--accent); }
+    .boat-sub { font-size: 12px; margin-top: 4px; color: var(--muted); }
+    
+    .side { position: absolute; top: 105px; width: 170px; height: 400px; display: flex; flex-direction: column; justify-content: space-between; }
+    .side.left { left: 30px; } .side.right { right: 30px; }
+    .center-line { position: absolute; left: 50%; top: 105px; transform: translateX(-50%); height: 420px; border-left: 2px dashed rgba(56, 189, 248, 0.4); }
 
-    .deck-section {
-      text-align: center;
-      padding: 10px;
-      border: 1px dashed #334155;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
+    .slot {
+      min-height: 78px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border);
+      border-radius: 12px; padding: 6px; text-align: center; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: .15s; color: #fff;
     }
+    .slot:hover { transform: scale(1.02); border-color: var(--accent); }
+    .slot.selected { outline: 3px solid var(--warning); border-color: var(--warning); }
+    .slot-label { font-size: 10px; color: var(--muted); font-weight: bold; }
+    .slot-name { font-size: 12px; font-weight: bold; max-width: 145px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .slot .avatar { width: 30px; height: 30px; font-size: 10px; }
 
-    .deck-section-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
-    .proa { color: #facc15; }
-    .meio { color: #94a3b8; }
-    .popa { color: #4ade80; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+    .back { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); width: 86%; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .bench { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(74, 222, 128, 0.4); border-radius: 14px; padding: 10px; }
+    .bench-title { text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #4ade80; }
+    .bench-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .bench .slot { min-height: 90px; }
 
-    .fisherman-tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 5px;
-    }
+    .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .result { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 10px; border-radius: 9px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
 
-    .fisherman-tag {
-      background: #0284c7;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-
-    .popa .fisherman-tag { background: #16a34a; border: 1px solid #4ade80; }
-
-    /* UPLOAD */
-    .upload-box {
-      border: 2px dashed #0284c7;
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-      background: #0f172a;
-      cursor: pointer;
-      position: relative;
-    }
-    .upload-box input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
-    .img-container { position: relative; height: 80px; border-radius: 6px; overflow: hidden; }
+    /* GALERIA & TOAST */
+    .upload-box { border: 2px dashed var(--accent); border-radius: 10px; padding: 20px; text-align: center; background: rgba(14, 165, 233, 0.05); cursor: pointer; position: relative; }
+    .upload-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 12px; }
+    .img-container { position: relative; height: 90px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
     .img-container img { width: 100%; height: 100%; object-fit: cover; }
+    .btn-del-img { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #f87171; border: 0; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; }
 
-    footer {
-      background: #07111e;
-      padding: 15px;
-      text-align: center;
-      border-top: 1px solid #1e293b;
-      margin-top: auto;
-    }
-    .dev-badge { color: #e2e8f0; font-size: 0.85rem; }
-    .dev-badge strong { color: #38bdf8; }
+    .toast { position: fixed; right: 18px; bottom: 18px; background: #073e52; color: #fff; padding: 13px 17px; border-radius: 9px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: none; z-index: 1000; border: 1px solid var(--accent); }
+    .toast.show { display: block; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .empty { padding: 16px; color: var(--muted); text-align: center; }
+
+    footer { text-align: center; background: #07111e; color: #fff; padding: 22px; margin-top: 25px; border-top: 1px solid var(--border); }
+    .dev-badge strong { color: var(--accent); }
+
+    @media(max-width:850px) { .grid-summary { grid-template-columns: repeat(2, 1fr); } .two-col { grid-template-columns: 1fr; } .container { padding: 12px; } .result-grid { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:520px) { .grid-summary { grid-template-columns: 1fr 1fr; } .summary .value { font-size: 19px; } .form-row { flex-direction: column; align-items: stretch; } .field { width: 100%; } .result-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-  <header class="hero-capa">
-    <h1>Expedição de Pescaria (18 Horas)</h1>
-    <p>Rodízio Automático com 4 Vagas na Popa & Cronômetro</p>
-  </header>
+<header>
+  <h1>Pesca Justa 🎣</h1>
+  <p>Organização da Pescaria, Sorteio, Rodízio de 18h & Controle Financeiro</p>
+  <div style="margin-top:12px"><span class="badge" id="roundBadge">Rodada 1</span></div>
+</header>
 
-  <main class="container">
+<main class="container">
 
-    <!-- INFORMAÇÕES DE SAÍDA -->
-    <section class="card">
-      <h2>📋 Detalhes do Embarque</h2>
-      <form id="pescariaForm" onsubmit="salvarDados(event)">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>📅 Data da Pescaria</label>
-            <input type="date" id="dataPesca">
-          </div>
-          <div class="form-group">
-            <label>⚓ Local de Saída / Marina</label>
-            <input type="text" id="localSaida" placeholder="Ex: Pier 3 - Marina">
-          </div>
-          <div class="form-group">
-            <label>🅿️ Estacionamento</label>
-            <input type="text" id="estacionamento" placeholder="Ex: R$ 30 no local">
-          </div>
-          <div class="form-group">
-            <label>📍 Ponto de Pesca Destino</label>
-            <input type="text" id="pontoPesca" placeholder="Ex: Laje de Santos">
-          </div>
-        </div>
-        <button type="submit" class="btn-action">💾 Salvar Informações</button>
-      </form>
-    </section>
+  <section class="grid-summary">
+    <div class="card summary"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
+    <div class="card summary"><div class="label">Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
+    <div class="card summary"><div class="label">Arrecadado</div><div class="value" id="sumCollected">R$ 0,00</div></div>
+    <div class="card summary"><div class="label">Rateio por pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
+  </section>
 
-    <!-- ROTAÇÃO DO CONVÉS -->
-    <section class="card">
-      <h2>⚓ Rodízio (4 Vagas Fixas na Popa)</h2>
-      <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 12px;">
-        Insira os pescadores separados por vírgula para iniciar a rotação de 18 horas.
-      </p>
+  <section class="card">
+    <h2>📈 Progresso Financeiro</h2>
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div><strong id="progressPercent">0%</strong> arrecadado</div>
+      <div>Falta: <strong id="sumPending">R$ 0,00</strong></div>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <div style="margin-top:14px"><button class="danger" onclick="clearAll()">🗑️ Zerar Pescaria</button></div>
+  </section>
 
-      <div class="form-group full-width">
-        <label>🎣 Lista de Pescadores</label>
-        <input type="text" id="listaPescadores" value="Devlin, Carlos, Roberto, André, Lucas, Marcelo, Fernando, Thiago">
+  <section class="two-col">
+    <div class="card">
+      <h2>👥 Participantes</h2>
+      <div class="form-row">
+        <div class="field"><label>Nome do pescador</label><input id="participantName" placeholder="Digite o nome"></div>
+        <button onclick="addParticipant()">Adicionar</button>
+        <button class="secondary" onclick="loadDefaultNames()">Carregar lista</button>
       </div>
-      <button onclick="iniciarRotacao()" class="btn-action" style="background: #16a34a; margin-bottom: 10px;">▶️ Iniciar Rotação</button>
+      <div class="table-wrap" style="margin-top:15px">
+        <table>
+          <thead><tr><th>Foto</th><th>Nome</th><th>Posições</th><th></th></tr></thead>
+          <tbody id="participantsTable"></tbody>
+        </table>
+      </div>
+    </div>
 
-      <div class="timer-panel">
-        <div class="timer-box">
-          <div class="timer-lbl">Turno Atual</div>
-          <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
+    <div class="card">
+      <h2>🧾 Despesas</h2>
+      <div class="form-row">
+        <div class="field"><label>Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
+        <div class="field"><label>Valor</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
+        <div class="field"><label>Categoria</label>
+          <select id="expenseCategory">
+            <option>Barco</option><option>Iscas</option><option>Alimentação</option><option>Bebidas</option><option>Gelo</option><option>Combustível</option><option>Outros</option>
+          </select>
         </div>
-        <div class="timer-box">
-          <div class="timer-lbl">Tempo Restante</div>
-          <div id="timerDisplay" class="timer-val">00:00:00</div>
-        </div>
-        <div class="timer-box">
-          <div class="timer-lbl">Duração/Turno</div>
-          <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
+        <button onclick="addExpense()">Adicionar</button>
+      </div>
+      <div class="table-wrap" style="margin-top:15px">
+        <table>
+          <thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th></th></tr></thead>
+          <tbody id="expensesTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🚤 Sorteio & Rodízio do Convés (18h)</h2>
+    <div class="form-row">
+      <button onclick="drawPositions()">🎲 Sortear posições</button>
+      <button onclick="iniciarCronometro18h()" style="background:#16a34a;">⏱️ Iniciar Cronômetro 18h</button>
+      <button class="secondary" onclick="clearPositions()">Limpar posições</button>
+      <button class="secondary" onclick="newRound()">🔄 Nova rodada</button>
+    </div>
+    <p class="muted" style="margin-top:10px;">O sorteio prioriza posições não utilizadas. Para trocar dois pescadores, clique em uma posição ocupada e depois na outra.</p>
+
+    <div class="timer-panel">
+      <div class="timer-box">
+        <div class="timer-lbl">Turno Atual</div>
+        <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
+      </div>
+      <div class="timer-box">
+        <div class="timer-lbl">Tempo Restante</div>
+        <div id="timerDisplay" class="timer-val">00:00:00</div>
+      </div>
+      <div class="timer-box">
+        <div class="timer-lbl">Duração/Turno</div>
+        <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
+      </div>
+    </div>
+
+    <div class="boat-wrap">
+      <div class="boat">
+        <div class="boat-title">🚤 PROA<div class="boat-sub">CORREDOR CENTRAL</div></div>
+        <div class="side left" id="leftSlots"></div>
+        <div class="center-line"></div>
+        <div class="side right" id="rightSlots"></div>
+        <div class="back">
+          <div class="bench"><div class="bench-title">BANCO DO FUNDO — ESQUERDA</div><div class="bench-slots" id="backLeftSlots"></div></div>
+          <div class="bench"><div class="bench-title">BANCO DO FUNDO — DIREITA</div><div class="bench-slots" id="backRightSlots"></div></div>
         </div>
       </div>
+    </div>
 
-      <div class="deck-view">
-        <div class="deck-section proa">
-          <div class="deck-section-title">⛵ PROA (FRENTE)</div>
-          <div id="posProa" class="fisherman-tags-container">--</div>
-        </div>
+    <h3>📋 Resultado da Rodada Atual</h3>
+    <div id="drawResults" class="result-grid"></div>
+  </section>
 
-        <div class="deck-section meio">
-          <div class="deck-section-title">↔️ MEIO DO BARCO</div>
-          <div id="posMeio" class="fisherman-tags-container">--</div>
-        </div>
+  <section class="card">
+    <h2>💳 Registrar Pagamento</h2>
+    <div class="form-row">
+      <div class="field"><label>Pescador</label><select id="paymentParticipant"></select></div>
+      <div class="field"><label>Despesa</label><select id="paymentExpense"></select></div>
+      <div class="field"><label>Valor pago</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
+      <button onclick="addPayment()">Registrar pagamento</button>
+    </div>
+  </section>
 
-        <div class="deck-section popa">
-          <div class="deck-section-title">⭐ POPA (FUNDO - 4 VAGAS)</div>
-          <div id="posPopa" class="fisherman-tags-container">--</div>
-        </div>
-      </div>
-    </section>
+  <section class="card">
+    <h2>📊 Situação Financeira por Pescador</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pescador</th><th>Deve pagar</th><th>Já pagou</th><th>Falta</th><th>Status</th></tr></thead>
+        <tbody id="financialTable"></tbody>
+      </table>
+    </div>
+  </section>
 
-    <!-- FOTOS DA EMBARCAÇÃO -->
-    <section class="card">
-      <h2>📸 Fotos da Embarcação</h2>
-      <div class="upload-box">
-        <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
-        <span style="font-size: 1.5rem; display: block;">📷</span>
-        <span style="font-size: 0.85rem;">Clique para selecionar ou enviar fotos</span>
-      </div>
-      <div class="preview-grid" id="previewGrid"></div>
-    </section>
+  <section class="card">
+    <h2>📋 Controle por Despesa</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Despesa</th><th>Categoria</th><th>Valor</th><th>Rateio/pessoa</th><th>Pago</th><th>Saldo</th><th>Status</th></tr></thead>
+        <tbody id="expenseControlTable"></tbody>
+      </table>
+    </div>
+  </section>
 
-  </main>
+  <section class="card">
+    <h2>📸 Fotos da Embarcação</h2>
+    <div class="upload-box">
+      <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
+      <span style="font-size: 1.5rem; display: block;">📷</span>
+      <span style="font-size: 0.85rem;">Clique para selecionar ou enviar fotos</span>
+    </div>
+    <div class="preview-grid" id="previewGrid"></div>
+  </section>
 
-  <footer>
-    <div class="dev-badge">⚡ Desenvolvido por <strong>Devlin Mariano</strong></div>
-  </footer>
+  <section class="card">
+    <h2>🧾 Histórico de Pagamentos</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pescador</th><th>Despesa</th><th>Data</th><th>Valor</th><th></th></tr></thead>
+        <tbody id="paymentsTable"></tbody>
+      </table>
+    </div>
+  </section>
 
-  <script>
-    let timerInterval = null;
-    let tempoRestanteSegundos = 0;
-    let pescadores = [];
-    let turnoIndex = 0;
-    const VAGAS_POPA = 4;
+  <section class="card">
+    <h2>🔄 Histórico de Rodízio</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Rodada</th><th>Pescador</th><th>Posição</th><th>Data</th></tr></thead>
+        <tbody id="historyTable"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
 
-    function iniciarRotacao() {
-      const rawInput = document.getElementById('listaPescadores').value;
-      pescadores = rawInput.split(',').map(n => n.trim()).filter(n => n.length > 0);
+<footer>
+  <div class="dev-badge">⚡ Desenvolvido por <strong>Devlin Mariano</strong> — © 2026 Pesca Justa 🎣</div>
+</footer>
 
-      if (pescadores.length < VAGAS_POPA) {
-        alert(`É necessário ter pelo menos ${VAGAS_POPA} pescadores.`);
-        return;
-      }
+<div class="toast" id="toast"></div>
 
-      const totalSegundos = 18 * 3600;
-      const duracaoTurnoSegundos = Math.floor(totalSegundos / pescadores.length);
+<script>
+const STORAGE_KEY = 'pesca-justa-unificado-v2';
+const POSITIONS = [
+  {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},{id:'esq-4',name:'Esquerda 4',group:'left'},
+  {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},{id:'dir-4',name:'Direita 4',group:'right'},
+  {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},{id:'fundo-esq-3',name:'Fundo E3',group:'backLeft'},
+  {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'},{id:'fundo-dir-3',name:'Fundo D3',group:'backRight'}
+];
+const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
 
-      document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoTurnoSegundos / 60)} min`;
-      turnoIndex = 0;
-      atualizarPosicoesEConvés(duracaoTurnoSegundos);
+let selectedPosition = null;
+let timerInterval = null;
+let tempoRestanteSegundos = 0;
+
+let state = {
+  participants: [],
+  expenses: [],
+  payments: [],
+  draw: [],
+  history: [],
+  photos: [],
+  round: 1
+};
+
+function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function money(v) { return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function initials(name) { return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join(''); }
+function numberBR(v) { return Number(String(v).replace(/\./g,'').replace(',','.'))||0; }
+function shuffle(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
+function esc(s) { return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove('show'),2800); }
+
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function load() { try { const x = JSON.parse(localStorage.getItem(STORAGE_KEY)); if(x) state = {...state, ...x}; } catch(e){} }
+
+function participant(pid) { return state.participants.find(x=>x.id===pid); }
+function expense(eid) { return state.expenses.find(x=>x.id===eid); }
+function pos(pid) { return POSITIONS.find(x=>x.id===pid); }
+function assignment(positionId) { return state.draw.find(x=>x.positionId===positionId); }
+
+function avatar(p) {
+  if(!p) return '';
+  return `<div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:esc(initials(p.name))}</div>`;
+}
+
+function totals() {
+  const expenses = state.expenses.reduce((s,x)=>s+x.value,0);
+  const collected = state.payments.reduce((s,x)=>s+x.value,0);
+  const share = state.participants.length ? expenses/state.participants.length : 0;
+  return { expenses, collected, share, pending: Math.max(0, expenses-collected) };
+}
+
+/* PARTICIPANTES & FOTOS */
+function addParticipant() {
+  const input = document.getElementById('participantName'), name = input.value.trim();
+  if(!name) return toast('Informe o nome do pescador.');
+  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase())) return toast('Esse pescador já está cadastrado.');
+  state.participants.push({id:id(), name}); input.value=''; save(); render(); toast('Pescador adicionado.');
+}
+
+function loadDefaultNames() {
+  let n = 0; const existing = new Set(state.participants.map(p=>p.name.toLowerCase()));
+  DEFAULT_NAMES.forEach(name => { if(!existing.has(name.toLowerCase())){ state.participants.push({id:id(), name}); n++; } });
+  save(); render(); toast(n?`${n} pescador(es) adicionado(s).`:'Todos já estão cadastrados.');
+}
+
+function editParticipant(pid) {
+  const p = participant(pid); const name = prompt('Novo nome:', p.name); if(name===null) return;
+  const n = name.trim(); if(!n) return toast('Nome inválido.');
+  if(state.participants.some(x=>x.id!==pid&&x.name.toLowerCase()===n.toLowerCase())) return toast('Já existe esse nome.');
+  p.name = n; save(); render(); toast('Nome atualizado.');
+}
+
+function deleteParticipant(pid) {
+  const p = participant(pid); if(!confirm(`Excluir ${p.name}?`)) return;
+  state.participants = state.participants.filter(x=>x.id!==pid);
+  state.payments = state.payments.filter(x=>x.participantId!==pid);
+  state.draw = state.draw.filter(x=>x.participantId!==pid);
+  state.history = state.history.filter(x=>x.participantId!==pid);
+  save(); render(); toast('Participante excluído.');
+}
+
+function changePhoto(pid, input) {
+  const file = input.files[0]; if(!file) return;
+  const r = new FileReader(); r.onload = e => {
+    const img = new Image(); img.onload = () => {
+      const c = document.createElement('canvas'); let max = 180, scale = Math.min(1, max/Math.max(img.width, img.height));
+      c.width = img.width*scale; c.height = img.height*scale;
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      participant(pid).photo = c.toDataURL('image/jpeg', .78); save(); render(); toast('Foto atualizada.');
+    }; img.src = e.target.result;
+  }; r.readAsDataURL(file);
+}
+
+/* DESPESAS & PAGAMENTOS */
+function addExpense() {
+  const desc = document.getElementById('expenseDesc').value.trim();
+  const value = numberBR(document.getElementById('expenseValue').value);
+  const category = document.getElementById('expenseCategory').value;
+  if(!desc) return toast('Informe a descrição.');
+  if(value<=0) return toast('Informe um valor válido.');
+  state.expenses.push({id:id(), desc, value, category});
+  document.getElementById('expenseDesc').value=''; document.getElementById('expenseValue').value='';
+  save(); render(); toast('Despesa adicionada.');
+}
+
+function editExpense(eid) {
+  const e = expense(eid); const desc = prompt('Descrição:', e.desc); if(desc===null) return;
+  const value = prompt('Valor:', String(e.value)); if(value===null) return;
+  const v = numberBR(value); if(!desc.trim()||v<=0) return toast('Dados inválidos.');
+  e.desc = desc.trim(); e.value = v; save(); render(); toast('Despesa atualizada.');
+}
+
+function deleteExpense(eid) {
+  if(!confirm('Excluir esta despesa e seus pagamentos vinculados?')) return;
+  state.expenses = state.expenses.filter(x=>x.id!==eid); state.payments = state.payments.filter(x=>x.expenseId!==eid); save(); render(); toast('Despesa excluída.');
+}
+
+function addPayment() {
+  const participantId = document.getElementById('paymentParticipant').value, expenseId = document.getElementById('paymentExpense').value, value = numberBR(document.getElementById('paymentValue').value);
+  if(!participantId) return toast('Selecione um pescador.'); if(!expenseId) return toast('Selecione uma despesa.'); if(value<=0) return toast('Informe um valor válido.');
+  state.payments.push({id:id(), participantId, expenseId, value, date: new Date().toISOString()});
+  document.getElementById('paymentValue').value=''; save(); render(); toast('Pagamento registrado.');
+}
+
+function deletePayment(pid) { state.payments = state.payments.filter(x=>x.id!==pid); save(); render(); toast('Pagamento removido.'); }
+
+/* SORTEIO & RODÍZIO DA EMBARCAÇÃO */
+function drawPositions() {
+  if(!state.participants.length) return toast('Cadastre os pescadores primeiro.');
+  const people = shuffle(state.participants).slice(0, POSITIONS.length);
+  const available = new Set(POSITIONS.map(x=>x.id)); const result = [];
+  
+  people.forEach(p => {
+    const used = new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId));
+    let choices = [...available].filter(x=>!used.has(x)); if(!choices.length) choices = [...available];
+    const chosen = choices[Math.floor(Math.random()*choices.length)];
+    available.delete(chosen); result.push({positionId:chosen, participantId:p.id});
+  });
+
+  state.draw = result;
+  result.forEach(x => state.history.push({id:id(), round:state.round, date: new Date().toISOString(), positionId:x.positionId, participantId:x.participantId}));
+  selectedPosition = null; save(); render(); toast(`Posições sorteadas para a rodada ${state.round}.`);
+}
+
+function clearPositions() { state.draw = []; selectedPosition = null; save(); render(); toast('Posições atuais removidas.'); }
+function newRound() { state.round++; state.draw = []; selectedPosition = null; save(); render(); toast(`Nova rodada ${state.round} iniciada.`); }
+
+function clickPosition(positionId) {
+  const a = assignment(positionId); if(!a) return toast('Esta posição está vazia.');
+  if(!selectedPosition) { selectedPosition = positionId; renderBoat(); toast('Clique na segunda posição para trocar.'); return; }
+  if(selectedPosition === positionId) { selectedPosition = null; renderBoat(); return; }
+  const b = assignment(selectedPosition); if(!b) { selectedPosition = null; renderBoat(); return; }
+  [a.participantId, b.participantId] = [b.participantId, a.participantId];
+  selectedPosition = null; save(); render(); toast('Posições trocadas.');
+}
+
+/* CRONÔMETRO DE 18 HORAS */
+function iniciarCronometro18h() {
+  if(!state.participants.length) return toast('Cadastre os pescadores primeiro.');
+  const totalSegundos = 18 * 3600;
+  const duracaoTurnoSegundos = Math.floor(totalSegundos / state.participants.length);
+  document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoTurnoSegundos / 60)} min`;
+  
+  if(timerInterval) clearInterval(timerInterval);
+  tempoRestanteSegundos = duracaoTurnoSegundos;
+
+  timerInterval = setInterval(() => {
+    tempoRestanteSegundos--;
+    renderTimer(tempoRestanteSegundos);
+    if(tempoRestanteSegundos <= 0) {
+      clearInterval(timerInterval);
+      alert('🔔 FIM DO TURNO! Hora de girar as posições da pescaria.');
+      newRound();
+      drawPositions();
+      iniciarCronometro18h();
     }
+  }, 1000);
+  toast('Cronômetro de 18 horas iniciado!');
+}
 
-    function atualizarPosicoesEConvés(duracaoSegundos) {
-      if (timerInterval) clearInterval(timerInterval);
-      tempoRestanteSegundos = duracaoSegundos;
-      document.getElementById('turnoAtual').textContent = `Turno ${turnoIndex + 1} de ${pescadores.length}`;
+function renderTimer(seg) {
+  const hrs = String(Math.floor(seg / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((seg % 3600) / 60)).padStart(2, '0');
+  const secs = String(seg % 60).padStart(2, '0');
+  document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
+}
 
-      const listaRotacionada = [...pescadores.slice(turnoIndex), ...pescadores.slice(0, turnoIndex)];
-      const popaPescadores = listaRotacionada.slice(0, VAGAS_POPA);
-      const restante = listaRotacionada.slice(VAGAS_POPA);
-      const metade = Math.ceil(restante.length / 2);
-      const proaPescadores = restante.slice(0, metade);
-      const meioPescadores = restante.slice(metade);
+/* GALERIA DE FOTOS DO BARCO */
+function processarFotos(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      state.photos.push(evt.target.result);
+      save(); renderGaleria();
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-      document.getElementById('posPopa').innerHTML = popaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
-      document.getElementById('posMeio').innerHTML = meioPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
-      document.getElementById('posProa').innerHTML = proaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
+function renderGaleria() {
+  const grid = document.getElementById('previewGrid'); grid.innerHTML = '';
+  (state.photos || []).forEach((imgSrc, idx) => {
+    const div = document.createElement('div'); div.className = 'img-container';
+    div.innerHTML = `<img src="${imgSrc}"><button class="btn-del-img" onclick="removerFoto(${idx})">&times;</button>`;
+    grid.appendChild(div);
+  });
+}
 
-      timerInterval = setInterval(() => {
-        tempoRestanteSegundos--;
-        renderTimer(tempoRestanteSegundos);
-        if (tempoRestanteSegundos <= 0) {
-          clearInterval(timerInterval);
-          turnoIndex = (turnoIndex + 1) % pescadores.length;
-          alert('🔔 HORA DE TROCAR DE POSIÇÃO NO BARCO!');
-          atualizarPosicoesEConvés(duracaoSegundos);
-        }
-      }, 1000);
-    }
+function removerFoto(idx) {
+  state.photos.splice(idx, 1); save(); renderGaleria();
+}
 
-    function renderTimer(segundos) {
-      const hrs = String(Math.floor(segundos / 3600)).padStart(2, '0');
-      const mins = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
-      const secs = String(segundos % 60).padStart(2, '0');
-      document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
-    }
+function clearAll() {
+  if(!confirm('Deseja apagar todos os dados do Pesca Justa?')) return;
+  state = { participants:[], expenses:[], payments:[], draw:[], history:[], photos:[], round:1 };
+  if(timerInterval) clearInterval(timerInterval);
+  selectedPosition = null; save(); render(); toast('Todos os dados foram apagados.');
+}
 
-    function salvarDados(e) {
-      e.preventDefault();
-      const dados = {
-        data: document.getElementById('dataPesca').value,
-        localSaida: document.getElementById('localSaida').value,
-        estacionamento: document.getElementById('estacionamento').value,
-        pontoPesca: document.getElementById('pontoPesca').value,
-      };
-      localStorage.setItem('pescaria_dados_v3', JSON.stringify(dados));
-      alert('Informações salvas com sucesso!');
-    }
+/* RENDERIZAÇÃO GERAL */
+function renderBoat() {
+  const targets = {left:'leftSlots', right:'rightSlots', backLeft:'backLeftSlots', backRight:'backRightSlots'};
+  Object.entries(targets).forEach(([group, target]) => {
+    document.getElementById(target).innerHTML = POSITIONS.filter(p=>p.group===group).map(p=>{
+      const a = assignment(p.id), person = a ? participant(a.participantId) : null;
+      return `<button class="slot ${selectedPosition===p.id?'selected':''}" onclick="clickPosition('${p.id}')">
+        <span class="slot-label">${esc(p.name)}</span>
+        ${person ? avatar(person) + `<span class="slot-name">${esc(person.name)}</span>` : `<span class="muted">Vago</span>`}
+      </button>`;
+    }).join('');
+  });
 
-    function processarFotos(e) {
-      const files = Array.from(e.target.files);
-      let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          fotosSalvas.push(evt.target.result);
-          localStorage.setItem('pescaria_fotos_v3', JSON.stringify(fotosSalvas));
-          renderGaleria();
-        };
-        reader.readAsDataURL(file);
-      });
-    }
+  document.getElementById('drawResults').innerHTML = state.draw.length ? state.draw.map(a=>{
+    const p = participant(a.participantId), po = pos(a.positionId);
+    return `<div class="result"><strong>${esc(po.name)}</strong><span>${esc(p?.name||'—')}</span></div>`;
+  }).join('') : '<div class="empty">Nenhuma posição sorteada nesta rodada.</div>';
+}
 
-    function renderGaleria() {
-      const grid = document.getElementById('previewGrid');
-      grid.innerHTML = '';
-      const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
-      fotosSalvas.forEach(imgSrc => {
-        const div = document.createElement('div');
-        div.className = 'img-container';
-        div.innerHTML = `<img src="${imgSrc}">`;
-        grid.appendChild(div);
-      });
-    }
+function render() {
+  const t = totals();
+  document.getElementById('sumParticipants').textContent = state.participants.length;
+  document.getElementById('sumExpenses').textContent = money(t.expenses);
+  document.getElementById('sumCollected').textContent = money(t.collected);
+  document.getElementById('sumShare').textContent = money(t.share);
+  document.getElementById('sumPending').textContent = money(t.pending);
+  
+  const pct = t.expenses ? Math.min(100, t.collected/t.expenses*100) : 0;
+  document.getElementById('progressPercent').textContent = pct.toFixed(1) + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('roundBadge').textContent = 'Rodada ' + state.round;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderGaleria();
-      const salvas = localStorage.getItem('pescaria_dados_v3');
-      if (salvas) {
-        const d = JSON.parse(salvas);
-        document.getElementById('dataPesca').value = d.data || '';
-        document.getElementById('localSaida').value = d.localSaida || '';
-        document.getElementById('estacionamento').value = d.estacionamento || '';
-        document.getElementById('pontoPesca').value = d.pontoPesca || '';
-      }
+  document.getElementById('participantsTable').innerHTML = state.participants.length ? state.participants.map(p=>{
+    const used = new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId)).size;
+    return `<tr>
+      <td><label style="cursor:pointer">${avatar(p)}<input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}',this)"></label></td>
+      <td>${esc(p.name)}</td>
+      <td><span class="badge">${used}/14 posições</span></td>
+      <td><div class="actions"><button class="small secondary" onclick="editParticipant('${p.id}')">Editar</button><button class="small danger" onclick="deleteParticipant('${p.id}')">Excluir</button></div></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
+
+  document.getElementById('expensesTable').innerHTML = state.expenses.length ? state.expenses.map(e=>`<tr>
+    <td>${esc(e.desc)}</td><td><span class="badge">${esc(e.category)}</span></td><td>${money(e.value)}</td>
+    <td><div class="actions"><button class="small secondary" onclick="editExpense('${e.id}')">Editar</button><button class="small danger" onclick="deleteExpense('${e.id}')">Excluir</button></div></td>
+  </tr>`).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa cadastrada.</td></tr>';
+
+  document.getElementById('paymentParticipant').innerHTML = state.participants.length ? state.participants.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option value="">Nenhum pescador</option>';
+  document.getElementById('paymentExpense').innerHTML = state.expenses.length ? state.expenses.map(e=>`<option value="${e.id}">${esc(e.desc)}</option>`).join('') : '<option value="">Nenhuma despesa</option>';
+
+  document.getElementById('financialTable').innerHTML = state.participants.length ? state.participants.map(p=>{
+    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0), missing = Math.max(0, t.share-paid);
+    const status = missing < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente', cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
+    return `<tr><td>${esc(p.name)}</td><td>${money(t.share)}</td><td>${money(paid)}</td><td>${money(missing)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
+  }).join('') : '<tr><td colspan="5" class="empty">Cadastre participantes.</td></tr>';
+
+  document.getElementById('expenseControlTable').innerHTML = state.expenses.length ? state.expenses.map(e=>{
+    const paid = state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0), saldo = Math.max(0, e.value-paid), share = state.participants.length ? e.value/state.participants.length : 0;
+    const status = saldo < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente', cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
+    return `<tr><td>${esc(e.desc)}</td><td>${esc(e.category)}</td><td>${money(e.value)}</td><td>${money(share)}</td><td>${money(paid)}</td><td>${money(saldo)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
+  }).join('') : '<tr><td colspan="7" class="empty">Cadastre despesas.</td></tr>';
+
+  document.getElementById('paymentsTable').innerHTML = state.payments.length ? [...state.payments].reverse().map(x=>`<tr>
+    <td>${esc(participant(x.participantId)?.name||'—')}</td><td>${esc(expense(x.expenseId)?.desc||'—')}</td><td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${money(x.value)}</td>
+    <td><button class="small danger" onclick="deletePayment('${x.id}')">Remover</button></td>
+  </tr>`).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
+
+  document.getElementById('historyTable').innerHTML = state.history.length ? [...state.history].reverse().slice(0, 100).map(h=>`<tr>
+    <td>Rodada ${h.round}</td><td>${esc(participant(h.participantId)?.name||'—')}</td><td>${esc(pos(h.positionId)?.name||'—')}</td><td>${new Date(h.date).toLocaleString('pt-BR')}</td>
+  </tr>`).join('') : '<tr><td colspan="4" class="empty">Ainda não existe histórico.</td></tr>';
+
+  renderBoat();
+  renderGaleria();
+}
+
+load();
+render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js").catch(function (err) {
+      console.log("Service Worker não registrado:", err);
     });
-  </script>
+  });
+}
+</script>
+
 </body>
 </html>
