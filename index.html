@@ -101,22 +101,10 @@
     <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
   </div>
   <h1>Pesca Justa 🎣</h1>
-  <p>Rodízio com Turnos Fixos de 5h30min & Sincronização Firebase</p>
+  <p>Sincronizado via Firebase em Tempo Real</p>
 </header>
 
 <main class="container">
-
-  <!-- CONFIGURAÇÕES FIREBASE -->
-  <section class="card" id="firebaseConfigCard">
-    <h2>🔑 Sincronização em Nuvem (Firebase)</h2>
-    <div class="form-row">
-      <div class="field" style="flex:2">
-        <label for="fbConfigInput">Configuração do Firebase (firebaseConfig)</label>
-        <input id="fbConfigInput" placeholder='{"apiKey": "...", "databaseURL": "...", ...}'>
-      </div>
-      <button onclick="salvarConfigFirebase()">Conectar Nuvem</button>
-    </div>
-  </section>
 
   <!-- RESUMO DA VIAGEM -->
   <section class="grid-summary">
@@ -213,9 +201,20 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
 <script>
+// CONFIGURAÇÃO AUTOMÁTICA DO SEU FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyAY9YVSdP3qtBSIaQnSvs26B70RrP6fMVE",
+  authDomain: "pescaria-justa.firebaseapp.com",
+  databaseURL: "https://pescaria-justa-default-rtdb.firebaseio.com",
+  projectId: "pescaria-justa",
+  storageBucket: "pescaria-justa.firebasestorage.app",
+  messagingSenderId: "1042867642805",
+  appId: "1:1042867642805:web:092fc9ca84613ead51b9fc"
+};
+
 let dbRef = null;
 let timerInterval = null;
-const TURNO_SEGUNDOS = (5 * 3600) + (30 * 60); // 5 horas e 30 minutos em segundos = 19800s
+const TURNO_SEGUNDOS = (5 * 3600) + (30 * 60); // 5h 30m em segundos
 
 let state = {
   theme: 'ocean',
@@ -224,8 +223,8 @@ let state = {
   payments: [],
   draw: [],
   round: 1,
-  turnoStartTime: null, // Timestamp do início do turno
-  turnoEndTime: null    // Timestamp do fim do turno
+  turnoStartTime: null,
+  turnoEndTime: null
 };
 
 function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
@@ -238,21 +237,8 @@ function setTheme(t) {
   state.theme = t; document.documentElement.setAttribute('data-theme', t); syncState();
 }
 
-/* FIREBASE CONFIGURATON & SINCRONIZAÇÃO EM TEMPO REAL */
-function salvarConfigFirebase() {
-  const input = document.getElementById('fbConfigInput').value.trim();
-  try {
-    const cfg = JSON.parse(input);
-    localStorage.setItem('pesca_fb_cfg', JSON.stringify(cfg));
-    initFirebase(cfg);
-    toast('Nuvem conectada!');
-  } catch(e) {
-    toast('JSON do Firebase inválido.');
-  }
-}
-
-function initFirebase(cfg) {
-  if (!firebase.apps.length) firebase.initializeApp(cfg);
+function initFirebase() {
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   dbRef = firebase.database().ref('pescaria_ativa');
   
   dbRef.on('value', snapshot => {
@@ -276,7 +262,6 @@ function gerarPosicoesDinamicas() {
   const total = state.participants.length;
   const posicoes = [];
   
-  // Máximo de 3 pessoas em cada lateral
   const slotsEsq = Math.min(3, Math.ceil(total / 2));
   const slotsDir = Math.min(3, Math.floor(total / 2));
   const noFundo = Math.max(0, total - (slotsEsq + slotsDir));
@@ -303,10 +288,8 @@ function drawPositions() {
   toast('Lugares sorteados com sucesso!');
 }
 
-/* ROTAÇÃO DE POSIÇÕES ENTRE TURNOS */
 function rotacionarLugares() {
   if (!state.draw || !state.draw.length) return;
-  // Desloca o primeiro participante para o final da fila (rotativo)
   const participantesAtuais = state.draw.map(d => d.participantId);
   if (participantesAtuais.length > 1) {
     const primeiro = participantesAtuais.shift();
@@ -335,7 +318,6 @@ function proximoTurno() {
   state.round = (state.round || 1) + 1;
   rotacionarLugares();
   
-  // O novo turno se inicia no exato momento do término
   const agora = Date.now();
   state.turnoStartTime = agora;
   state.turnoEndTime = agora + (TURNO_SEGUNDOS * 1000);
@@ -354,7 +336,6 @@ function atualizarCronometroAtivo() {
     return;
   }
 
-  // Formatar Horários de Início e Término
   const dtInicio = new Date(state.turnoStartTime);
   const dtFim = new Date(state.turnoEndTime);
 
@@ -425,7 +406,6 @@ function render() {
   document.getElementById('sumCollected').textContent = money(totalColl);
   document.getElementById('sumShare').textContent = money(share);
 
-  // Tabela Pescadores
   const pTable = document.getElementById('participantsTable');
   pTable.innerHTML = state.participants.map(p => `
     <tr>
@@ -435,7 +415,6 @@ function render() {
     </tr>
   `).join('');
 
-  // Tabela Despesas
   const eTable = document.getElementById('expensesTable');
   eTable.innerHTML = (state.expenses || []).map(e => `
     <tr>
@@ -471,13 +450,7 @@ function renderBoat() {
 }
 
 window.onload = () => {
-  const savedCfg = localStorage.getItem('pesca_fb_cfg');
-  if (savedCfg) {
-    document.getElementById('fbConfigInput').value = savedCfg;
-    initFirebase(JSON.parse(savedCfg));
-  } else {
-    render();
-  }
+  initFirebase();
 };
 </script>
 </body>
