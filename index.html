@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="ocean">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesca Justa 🎣 - Rodízio & Gestão Financeira</title>
+  <title>Pesca Justa 🎣 - Rodízio & Gestão Financeira Pro</title>
   
+  <!-- METADADOS PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#0b5d7a">
   <meta name="mobile-web-app-capable" content="yes">
@@ -14,7 +15,8 @@
   <link rel="apple-touch-icon" href="icon-192.png">
 
   <style>
-    :root {
+    /* TEMAS DE COR */
+    :root[data-theme="ocean"] {
       --primary: #0b5d7a;
       --primary2: #073e52;
       --bg: #0f172a;
@@ -26,63 +28,112 @@
       --warning: #f59e0b;
       --success: #10b981;
       --accent: #38bdf8;
+      --boat-bg: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+    }
+
+    :root[data-theme="sunny"] {
+      --primary: #0284c7;
+      --primary2: #0369a1;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: rgba(0, 0, 0, 0.12);
+      --danger: #dc2626;
+      --warning: #d97706;
+      --success: #059669;
+      --accent: #0284c7;
+      --boat-bg: radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);
+    }
+
+    :root[data-theme="dark"] {
+      --primary: #111827;
+      --primary2: #000000;
+      --bg: #030712;
+      --card: #111827;
+      --text: #f9fafb;
+      --muted: #6b7280;
+      --border: rgba(255, 255, 255, 0.1);
+      --danger: #f87171;
+      --warning: #fbbf24;
+      --success: #34d399;
+      --accent: #60a5fa;
+      --boat-bg: radial-gradient(circle, #1f2937 0%, #030712 100%);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
-      background: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.95)), 
-                  url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1920&q=80') center/cover fixed no-repeat;
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background 0.3s, color 0.3s;
     }
 
     /* HEADER HERO */
     header {
-      background: rgba(7, 62, 82, 0.8);
-      border-bottom: 2px solid var(--accent);
+      background: var(--primary2);
+      border-bottom: 3px solid var(--accent);
       color: #fff;
-      padding: 34px 18px;
+      padding: 24px 18px;
       text-align: center;
+      position: relative;
     }
-    header h1 { margin: 0; font-size: 32px; font-weight: 800; }
-    header p { margin: 8px 0 0; opacity: .9; color: #7dd3fc; }
+    header h1 { margin: 0; font-size: 30px; font-weight: 800; }
+    header p { margin: 6px 0 0; opacity: .9; color: var(--accent); }
+
+    .theme-selector {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 6px;
+    }
+    .theme-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid var(--border);
+      color: #fff;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
     /* LAYOUT & CARDS */
     .container { max-width: 1250px; margin: auto; padding: 22px; width: 100%; flex: 1; }
     .grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
     
     .card {
-      background: rgba(30, 41, 59, 0.95);
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
     .summary .label { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: bold; }
     .summary .value { font-size: 24px; font-weight: bold; margin-top: 7px; color: var(--accent); }
 
     h2 { margin: 0 0 14px; font-size: 20px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-    h3 { margin: 18px 0 10px; color: #e2e8f0; }
+    h3 { margin: 18px 0 10px; color: var(--text); }
     
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .form-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
     .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 150px; }
     
-    label { font-size: 13px; font-weight: bold; color: #cbd5e1; }
+    label { font-size: 13px; font-weight: bold; color: var(--muted); }
     input, select {
       height: 40px;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 0 11px;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(0, 0, 0, 0.05);
       font-size: 14px;
-      color: #fff;
+      color: var(--text);
       outline: none;
     }
     input:focus, select:focus { border-color: var(--accent); }
@@ -93,16 +144,17 @@
       border-radius: 8px;
       padding: 0 16px;
       cursor: pointer;
-      background: #0284c7;
+      background: var(--primary);
       color: #fff;
       font-weight: bold;
       font-size: 14px;
-      transition: background .2s;
+      transition: opacity .2s, transform .1s;
     }
-    button:hover { background: #0369a1; }
-    button.secondary { background: #334155; color: #fff; }
-    button.secondary:hover { background: #475569; }
-    button.danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #f87171; }
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.98); }
+    button.secondary { background: var(--muted); color: #fff; }
+    button.success { background: var(--success); color: #fff; }
+    button.danger { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); }
     button.danger:hover { background: var(--danger); color: #fff; }
     button.small { height: 32px; padding: 0 9px; font-size: 12px; }
 
@@ -116,23 +168,23 @@
     /* COMPONENTES DE INTERFACE */
     .avatar {
       width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
-      background: #334155; display: inline-flex; align-items: center; justify-content: center;
+      background: var(--border); display: inline-flex; align-items: center; justify-content: center;
       font-weight: bold; font-size: 12px; border: 1px solid var(--border); color: var(--accent);
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
     
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #334155; font-size: 12px; font-weight: bold; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.1); font-size: 12px; font-weight: bold; }
     .status-paid { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
     .status-partial { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
-    .status-pending { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid var(--danger); }
+    .status-pending { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
 
-    .progress { height: 12px; background: #0f172a; border-radius: 999px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border); }
+    .progress { height: 12px; background: rgba(0,0,0,0.1); border-radius: 999px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border); }
     .progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
 
     /* TIMER DE RODÍZIO */
     .timer-panel {
       display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
-      background: rgba(15, 23, 42, 0.9); border: 1px solid var(--accent); padding: 16px;
+      background: rgba(0,0,0,0.15); border: 1px solid var(--accent); padding: 16px;
       border-radius: 10px; margin: 15px 0; gap: 10px;
     }
     .timer-box { text-align: center; }
@@ -144,20 +196,20 @@
     .boat {
       position: relative; width: 900px; height: 760px; margin: auto;
       border: 4px solid var(--accent); border-radius: 160px 160px 60px 60px;
-      background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); overflow: hidden;
-      box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+      background: var(--boat-bg); overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
     }
     .boat-title { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); font-weight: bold; text-align: center; font-size: 18px; color: var(--accent); }
     .boat-sub { font-size: 12px; margin-top: 4px; color: var(--muted); }
     
     .side { position: absolute; top: 105px; width: 170px; height: 400px; display: flex; flex-direction: column; justify-content: space-between; }
     .side.left { left: 30px; } .side.right { right: 30px; }
-    .center-line { position: absolute; left: 50%; top: 105px; transform: translateX(-50%); height: 420px; border-left: 2px dashed rgba(56, 189, 248, 0.4); }
+    .center-line { position: absolute; left: 50%; top: 105px; transform: translateX(-50%); height: 420px; border-left: 2px dashed var(--accent); opacity: 0.4; }
 
     .slot {
-      min-height: 78px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border);
+      min-height: 78px; background: rgba(0,0,0,0.2); border: 1px solid var(--border);
       border-radius: 12px; padding: 6px; text-align: center; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: .15s; color: #fff;
+      align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: .15s; color: var(--text);
     }
     .slot:hover { transform: scale(1.02); border-color: var(--accent); }
     .slot.selected { outline: 3px solid var(--warning); border-color: var(--warning); }
@@ -166,13 +218,13 @@
     .slot .avatar { width: 30px; height: 30px; font-size: 10px; }
 
     .back { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); width: 86%; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-    .bench { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(74, 222, 128, 0.4); border-radius: 14px; padding: 10px; }
-    .bench-title { text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #4ade80; }
+    .bench { background: rgba(0,0,0,0.15); border: 1px solid rgba(74, 222, 128, 0.4); border-radius: 14px; padding: 10px; }
+    .bench-title { text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 8px; color: var(--success); }
     .bench-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .bench .slot { min-height: 90px; }
 
     .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-    .result { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 10px; border-radius: 9px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+    .result { background: rgba(0,0,0,0.1); border: 1px solid var(--border); padding: 10px; border-radius: 9px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
 
     /* GALERIA & TOAST */
     .upload-box { border: 2px dashed var(--accent); border-radius: 10px; padding: 20px; text-align: center; background: rgba(14, 165, 233, 0.05); cursor: pointer; position: relative; }
@@ -182,28 +234,34 @@
     .img-container img { width: 100%; height: 100%; object-fit: cover; }
     .btn-del-img { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #f87171; border: 0; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; }
 
-    .toast { position: fixed; right: 18px; bottom: 18px; background: #073e52; color: #fff; padding: 13px 17px; border-radius: 9px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: none; z-index: 1000; border: 1px solid var(--accent); }
+    .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 13px 17px; border-radius: 9px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: none; z-index: 1000; border: 1px solid var(--accent); }
     .toast.show { display: block; }
     .muted { color: var(--muted); font-size: 14px; }
     .empty { padding: 16px; color: var(--muted); text-align: center; }
 
-    footer { text-align: center; background: #07111e; color: #fff; padding: 22px; margin-top: 25px; border-top: 1px solid var(--border); }
+    footer { text-align: center; background: var(--primary2); color: #fff; padding: 22px; margin-top: 25px; border-top: 1px solid var(--border); }
     .dev-badge strong { color: var(--accent); }
 
     @media(max-width:850px) { .grid-summary { grid-template-columns: repeat(2, 1fr); } .two-col { grid-template-columns: 1fr; } .container { padding: 12px; } .result-grid { grid-template-columns: 1fr 1fr; } }
-    @media(max-width:520px) { .grid-summary { grid-template-columns: 1fr 1fr; } .summary .value { font-size: 19px; } .form-row { flex-direction: column; align-items: stretch; } .field { width: 100%; } .result-grid { grid-template-columns: 1fr; } }
+    @media(max-width:520px) { .grid-summary { grid-template-columns: 1fr 1fr; } .summary .value { font-size: 19px; } .form-row { flex-direction: column; align-items: stretch; } .field { width: 100%; } .result-grid { grid-template-columns: 1fr; } .theme-selector { position: static; justify-content: center; margin-top: 10px; } }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Pesca Justa 🎣</h1>
-  <p>Organização da Pescaria, Sorteio, Rodízio de 18h & Controle Financeiro</p>
+  <div class="theme-selector">
+    <button class="theme-btn" onclick="setTheme('ocean')">🌊 Oceano</button>
+    <button class="theme-btn" onclick="setTheme('sunny')">☀️ Dia</button>
+    <button class="theme-btn" onclick="setTheme('dark')">🌙 Escuro</button>
+  </div>
+  <h1>Pesca Justa 🎣 Pro</h1>
+  <p>Gestão Financeira, Rodízio Inteligente & Prestação de Contas</p>
   <div style="margin-top:12px"><span class="badge" id="roundBadge">Rodada 1</span></div>
 </header>
 
 <main class="container">
 
+  <!-- RESUMO FINANCEIRO -->
   <section class="grid-summary">
     <div class="card summary"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
     <div class="card summary"><div class="label">Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
@@ -211,23 +269,32 @@
     <div class="card summary"><div class="label">Rateio por pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
   </section>
 
+  <!-- PROGRESSO, EXPORTAÇÃO & REINÍCIO -->
   <section class="card">
-    <h2>📈 Progresso Financeiro</h2>
+    <h2>📈 Progresso Financeiro & Ações</h2>
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div><strong id="progressPercent">0%</strong> arrecadado</div>
       <div>Falta: <strong id="sumPending">R$ 0,00</strong></div>
     </div>
     <div class="progress"><div id="progressBar"></div></div>
-    <div style="margin-top:14px"><button class="danger" onclick="clearAll()">🗑️ Zerar Pescaria</button></div>
+    
+    <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="success" onclick="shareWhatsApp()">📲 WhatsApp Resumo</button>
+      <button class="secondary" onclick="exportData()">💾 Salvar Backup</button>
+      <button class="secondary" onclick="document.getElementById('fileBackup').click()">📂 Restaurar</button>
+      <input type="file" id="fileBackup" accept=".json" style="display:none" onchange="importData(event)">
+      <button class="danger" onclick="clearAll()">🗑️ Zerar Pescaria</button>
+    </div>
   </section>
 
+  <!-- PARTICIPANTES & DESPESAS -->
   <section class="two-col">
     <div class="card">
       <h2>👥 Participantes</h2>
       <div class="form-row">
         <div class="field"><label>Nome do pescador</label><input id="participantName" placeholder="Digite o nome"></div>
         <button onclick="addParticipant()">Adicionar</button>
-        <button class="secondary" onclick="loadDefaultNames()">Carregar lista</button>
+        <button class="secondary" onclick="loadDefaultNames()">Lista Padrão</button>
       </div>
       <div class="table-wrap" style="margin-top:15px">
         <table>
@@ -258,6 +325,7 @@
     </div>
   </section>
 
+  <!-- SORTEIO, RODÍZIO DE 18H & MAPA DO BARCO -->
   <section class="card">
     <h2>🚤 Sorteio & Rodízio do Convés (18h)</h2>
     <div class="form-row">
@@ -266,12 +334,13 @@
       <button class="secondary" onclick="clearPositions()">Limpar posições</button>
       <button class="secondary" onclick="newRound()">🔄 Nova rodada</button>
     </div>
-    <p class="muted" style="margin-top:10px;">O sorteio prioriza posições não utilizadas. Para trocar dois pescadores, clique em uma posição ocupada e depois na outra.</p>
+    <p class="muted" style="margin-top:10px;">Para trocar a posição de dois pescadores, clique no primeiro quadro e depois no segundo.</p>
 
+    <!-- PAINEL DO CRONÔMETRO -->
     <div class="timer-panel">
       <div class="timer-box">
         <div class="timer-lbl">Turno Atual</div>
-        <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
+        <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: var(--text);">Turno 1</div>
       </div>
       <div class="timer-box">
         <div class="timer-lbl">Tempo Restante</div>
@@ -279,10 +348,11 @@
       </div>
       <div class="timer-box">
         <div class="timer-lbl">Duração/Turno</div>
-        <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
+        <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: var(--accent);">-- min</div>
       </div>
     </div>
 
+    <!-- MAPA VISUAL DA EMBARCAÇÃO -->
     <div class="boat-wrap">
       <div class="boat">
         <div class="boat-title">🚤 PROA<div class="boat-sub">CORREDOR CENTRAL</div></div>
@@ -300,6 +370,7 @@
     <div id="drawResults" class="result-grid"></div>
   </section>
 
+  <!-- PAGAMENTOS E FINANCEIRO POR PESCADOR -->
   <section class="card">
     <h2>💳 Registrar Pagamento</h2>
     <div class="form-row">
@@ -330,8 +401,9 @@
     </div>
   </section>
 
+  <!-- GALERIA DE FOTOS DA EMBARCAÇÃO -->
   <section class="card">
-    <h2>📸 Fotos da Embarcação</h2>
+    <h2>📸 Fotos da Pescaria & Embarcação</h2>
     <div class="upload-box">
       <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
       <span style="font-size: 1.5rem; display: block;">📷</span>
@@ -340,6 +412,7 @@
     <div class="preview-grid" id="previewGrid"></div>
   </section>
 
+  <!-- HISTÓRICOS -->
   <section class="card">
     <h2>🧾 Histórico de Pagamentos</h2>
     <div class="table-wrap">
@@ -368,7 +441,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'pesca-justa-unificado-v2';
+const STORAGE_KEY = 'pesca-justa-unificado-v3';
 const POSITIONS = [
   {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},{id:'esq-4',name:'Esquerda 4',group:'left'},
   {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},{id:'dir-4',name:'Direita 4',group:'right'},
@@ -382,6 +455,7 @@ let timerInterval = null;
 let tempoRestanteSegundos = 0;
 
 let state = {
+  theme: 'ocean',
   participants: [],
   expenses: [],
   payments: [],
@@ -399,8 +473,20 @@ function shuffle(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){ let j=Math.
 function esc(s) { return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove('show'),2800); }
 
+function setTheme(t) {
+  state.theme = t;
+  document.documentElement.setAttribute('data-theme', t);
+  save();
+}
+
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function load() { try { const x = JSON.parse(localStorage.getItem(STORAGE_KEY)); if(x) state = {...state, ...x}; } catch(e){} }
+function load() {
+  try {
+    const x = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(x) state = {...state, ...x};
+    if(state.theme) document.documentElement.setAttribute('data-theme', state.theme);
+  } catch(e){}
+}
 
 function participant(pid) { return state.participants.find(x=>x.id===pid); }
 function expense(eid) { return state.expenses.find(x=>x.id===eid); }
@@ -524,7 +610,19 @@ function clickPosition(positionId) {
   selectedPosition = null; save(); render(); toast('Posições trocadas.');
 }
 
-/* CRONÔMETRO DE 18 HORAS */
+/* CRONÔMETRO DE 18 HORAS COM ÁUDIO */
+function playSoundAlert() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 1.5);
+  } catch(e){}
+}
+
 function iniciarCronometro18h() {
   if(!state.participants.length) return toast('Cadastre os pescadores primeiro.');
   const totalSegundos = 18 * 3600;
@@ -539,6 +637,7 @@ function iniciarCronometro18h() {
     renderTimer(tempoRestanteSegundos);
     if(tempoRestanteSegundos <= 0) {
       clearInterval(timerInterval);
+      playSoundAlert();
       alert('🔔 FIM DO TURNO! Hora de girar as posições da pescaria.');
       newRound();
       drawPositions();
@@ -553,6 +652,58 @@ function renderTimer(seg) {
   const mins = String(Math.floor((seg % 3600) / 60)).padStart(2, '0');
   const secs = String(seg % 60).padStart(2, '0');
   document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
+}
+
+/* COMPARTILHAR RESUMO NO WHATSAPP */
+function shareWhatsApp() {
+  const t = totals();
+  let msg = `*🎣 PESCA JUSTA - PRESTAÇÃO DE CONTAS*\n\n`;
+  msg += `👥 *Participantes:* ${state.participants.length}\n`;
+  msg += `💸 *Total Despesas:* ${money(t.expenses)}\n`;
+  msg += `📊 *Rateio por Pessoa:* ${money(t.share)}\n`;
+  msg += `✅ *Total Arrecadado:* ${money(t.collected)}\n\n`;
+  msg += `*SITUAÇÃO POR PESCADOR:*\n`;
+  
+  state.participants.forEach(p => {
+    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0);
+    const missing = Math.max(0, t.share - paid);
+    const st = missing < 0.01 ? '✅ Pago' : `⚠️ Falta ${money(missing)}`;
+    msg += `• ${p.name}: ${st}\n`;
+  });
+
+  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+/* EXPORTAR E IMPORTAR BACKUP */
+function exportData() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+  const dl = document.createElement('a');
+  dl.setAttribute("href", dataStr);
+  dl.setAttribute("download", `pesca_justa_backup_${new Date().toISOString().slice(0,10)}.json`);
+  dl.click();
+}
+
+function importData(evt) {
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(data && data.participants) {
+        state = data;
+        save();
+        render();
+        toast('Dados restaurados com sucesso!');
+      } else {
+        toast('Arquivo de backup inválido.');
+      }
+    } catch(err) {
+      toast('Erro ao ler o arquivo.');
+    }
+  };
+  reader.readAsText(file);
 }
 
 /* GALERIA DE FOTOS DO BARCO */
@@ -583,7 +734,7 @@ function removerFoto(idx) {
 
 function clearAll() {
   if(!confirm('Deseja apagar todos os dados do Pesca Justa?')) return;
-  state = { participants:[], expenses:[], payments:[], draw:[], history:[], photos:[], round:1 };
+  state = { theme: state.theme, participants:[], expenses:[], payments:[], draw:[], history:[], photos:[], round:1 };
   if(timerInterval) clearInterval(timerInterval);
   selectedPosition = null; save(); render(); toast('Todos os dados foram apagados.');
 }
