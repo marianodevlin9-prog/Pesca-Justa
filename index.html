@@ -1,625 +1,3850 @@
 ```tsx
-{/* =================================================
-    SORTEIO E MAPA DO BARCO
-================================================= */}
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
-<Card>
-  <CardHeader>
-    <CardTitle>
-      🎲 Sorteio de posições no barco
-    </CardTitle>
-  </CardHeader>
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-  <CardContent className="space-y-6">
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      {
+        title: "Pesca Justa — Rateio e Sorteio de Pescaria",
+      },
+      {
+        name: "description",
+        content:
+          "Organize sua pescaria com participantes, mapa do barco, sorteio de posições, despesas, rateio e pagamentos.",
+      },
+    ],
+  }),
+  component: Index,
+});
 
-    <div className="flex flex-wrap gap-3">
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
 
-      <Button
+const STORAGE_KEY = "pesca-justa:v3";
+
+const CATEGORIAS = [
+  "Barco",
+  "Iscas",
+  "Alimentação",
+  "Bebidas",
+  "Gelo",
+  "Combustível",
+  "Outros",
+] as const;
+
+type Categoria = (typeof CATEGORIAS)[number];
+
+/* =========================================================
+   TIPOS
+========================================================= */
+
+type Participante = {
+  id: string;
+  nome: string;
+  foto?: string;
+};
+
+type Despesa = {
+  id: string;
+  desc: string;
+  valor: number;
+  categoria: Categoria;
+};
+
+type Pagamento = {
+  id: string;
+  participanteId: string;
+  despesaId: string;
+  valor: number;
+  data: string;
+};
+
+type PosicaoBarco = {
+  id: string;
+  nome: string;
+  grupo: "esquerda" | "direita" | "fundo";
+};
+
+type ResultadoSorteio = {
+  posicaoId: string;
+  participanteId: string;
+};
+
+type HistoricoPosicao = {
+  id: string;
+  rodada: number;
+  data: string;
+  posicaoId: string;
+  participanteId: string;
+};
+
+type Estado = {
+  participantes: Participante[];
+  despesas: Despesa[];
+  pagamentos: Pagamento[];
+
+  resultadoSorteio: ResultadoSorteio[];
+
+  historicoPosicoes: HistoricoPosicao[];
+
+  rodadaAtual: number;
+};
+
+const vazio: Estado = {
+  participantes: [],
+  despesas: [],
+  pagamentos: [],
+  resultadoSorteio: [],
+  historicoPosicoes: [],
+  rodadaAtual: 1,
+};
+
+/* =========================================================
+   POSIÇÕES DO BARCO
+========================================================= */
+
+const POSICOES_BARCO: PosicaoBarco[] = [
+  {
+    id: "esq-1",
+    nome: "Esquerda 1",
+    grupo: "esquerda",
+  },
+  {
+    id: "esq-2",
+    nome: "Esquerda 2",
+    grupo: "esquerda",
+  },
+  {
+    id: "esq-3",
+    nome: "Esquerda 3",
+    grupo: "esquerda",
+  },
+  {
+    id: "esq-4",
+    nome: "Esquerda 4",
+    grupo: "esquerda",
+  },
+
+  {
+    id: "dir-1",
+    nome: "Direita 1",
+    grupo: "direita",
+  },
+  {
+    id: "dir-2",
+    nome: "Direita 2",
+    grupo: "direita",
+  },
+  {
+    id: "dir-3",
+    nome: "Direita 3",
+    grupo: "direita",
+  },
+  {
+    id: "dir-4",
+    nome: "Direita 4",
+    grupo: "direita",
+  },
+
+  {
+    id: "fundo-esq-1",
+    nome: "Fundo E1",
+    grupo: "fundo",
+  },
+  {
+    id: "fundo-esq-2",
+    nome: "Fundo E2",
+    grupo: "fundo",
+  },
+  {
+    id: "fundo-esq-3",
+    nome: "Fundo E3",
+    grupo: "fundo",
+  },
+
+  {
+    id: "fundo-dir-1",
+    nome: "Fundo D1",
+    grupo: "fundo",
+  },
+  {
+    id: "fundo-dir-2",
+    nome: "Fundo D2",
+    grupo: "fundo",
+  },
+  {
+    id: "fundo-dir-3",
+    nome: "Fundo D3",
+    grupo: "fundo",
+  },
+];
+
+/* =========================================================
+   FUNÇÕES AUXILIARES
+========================================================= */
+
+function uid() {
+  if (
+    typeof window !== "undefined" &&
+    window.crypto?.randomUUID
+  ) {
+    return window.crypto.randomUUID();
+  }
+
+  return Math.random()
+    .toString(36)
+    .slice(2, 12);
+}
+
+function brl(valor: number) {
+  return valor.toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+    },
+  );
+}
+
+function iniciais(nome: string) {
+  return nome
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(
+      (parte) =>
+        parte[0]?.toUpperCase(),
+    )
+    .join("");
+}
+
+function embaralhar<T>(
+  lista: T[],
+) {
+  const copia = [...lista];
+
+  for (
+    let i = copia.length - 1;
+    i > 0;
+    i--
+  ) {
+    const j = Math.floor(
+      Math.random() *
+        (i + 1),
+    );
+
+    [
+      copia[i],
+      copia[j],
+    ] = [
+      copia[j],
+      copia[i],
+    ];
+  }
+
+  return copia;
+}
+
+/* =========================================================
+   NOMES PADRÃO
+========================================================= */
+
+const NOMES_PADRAO = [
+  "Adhamo",
+  "Gabriel",
+  "Claudio",
+  "Emiliano",
+  "Wesnex Tattoo",
+  "Devlin",
+  "Valtair",
+  "Roderley",
+  "Padrasto Rafa",
+  "Rafa",
+  "Willian",
+  "Marcelo Rastoldo",
+  "João Darço",
+];
+
+/* =========================================================
+   IMAGENS
+========================================================= */
+
+async function comprimirImagem(
+  file: File,
+  max = 180,
+): Promise<string> {
+  const bitmap =
+    await createImageBitmap(file);
+
+  const escala =
+    Math.min(
+      1,
+      max /
+        Math.max(
+          bitmap.width,
+          bitmap.height,
+        ),
+    );
+
+  const largura =
+    Math.max(
+      1,
+      Math.round(
+        bitmap.width *
+          escala,
+      ),
+    );
+
+  const altura =
+    Math.max(
+      1,
+      Math.round(
+        bitmap.height *
+          escala,
+      ),
+    );
+
+  const canvas =
+    document.createElement(
+      "canvas",
+    );
+
+  canvas.width = largura;
+  canvas.height = altura;
+
+  const contexto =
+    canvas.getContext("2d");
+
+  if (!contexto) {
+    throw new Error(
+      "Erro ao processar imagem.",
+    );
+  }
+
+  contexto.drawImage(
+    bitmap,
+    0,
+    0,
+    largura,
+    altura,
+  );
+
+  bitmap.close?.();
+
+  return canvas.toDataURL(
+    "image/jpeg",
+    0.75,
+  );
+}
+
+/* =========================================================
+   FOTO DO PARTICIPANTE
+========================================================= */
+
+function FotoPescador({
+  participante,
+  onSelecionar,
+}: {
+  participante: Participante;
+  onSelecionar: (
+    id: string,
+    file:
+      | File
+      | null
+      | undefined,
+  ) => void;
+}) {
+  const inputRef =
+    useRef<HTMLInputElement>(
+      null,
+    );
+
+  return (
+    <div className="flex items-center">
+      <button
         type="button"
-        onClick={realizarSorteio}
-        disabled={participantes.length === 0}
-      >
-        🎲 Sortear posições
-      </Button>
-
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => {
-          setResultadoSorteio([]);
-          setSorteados([]);
-        }}
-      >
-        Limpar posições
-      </Button>
-
-    </div>
-
-
-    {/* =============================================
-        MAPA VISUAL DO BARCO
-    ============================================== */}
-
-    <div
-      className="
-        relative
-        mx-auto
-        min-h-[700px]
-        max-w-3xl
-        overflow-hidden
-        rounded-[80px]
-        border-4
-        border-primary
-        bg-muted
-        p-6
-        shadow-lg
-      "
-    >
-
-      {/* PROA */}
-
-      <div
+        title="Adicionar ou alterar foto"
+        onClick={() =>
+          inputRef.current?.click()
+        }
         className="
-          absolute
-          left-1/2
-          top-4
-          -translate-x-1/2
-          text-center
-          text-lg
-          font-bold
-        "
-      >
-        🚤 PROA
-      </div>
-
-
-      {/* LATERAL ESQUERDA */}
-
-      <div
-        className="
-          absolute
-          left-6
-          top-28
-          flex
-          h-[480px]
-          flex-col
-          justify-around
-        "
-      >
-
-        {[
-          "esq-1",
-          "esq-2",
-          "esq-3",
-          "esq-4",
-        ].map((posicaoId) => {
-
-          const posicao =
-            POSICOES_BARCO.find(
-              (p) =>
-                p.id === posicaoId,
-            );
-
-          const resultado =
-            resultadoSorteio.find(
-              (r) =>
-                r.posicaoId ===
-                posicaoId,
-            );
-
-          const participante =
-            participantes.find(
-              (p) =>
-                p.id ===
-                resultado?.participanteId,
-            );
-
-          return (
-
-            <div
-              key={posicaoId}
-              className="
-                flex
-                min-h-[70px]
-                w-36
-                flex-col
-                justify-center
-                rounded-lg
-                border-2
-                bg-background
-                p-2
-                text-center
-                shadow
-              "
-            >
-
-              <span
-                className="
-                  text-xs
-                  font-semibold
-                  text-muted-foreground
-                "
-              >
-                {posicao?.nome}
-              </span>
-
-              <span
-                className="
-                  mt-1
-                  text-sm
-                  font-bold
-                "
-              >
-                {participante?.nome ??
-                  "Vago"}
-              </span>
-
-            </div>
-
-          );
-
-        })}
-
-      </div>
-
-
-      {/* LATERAL DIREITA */}
-
-      <div
-        className="
-          absolute
-          right-6
-          top-28
-          flex
-          h-[480px]
-          flex-col
-          justify-around
-        "
-      >
-
-        {[
-          "dir-1",
-          "dir-2",
-          "dir-3",
-          "dir-4",
-        ].map((posicaoId) => {
-
-          const posicao =
-            POSICOES_BARCO.find(
-              (p) =>
-                p.id === posicaoId,
-            );
-
-          const resultado =
-            resultadoSorteio.find(
-              (r) =>
-                r.posicaoId ===
-                posicaoId,
-            );
-
-          const participante =
-            participantes.find(
-              (p) =>
-                p.id ===
-                resultado?.participanteId,
-            );
-
-          return (
-
-            <div
-              key={posicaoId}
-              className="
-                flex
-                min-h-[70px]
-                w-36
-                flex-col
-                justify-center
-                rounded-lg
-                border-2
-                bg-background
-                p-2
-                text-center
-                shadow
-              "
-            >
-
-              <span
-                className="
-                  text-xs
-                  font-semibold
-                  text-muted-foreground
-                "
-              >
-                {posicao?.nome}
-              </span>
-
-              <span
-                className="
-                  mt-1
-                  text-sm
-                  font-bold
-                "
-              >
-                {participante?.nome ??
-                  "Vago"}
-              </span>
-
-            </div>
-
-          );
-
-        })}
-
-      </div>
-
-
-      {/* CORREDOR CENTRAL */}
-
-      <div
-        className="
-          absolute
-          left-1/2
-          top-24
-          h-[500px]
-          w-32
-          -translate-x-1/2
+          size-10
+          overflow-hidden
           rounded-full
           border
-          border-dashed
-          border-muted-foreground
-          opacity-40
-        "
-      />
-
-
-      {/* BANCOS DO FUNDO */}
-
-      <div
-        className="
-          absolute
-          bottom-8
-          left-1/2
-          w-[90%]
-          -translate-x-1/2
+          bg-muted
+          text-xs
+          font-semibold
         "
       >
-
-        <p
-          className="
-            mb-3
-            text-center
-            text-sm
-            font-bold
-          "
-        >
-          🔙 FUNDO DO BARCO
-        </p>
-
-
-        <div
-          className="
-            grid
-            grid-cols-2
-            gap-6
-          "
-        >
-
-
-          {/* BANCO ESQUERDO */}
-
-          <div
+        {participante.foto ? (
+          <img
+            src={participante.foto}
+            alt={participante.nome}
             className="
-              rounded-xl
-              border-2
-              bg-background
-              p-3
-              shadow
+              size-full
+              object-cover
             "
-          >
+          />
+        ) : (
+          <span>
+            {iniciais(
+              participante.nome,
+            )}
+          </span>
+        )}
+      </button>
 
-            <p
-              className="
-                mb-2
-                text-center
-                text-xs
-                font-bold
-              "
-            >
-              BANCO TRASEIRO ESQUERDO
-            </p>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(event) => {
+          onSelecionar(
+            participante.id,
+            event.target.files?.[0],
+          );
 
+          event.target.value = "";
+        }}
+      />
+    </div>
+  );
+}
 
-            <div
-              className="
-                grid
-                grid-cols-3
-                gap-2
-              "
-            >
+/* =========================================================
+   COMPONENTE POSIÇÃO DO BARCO
+========================================================= */
 
-              {[
-                "fundo-esq-1",
-                "fundo-esq-2",
-                "fundo-esq-3",
-              ].map((posicaoId) => {
+function VagaBarco({
+  posicao,
+  participante,
+  selecionada,
+  onClick,
+}: {
+  posicao: PosicaoBarco;
+  participante?: Participante;
+  selecionada: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`
+        flex
+        min-h-[88px]
+        w-full
+        flex-col
+        items-center
+        justify-center
+        rounded-xl
+        border-2
+        p-2
+        text-center
+        shadow-sm
+        transition
+        hover:scale-[1.02]
 
-                const posicao =
-                  POSICOES_BARCO.find(
-                    (p) =>
-                      p.id === posicaoId,
-                  );
+        ${
+          selecionada
+            ? "border-primary ring-2 ring-primary"
+            : "border-border"
+        }
 
-                const resultado =
-                  resultadoSorteio.find(
-                    (r) =>
-                      r.posicaoId ===
-                      posicaoId,
-                  );
-
-                const participante =
-                  participantes.find(
-                    (p) =>
-                      p.id ===
-                      resultado?.participanteId,
-                  );
-
-                return (
-
-                  <div
-                    key={posicaoId}
-                    className="
-                      min-h-[80px]
-                      rounded-lg
-                      border
-                      bg-muted
-                      p-2
-                      text-center
-                    "
-                  >
-
-                    <div
-                      className="
-                        text-xs
-                        text-muted-foreground
-                      "
-                    >
-                      {posicao?.nome}
-                    </div>
-
-                    <div
-                      className="
-                        mt-2
-                        text-sm
-                        font-bold
-                      "
-                    >
-                      {participante?.nome ??
-                        "Vago"}
-                    </div>
-
-                  </div>
-
-                );
-
-              })}
-
-            </div>
-
-          </div>
-
-
-          {/* BANCO DIREITO */}
-
-          <div
-            className="
-              rounded-xl
-              border-2
-              bg-background
-              p-3
-              shadow
-            "
-          >
-
-            <p
-              className="
-                mb-2
-                text-center
-                text-xs
-                font-bold
-              "
-            >
-              BANCO TRASEIRO DIREITO
-            </p>
-
-
-            <div
-              className="
-                grid
-                grid-cols-3
-                gap-2
-              "
-            >
-
-              {[
-                "fundo-dir-1",
-                "fundo-dir-2",
-                "fundo-dir-3",
-              ].map((posicaoId) => {
-
-                const posicao =
-                  POSICOES_BARCO.find(
-                    (p) =>
-                      p.id === posicaoId,
-                  );
-
-                const resultado =
-                  resultadoSorteio.find(
-                    (r) =>
-                      r.posicaoId ===
-                      posicaoId,
-                  );
-
-                const participante =
-                  participantes.find(
-                    (p) =>
-                      p.id ===
-                      resultado?.participanteId,
-                  );
-
-                return (
-
-                  <div
-                    key={posicaoId}
-                    className="
-                      min-h-[80px]
-                      rounded-lg
-                      border
-                      bg-muted
-                      p-2
-                      text-center
-                    "
-                  >
-
-                    <div
-                      className="
-                        text-xs
-                        text-muted-foreground
-                      "
-                    >
-                      {posicao?.nome}
-                    </div>
-
-                    <div
-                      className="
-                        mt-2
-                        text-sm
-                        font-bold
-                      "
-                    >
-                      {participante?.nome ??
-                        "Vago"}
-                    </div>
-
-                  </div>
-
-                );
-
-              })}
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      {/* LEGENDA */}
-
-      <div
+        ${
+          participante
+            ? "bg-background"
+            : "bg-muted"
+        }
+      `}
+    >
+      <span
         className="
-          absolute
-          bottom-2
-          left-1/2
-          -translate-x-1/2
-          text-xs
+          text-[10px]
+          font-semibold
           text-muted-foreground
         "
       >
-        Cada posição recebe apenas um pescador.
-      </div>
+        {posicao.nome}
+      </span>
 
-    </div>
-
-
-    {/* LISTA DO RESULTADO */}
-
-    {resultadoSorteio.length > 0 && (
-
-      <div>
-
-        <h3
+      {participante ? (
+        <div
           className="
-            mb-3
-            text-sm
-            font-semibold
+            mt-2
+            flex
+            flex-col
+            items-center
+            gap-1
           "
         >
-          📋 Resultado do sorteio
-        </h3>
+          <div
+            className="
+              size-9
+              overflow-hidden
+              rounded-full
+              border
+              bg-muted
+              text-[10px]
+              font-bold
+              flex
+              items-center
+              justify-center
+            "
+          >
+            {participante.foto ? (
+              <img
+                src={
+                  participante.foto
+                }
+                alt={
+                  participante.nome
+                }
+                className="
+                  size-full
+                  object-cover
+                "
+              />
+            ) : (
+              iniciais(
+                participante.nome,
+              )
+            )}
+          </div>
 
+          <span
+            className="
+              max-w-full
+              truncate
+              text-xs
+              font-bold
+            "
+          >
+            {participante.nome}
+          </span>
+        </div>
+      ) : (
+        <span
+          className="
+            mt-2
+            text-xs
+            text-muted-foreground
+          "
+        >
+          Vago
+        </span>
+      )}
+    </button>
+  );
+}
+
+/* =========================================================
+   PERSISTÊNCIA
+========================================================= */
+
+function usePescaria() {
+  const [
+    estado,
+    setEstado,
+  ] =
+    useState<Estado>(vazio);
+
+  const [
+    carregado,
+    setCarregado,
+  ] =
+    useState(false);
+
+  useEffect(() => {
+    try {
+      const raw =
+        localStorage.getItem(
+          STORAGE_KEY,
+        );
+
+      if (raw) {
+        const parsed =
+          JSON.parse(
+            raw,
+          ) as Partial<Estado>;
+
+        setEstado({
+          participantes:
+            parsed.participantes ??
+            [],
+
+          despesas:
+            (
+              parsed.despesas ?? []
+            ).map(
+              (despesa) => ({
+                ...despesa,
+                categoria:
+                  CATEGORIAS.includes(
+                    despesa.categoria as Categoria,
+                  )
+                    ? (despesa.categoria as Categoria)
+                    : "Outros",
+              }),
+            ),
+
+          pagamentos:
+            parsed.pagamentos ??
+            [],
+
+          resultadoSorteio:
+            parsed.resultadoSorteio ??
+            [],
+
+          historicoPosicoes:
+            parsed.historicoPosicoes ??
+            [],
+
+          rodadaAtual:
+            parsed.rodadaAtual ??
+            1,
+        });
+      }
+    } catch {
+      toast.error(
+        "Não foi possível recuperar os dados salvos.",
+      );
+    }
+
+    setCarregado(true);
+  }, []);
+
+  useEffect(() => {
+    if (!carregado) return;
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        estado,
+      ),
+    );
+  }, [
+    estado,
+    carregado,
+  ]);
+
+  return {
+    estado,
+    setEstado,
+  };
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+function Index() {
+  const {
+    estado,
+    setEstado,
+  } =
+    usePescaria();
+
+  const {
+    participantes,
+    despesas,
+    pagamentos,
+    resultadoSorteio,
+    historicoPosicoes,
+    rodadaAtual,
+  } = estado;
+
+  /* =====================================================
+     FORMULÁRIOS
+  ===================================================== */
+
+  const [
+    nome,
+    setNome,
+  ] =
+    useState("");
+
+  const [
+    descDespesa,
+    setDescDespesa,
+  ] =
+    useState("");
+
+  const [
+    valorDespesa,
+    setValorDespesa,
+  ] =
+    useState("");
+
+  const [
+    categoriaDespesa,
+    setCategoriaDespesa,
+  ] =
+    useState<Categoria>(
+      "Barco",
+    );
+
+  const [
+    pescadorId,
+    setPescadorId,
+  ] =
+    useState("");
+
+  const [
+    despesaPagamentoId,
+    setDespesaPagamentoId,
+  ] =
+    useState("");
+
+  const [
+    valorPagamento,
+    setValorPagamento,
+  ] =
+    useState("");
+
+  /* =====================================================
+     EDIÇÃO
+  ===================================================== */
+
+  const [
+    participanteEditando,
+    setParticipanteEditando,
+  ] =
+    useState<string | null>(
+      null,
+    );
+
+  const [
+    nomeEdicao,
+    setNomeEdicao,
+  ] =
+    useState("");
+
+  const [
+    despesaEditando,
+    setDespesaEditando,
+  ] =
+    useState<string | null>(
+      null,
+    );
+
+  const [
+    descricaoEdicao,
+    setDescricaoEdicao,
+  ] =
+    useState("");
+
+  const [
+    valorEdicao,
+    setValorEdicao,
+  ] =
+    useState("");
+
+  const [
+    categoriaEdicao,
+    setCategoriaEdicao,
+  ] =
+    useState<Categoria>(
+      "Outros",
+    );
+
+  /* =====================================================
+     MAPA
+  ===================================================== */
+
+  const [
+    posicaoSelecionada,
+    setPosicaoSelecionada,
+  ] =
+    useState<string | null>(
+      null,
+    );
+
+  /* =====================================================
+     CORREÇÃO DOS SELECTS
+  ===================================================== */
+
+  useEffect(() => {
+    if (
+      participantes.length ===
+      0
+    ) {
+      setPescadorId("");
+      return;
+    }
+
+    const existe =
+      participantes.some(
+        (p) =>
+          p.id ===
+          pescadorId,
+      );
+
+    if (!existe) {
+      setPescadorId(
+        participantes[0].id,
+      );
+    }
+  }, [
+    participantes,
+    pescadorId,
+  ]);
+
+  useEffect(() => {
+    if (
+      despesas.length === 0
+    ) {
+      setDespesaPagamentoId(
+        "",
+      );
+      return;
+    }
+
+    const existe =
+      despesas.some(
+        (d) =>
+          d.id ===
+          despesaPagamentoId,
+      );
+
+    if (!existe) {
+      setDespesaPagamentoId(
+        despesas[0].id,
+      );
+    }
+  }, [
+    despesas,
+    despesaPagamentoId,
+  ]);
+
+  /* =====================================================
+     TOTAIS
+  ===================================================== */
+
+  const totais =
+    useMemo(() => {
+      const totalDespesas =
+        despesas.reduce(
+          (
+            soma,
+            despesa,
+          ) =>
+            soma +
+            despesa.valor,
+          0,
+        );
+
+      const totalArrecadado =
+        pagamentos.reduce(
+          (
+            soma,
+            pagamento,
+          ) =>
+            soma +
+            pagamento.valor,
+          0,
+        );
+
+      const rateio =
+        participantes.length >
+        0
+          ? totalDespesas /
+            participantes.length
+          : 0;
+
+      return {
+        totalDespesas,
+        totalArrecadado,
+        pendente:
+          Math.max(
+            totalDespesas -
+              totalArrecadado,
+            0,
+          ),
+        rateio,
+      };
+    }, [
+      despesas,
+      pagamentos,
+      participantes,
+    ]);
+
+  const progressoFinanceiro =
+    totais.totalDespesas > 0
+      ? Math.min(
+          100,
+          (
+            totais.totalArrecadado /
+            totais.totalDespesas
+          ) * 100,
+        )
+      : 0;
+
+  /* =====================================================
+     LINHAS FINANCEIRAS
+  ===================================================== */
+
+  const linhas =
+    useMemo(() => {
+      return participantes.map(
+        (
+          participante,
+        ) => {
+          const pago =
+            pagamentos
+              .filter(
+                (pg) =>
+                  pg.participanteId ===
+                  participante.id,
+              )
+              .reduce(
+                (
+                  soma,
+                  pg,
+                ) =>
+                  soma +
+                  pg.valor,
+                0,
+              );
+
+          const falta =
+            Math.max(
+              totais.rateio -
+                pago,
+              0,
+            );
+
+          const status =
+            falta <= 0.005
+              ? "Pago"
+              : pago > 0
+                ? "Parcial"
+                : "Pendente";
+
+          return {
+            ...participante,
+            pago,
+            falta,
+            status,
+          };
+        },
+      );
+    }, [
+      participantes,
+      pagamentos,
+      totais.rateio,
+    ]);
+
+  const despesaLinhas =
+    useMemo(() => {
+      return despesas.map(
+        (despesa) => {
+          const rateioDespesa =
+            participantes.length >
+            0
+              ? despesa.valor /
+                participantes.length
+              : 0;
+
+          const pagoDespesa =
+            pagamentos
+              .filter(
+                (pg) =>
+                  pg.despesaId ===
+                  despesa.id,
+              )
+              .reduce(
+                (
+                  soma,
+                  pg,
+                ) =>
+                  soma +
+                  pg.valor,
+                0,
+              );
+
+          const saldo =
+            Math.max(
+              despesa.valor -
+                pagoDespesa,
+              0,
+            );
+
+          const status =
+            saldo <= 0.005
+              ? "Pago"
+              : pagoDespesa > 0
+                ? "Parcial"
+                : "Pendente";
+
+          return {
+            ...despesa,
+            rateioDespesa,
+            pagoDespesa,
+            saldo,
+            status,
+          };
+        },
+      );
+    }, [
+      despesas,
+      participantes,
+      pagamentos,
+    ]);
+
+  /* =====================================================
+     FUNÇÕES DE CONSULTA
+  ===================================================== */
+
+  function participantePorId(
+    id: string,
+  ) {
+    return participantes.find(
+      (p) => p.id === id,
+    );
+  }
+
+  function resultadoPorPosicao(
+    posicaoId: string,
+  ) {
+    return resultadoSorteio.find(
+      (r) =>
+        r.posicaoId ===
+        posicaoId,
+    );
+  }
+
+  function participanteDaPosicao(
+    posicaoId: string,
+  ) {
+    const resultado =
+      resultadoPorPosicao(
+        posicaoId,
+      );
+
+    if (!resultado) {
+      return undefined;
+    }
+
+    return participantePorId(
+      resultado.participanteId,
+    );
+  }
+
+  function nomePorId(
+    id: string,
+  ) {
+    return (
+      participantePorId(
+        id,
+      )?.nome ?? "—"
+    );
+  }
+
+  function nomeDespesaPorId(
+    id: string,
+  ) {
+    return (
+      despesas.find(
+        (d) => d.id === id,
+      )?.desc ?? "—"
+    );
+  }
+
+  /* =====================================================
+     PARTICIPANTES
+  ===================================================== */
+
+  function carregarNomesPadrao() {
+    setEstado(
+      (
+        estadoAtual,
+      ) => {
+        const existentes =
+          new Set(
+            estadoAtual.participantes.map(
+              (p) =>
+                p.nome
+                  .toLowerCase()
+                  .trim(),
+            ),
+          );
+
+        const novos =
+          NOMES_PADRAO
+            .filter(
+              (nomePadrao) =>
+                !existentes.has(
+                  nomePadrao
+                    .toLowerCase()
+                    .trim(),
+                ),
+            )
+            .map(
+              (
+                nomePadrao,
+              ) => ({
+                id: uid(),
+                nome: nomePadrao,
+              }),
+            );
+
+        if (
+          novos.length === 0
+        ) {
+          toast.info(
+            "Todos os pescadores já estão cadastrados.",
+          );
+
+          return estadoAtual;
+        }
+
+        toast.success(
+          `${novos.length} pescador(es) adicionado(s).`,
+        );
+
+        return {
+          ...estadoAtual,
+          participantes: [
+            ...estadoAtual.participantes,
+            ...novos,
+          ],
+        };
+      },
+    );
+  }
+
+  function adicionarParticipante(
+    event?: React.FormEvent,
+  ) {
+    event?.preventDefault();
+
+    const nomeLimpo =
+      nome
+        .trim()
+        .slice(
+          0,
+          60,
+        );
+
+    if (!nomeLimpo) {
+      toast.error(
+        "Informe o nome do pescador.",
+      );
+      return;
+    }
+
+    const duplicado =
+      participantes.some(
+        (p) =>
+          p.nome
+            .toLowerCase()
+            .trim() ===
+          nomeLimpo
+            .toLowerCase()
+            .trim(),
+      );
+
+    if (duplicado) {
+      toast.error(
+        "Esse pescador já está cadastrado.",
+      );
+      return;
+    }
+
+    const novo = {
+      id: uid(),
+      nome: nomeLimpo,
+    };
+
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        participantes: [
+          ...estadoAtual.participantes,
+          novo,
+        ],
+      }),
+    );
+
+    setNome("");
+
+    toast.success(
+      `${nomeLimpo} adicionado.`,
+    );
+  }
+
+  function iniciarEdicaoParticipante(
+    participante: Participante,
+  ) {
+    setParticipanteEditando(
+      participante.id,
+    );
+
+    setNomeEdicao(
+      participante.nome,
+    );
+  }
+
+  function salvarParticipante(
+    id: string,
+  ) {
+    const novoNome =
+      nomeEdicao
+        .trim()
+        .slice(
+          0,
+          60,
+        );
+
+    if (!novoNome) {
+      toast.error(
+        "O nome não pode ficar vazio.",
+      );
+      return;
+    }
+
+    const duplicado =
+      participantes.some(
+        (p) =>
+          p.id !== id &&
+          p.nome
+            .toLowerCase()
+            .trim() ===
+            novoNome
+              .toLowerCase()
+              .trim(),
+      );
+
+    if (duplicado) {
+      toast.error(
+        "Já existe um participante com esse nome.",
+      );
+      return;
+    }
+
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        participantes:
+          estadoAtual.participantes.map(
+            (p) =>
+              p.id === id
+                ? {
+                    ...p,
+                    nome: novoNome,
+                  }
+                : p,
+          ),
+      }),
+    );
+
+    setParticipanteEditando(
+      null,
+    );
+
+    toast.success(
+      "Participante atualizado.",
+    );
+  }
+
+  function excluirParticipante(
+    id: string,
+  ) {
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+
+        participantes:
+          estadoAtual.participantes.filter(
+            (p) =>
+              p.id !== id,
+          ),
+
+        pagamentos:
+          estadoAtual.pagamentos.filter(
+            (pg) =>
+              pg.participanteId !==
+              id,
+          ),
+
+        resultadoSorteio:
+          estadoAtual.resultadoSorteio.filter(
+            (r) =>
+              r.participanteId !==
+              id,
+          ),
+
+        historicoPosicoes:
+          estadoAtual.historicoPosicoes.filter(
+            (h) =>
+              h.participanteId !==
+              id,
+          ),
+      }),
+    );
+
+    toast.success(
+      "Participante excluído.",
+    );
+  }
+
+  async function definirFoto(
+    id: string,
+    file:
+      | File
+      | null
+      | undefined,
+  ) {
+    if (!file) return;
+
+    if (
+      !file.type.startsWith(
+        "image/",
+      )
+    ) {
+      toast.error(
+        "Selecione uma imagem válida.",
+      );
+      return;
+    }
+
+    try {
+      const foto =
+        await comprimirImagem(
+          file,
+        );
+
+      setEstado(
+        (
+          estadoAtual,
+        ) => ({
+          ...estadoAtual,
+          participantes:
+            estadoAtual.participantes.map(
+              (p) =>
+                p.id === id
+                  ? {
+                      ...p,
+                      foto,
+                    }
+                  : p,
+            ),
+        }),
+      );
+
+      toast.success(
+        "Foto atualizada.",
+      );
+    } catch {
+      toast.error(
+        "Não foi possível processar a foto.",
+      );
+    }
+  }
+
+  /* =====================================================
+     DESPESAS
+  ===================================================== */
+
+  function adicionarDespesa(
+    event?: React.FormEvent,
+  ) {
+    event?.preventDefault();
+
+    const descricao =
+      descDespesa
+        .trim()
+        .slice(
+          0,
+          80,
+        );
+
+    const valor =
+      Number(
+        valorDespesa.replace(
+          ",",
+          ".",
+        ),
+      );
+
+    if (!descricao) {
+      toast.error(
+        "Informe a descrição da despesa.",
+      );
+      return;
+    }
+
+    if (
+      !Number.isFinite(
+        valor,
+      ) ||
+      valor <= 0
+    ) {
+      toast.error(
+        "Informe um valor válido.",
+      );
+      return;
+    }
+
+    const novaDespesa = {
+      id: uid(),
+      desc: descricao,
+      valor,
+      categoria:
+        categoriaDespesa,
+    };
+
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        despesas: [
+          ...estadoAtual.despesas,
+          novaDespesa,
+        ],
+      }),
+    );
+
+    setDescDespesa("");
+    setValorDespesa("");
+
+    toast.success(
+      "Despesa adicionada.",
+    );
+  }
+
+  function iniciarEdicaoDespesa(
+    despesa: Despesa,
+  ) {
+    setDespesaEditando(
+      despesa.id,
+    );
+
+    setDescricaoEdicao(
+      despesa.desc,
+    );
+
+    setValorEdicao(
+      String(
+        despesa.valor,
+      ),
+    );
+
+    setCategoriaEdicao(
+      despesa.categoria,
+    );
+  }
+
+  function salvarDespesa(
+    id: string,
+  ) {
+    const descricao =
+      descricaoEdicao
+        .trim()
+        .slice(
+          0,
+          80,
+        );
+
+    const valor =
+      Number(
+        valorEdicao.replace(
+          ",",
+          ".",
+        ),
+      );
+
+    if (!descricao) {
+      toast.error(
+        "Informe a descrição.",
+      );
+      return;
+    }
+
+    if (
+      !Number.isFinite(
+        valor,
+      ) ||
+      valor <= 0
+    ) {
+      toast.error(
+        "Informe um valor válido.",
+      );
+      return;
+    }
+
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        despesas:
+          estadoAtual.despesas.map(
+            (d) =>
+              d.id === id
+                ? {
+                    ...d,
+                    desc: descricao,
+                    valor,
+                    categoria:
+                      categoriaEdicao,
+                  }
+                : d,
+          ),
+      }),
+    );
+
+    setDespesaEditando(
+      null,
+    );
+
+    toast.success(
+      "Despesa atualizada.",
+    );
+  }
+
+  function excluirDespesa(
+    id: string,
+  ) {
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+
+        despesas:
+          estadoAtual.despesas.filter(
+            (d) =>
+              d.id !== id,
+          ),
+
+        pagamentos:
+          estadoAtual.pagamentos.filter(
+            (pg) =>
+              pg.despesaId !==
+              id,
+          ),
+      }),
+    );
+
+    toast.success(
+      "Despesa excluída.",
+    );
+  }
+
+  /* =====================================================
+     SORTEIO INTELIGENTE
+  ===================================================== */
+
+  function sortearPosicoes() {
+    if (
+      participantes.length === 0
+    ) {
+      toast.error(
+        "Cadastre os pescadores primeiro.",
+      );
+      return;
+    }
+
+    const participantesSorteados =
+      embaralhar(
+        participantes,
+      );
+
+    const posicoesDisponiveis =
+      embaralhar(
+        POSICOES_BARCO,
+      );
+
+    const resultado:
+      ResultadoSorteio[] =
+      [];
+
+    const usadas =
+      new Set<string>();
+
+    participantesSorteados
+      .slice(
+        0,
+        Math.min(
+          participantesSorteados.length,
+          POSICOES_BARCO.length,
+        ),
+      )
+      .forEach(
+        (
+          participante,
+          indice,
+        ) => {
+          const posicoesJaUsadas =
+            historicoPosicoes
+              .filter(
+                (h) =>
+                  h.participanteId ===
+                  participante.id,
+              )
+              .map(
+                (h) =>
+                  h.posicaoId,
+              );
+
+          const nuncaUsadas =
+            posicoesDisponiveis.filter(
+              (posicao) =>
+                !usadas.has(
+                  posicao.id,
+                ) &&
+                !posicoesJaUsadas.includes(
+                  posicao.id,
+                ),
+            );
+
+          const candidatas =
+            nuncaUsadas.length >
+            0
+              ? nuncaUsadas
+              : posicoesDisponiveis.filter(
+                  (posicao) =>
+                    !usadas.has(
+                      posicao.id,
+                    ),
+                );
+
+          const posicao =
+            candidatas[
+              indice %
+                candidatas.length
+            ];
+
+          if (!posicao) return;
+
+          usadas.add(
+            posicao.id,
+          );
+
+          resultado.push({
+            participanteId:
+              participante.id,
+            posicaoId:
+              posicao.id,
+          });
+        },
+      );
+
+    const novosHistoricos:
+      HistoricoPosicao[] =
+      resultado.map(
+        (item) => ({
+          id: uid(),
+          rodada:
+            rodadaAtual,
+          data:
+            new Date().toISOString(),
+          participanteId:
+            item.participanteId,
+          posicaoId:
+            item.posicaoId,
+        }),
+      );
+
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        resultadoSorteio:
+          resultado,
+        historicoPosicoes: [
+          ...estadoAtual.historicoPosicoes,
+          ...novosHistoricos,
+        ],
+      }),
+    );
+
+    setPosicaoSelecionada(
+      null,
+    );
+
+    toast.success(
+      `Posições sorteadas para a rodada ${rodadaAtual}.`,
+    );
+  }
+
+  function limparPosicoes() {
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        resultadoSorteio:
+          [],
+      }),
+    );
+
+    setPosicaoSelecionada(
+      null,
+    );
+
+    toast.success(
+      "Posições atuais removidas.",
+    );
+  }
+
+  function novaRodada() {
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        rodadaAtual:
+          estadoAtual.rodadaAtual +
+          1,
+        resultadoSorteio:
+          [],
+      }),
+    );
+
+    setPosicaoSelecionada(
+      null,
+    );
+
+    toast.success(
+      `Nova rodada ${rodadaAtual + 1} iniciada.`,
+    );
+  }
+
+  function trocarPosicoes(
+    primeiraPosicaoId: string,
+    segundaPosicaoId: string,
+  ) {
+    if (
+      primeiraPosicaoId ===
+      segundaPosicaoId
+    ) {
+      return;
+    }
+
+    setEstado(
+      (
+        estadoAtual,
+      ) => {
+        const primeiro =
+          estadoAtual.resultadoSorteio.find(
+            (r) =>
+              r.posicaoId ===
+              primeiraPosicaoId,
+          );
+
+        const segundo =
+          estadoAtual.resultadoSorteio.find(
+            (r) =>
+              r.posicaoId ===
+              segundaPosicaoId,
+          );
+
+        if (
+          !primeiro ||
+          !segundo
+        ) {
+          toast.error(
+            "As duas posições precisam estar ocupadas para trocar.",
+          );
+
+          return estadoAtual;
+        }
+
+        return {
+          ...estadoAtual,
+          resultadoSorteio:
+            estadoAtual.resultadoSorteio.map(
+              (r) => {
+                if (
+                  r.posicaoId ===
+                  primeiraPosicaoId
+                ) {
+                  return {
+                    ...r,
+                    participanteId:
+                      segundo.participanteId,
+                  };
+                }
+
+                if (
+                  r.posicaoId ===
+                  segundaPosicaoId
+                ) {
+                  return {
+                    ...r,
+                    participanteId:
+                      primeiro.participanteId,
+                  };
+                }
+
+                return r;
+              },
+            ),
+        };
+      },
+    );
+
+    toast.success(
+      "Posições trocadas.",
+    );
+  }
+
+  function clicarPosicao(
+    posicaoId: string,
+  ) {
+    const ocupada =
+      resultadoPorPosicao(
+        posicaoId,
+      );
+
+    if (!ocupada) {
+      toast.info(
+        "Essa posição está vazia.",
+      );
+      return;
+    }
+
+    if (
+      !posicaoSelecionada
+    ) {
+      setPosicaoSelecionada(
+        posicaoId,
+      );
+
+      toast.info(
+        "Agora clique na segunda posição para trocar.",
+      );
+
+      return;
+    }
+
+    if (
+      posicaoSelecionada ===
+      posicaoId
+    ) {
+      setPosicaoSelecionada(
+        null,
+      );
+      return;
+    }
+
+    trocarPosicoes(
+      posicaoSelecionada,
+      posicaoId,
+    );
+
+    setPosicaoSelecionada(
+      null,
+    );
+  }
+
+  /* =====================================================
+     PAGAMENTOS
+  ===================================================== */
+
+  function registrarPagamento(
+    event?: React.FormEvent,
+  ) {
+    event?.preventDefault();
+
+    const valor =
+      Number(
+        valorPagamento.replace(
+          ",",
+          ".",
+        ),
+      );
+
+    if (!pescadorId) {
+      toast.error(
+        "Selecione um pescador.",
+      );
+      return;
+    }
+
+    if (
+      !despesaPagamentoId
+    ) {
+      toast.error(
+        "Selecione uma despesa.",
+      );
+      return;
+    }
+
+    if (
+      !Number.isFinite(
+        valor,
+      ) ||
+      valor <= 0
+    ) {
+      toast.error(
+        "Informe um valor válido.",
+      );
+      return;
+    }
+
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        pagamentos: [
+          ...estadoAtual.pagamentos,
+          {
+            id: uid(),
+            participanteId:
+              pescadorId,
+            despesaId:
+              despesaPagamentoId,
+            valor,
+            data:
+              new Date().toISOString(),
+          },
+        ],
+      }),
+    );
+
+    setValorPagamento("");
+
+    toast.success(
+      "Pagamento registrado.",
+    );
+  }
+
+  function excluirPagamento(
+    id: string,
+  ) {
+    setEstado(
+      (
+        estadoAtual,
+      ) => ({
+        ...estadoAtual,
+        pagamentos:
+          estadoAtual.pagamentos.filter(
+            (p) =>
+              p.id !== id,
+          ),
+      }),
+    );
+
+    toast.success(
+      "Pagamento removido.",
+    );
+  }
+
+  /* =====================================================
+     LIMPEZA
+  ===================================================== */
+
+  function limparTudo() {
+    const confirmar =
+      window.confirm(
+        "Deseja apagar todos os dados da pescaria?",
+      );
+
+    if (!confirmar) return;
+
+    setEstado(
+      vazio,
+    );
+
+    setPosicaoSelecionada(
+      null,
+    );
+
+    toast.success(
+      "Todos os dados foram apagados.",
+    );
+  }
+
+  /* =====================================================
+     HISTÓRICO
+  ===================================================== */
+
+  function quantidadePosicoesUsadas(
+    participanteId: string,
+  ) {
+    return new Set(
+      historicoPosicoes
+        .filter(
+          (h) =>
+            h.participanteId ===
+            participanteId,
+        )
+        .map(
+          (h) =>
+            h.posicaoId,
+        ),
+    ).size;
+  }
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
+
+  return (
+    <div className="min-h-screen bg-background">
+
+      <header
+        className="
+          bg-primary
+          px-6
+          py-14
+          text-center
+          text-primary-foreground
+        "
+      >
+        <h1
+          className="
+            text-4xl
+            font-bold
+            tracking-tight
+            sm:text-5xl
+          "
+        >
+          Pesca Justa 🎣
+        </h1>
+
+        <p
+          className="
+            mx-auto
+            mt-3
+            max-w-2xl
+            text-sm
+            opacity-90
+            sm:text-base
+          "
+        >
+          Participantes, mapa do barco,
+          sorteio inteligente, rodízio,
+          despesas e controle financeiro.
+        </p>
+
+        <Badge
+          className="
+            mt-4
+            bg-background
+            text-foreground
+          "
+        >
+          Rodada {rodadaAtual}
+        </Badge>
+      </header>
+
+      <main
+        className="
+          mx-auto
+          grid
+          max-w-6xl
+          gap-6
+          px-4
+          py-10
+        "
+      >
+
+        {/* RESUMO */}
+
+        <section
+          className="
+            grid
+            gap-4
+            sm:grid-cols-2
+            lg:grid-cols-4
+          "
+        >
+          {[
+            {
+              label:
+                "Participantes",
+              value:
+                participantes.length,
+            },
+            {
+              label:
+                "Despesas",
+              value: brl(
+                totais.totalDespesas,
+              ),
+            },
+            {
+              label:
+                "Arrecadado",
+              value: brl(
+                totais.totalArrecadado,
+              ),
+            },
+            {
+              label:
+                "Rateio por pessoa",
+              value: brl(
+                totais.rateio,
+              ),
+            },
+          ].map(
+            (item) => (
+              <Card
+                key={
+                  item.label
+                }
+              >
+                <CardContent className="p-5">
+                  <p
+                    className="
+                      text-xs
+                      font-medium
+                      uppercase
+                      tracking-wide
+                      text-muted-foreground
+                    "
+                  >
+                    {item.label}
+                  </p>
+
+                  <p
+                    className="
+                      mt-2
+                      text-2xl
+                      font-semibold
+                    "
+                  >
+                    {item.value}
+                  </p>
+                </CardContent>
+              </Card>
+            ),
+          )}
+        </section>
+
+        {/* PROGRESSO */}
+
+        <Card>
+          <CardContent className="p-5">
+            <div
+              className="
+                flex
+                flex-wrap
+                items-center
+                justify-between
+                gap-3
+              "
+            >
+              <div>
+                <p
+                  className="
+                    text-sm
+                    text-muted-foreground
+                  "
+                >
+                  Arrecadação financeira
+                </p>
+
+                <p
+                  className="
+                    mt-1
+                    text-lg
+                    font-bold
+                  "
+                >
+                  {progressoFinanceiro.toFixed(
+                    1,
+                  )}
+                  %
+                </p>
+              </div>
+
+              <div
+                className="
+                  text-right
+                  text-sm
+                "
+              >
+                <div>
+                  Falta{" "}
+                  <strong>
+                    {brl(
+                      totais.pendente,
+                    )}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="
+                mt-4
+                h-3
+                overflow-hidden
+                rounded-full
+                bg-muted
+              "
+            >
+              <div
+                className="
+                  h-full
+                  bg-primary
+                  transition-all
+                "
+                style={{
+                  width: `${progressoFinanceiro}%`,
+                }}
+              />
+            </div>
+
+            <div className="mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={
+                  limparTudo
+                }
+              >
+                Zerar pescaria
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* PARTICIPANTES E DESPESAS */}
 
         <div
           className="
             grid
-            gap-2
-            sm:grid-cols-2
+            gap-6
+            lg:grid-cols-2
           "
         >
 
-          {resultadoSorteio.map(
-            (resultado) => {
+          {/* PARTICIPANTES */}
 
-              const posicao =
-                POSICOES_BARCO.find(
-                  (p) =>
-                    p.id ===
-                    resultado.posicaoId,
-                );
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                👥 Participantes
+              </CardTitle>
+            </CardHeader>
 
-              const participante =
-                participantes.find(
-                  (p) =>
-                    p.id ===
-                    resultado.participanteId,
-                );
+            <CardContent className="space-y-4">
 
-              return (
-
-                <div
-                  key={
-                    resultado.posicaoId
+              <form
+                onSubmit={
+                  adicionarParticipante
+                }
+                className="
+                  flex
+                  flex-wrap
+                  gap-2
+                "
+              >
+                <Input
+                  value={nome}
+                  placeholder="Nome do pescador"
+                  maxLength={60}
+                  onChange={(
+                    event,
+                  ) =>
+                    setNome(
+                      event.target.value,
+                    )
                   }
-
                   className="
-                    flex
-                    justify-between
-                    rounded-lg
+                    min-w-40
+                    flex-1
+                  "
+                />
+
+                <Button
+                  type="submit"
+                >
+                  Adicionar
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={
+                    carregarNomesPadrao
+                  }
+                >
+                  Carregar lista
+                </Button>
+              </form>
+
+              {participantes.length ===
+              0 ? (
+                <p
+                  className="
+                    text-sm
+                    text-muted-foreground
+                  "
+                >
+                  Nenhum pescador cadastrado.
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        Foto
+                      </TableHead>
+
+                      <TableHead>
+                        Nome
+                      </TableHead>
+
+                      <TableHead>
+                        Histórico
+                      </TableHead>
+
+                      <TableHead />
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {participantes.map(
+                      (p) => (
+                        <TableRow
+                          key={p.id}
+                        >
+                          <TableCell>
+                            <FotoPescador
+                              participante={
+                                p
+                              }
+                              onSelecionar={
+                                definirFoto
+                              }
+                            />
+                          </TableCell>
+
+                          <TableCell>
+                            {participanteEditando ===
+                            p.id ? (
+                              <Input
+                                value={
+                                  nomeEdicao
+                                }
+                                onChange={(
+                                  event,
+                                ) =>
+                                  setNomeEdicao(
+                                    event
+                                      .target
+                                      .value,
+                                  )
+                                }
+                              />
+                            ) : (
+                              p.nome
+                            )}
+                          </TableCell>
+
+                          <TableCell>
+                            <Badge
+                              variant="secondary"
+                            >
+                              {
+                                quantidadePosicoesUsadas(
+                                  p.id,
+                                )
+                              }
+                              /14 posições
+                            </Badge>
+                          </TableCell>
+
+                          <TableCell
+                            className="
+                              text-right
+                              space-x-2
+                            "
+                          >
+                            {participanteEditando ===
+                            p.id ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    salvarParticipante(
+                                      p.id,
+                                    )
+                                  }
+                                >
+                                  Salvar
+                                </Button>
+
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    setParticipanteEditando(
+                                      null,
+                                    )
+                                  }
+                                >
+                                  Cancelar
+                                </Button>
+                              </>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  iniciarEdicaoParticipante(
+                                    p,
+                                  )
+                                }
+                              >
+                                Editar
+                              </Button>
+                            )}
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() =>
+                                excluirParticipante(
+                                  p.id,
+                                )
+                              }
+                            >
+                              Excluir
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ),
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* DESPESAS */}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                🧾 Despesas
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+
+              <form
+                onSubmit={
+                  adicionarDespesa
+                }
+                className="
+                  flex
+                  flex-wrap
+                  gap-2
+                "
+              >
+                <Input
+                  value={
+                    descDespesa
+                  }
+                  placeholder="Descrição"
+                  onChange={(
+                    event,
+                  ) =>
+                    setDescDespesa(
+                      event.target.value,
+                    )
+                  }
+                  className="
+                    min-w-32
+                    flex-1
+                  "
+                />
+
+                <Input
+                  value={
+                    valorDespesa
+                  }
+                  placeholder="R$ 0,00"
+                  onChange={(
+                    event,
+                  ) =>
+                    setValorDespesa(
+                      event.target.value,
+                    )
+                  }
+                  className="w-28"
+                />
+
+                <select
+                  value={
+                    categoriaDespesa
+                  }
+                  onChange={(
+                    event,
+                  ) =>
+                    setCategoriaDespesa(
+                      event.target
+                        .value as Categoria,
+                    )
+                  }
+                  className="
+                    h-10
+                    rounded-md
                     border
-                    bg-muted
-                    px-4
-                    py-3
+                    border-input
+                    bg-background
+                    px-3
                     text-sm
                   "
                 >
+                  {CATEGORIAS.map(
+                    (
+                      categoria,
+                    ) => (
+                      <option
+                        key={
+                          categoria
+                        }
+                        value={
+                          categoria
+                        }
+                      >
+                        {categoria}
+                      </option>
+                    ),
+                  )}
+                </select>
 
-                  <span
-                    className="
-                      font-semibold
-                    "
-                  >
-                    {posicao?.nome}
-                  </span>
+                <Button
+                  type="submit"
+                >
+                  Adicionar
+                </Button>
+              </form>
 
+              {despesas.length ===
+              0 ? (
+                <p
+                  className="
+                    text-sm
+                    text-muted-foreground
+                  "
+                >
+                  Nenhuma despesa cadastrada.
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        Descrição
+                      </TableHead>
 
-                  <span>
-                    {participante?.nome}
-                  </span>
+                      <TableHead>
+                        Categoria
+                      </TableHead>
 
-                </div>
+                      <TableHead>
+                        Valor
+                      </TableHead>
 
-              );
+                      <TableHead />
+                    </TableRow>
+                  </TableHeader>
 
-            },
-          )}
+                  <TableBody>
+                    {despesas.map(
+                      (d) => (
+                        <TableRow
+                          key={d.id}
+                        >
+                          <TableCell>
+                            {despesaEditando ===
+                            d.id ? (
+                              <Input
+                                value={
+                                  descricaoEdicao
+                                }
+                                onChange={(
+                                  event,
+                                ) =>
+                                  setDescricaoEdicao(
+                                    event
+                                      .target
+                                      .value,
+                                  )
+                                }
+                              />
+                            ) : (
+                              d.desc
+                            )}
+                          </TableCell>
 
+                          <TableCell>
+                            {despesaEditando ===
+                            d.id ? (
+                              <select
+                                value={
+                                  categoriaEdicao
+                                }
+                                onChange={(
+                                  event,
+                                ) =>
+                                  setCategoriaEdicao(
+                                    event
+                                      .target
+                                      .value as Categoria,
+                                  )
+                                }
+                                className="
+                                  h-10
+                                  rounded-md
+                                  border
+                                  px-2
+                                "
+                              >
+                                {CATEGORIAS.map(
+                                  (
+                                    categoria,
+                                  ) => (
+                                    <option
+                                      key={
+                                        categoria
+                                      }
+                                      value={
+                                        categoria
+                                      }
+                                    >
+                                      {
+                                        categoria
+                                      }
+                                    </option>
+                                  ),
+                                )}
+                              </select>
+                            ) : (
+                              <Badge
+                                variant="secondary"
+                              >
+                                {
+                                  d.categoria
+                                }
+                              </Badge>
+                            )}
+                          </TableCell>
+
+                          <TableCell>
+                            {despesaEditando ===
+                            d.id ? (
+                              <Input
+                                value={
+                                  valorEdicao
+                                }
+                                onChange={(
+                                  event,
+                                ) =>
+                                  setValorEdicao(
+                                    event
+                                      .target
+                                      .value,
+                                  )
+                                }
+                                className="w-28"
+                              />
+                            ) : (
+                              brl(
+                                d.valor,
+                              )
+                            )}
+                          </TableCell>
+
+                          <TableCell
+                            className="
+                              text-right
+                              space-x-2
+                            "
+                          >
+                            {despesaEditando ===
+                            d.id ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    salvarDespesa(
+                                      d.id,
+                                    )
+                                  }
+                                >
+                                  Salvar
+                                </Button>
+
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    setDespesaEditando(
+                                      null,
+                                    )
+                                  }
+                                >
+                                  Cancelar
+                                </Button>
+                              </>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  iniciarEdicaoDespesa(
+                                    d,
+                                  )
+                                }
+                              >
+                                Editar
+                              </Button>
+                            )}
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() =>
+                                excluirDespesa(
+                                  d.id,
+                                )
+                              }
+                            >
+                              Excluir
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ),
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
-      </div>
+        {/* MAPA DO BARCO */}
 
-    )}
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              🚤 Mapa e sorteio das posições
+            </CardTitle>
+          </CardHeader>
 
-  </CardContent>
-</Card>
+          <CardContent className="space-y-6">
+
+            <div
+              className="
+                flex
+                flex-wrap
+                gap-3
+              "
+            >
+              <Button
+                type="button"
+                onClick={
+                  sortearPosicoes
+                }
+                disabled={
+                  participantes.length ===
+                  0
+                }
+              >
+                🎲 Sortear posições
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={
+                  limparPosicoes
+                }
+              >
+                Limpar posições
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={
+                  novaRodada
+                }
+              >
+                🔄 Nova rodada
+              </Button>
+            </div>
+
+            <p
+              className="
+                text-sm
+                text-muted-foreground
+              "
+            >
+              O sorteio prioriza posições que o
+              pescador ainda não utilizou.
+              Para trocar dois pescadores,
+              clique em uma posição ocupada
+              e depois na outra.
+            </p>
+
+            <div className="overflow-x-auto">
+              <div
+                className="
+                  relative
+                  mx-auto
+                  min-h-[760px]
+                  min-w-[820px]
+                  max-w-4xl
+                  overflow-hidden
+                  rounded-[100px]
+                  border-4
+                  border-primary
+                  bg-muted
+                  shadow-xl
+                "
+              >
+
+                {/* PROA */}
+
+                <div
+                  className="
+                    absolute
+                    left-1/2
+                    top-6
+                    -translate-x-1/2
+                    text-center
+                  "
+                >
+                  <div className="text-3xl">
+                    🚤
+                  </div>
+
+                  <div
+                    className="
+                      text-sm
+                      font-bold
+                    "
+                  >
+                    PROA
+                  </div>
+                </div>
+
+                {/* LATERAL ESQUERDA */}
+
+                <div
+                  className="
+                    absolute
+                    left-8
+                    top-28
+                    flex
+                    h-[470px]
+                    w-40
+                    flex-col
+                    justify-around
+                  "
+                >
+                  {POSICOES_BARCO
+                    .filter(
+                      (p) =>
+                        p.grupo ===
+                        "esquerda",
+                    )
+                    .map(
+                      (
+                        posicao,
+                      ) => (
+                        <VagaBarco
+                          key={
+                            posicao.id
+                          }
+                          posicao={
+                            posicao
+                          }
+                          participante={
+                            participanteDaPosicao(
+                              posicao.id,
+                            )
+                          }
+                          selecionada={
+                            posicaoSelecionada ===
+                            posicao.id
+                          }
+                          onClick={() =>
+                            clicarPosicao(
+                              posicao.id,
+                            )
+                          }
+                        />
+                      ),
+                    )}
+                </div>
+
+                {/* CORREDOR */}
+
+                <div
+                  className="
+                    absolute
+                    left-1/2
+                    top-28
+                    h-[470px]
+                    w-40
+                    -translate-x-1/2
+                    rounded-full
+                    border-2
+                    border-dashed
+                    opacity-30
+                  "
+                />
+
+                {/* LATERAL DIREITA */}
+
+                <div
+                  className="
+                    absolute
+                    right-8
+                    top-28
+                    flex
+                    h-[470px]
+                    w-40
+                    flex-col
+                    justify-around
+                  "
+                >
+                  {POSICOES_BARCO
+                    .filter(
+                      (p) =>
+                        p.grupo ===
+                        "direita",
+                    )
+                    .map(
+                      (
+                        posicao,
+                      ) => (
+                        <VagaBarco
+                          key={
+                            posicao.id
+                          }
+                          posicao={
+                            posicao
+                          }
+                          participante={
+                            participanteDaPosicao(
+                              posicao.id,
+                            )
+                          }
+                          selecionada={
+                            posicaoSelecionada ===
+                            posicao.id
+                          }
+                          onClick={() =>
+                            clicarPosicao(
+                              posicao.id,
+                            )
+                          }
+                        />
+                      ),
+                    )}
+                </div>
+
+                {/* FUNDO */}
+
+                <div
+                  className="
+                    absolute
+                    bottom-10
+                    left-1/2
+                    w-[88%]
+                    -translate-x-1/2
+                  "
+                >
+                  <p
+                    className="
+                      mb-3
+                      text-center
+                      font-bold
+                    "
+                  >
+                    🔙 BANCOS DO FUNDO
+                  </p>
+
+                  <div
+                    className="
+                      grid
+                      grid-cols-2
+                      gap-6
+                    "
+                  >
+                    <div
+                      className="
+                        rounded-xl
+                        border-2
+                        bg-background
+                        p-3
+                      "
+                    >
+                      <p
+                        className="
+                          mb-2
+                          text-center
+                          text-xs
+                          font-bold
+                        "
+                      >
+                        BANCO ESQUERDO
+                      </p>
+
+                      <div
+                        className="
+                          grid
+                          grid-cols-3
+                          gap-2
+                        "
+                      >
+                        {POSICOES_BARCO
+                          .filter(
+                            (p) =>
+                              p.id.startsWith(
+                                "fundo-esq",
+                              ),
+                          )
+                          .map(
+                            (
+                              posicao,
+                            ) => (
+                              <VagaBarco
+                                key={
+                                  posicao.id
+                                }
+                                posicao={
+                                  posicao
+                                }
+                                participante={
+                                  participanteDaPosicao(
+                                    posicao.id,
+                                  )
+                                }
+                                selecionada={
+                                  posicaoSelecionada ===
+                                  posicao.id
+                                }
+                                onClick={() =>
+                                  clicarPosicao(
+                                    posicao.id,
+                                  )
+                                }
+                              />
+                            ),
+                          )}
+                      </div>
+                    </div>
+
+                    <div
+                      className="
+                        rounded-xl
+                        border-2
+                        bg-background
+                        p-3
+                      "
+                    >
+                      <p
+                        className="
+                          mb-2
+                          text-center
+                          text-xs
+                          font-bold
+                        "
+                      >
+                        BANCO DIREITO
+                      </p>
+
+                      <div
+                        className="
+                          grid
+                          grid-cols-3
+                          gap-2
+                        "
+                      >
+                        {POSICOES_BARCO
+                          .filter(
+                            (p) =>
+                              p.id.startsWith(
+                                "fundo-dir",
+                              ),
+                          )
+                          .map(
+                            (
+                              posicao,
+                            ) => (
+                              <VagaBarco
+                                key={
+                                  posicao.id
+                                }
+                                posicao={
+                                  posicao
+                                }
+                                participante={
+                                  participanteDaPosicao(
+                                    posicao.id,
+                                  )
+                                }
+                                selecionada={
+                                  posicaoSelecionada ===
+                                  posicao.id
+                                }
+                                onClick={() =>
+                                  clicarPosicao(
+                                    posicao.id,
+                                  )
+                                }
+                              />
+                            ),
+                          )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RESULTADO */}
+
+            {resultadoSorteio.length >
+              0 && (
+              <div>
+                <h3
+                  className="
+                    mb-3
+                    font-semibold
+                  "
+                >
+                  📋 Resultado da rodada{" "}
+                  {rodadaAtual}
+                </h3>
+
+                <div
+                  className="
+                    grid
+                    gap-2
+                    sm:grid-cols-2
+                    lg:grid-cols-3
+                  "
+                >
+                  {resultadoSorteio.map(
+                    (
+                      resultado,
+                    ) => {
+                      const posicao =
+                        POSICOES_BARCO.find(
+                          (p) =>
+                            p.id ===
+                            resultado.posicaoId,
+                        );
+
+                      const participante =
+                        participantePorId(
+                          resultado.participanteId,
+                        );
+
+                      return (
+                        <div
+                          key={
+                            resultado.posicaoId
+                          }
+                          className="
+                            flex
+                            items-center
+                            justify-between
+                            rounded-lg
+                            border
+                            bg-muted
+                            px-4
+                            py-3
+                            text-sm
+                          "
+                        >
+                          <span
+                            className="
+                              font-semibold
+                            "
+                          >
+                            {
+                              posicao?.nome
+                            }
+                          </span>
+
+                          <span>
+                            {
+                              participante?.nome
+                            }
+                          </span>
+                        </div>
+                      );
+                    },
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* FINANCEIRO POR DESPESA */}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              📊 Controle por despesa
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            {despesaLinhas.length ===
+            0 ? (
+              <p
+                className="
+                  text-sm
+                  text-muted-foreground
+                "
+              >
+                Cadastre despesas para
+                visualizar o controle.
+              </p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>
+                      Despesa
+                    </TableHead>
+
+                    <TableHead>
+                      Categoria
+                    </TableHead>
+
+                    <TableHead>
+                      Valor
+                    </TableHead>
+
+                    <TableHead>
+                      Rateio/pessoa
+                    </TableHead>
+
+                    <TableHead>
+                      Pago
+                    </TableHead>
+
+                    <TableHead>
+                      Saldo
+                    </TableHead>
+
+                    <TableHead>
+                      Status
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {despesaLinhas.map(
+                    (d) => (
+                      <TableRow
+                        key={d.id}
+                      >
+                        <TableCell>
+                          {d.desc}
+                        </TableCell>
+
+                        <TableCell>
+                          <Badge
+                            variant="secondary"
+                          >
+                            {
+                              d.categoria
+                            }
+                          </Badge>
+                        </TableCell>
+
+                        <TableCell>
+                          {brl(
+                            d.valor,
+                          )}
+                        </TableCell>
+
+                        <TableCell>
+                          {brl(
+                            d.rateioDespesa,
+                          )}
+                        </TableCell>
+
+                        <TableCell>
+                          {brl(
+                            d.pagoDespesa,
+                          )}
+                        </TableCell>
+
+                        <TableCell>
+                          {brl(
+                            d.saldo,
+                          )}
+                        </TableCell>
+
+                        <TableCell>
+                          <Badge
+                            variant={
+                              d.status ===
+                              "Pago"
+                                ? "default"
+                                : d.status ===
+                                    "Parcial"
+                                  ? "secondary"
+                                  : "destructive"
+                            }
+                          >
+                            {
+                              d.status
+                            }
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ),
+                  )}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* PAGAMENTOS */}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              💳 Pagamentos
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent className="space-y-8">
+
+            <form
+              onSubmit={
+                registrarPagamento
+              }
+              className="
+                flex
+                flex-wrap
+                items-end
+                gap-3
+              "
+            >
+              <div className="space-y-1">
+                <Label>
+                  Pescador
+                </Label>
+
+                <select
+                  value={
+                    pescadorId
+                  }
+                  onChange={(
+                    event,
+                  ) =>
+                    setPescadorId(
+                      event.target.value,
+                    )
+                  }
+                  disabled={
+                    participantes.length ===
+                    0
+                  }
+                  className="
+                    h-10
+                    w-52
+                    rounded-md
+                    border
+                    border-input
+                    bg-background
+                    px-3
+                    text-sm
+                  "
+                >
+                  {participantes.length ===
+                  0 ? (
+                    <option value="">
+                      Nenhum pescador
+                    </option>
+                  ) : (
+                    participantes.map(
+                      (p) => (
+                        <option
+                          key={p.id}
+                          value={p.id}
+                        >
+                          {
+                            p.nome
+                          }
+                        </option>
+                      ),
+                    )
+                  )}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <Label>
+                  Despesa
+                </Label>
+
+                <select
+                  value={
+                    despesaPagamentoId
+                  }
+                  onChange={(
+                    event,
+                  ) =>
+                    setDespesaPagamentoId(
+                      event.target.value,
+                    )
+                  }
+                  disabled={
+                    despesas.length ===
+                    0
+                  }
+                  className="
+                    h-10
+                    w-52
+                    rounded-md
+                    border
+                    border-input
+                    bg-background
+                    px-3
+                    text-sm
+                  "
+                >
+                  {despesas.length ===
+                  0 ? (
+                    <option value="">
+                      Nenhuma despesa
+                    </option>
+                  ) : (
+                    despesas.map(
+                      (d) => (
+                        <option
+                          key={d.id}
+                          value={d.id}
+                        >
+                          {
+                            d.desc
+                          }
+                        </option>
+                      ),
+                    )
+                  )}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <Label>
+                  Valor pago
+                </Label>
+
+                <Input
+                  value={
+                    valorPagamento
+                  }
+                  placeholder="R$ 0,00"
+                  onChange={(
+                    event,
+                  ) =>
+                    setValorPagamento(
+                      event.target.value,
+                    )
+                  }
+                  className="w-32"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                disabled={
+                  participantes.length ===
+                    0 ||
+                  despesas.length === 0
+                }
+              >
+                Registrar pagamento
+              </Button>
+            </form>
+
+            {/* TABELA GERAL */}
+
+            <div>
+              <h3
+                className="
+                  mb-3
+                  font-semibold
+                "
+              >
+                Situação geral
+              </h3>
+
+              {linhas.length ===
+              0 ? (
+                <p
+                  className="
+                    text-sm
+                    text-muted-foreground
+                  "
+                >
+                  Cadastre participantes
+                  para visualizar o rateio.
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        Pescador
+                      </TableHead>
+
+                      <TableHead>
+                        Deve pagar
+                      </TableHead>
+
+                      <TableHead>
+                        Já pagou
+                      </TableHead>
+
+                      <TableHead>
+                        Falta
+                      </TableHead>
+
+                      <TableHead>
+                        Status
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {linhas.map(
+                      (linha) => (
+                        <TableRow
+                          key={
+                            linha.id
+                          }
+                        >
+                          <TableCell>
+                            {
+                              linha.nome
+                            }
+                          </TableCell>
+
+                          <TableCell>
+                            {brl(
+                              totais.rateio,
+                            )}
+                          </TableCell>
+
+                          <TableCell>
+                            {brl(
+                              linha.pago,
+                            )}
+                          </TableCell>
+
+                          <TableCell>
+                            {brl(
+                              linha.falta,
+                            )}
+                          </TableCell>
+
+                          <TableCell>
+                            <Badge
+                              variant={
+                                linha.status ===
+                                "Pago"
+                                  ? "default"
+                                  : linha.status ===
+                                      "Parcial"
+                                    ? "secondary"
+                                    : "destructive"
+                              }
+                            >
+                              {
+                                linha.status
+                              }
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ),
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+
+            {/* HISTÓRICO DE PAGAMENTOS */}
+
+            <div>
+              <h3
+                className="
+                  mb-3
+                  font-semibold
+                "
+              >
+                Histórico de pagamentos
+              </h3>
+
+              {pagamentos.length ===
+              0 ? (
+                <p
+                  className="
+                    text-sm
+                    text-muted-foreground
+                  "
+                >
+                  Nenhum pagamento registrado.
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        Pescador
+                      </TableHead>
+
+                      <TableHead>
+                        Despesa
+                      </TableHead>
+
+                      <TableHead>
+                        Data
+                      </TableHead>
+
+                      <TableHead>
+                        Valor
+                      </TableHead>
+
+                      <TableHead />
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {[
+                      ...pagamentos,
+                    ]
+                      .reverse()
+                      .map(
+                        (pg) => (
+                          <TableRow
+                            key={
+                              pg.id
+                            }
+                          >
+                            <TableCell>
+                              {nomePorId(
+                                pg.participanteId,
+                              )}
+                            </TableCell>
+
+                            <TableCell>
+                              {nomeDespesaPorId(
+                                pg.despesaId,
+                              )}
+                            </TableCell>
+
+                            <TableCell>
+                              {new Date(
+                                pg.data,
+                              ).toLocaleString(
+                                "pt-BR",
+                                {
+                                  dateStyle:
+                                    "short",
+                                  timeStyle:
+                                    "short",
+                                },
+                              )}
+                            </TableCell>
+
+                            <TableCell>
+                              {brl(
+                                pg.valor,
+                              )}
+                            </TableCell>
+
+                            <TableCell>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                onClick={() =>
+                                  excluirPagamento(
+                                    pg.id,
+                                  )
+                                }
+                              >
+                                Remover
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* HISTÓRICO DE POSIÇÕES */}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              🔄 Histórico de rodízio
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            {historicoPosicoes.length ===
+            0 ? (
+              <p
+                className="
+                  text-sm
+                  text-muted-foreground
+                "
+              >
+                Ainda não existem posições
+                registradas.
+              </p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>
+                      Rodada
+                    </TableHead>
+
+                    <TableHead>
+                      Pescador
+                    </TableHead>
+
+                    <TableHead>
+                      Posição
+                    </TableHead>
+
+                    <TableHead>
+                      Data
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {[
+                    ...historicoPosicoes,
+                  ]
+                    .reverse()
+                    .slice(
+                      0,
+                      50,
+                    )
+                    .map(
+                      (h) => {
+                        const posicao =
+                          POSICOES_BARCO.find(
+                            (p) =>
+                              p.id ===
+                              h.posicaoId,
+                          );
+
+                        return (
+                          <TableRow
+                            key={h.id}
+                          >
+                            <TableCell>
+                              Rodada{" "}
+                              {
+                                h.rodada
+                              }
+                            </TableCell>
+
+                            <TableCell>
+                              {nomePorId(
+                                h.participanteId,
+                              )}
+                            </TableCell>
+
+                            <TableCell>
+                              {
+                                posicao?.nome ??
+                                "—"
+                              }
+                            </TableCell>
+
+                            <TableCell>
+                              {new Date(
+                                h.data,
+                              ).toLocaleString(
+                                "pt-BR",
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      },
+                    )}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </main>
+
+      <footer
+        className="
+          mt-6
+          bg-primary
+          py-6
+          text-center
+          text-sm
+          text-primary-foreground
+        "
+      >
+        © 2026 Pesca Justa 🎣
+      </footer>
+    </div>
+  );
+}
 ```
