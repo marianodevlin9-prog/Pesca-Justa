@@ -31,14 +31,6 @@ export const Route = createFileRoute("/")({
         content:
           "Organize sua pescaria: cadastre participantes, sorteie vagas, lance despesas e controle o rateio e os pagamentos de cada pescador.",
       },
-      { property: "og:title", content: "Pesca Justa — Rateio e Sorteio de Pescaria" },
-      {
-        property: "og:description",
-        content:
-          "Controle participantes, despesas, sorteio de vagas e pagamentos da sua pescaria em um só lugar.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
@@ -160,7 +152,7 @@ function usePescaria() {
         });
       }
     } catch {
-      // ignora dados corrompidos
+      // ignora se falhar
     }
     setCarregado(true);
   }, []);
@@ -176,6 +168,7 @@ function Index() {
   const { estado, setEstado } = usePescaria();
   const { participantes, despesas, pagamentos } = estado;
 
+  // Estados dos inputs dos formulários
   const [nome, setNome] = useState("");
   const [descDespesa, setDescDespesa] = useState("");
   const [valorDespesa, setValorDespesa] = useState("");
@@ -215,14 +208,14 @@ function Index() {
     if (participantes.length && !participantes.some((p) => p.id === pescadorId)) {
       setPescadorId(participantes[0]!.id);
     }
-    if (!participantes.length && pescadorId) setPescadorId("");
+    if (!participantes.length) setPescadorId("");
   }, [participantes, pescadorId]);
 
   useEffect(() => {
     if (despesas.length && !despesas.some((d) => d.id === despesaPagamentoId)) {
       setDespesaPagamentoId(despesas[0]!.id);
     }
-    if (!despesas.length && despesaPagamentoId) setDespesaPagamentoId("");
+    if (!despesas.length) setDespesaPagamentoId("");
   }, [despesas, despesaPagamentoId]);
 
   const despesaLinhas = useMemo(
@@ -277,9 +270,14 @@ function Index() {
 
   function adicionarParticipante() {
     const limpo = nome.trim().slice(0, 60);
-    if (!limpo) { toast.error("Informe o nome do pescador."); return; }
-    if (participantes.some((p) => p.nome.toLowerCase() === limpo.toLowerCase()))
-      { toast.error("Esse pescador já está na lista."); return; }
+    if (!limpo) {
+      toast.error("Informe o nome do pescador.");
+      return;
+    }
+    if (participantes.some((p) => p.nome.toLowerCase() === limpo.toLowerCase())) {
+      toast.error("Esse pescador já está na lista.");
+      return;
+    }
     setEstado((e) => ({
       ...e,
       participantes: [...e.participantes, { id: uid(), nome: limpo }],
@@ -300,9 +298,14 @@ function Index() {
   function adicionarDespesa() {
     const desc = descDespesa.trim().slice(0, 80);
     const valor = Number(valorDespesa.replace(",", "."));
-    if (!desc) { toast.error("Informe a descrição da despesa."); return; }
-    if (!Number.isFinite(valor) || valor <= 0)
-      { toast.error("Informe um valor maior que zero."); return; }
+    if (!desc) {
+      toast.error("Informe a descrição da despesa.");
+      return;
+    }
+    if (!Number.isFinite(valor) || valor <= 0) {
+      toast.error("Informe um valor maior que zero.");
+      return;
+    }
     setEstado((e) => ({
       ...e,
       despesas: [...e.despesas, { id: uid(), desc, valor, categoria: categoriaDespesa }],
@@ -321,8 +324,14 @@ function Index() {
 
   function realizarSorteio() {
     const qtd = Math.floor(Number(vagas));
-    if (!participantes.length) { toast.error("Cadastre participantes primeiro."); return; }
-    if (!Number.isFinite(qtd) || qtd < 1) { toast.error("Quantidade de vagas inválida."); return; }
+    if (!participantes.length) {
+      toast.error("Cadastre participantes primeiro.");
+      return;
+    }
+    if (!Number.isFinite(qtd) || qtd < 1) {
+      toast.error("Quantidade de vagas inválida.");
+      return;
+    }
     const embaralhado = [...participantes];
     for (let i = embaralhado.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -333,10 +342,18 @@ function Index() {
 
   function registrarPagamento() {
     const valor = Number(valorPagamento.replace(",", "."));
-    if (!pescadorId) { toast.error("Selecione um pescador."); return; }
-    if (!despesaPagamentoId) { toast.error("Selecione a despesa."); return; }
-    if (!Number.isFinite(valor) || valor <= 0)
-      { toast.error("Informe um valor maior que zero."); return; }
+    if (!pescadorId) {
+      toast.error("Selecione um pescador.");
+      return;
+    }
+    if (!despesaPagamentoId) {
+      toast.error("Selecione a despesa.");
+      return;
+    }
+    if (!Number.isFinite(valor) || valor <= 0) {
+      toast.error("Informe um valor maior que zero.");
+      return;
+    }
     setEstado((e) => ({
       ...e,
       pagamentos: [
@@ -372,9 +389,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header
-        className="px-6 py-14 text-center text-primary-foreground bg-primary"
-      >
+      <header className="bg-primary px-6 py-14 text-center text-primary-foreground">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Pesca Justa 🎣</h1>
         <p className="mx-auto mt-3 max-w-xl text-sm opacity-90 sm:text-base">
           Organize sua pescaria: participantes, sorteio de vagas, despesas e rateio justo.
@@ -417,6 +432,7 @@ function Index() {
         </section>
 
         <div className="grid gap-6 lg:grid-cols-2">
+          {/* PARTICIPANTES */}
           <Card>
             <CardHeader>
               <CardTitle>👥 Participantes</CardTitle>
@@ -429,10 +445,12 @@ function Index() {
                   placeholder="Nome do pescador"
                   onChange={(e) => setNome(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && adicionarParticipante()}
-                  className="flex-1 min-w-40"
+                  className="min-w-40 flex-1"
                 />
-                <Button onClick={adicionarParticipante}>Adicionar</Button>
-                <Button variant="outline" onClick={carregarNomesPadrao}>
+                <Button type="button" onClick={adicionarParticipante}>
+                  Adicionar
+                </Button>
+                <Button type="button" variant="outline" onClick={carregarNomesPadrao}>
                   Carregar lista
                 </Button>
               </div>
@@ -471,6 +489,7 @@ function Index() {
             </CardContent>
           </Card>
 
+          {/* DESPESAS */}
           <Card>
             <CardHeader>
               <CardTitle>🧾 Despesas</CardTitle>
@@ -482,14 +501,13 @@ function Index() {
                   maxLength={80}
                   placeholder="Descrição"
                   onChange={(e) => setDescDespesa(e.target.value)}
-                  className="flex-1 min-w-32"
+                  className="min-w-32 flex-1"
                 />
                 <Input
                   value={valorDespesa}
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="Valor"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="R$ 0,00"
                   onChange={(e) => setValorDespesa(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && adicionarDespesa()}
                   className="w-28"
@@ -509,7 +527,9 @@ function Index() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button onClick={adicionarDespesa}>Adicionar</Button>
+                <Button type="button" onClick={adicionarDespesa}>
+                  Adicionar
+                </Button>
               </div>
               {despesas.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Nenhuma despesa lançada.</p>
@@ -545,6 +565,7 @@ function Index() {
           </Card>
         </div>
 
+        {/* SORTEIO */}
         <Card>
           <CardHeader>
             <CardTitle>🎲 Sorteio de vagas</CardTitle>
@@ -562,7 +583,9 @@ function Index() {
                   className="w-28"
                 />
               </div>
-              <Button onClick={realizarSorteio}>Realizar sorteio</Button>
+              <Button type="button" onClick={realizarSorteio}>
+                Realizar sorteio
+              </Button>
             </div>
             {sorteados.length > 0 && (
               <ol className="grid gap-2 sm:grid-cols-2">
@@ -580,6 +603,7 @@ function Index() {
           </CardContent>
         </Card>
 
+        {/* PAGAMENTOS POR DESPESA */}
         <Card>
           <CardHeader>
             <CardTitle>📊 Pagamentos por despesa</CardTitle>
@@ -632,6 +656,7 @@ function Index() {
           </CardContent>
         </Card>
 
+        {/* REGISTRO DE PAGAMENTOS */}
         <Card>
           <CardHeader>
             <CardTitle>💳 Pagamentos</CardTitle>
@@ -680,16 +705,18 @@ function Index() {
                 <Label htmlFor="valorPg">Valor pago</Label>
                 <Input
                   id="valorPg"
-                  type="number"
-                  min="0"
-                  step="0.01"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="R$ 0,00"
                   value={valorPagamento}
                   onChange={(e) => setValorPagamento(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && registrarPagamento()}
                   className="w-32"
                 />
               </div>
-              <Button onClick={registrarPagamento}>Registrar</Button>
+              <Button type="button" onClick={registrarPagamento}>
+                Registrar
+              </Button>
             </div>
 
             <div>
