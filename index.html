@@ -217,10 +217,11 @@
     .slot-name { font-size: 12px; font-weight: bold; max-width: 145px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .slot .avatar { width: 30px; height: 30px; font-size: 10px; }
 
+    /* BANCOS DO FUNDO (2 OCUPANTES POR BANCO - TOTAL 4 PESSOAS) */
     .back { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); width: 86%; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
     .bench { background: rgba(0,0,0,0.15); border: 1px solid rgba(74, 222, 128, 0.4); border-radius: 14px; padding: 10px; }
     .bench-title { text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 8px; color: var(--success); }
-    .bench-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .bench-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .bench .slot { min-height: 90px; }
 
     .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
@@ -261,6 +262,31 @@
 
 <main class="container">
 
+  <!-- DADOS DA VIAGEM DE PESCA -->
+  <section class="card">
+    <h2>⛵ Cadastro da Viagem & Embarcação</h2>
+    <div class="form-row">
+      <div class="field">
+        <label for="boatName">Nome da Embarcação</label>
+        <input id="boatName" placeholder="Ex.: Pérola do Mar II" onchange="saveTripInfo()">
+      </div>
+      <div class="field">
+        <label for="tripDate">Dia da Pesca</label>
+        <input id="tripDate" type="date" onchange="saveTripInfo()">
+      </div>
+      <div class="field">
+        <label for="tripTime">Horário de Saída</label>
+        <input id="tripTime" type="time" onchange="saveTripInfo()">
+      </div>
+    </div>
+    <div class="form-row" style="margin-top: 10px;">
+      <div class="field" style="width: 100%;">
+        <label for="departureAddress">Endereço / Local de Embarque (Ponto de Saída)</label>
+        <input id="departureAddress" placeholder="Ex.: Marina Trapiche - Cais 04, Av. Beira Mar, nº 1000" onchange="saveTripInfo()">
+      </div>
+    </div>
+  </section>
+
   <!-- RESUMO FINANCEIRO -->
   <section class="grid-summary">
     <div class="card summary"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
@@ -292,7 +318,7 @@
     <div class="card">
       <h2>👥 Participantes</h2>
       <div class="form-row">
-        <div class="field"><label>Nome do pescador</label><input id="participantName" placeholder="Digite o nome"></div>
+        <div class="field"><label for="participantName">Nome do pescador</label><input id="participantName" placeholder="Digite o nome"></div>
         <button onclick="addParticipant()">Adicionar</button>
         <button class="secondary" onclick="loadDefaultNames()">Lista Padrão</button>
       </div>
@@ -307,9 +333,9 @@
     <div class="card">
       <h2>🧾 Despesas</h2>
       <div class="form-row">
-        <div class="field"><label>Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
-        <div class="field"><label>Valor</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
-        <div class="field"><label>Categoria</label>
+        <div class="field"><label for="expenseDesc">Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
+        <div class="field"><label for="expenseValue">Valor</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
+        <div class="field"><label for="expenseCategory">Categoria</label>
           <select id="expenseCategory">
             <option>Barco</option><option>Iscas</option><option>Alimentação</option><option>Bebidas</option><option>Gelo</option><option>Combustível</option><option>Outros</option>
           </select>
@@ -360,8 +386,8 @@
         <div class="center-line"></div>
         <div class="side right" id="rightSlots"></div>
         <div class="back">
-          <div class="bench"><div class="bench-title">BANCO DO FUNDO — ESQUERDA</div><div class="bench-slots" id="backLeftSlots"></div></div>
-          <div class="bench"><div class="bench-title">BANCO DO FUNDO — DIREITA</div><div class="bench-slots" id="backRightSlots"></div></div>
+          <div class="bench"><div class="bench-title">BANCO FUNDO — ESQUERDA (2)</div><div class="bench-slots" id="backLeftSlots"></div></div>
+          <div class="bench"><div class="bench-title">BANCO FUNDO — DIREITA (2)</div><div class="bench-slots" id="backRightSlots"></div></div>
         </div>
       </div>
     </div>
@@ -374,9 +400,9 @@
   <section class="card">
     <h2>💳 Registrar Pagamento</h2>
     <div class="form-row">
-      <div class="field"><label>Pescador</label><select id="paymentParticipant"></select></div>
-      <div class="field"><label>Despesa</label><select id="paymentExpense"></select></div>
-      <div class="field"><label>Valor pago</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
+      <div class="field"><label for="paymentParticipant">Pescador</label><select id="paymentParticipant"></select></div>
+      <div class="field"><label for="paymentExpense">Despesa</label><select id="paymentExpense"></select></div>
+      <div class="field"><label for="paymentValue">Valor pago</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
       <button onclick="addPayment()">Registrar pagamento</button>
     </div>
   </section>
@@ -441,14 +467,17 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'pesca-justa-unificado-v3';
+const STORAGE_KEY = 'pesca-justa-unificado-v4';
+
+/* CONFIGURAÇÃO DAS 12 POSIÇÕES DA EMBARCAÇÃO (4 NO BANCO DO FUNDO) */
 const POSITIONS = [
   {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},{id:'esq-4',name:'Esquerda 4',group:'left'},
   {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},{id:'dir-4',name:'Direita 4',group:'right'},
-  {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},{id:'fundo-esq-3',name:'Fundo E3',group:'backLeft'},
-  {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'},{id:'fundo-dir-3',name:'Fundo D3',group:'backRight'}
+  {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},
+  {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'}
 ];
-const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
+
+const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo'];
 
 let selectedPosition = null;
 let timerInterval = null;
@@ -456,6 +485,7 @@ let tempoRestanteSegundos = 0;
 
 let state = {
   theme: 'ocean',
+  trip: { boatName: '', date: '', time: '', address: '' },
   participants: [],
   expenses: [],
   payments: [],
@@ -484,8 +514,29 @@ function load() {
   try {
     const x = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if(x) state = {...state, ...x};
+    if(!state.trip) state.trip = { boatName: '', date: '', time: '', address: '' };
     if(state.theme) document.documentElement.setAttribute('data-theme', state.theme);
   } catch(e){}
+}
+
+function saveTripInfo() {
+  state.trip = {
+    boatName: document.getElementById('boatName').value,
+    date: document.getElementById('tripDate').value,
+    time: document.getElementById('tripTime').value,
+    address: document.getElementById('departureAddress').value
+  };
+  save();
+  toast('Informações da viagem salvas.');
+}
+
+function loadTripInputs() {
+  if(state.trip) {
+    document.getElementById('boatName').value = state.trip.boatName || '';
+    document.getElementById('tripDate').value = state.trip.date || '';
+    document.getElementById('tripTime').value = state.trip.time || '';
+    document.getElementById('departureAddress').value = state.trip.address || '';
+  }
 }
 
 function participant(pid) { return state.participants.find(x=>x.id===pid); }
@@ -654,10 +705,63 @@ function renderTimer(seg) {
   document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
 }
 
+/* GALERIA DE FOTOS */
+function processarFotos(evt) {
+  const files = Array.from(evt.target.files);
+  if(!files.length) return;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        let max = 800, scale = Math.min(1, max/Math.max(img.width, img.height));
+        c.width = img.width * scale;
+        c.height = img.height * scale;
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        state.photos.push({ id: id(), data: c.toDataURL('image/jpeg', 0.8) });
+        save(); renderPhotos();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  toast('Foto(s) adicionada(s).');
+}
+
+function deletePhoto(photoId) {
+  state.photos = state.photos.filter(p => p.id !== photoId);
+  save(); renderPhotos(); toast('Foto removida.');
+}
+
+function renderPhotos() {
+  const grid = document.getElementById('previewGrid');
+  if(!state.photos || !state.photos.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column: 1/-1;">Nenhuma foto cadastrada.</div>';
+    return;
+  }
+  grid.innerHTML = state.photos.map(p => `
+    <div class="img-container">
+      <img src="${p.data}" alt="Foto da pescaria">
+      <button class="btn-del-img" onclick="deletePhoto('${p.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
 /* COMPARTILHAR RESUMO NO WHATSAPP */
 function shareWhatsApp() {
   const t = totals();
   let msg = `*🎣 PESCA JUSTA - PRESTAÇÃO DE CONTAS*\n\n`;
+  if(state.trip) {
+    if(state.trip.boatName) msg += `⛵ *Barco:* ${state.trip.boatName}\n`;
+    if(state.trip.date) {
+      const [y, m, d] = state.trip.date.split('-');
+      msg += `📅 *Data:* ${d}/${m}/${y}\n`;
+    }
+    if(state.trip.time) msg += `⏰ *Saída:* ${state.trip.time}\n`;
+    if(state.trip.address) msg += `📍 *Embarque:* ${state.trip.address}\n`;
+    msg += `\n`;
+  }
   msg += `👥 *Participantes:* ${state.participants.length}\n`;
   msg += `💸 *Total Despesas:* ${money(t.expenses)}\n`;
   msg += `📊 *Rateio por Pessoa:* ${money(t.share)}\n`;
@@ -692,141 +796,208 @@ function importData(evt) {
     try {
       const data = JSON.parse(e.target.result);
       if(data && data.participants) {
-        state = data;
-        save();
-        render();
-        toast('Dados restaurados com sucesso!');
-      } else {
-        toast('Arquivo de backup inválido.');
-      }
-    } catch(err) {
-      toast('Erro ao ler o arquivo.');
-    }
+        state = {...state, ...data};
+        save(); loadTripInputs(); render(); toast('Backup restaurado com sucesso!');
+      } else { toast('Arquivo de backup inválido.'); }
+    } catch(err) { toast('Erro ao ler o arquivo JSON.'); }
   };
   reader.readAsText(file);
 }
 
-/* GALERIA DE FOTOS DO BARCO */
-function processarFotos(e) {
-  const files = Array.from(e.target.files);
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      state.photos.push(evt.target.result);
-      save(); renderGaleria();
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function renderGaleria() {
-  const grid = document.getElementById('previewGrid'); grid.innerHTML = '';
-  (state.photos || []).forEach((imgSrc, idx) => {
-    const div = document.createElement('div'); div.className = 'img-container';
-    div.innerHTML = `<img src="${imgSrc}"><button class="btn-del-img" onclick="removerFoto(${idx})">&times;</button>`;
-    grid.appendChild(div);
-  });
-}
-
-function removerFoto(idx) {
-  state.photos.splice(idx, 1); save(); renderGaleria();
-}
-
 function clearAll() {
-  if(!confirm('Deseja apagar todos os dados do Pesca Justa?')) return;
-  state = { theme: state.theme, participants:[], expenses:[], payments:[], draw:[], history:[], photos:[], round:1 };
-  if(timerInterval) clearInterval(timerInterval);
-  selectedPosition = null; save(); render(); toast('Todos os dados foram apagados.');
+  if(!confirm('Atenção: Todos os dados da pescaria (pescadores, despesas, pagamentos e fotos) serão apagados! Confirmar?')) return;
+  state = {
+    theme: state.theme,
+    trip: { boatName: '', date: '', time: '', address: '' },
+    participants: [],
+    expenses: [],
+    payments: [],
+    draw: [],
+    history: [],
+    photos: [],
+    round: 1
+  };
+  save(); loadTripInputs(); render(); toast('Pescaria zerada.');
 }
 
-/* RENDERIZAÇÃO GERAL */
+/* RENDERIZAÇÃO DA INTERFACE */
 function renderBoat() {
-  const targets = {left:'leftSlots', right:'rightSlots', backLeft:'backLeftSlots', backRight:'backRightSlots'};
-  Object.entries(targets).forEach(([group, target]) => {
-    document.getElementById(target).innerHTML = POSITIONS.filter(p=>p.group===group).map(p=>{
-      const a = assignment(p.id), person = a ? participant(a.participantId) : null;
-      return `<button class="slot ${selectedPosition===p.id?'selected':''}" onclick="clickPosition('${p.id}')">
-        <span class="slot-label">${esc(p.name)}</span>
-        ${person ? avatar(person) + `<span class="slot-name">${esc(person.name)}</span>` : `<span class="muted">Vago</span>`}
-      </button>`;
+  const renderSlots = (containerId, group) => {
+    const container = document.getElementById(containerId);
+    container.innerHTML = POSITIONS.filter(p=>p.group===group).map(p => {
+      const a = assignment(p.id);
+      const part = a ? participant(a.participantId) : null;
+      const sel = selectedPosition === p.id ? 'selected' : '';
+      return `
+        <div class="slot ${sel}" onclick="clickPosition('${p.id}')">
+          <div class="slot-label">${esc(p.name)}</div>
+          ${part ? avatar(part) : ''}
+          <div class="slot-name">${part ? esc(part.name) : '<span style="opacity:0.4">Vazio</span>'}</div>
+        </div>
+      `;
     }).join('');
-  });
+  };
 
-  document.getElementById('drawResults').innerHTML = state.draw.length ? state.draw.map(a=>{
-    const p = participant(a.participantId), po = pos(a.positionId);
-    return `<div class="result"><strong>${esc(po.name)}</strong><span>${esc(p?.name||'—')}</span></div>`;
-  }).join('') : '<div class="empty">Nenhuma posição sorteada nesta rodada.</div>';
+  renderSlots('leftSlots', 'left');
+  renderSlots('rightSlots', 'right');
+  renderSlots('backLeftSlots', 'backLeft');
+  renderSlots('backRightSlots', 'backRight');
 }
 
 function render() {
+  document.getElementById('roundBadge').textContent = `Rodada ${state.round}`;
   const t = totals();
+  
+  // Resumo
   document.getElementById('sumParticipants').textContent = state.participants.length;
   document.getElementById('sumExpenses').textContent = money(t.expenses);
   document.getElementById('sumCollected').textContent = money(t.collected);
   document.getElementById('sumShare').textContent = money(t.share);
   document.getElementById('sumPending').textContent = money(t.pending);
   
-  const pct = t.expenses ? Math.min(100, t.collected/t.expenses*100) : 0;
-  document.getElementById('progressPercent').textContent = pct.toFixed(1) + '%';
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('roundBadge').textContent = 'Rodada ' + state.round;
+  const pct = t.expenses > 0 ? Math.min(100, Math.round((t.collected / t.expenses) * 100)) : 0;
+  document.getElementById('progressPercent').textContent = `${pct}%`;
+  document.getElementById('progressBar').style.width = `${pct}%`;
 
-  document.getElementById('participantsTable').innerHTML = state.participants.length ? state.participants.map(p=>{
-    const used = new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId)).size;
-    return `<tr>
-      <td><label style="cursor:pointer">${avatar(p)}<input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}',this)"></label></td>
-      <td>${esc(p.name)}</td>
-      <td><span class="badge">${used}/14 posições</span></td>
-      <td><div class="actions"><button class="small secondary" onclick="editParticipant('${p.id}')">Editar</button><button class="small danger" onclick="deleteParticipant('${p.id}')">Excluir</button></div></td>
-    </tr>`;
+  // Tabela Participantes
+  const partTbody = document.getElementById('participantsTable');
+  partTbody.innerHTML = state.participants.length ? state.participants.map(p => {
+    const posCount = state.history.filter(h=>h.participantId===p.id).length;
+    return `
+      <tr>
+        <td style="width:50px">
+          <label style="cursor:pointer">
+            ${avatar(p)}
+            <input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}', this)">
+          </label>
+        </td>
+        <td><strong>${esc(p.name)}</strong></td>
+        <td><span class="badge">${posCount} trocas</span></td>
+        <td class="actions">
+          <button class="small secondary" onclick="editParticipant('${p.id}')">✏️</button>
+          <button class="small danger" onclick="deleteParticipant('${p.id}')">🗑️</button>
+        </td>
+      </tr>
+    `;
   }).join('') : '<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
 
-  document.getElementById('expensesTable').innerHTML = state.expenses.length ? state.expenses.map(e=>`<tr>
-    <td>${esc(e.desc)}</td><td><span class="badge">${esc(e.category)}</span></td><td>${money(e.value)}</td>
-    <td><div class="actions"><button class="small secondary" onclick="editExpense('${e.id}')">Editar</button><button class="small danger" onclick="deleteExpense('${e.id}')">Excluir</button></div></td>
-  </tr>`).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa cadastrada.</td></tr>';
+  // Tabela Despesas
+  const expTbody = document.getElementById('expensesTable');
+  expTbody.innerHTML = state.expenses.length ? state.expenses.map(e => `
+    <tr>
+      <td><strong>${esc(e.desc)}</strong></td>
+      <td><span class="badge">${esc(e.category)}</span></td>
+      <td>${money(e.value)}</td>
+      <td class="actions">
+        <button class="small secondary" onclick="editExpense('${e.id}')">✏️</button>
+        <button class="small danger" onclick="deleteExpense('${e.id}')">🗑️</button>
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa lançada.</td></tr>';
 
-  document.getElementById('paymentParticipant').innerHTML = state.participants.length ? state.participants.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option value="">Nenhum pescador</option>';
-  document.getElementById('paymentExpense').innerHTML = state.expenses.length ? state.expenses.map(e=>`<option value="${e.id}">${esc(e.desc)}</option>`).join('') : '<option value="">Nenhuma despesa</option>';
+  // Selects do Pagamento
+  const partSelect = document.getElementById('paymentParticipant');
+  partSelect.innerHTML = '<option value="">Selecione...</option>' + state.participants.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  
+  const expSelect = document.getElementById('paymentExpense');
+  expSelect.innerHTML = '<option value="">Selecione...</option>' + state.expenses.map(e => `<option value="${e.id}">${esc(e.desc)} (${money(e.value)})</option>`).join('');
 
-  document.getElementById('financialTable').innerHTML = state.participants.length ? state.participants.map(p=>{
-    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0), missing = Math.max(0, t.share-paid);
-    const status = missing < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente', cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-    return `<tr><td>${esc(p.name)}</td><td>${money(t.share)}</td><td>${money(paid)}</td><td>${money(missing)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
-  }).join('') : '<tr><td colspan="5" class="empty">Cadastre participantes.</td></tr>';
+  // Tabela Financeira por Pescador
+  const finTbody = document.getElementById('financialTable');
+  finTbody.innerHTML = state.participants.length ? state.participants.map(p => {
+    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0);
+    const missing = t.share - paid;
+    let statusClass = 'status-pending', statusText = 'Pendente';
+    if(missing <= 0.01) { statusClass = 'status-paid'; statusText = 'Pago'; }
+    else if(paid > 0) { statusClass = 'status-partial'; statusText = 'Parcial'; }
+    return `
+      <tr>
+        <td><strong>${esc(p.name)}</strong></td>
+        <td>${money(t.share)}</td>
+        <td>${money(paid)}</td>
+        <td>${money(Math.max(0, missing))}</td>
+        <td><span class="badge ${statusClass}">${statusText}</span></td>
+      </tr>
+    `;
+  }).join('') : '<tr><td colspan="5" class="empty">Nenhum dado financeiro.</td></tr>';
 
-  document.getElementById('expenseControlTable').innerHTML = state.expenses.length ? state.expenses.map(e=>{
-    const paid = state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0), saldo = Math.max(0, e.value-paid), share = state.participants.length ? e.value/state.participants.length : 0;
-    const status = saldo < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente', cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-    return `<tr><td>${esc(e.desc)}</td><td>${esc(e.category)}</td><td>${money(e.value)}</td><td>${money(share)}</td><td>${money(paid)}</td><td>${money(saldo)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
-  }).join('') : '<tr><td colspan="7" class="empty">Cadastre despesas.</td></tr>';
+  // Controle por Despesa
+  const expCtrlTbody = document.getElementById('expenseControlTable');
+  expCtrlTbody.innerHTML = state.expenses.length ? state.expenses.map(e => {
+    const perPerson = state.participants.length ? e.value / state.participants.length : 0;
+    const paid = state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0);
+    const balance = e.value - paid;
+    let stClass = 'status-pending', stText = 'Pendente';
+    if(balance <= 0.01) { stClass = 'status-paid'; stText = 'Quitado'; }
+    else if(paid > 0) { stClass = 'status-partial'; stText = 'Parcial'; }
+    return `
+      <tr>
+        <td><strong>${esc(e.desc)}</strong></td>
+        <td><span class="badge">${esc(e.category)}</span></td>
+        <td>${money(e.value)}</td>
+        <td>${money(perPerson)}</td>
+        <td>${money(paid)}</td>
+        <td>${money(Math.max(0, balance))}</td>
+        <td><span class="badge ${stClass}">${stText}</span></td>
+      </tr>
+    `;
+  }).join('') : '<tr><td colspan="7" class="empty">Nenhuma despesa.</td></tr>';
 
-  document.getElementById('paymentsTable').innerHTML = state.payments.length ? [...state.payments].reverse().map(x=>`<tr>
-    <td>${esc(participant(x.participantId)?.name||'—')}</td><td>${esc(expense(x.expenseId)?.desc||'—')}</td><td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${money(x.value)}</td>
-    <td><button class="small danger" onclick="deletePayment('${x.id}')">Remover</button></td>
-  </tr>`).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
+  // Histórico Pagamentos
+  const payTbody = document.getElementById('paymentsTable');
+  payTbody.innerHTML = state.payments.length ? state.payments.slice().reverse().map(p => {
+    const part = participant(p.participantId);
+    const exp = expense(p.expenseId);
+    const d = new Date(p.date);
+    return `
+      <tr>
+        <td><strong>${part ? esc(part.name) : 'Excluído'}</strong></td>
+        <td>${exp ? esc(exp.desc) : 'Excluído'}</td>
+        <td>${d.toLocaleDateString()} ${d.toLocaleTimeString().slice(0,5)}</td>
+        <td>${money(p.value)}</td>
+        <td class="actions"><button class="small danger" onclick="deletePayment('${p.id}')">🗑️</button></td>
+      </tr>
+    `;
+  }).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
 
-  document.getElementById('historyTable').innerHTML = state.history.length ? [...state.history].reverse().slice(0, 100).map(h=>`<tr>
-    <td>Rodada ${h.round}</td><td>${esc(participant(h.participantId)?.name||'—')}</td><td>${esc(pos(h.positionId)?.name||'—')}</td><td>${new Date(h.date).toLocaleString('pt-BR')}</td>
-  </tr>`).join('') : '<tr><td colspan="4" class="empty">Ainda não existe histórico.</td></tr>';
+  // Histórico Rodízio
+  const histTbody = document.getElementById('historyTable');
+  histTbody.innerHTML = state.history.length ? state.history.slice().reverse().map(h => {
+    const part = participant(h.participantId);
+    const position = pos(h.positionId);
+    const d = new Date(h.date);
+    return `
+      <tr>
+        <td><span class="badge">Rodada ${h.round}</span></td>
+        <td><strong>${part ? esc(part.name) : 'Excluído'}</strong></td>
+        <td>${position ? esc(position.name) : h.positionId}</td>
+        <td>${d.toLocaleDateString()} ${d.toLocaleTimeString().slice(0,5)}</td>
+      </tr>
+    `;
+  }).join('') : '<tr><td colspan="4" class="empty">Nenhum histórico de sorteio.</td></tr>';
+
+  // Sorteio Atual Resultado
+  const drawRes = document.getElementById('drawResults');
+  drawRes.innerHTML = state.draw.length ? state.draw.map(d => {
+    const position = pos(d.positionId);
+    const part = participant(d.participantId);
+    return `
+      <div class="result">
+        <span><strong>${position ? esc(position.name) : ''}</strong></span>
+        <span>${part ? esc(part.name) : 'Vazio'}</span>
+      </div>
+    `;
+  }).join('') : '<div class="empty" style="grid-column: 1/-1;">Nenum sorteio realizado na rodada atual.</div>';
 
   renderBoat();
-  renderGaleria();
+  renderPhotos();
 }
 
-load();
-render();
+window.onload = () => {
+  load();
+  loadTripInputs();
+  render();
+};
 </script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js").catch(function (err) {
-      console.log("Service Worker não registrado:", err);
-    });
-  });
-}
-</script>
-
 </body>
 </html>
