@@ -59,10 +59,14 @@
 
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
     th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 
-    .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--border); display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 11px; color: var(--accent); overflow: hidden; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary2); border: 1px solid var(--accent); display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; color: var(--accent); }
+
+    .badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; display: inline-block; }
+    .badge-paid { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .badge-pending { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
 
     /* PAINEL DE CRONÔMETRO DE TURNO */
     .timer-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--accent); padding: 16px; border-radius: 12px; margin: 15px 0; text-align: center; }
@@ -71,20 +75,20 @@
     .timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: bold; }
 
     /* LAYOUT EMBARCAÇÃO DINÂMICO */
-    .boat-wrap { overflow-x: auto; padding-bottom: 8px; }
-    .boat { position: relative; width: 900px; min-height: 480px; margin: auto; border: 4px solid var(--accent); border-radius: 140px 140px 40px 40px; background: var(--boat-bg); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
-    .boat-title { text-align: center; font-weight: bold; font-size: 16px; color: var(--accent); margin-bottom: 15px; }
+    .boat-wrap { overflow-x: auto; padding: 10px 0; }
+    .boat { position: relative; min-width: 750px; max-width: 900px; min-height: 480px; margin: auto; border: 4px solid var(--accent); border-radius: 140px 140px 40px 40px; background: var(--boat-bg); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; }
+    .boat-title { text-align: center; font-weight: bold; font-size: 16px; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
     
     .boat-body { display: flex; justify-content: space-between; gap: 20px; flex: 1; }
-    .side { width: 160px; display: flex; flex-direction: column; gap: 8px; justify-content: flex-start; }
+    .side { width: 220px; display: flex; flex-direction: column; gap: 12px; justify-content: flex-start; }
     
-    .slot { min-height: 65px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 5px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-    .slot-label { font-size: 9px; color: var(--muted); font-weight: bold; }
-    .slot-name { font-size: 11px; font-weight: bold; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .slot { min-height: 60px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent); border-radius: 8px; padding: 8px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+    .slot-label { font-size: 10px; color: var(--accent); font-weight: bold; text-transform: uppercase; }
+    .slot-name { font-size: 13px; font-weight: bold; color: var(--text); }
     
-    .back { margin-top: 15px; width: 100%; border-top: 2px dashed var(--border); padding-top: 15px; }
-    .bench-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 8px; color: var(--success); }
-    .bench-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; }
+    .back { margin-top: 20px; width: 100%; border-top: 2px dashed var(--border); padding-top: 15px; }
+    .bench-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 10px; color: var(--success); text-transform: uppercase; }
+    .bench-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
 
     .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 12px 18px; border-radius: 99px; border: 1px solid var(--accent); display: none; z-index: 1000; }
     .toast.show { display: block; }
@@ -117,24 +121,24 @@
   <!-- PARTICIPANTES & DESPESAS -->
   <section class="two-col">
     <div class="card">
-      <h2>👥 Pescadores (<span id="countPescadores">0</span>)</h2>
+      <h2>👥 Lista de Pescadores (<span id="countPescadores">0</span>)</h2>
       <div class="form-row">
         <div class="field"><label for="participantName">Nome do Pescador</label><input id="participantName" placeholder="Ex.: Devlin"></div>
         <button onclick="addParticipant()">Adicionar</button>
       </div>
       <div class="table-wrap" style="margin-top:15px">
         <table>
-          <thead><tr><th>Avatar</th><th>Nome</th><th>Ações</th></tr></thead>
+          <thead><tr><th>Pescador</th><th>Pagamento</th><th>Ações</th></tr></thead>
           <tbody id="participantsTable"></tbody>
         </table>
       </div>
     </div>
 
     <div class="card">
-      <h2>🧾 Despesas</h2>
+      <h2>🧾 Despesas do Barco</h2>
       <div class="form-row">
-        <div class="field"><label for="expenseDesc">Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
-        <div class="field"><label for="expenseValue">Valor</label><input id="expenseValue" placeholder="0,00"></div>
+        <div class="field"><label for="expenseDesc">Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco, Isca, Bebida"></div>
+        <div class="field"><label for="expenseValue">Valor (R$)</label><input id="expenseValue" placeholder="0,00"></div>
         <button onclick="addExpense()">Adicionar</button>
       </div>
       <div class="table-wrap" style="margin-top:15px">
@@ -146,23 +150,23 @@
     </div>
   </section>
 
-  <!-- CONTROLE DE TURNOS DE 5H30 E SORTEIO -->
+  <!-- CONTROLE DE TURNOS DE 5H30 E SORTEIO DE LUGARES -->
   <section class="card">
-    <h2>🚤 Controle de Rodízio (Turnos Fixos de 5h30min)</h2>
-    <div class="form-row">
-      <button onclick="drawPositions()">🎲 Sortear Posições Iniciais</button>
+    <h2>🚤 Distribuição dos Lugares (Turnos de 5h30min)</h2>
+    <div class="form-row" style="margin-bottom:15px;">
+      <button onclick="drawPositions()">🎲 Sortear Lugares</button>
       <button class="success" onclick="iniciarTurno5h30()">▶️ Iniciar Turno (5h30)</button>
-      <button class="secondary" onclick="proximoTurno()">🔄 Encerrar Turno & Girar Lugares</button>
+      <button class="secondary" onclick="proximoTurno()">🔄 Proximo Turno (Girar)</button>
     </div>
 
-    <!-- EXIBIÇÃO DOS HORÁRIOS DE INÍCIO, FIM E CRONÔMETRO -->
+    <!-- EXIBIÇÃO DO CRONÔMETRO -->
     <div class="timer-panel">
       <div>
-        <div class="timer-lbl">Rodada / Turno</div>
+        <div class="timer-lbl">Rodada</div>
         <div id="turnoAtual" class="timer-val" style="color:var(--text)">Turno 1</div>
       </div>
       <div>
-        <div class="timer-lbl">Início do Turno</div>
+        <div class="timer-lbl">Início</div>
         <div id="horaInicioTurno" class="timer-time">--:--:--</div>
       </div>
       <div>
@@ -170,22 +174,28 @@
         <div id="horaFimTurno" class="timer-time" style="color:var(--warning)">--:--:--</div>
       </div>
       <div>
-        <div class="timer-lbl">Contagem Regressiva</div>
+        <div class="timer-lbl">Tempo Restante</div>
         <div id="timerDisplay" class="timer-val">05:30:00</div>
       </div>
     </div>
 
-    <!-- MAPA VISUAL DA EMBARCAÇÃO DINÂMICO -->
+    <!-- MAPA VISUAL DO BARCO -->
     <div class="boat-wrap">
       <div class="boat">
-        <div class="boat-title">🚤 PROA (FRENTE DO BARCO)</div>
+        <div class="boat-title">⚓ PROA (FRENTE DO BARCO) ⚓</div>
         <div class="boat-body">
-          <div class="side" id="leftSlots"></div>
-          <div style="flex:1; border-left: 1px dashed var(--border); margin: 0 10px;"></div>
-          <div class="side" id="rightSlots"></div>
+          <div class="side">
+            <div style="text-align:center; font-size:11px; color:var(--muted); font-weight:bold; margin-bottom:5px;">LATERAL ESQUERDA</div>
+            <div id="leftSlots" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+          <div style="flex:1; border-left: 2px dashed var(--border); margin: 0 10px;"></div>
+          <div class="side">
+            <div style="text-align:center; font-size:11px; color:var(--muted); font-weight:bold; margin-bottom:5px;">LATERAL DIREITA</div>
+            <div id="rightSlots" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
         </div>
         <div class="back">
-          <div class="bench-title">BANCO DO FUNDO (EXCEDENTES)</div>
+          <div class="bench-title">🪑 BANCO DO FUNDO (EXCEDENTES)</div>
           <div class="bench-slots" id="backSlots"></div>
         </div>
       </div>
@@ -201,7 +211,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
 <script>
-// CONFIGURAÇÃO AUTOMÁTICA DO SEU FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyAY9YVSdP3qtBSIaQnSvs26B70RrP6fMVE",
   authDomain: "pescaria-justa.firebaseapp.com",
@@ -214,13 +223,13 @@ const firebaseConfig = {
 
 let dbRef = null;
 let timerInterval = null;
-const TURNO_SEGUNDOS = (5 * 3600) + (30 * 60); // 5h 30m em segundos
+const TURNO_SEGUNDOS = (5 * 3600) + (30 * 60);
 
 let state = {
   theme: 'ocean',
   participants: [],
   expenses: [],
-  payments: [],
+  payments: {},
   draw: [],
   round: 1,
   turnoStartTime: null,
@@ -245,6 +254,7 @@ function initFirebase() {
     const data = snapshot.val();
     if (data) {
       state = data;
+      if (!state.payments) state.payments = {};
       if (state.theme) document.documentElement.setAttribute('data-theme', state.theme);
       render();
       atualizarCronometroAtivo();
@@ -257,9 +267,8 @@ function syncState() {
   else render();
 }
 
-/* REGRAS DE POSICIONAMENTO DINÂMICO */
 function gerarPosicoesDinamicas() {
-  const total = state.participants.length;
+  const total = state.participants ? state.participants.length : 0;
   const posicoes = [];
   
   const slotsEsq = Math.min(3, Math.ceil(total / 2));
@@ -274,7 +283,7 @@ function gerarPosicoesDinamicas() {
 }
 
 function drawPositions() {
-  if(!state.participants.length) return toast('Adicione pescadores primeiro.');
+  if(!state.participants || !state.participants.length) return toast('Adicione pescadores primeiro.');
   
   const posicoes = gerarPosicoesDinamicas();
   const embaralhados = shuffle(state.participants);
@@ -285,7 +294,7 @@ function drawPositions() {
   }));
 
   syncState();
-  toast('Lugares sorteados com sucesso!');
+  toast('Lugares sorteados!');
 }
 
 function rotacionarLugares() {
@@ -301,9 +310,8 @@ function rotacionarLugares() {
   }
 }
 
-/* CONTROLE DOS TURNOS DE 5H30MIN */
 function iniciarTurno5h30() {
-  if(!state.participants.length) return toast('Adicione pescadores para iniciar.');
+  if(!state.participants || !state.participants.length) return toast('Adicione pescadores para iniciar.');
   if(!state.draw || !state.draw.length) drawPositions();
 
   const agora = Date.now();
@@ -311,7 +319,7 @@ function iniciarTurno5h30() {
   state.turnoEndTime = agora + (TURNO_SEGUNDOS * 1000);
 
   syncState();
-  toast(`Turno ${state.round || 1} iniciado! Duração: 5h30min.`);
+  toast(`Turno ${state.round || 1} iniciado!`);
 }
 
 function proximoTurno() {
@@ -323,7 +331,7 @@ function proximoTurno() {
   state.turnoEndTime = agora + (TURNO_SEGUNDOS * 1000);
 
   syncState();
-  toast(`Iniciado Turno ${state.round}! Lugares rotacionados.`);
+  toast(`Iniciado Turno ${state.round}! Lugares alterados.`);
 }
 
 function atualizarCronometroAtivo() {
@@ -349,7 +357,7 @@ function atualizarCronometroAtivo() {
     if (restante <= 0) {
       clearInterval(timerInterval);
       document.getElementById('timerDisplay').textContent = "00:00:00";
-      alert(`🔔 Fim do Turno ${state.round || 1}! Realizando rotação de lugares...`);
+      alert(`🔔 Fim do Turno ${state.round || 1}! Girando posições...`);
       proximoTurno();
     } else {
       const h = String(Math.floor(restante / 3600)).padStart(2, '0');
@@ -360,11 +368,17 @@ function atualizarCronometroAtivo() {
   }, 1000);
 }
 
-/* MANIPULAÇÃO DE LISTAS */
+function togglePayment(pid) {
+  if(!state.payments) state.payments = {};
+  state.payments[pid] = !state.payments[pid];
+  syncState();
+}
+
 function addParticipant() {
   const nameInput = document.getElementById('participantName');
   const name = nameInput.value.trim();
   if(!name) return;
+  if(!state.participants) state.participants = [];
   state.participants.push({ id: id(), name });
   nameInput.value = '';
   syncState();
@@ -373,6 +387,7 @@ function addParticipant() {
 function deleteParticipant(pid) {
   state.participants = state.participants.filter(x => x.id !== pid);
   state.draw = (state.draw || []).filter(x => x.participantId !== pid);
+  if(state.payments) delete state.payments[pid];
   syncState();
 }
 
@@ -392,34 +407,54 @@ function deleteExpense(eid) {
   syncState();
 }
 
-/* RENDERIZAÇÃO DA TELA */
 function render() {
-  document.getElementById('countPescadores').textContent = state.participants.length;
-  document.getElementById('sumParticipants').textContent = state.participants.length;
+  const participants = state.participants || [];
+  const expenses = state.expenses || [];
+  const payments = state.payments || {};
+
+  document.getElementById('countPescadores').textContent = participants.length;
+  document.getElementById('sumParticipants').textContent = participants.length;
   document.getElementById('turnoAtual').textContent = `Turno ${state.round || 1}`;
   
-  const totalExp = (state.expenses || []).reduce((s,x)=>s+x.value, 0);
-  const totalColl = (state.payments || []).reduce((s,x)=>s+x.value, 0);
-  const share = state.participants.length ? totalExp / state.participants.length : 0;
+  const totalExp = expenses.reduce((s,x)=>s+x.value, 0);
+  const share = participants.length ? totalExp / participants.length : 0;
+  
+  let paidCount = 0;
+  participants.forEach(p => { if(payments[p.id]) paidCount++; });
+  const totalCollected = paidCount * share;
 
   document.getElementById('sumExpenses').textContent = money(totalExp);
-  document.getElementById('sumCollected').textContent = money(totalColl);
+  document.getElementById('sumCollected').textContent = money(totalCollected);
   document.getElementById('sumShare').textContent = money(share);
 
+  // Tabela Pescadores
   const pTable = document.getElementById('participantsTable');
-  pTable.innerHTML = state.participants.map(p => `
-    <tr>
-      <td><div class="avatar">${p.name.slice(0,2).toUpperCase()}</div></td>
-      <td><strong>${p.name}</strong></td>
-      <td><button class="small danger" onclick="deleteParticipant('${p.id}')">🗑️</button></td>
-    </tr>
-  `).join('');
+  pTable.innerHTML = participants.map(p => {
+    const isPaid = !!payments[p.id];
+    return `
+      <tr>
+        <td>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="avatar">${p.name.slice(0,2).toUpperCase()}</div>
+            <strong>${p.name}</strong>
+          </div>
+        </td>
+        <td>
+          <button class="small ${isPaid ? 'success' : 'secondary'}" onclick="togglePayment('${p.id}')">
+            ${isPaid ? 'PAGO' : 'PENDENTE'}
+          </button>
+        </td>
+        <td><button class="small danger" onclick="deleteParticipant('${p.id}')">🗑️</button></td>
+      </tr>
+    `;
+  }).join('');
 
+  // Tabela Despesas
   const eTable = document.getElementById('expensesTable');
-  eTable.innerHTML = (state.expenses || []).map(e => `
+  eTable.innerHTML = expenses.map(e => `
     <tr>
       <td>${e.desc}</td>
-      <td>${money(e.value)}</td>
+      <td><strong>${money(e.value)}</strong></td>
       <td><button class="small danger" onclick="deleteExpense('${e.id}')">🗑️</button></td>
     </tr>
   `).join('');
@@ -429,12 +464,14 @@ function render() {
 
 function renderBoat() {
   const posicoes = gerarPosicoesDinamicas();
+  const participants = state.participants || [];
   
   const renderGroup = (containerId, group) => {
     const el = document.getElementById(containerId);
+    if(!el) return;
     el.innerHTML = posicoes.filter(p => p.group === group).map(pos => {
       const assignment = (state.draw || []).find(d => d.positionId === pos.id);
-      const part = assignment ? state.participants.find(x => x.id === assignment.participantId) : null;
+      const part = assignment ? participants.find(x => x.id === assignment.participantId) : null;
       return `
         <div class="slot">
           <div class="slot-label">${pos.name}</div>
