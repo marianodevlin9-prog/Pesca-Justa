@@ -110,19 +110,27 @@ th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 .result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 9px; }
 .result { background: var(--input-bg); border: 1px solid #334155; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
 
-/* TIMER E CONVÉS — TIPO 2 (ROTAÇÃO 18H) */
+/* TIMER E CONVÉS — TIPO 2 (ROTAÇÃO 24H) */
 .timer-panel { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; background: var(--input-bg); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; margin: 15px 0; gap: 10px; }
 .timer-box { text-align: center; }
 .timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
 .timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
 
-.deck-view { width: 100%; max-width: 420px; min-height: 500px; margin: 15px auto; background: #091322; border: 3px solid var(--accent); border-radius: 160px 160px 25px 25px; display: flex; flex-direction: column; justify-content: space-between; padding: 25px 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+.deck-view { width: 100%; max-width: 500px; min-height: 560px; margin: 15px auto; background: #091322; border: 3px solid var(--accent); border-radius: 160px 160px 25px 25px; display: flex; flex-direction: column; justify-content: space-between; padding: 25px 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
 .deck-section { text-align: center; padding: 10px; border: 1px dashed #334155; border-radius: 8px; background: rgba(255, 255, 255, 0.02); }
 .deck-section-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
-.proa { color: #facc15; } .meio { color: var(--muted); } .popa { color: #4ade80; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+.proa { color: #facc15; } .lateral-dir { color: #38bdf8; } .lateral-esq { color: #a78bfa; } .banco-extra { color: #fb923c; }
+.popa { color: #4ade80; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
 .fisherman-tags-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
 .fisherman-tag { background: #0284c7; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.82rem; font-weight: 600; }
 .popa .fisherman-tag { background: #16a34a; border: 1px solid #4ade80; }
+
+/* TABELA DE ROTAÇÃO / CRONOGRAMA */
+.rotacao-table-wrap { margin-top: 15px; overflow-x: auto; }
+.rotacao-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+.rotacao-table th, .rotacao-table td { border: 1px solid #334155; padding: 8px 10px; }
+.rotacao-table th { background: #07111e; color: var(--accent); }
+.rotacao-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
 
 /* GALERIA DE FOTOS */
 .upload-box { border: 2px dashed var(--accent); border-radius: 8px; padding: 20px; text-align: center; background: var(--input-bg); cursor: pointer; position: relative; }
@@ -150,7 +158,7 @@ footer strong { color: var(--accent); }
   
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('tab-gestao')">📊 Gestão & Sorteio</button>
-    <button class="tab-btn" onclick="switchTab('tab-expedicao')">⏱️ Expedição 18h & Timer</button>
+    <button class="tab-btn" onclick="switchTab('tab-expedicao')">⏱️ Expedição & Timer (13 Pescadores)</button>
   </div>
 </header>
 
@@ -300,25 +308,25 @@ footer strong { color: var(--accent); }
 
   </div>
 
-  <!-- ================= ABA 2: EXPEDIÇÃO 18H & TIMER ================= -->
+  <!-- ================= ABA 2: EXPEDIÇÃO & TIMER (13 PESCADORES) ================= -->
   <div id="tab-expedicao" class="tab-content">
     
     <!-- EMBARQUE -->
     <section class="card">
-      <h2>📋 Detalhes do Embarque</h2>
+      <h2>📋 Detalhes do Embarque & Cronograma (24h)</h2>
       <form id="pescariaForm" onsubmit="salvarDadosEmbarque(event)">
         <div class="form-grid">
           <div class="form-group">
-            <label>📅 Data da Pescaria</label>
-            <input type="date" id="dataPesca">
+            <label>📅 Data da Saída</label>
+            <input type="date" id="dataPesca" value="2026-10-17">
+          </div>
+          <div class="form-group">
+            <label>⏰ Horário de Saída do Porto</label>
+            <input type="time" id="horaSaidaPorto" value="10:00">
           </div>
           <div class="form-group">
             <label>⚓ Local de Saída / Marina</label>
             <input type="text" id="localSaida" placeholder="Ex: Pier 3 - Marina">
-          </div>
-          <div class="form-group">
-            <label>🅿️ Estacionamento</label>
-            <input type="text" id="estacionamento" placeholder="Ex: R$ 30 no local">
           </div>
           <div class="form-group">
             <label>📍 Ponto de Pesca Destino</label>
@@ -329,45 +337,71 @@ footer strong { color: var(--accent); }
       </form>
     </section>
 
-    <!-- ROTAÇÃO CONTINUA DE 18H -->
+    <!-- ROTAÇÃO CONTINUA 24H (13 PESCADORES) -->
     <section class="card">
-      <h2>⚓ Rodízio Automático (4 Vagas na Popa - 18 Horas)</h2>
-      <p class="muted" style="margin-bottom: 12px;">Insira os pescadores separados por vírgula para calcular os turnos divididos igualmente em 18 horas.</p>
+      <h2>⚓ Rodízio Automático (13 Pescadores — 4 Popa, 3 Dir, 3 Esq, 3 Banco Extra)</h2>
+      <p class="muted" style="margin-bottom: 12px;">Lista oficial atualizada com 13 pescadores. Saída às 10:00 com 3h de viagem de ida (pesca efetiva iniciada às 13:00) e 3h de retorno (chegada às 10:00 do dia seguinte).</p>
       
       <div class="form-group full-width">
-        <label>🎣 Lista de Pescadores</label>
-        <input type="text" id="listaPescadores" value="Devlin, Carlos, Roberto, André, Lucas, Marcelo, Fernando, Thiago">
+        <label>🎣 Lista de Pescadores (13)</label>
+        <input type="text" id="listaPescadores" value="Devlin, Carlos, Roberto, André, Lucas, Marcelo, Fernando, Thiago, Paulo, João, Marcos, Bruno, Rafael">
       </div>
-      <button onclick="iniciarRotacao18h()" class="btn-action" style="background: #16a34a; margin-top: 10px;">▶️ Iniciar Rotação 18h</button>
+      <button onclick="iniciarRotacao24h()" class="btn-action" style="background: #16a34a; margin-top: 10px;">▶️ Iniciar Rotação e Cálculo de Horários</button>
 
       <div class="timer-panel">
         <div class="timer-box">
           <div class="timer-lbl">Turno Atual</div>
-          <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
+          <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1 / 13</div>
         </div>
         <div class="timer-box">
-          <div class="timer-lbl">Tempo Restante</div>
+          <div class="timer-lbl">Tempo Restante do Turno</div>
           <div id="timerDisplay" class="timer-val">00:00:00</div>
         </div>
         <div class="timer-box">
-          <div class="timer-lbl">Duração/Turno</div>
+          <div class="timer-lbl">Duração por Turno</div>
           <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
         </div>
       </div>
 
       <div class="deck-view">
-        <div class="deck-section proa">
-          <div class="deck-section-title">⛵ PROA (FRENTE)</div>
-          <div id="posProa" class="fisherman-tags-container">--</div>
-        </div>
-        <div class="deck-section meio">
-          <div class="deck-section-title">↔️ MEIO DO BARCO</div>
-          <div id="posMeio" class="fisherman-tags-container">--</div>
-        </div>
         <div class="deck-section popa">
-          <div class="deck-section-title">⭐ POPA (FUNDO - 4 VAGAS)</div>
+          <div class="deck-section-title">⭐ POPA (FUNDOS - 4 VAGAS FIXAS)</div>
           <div id="posPopa" class="fisherman-tags-container">--</div>
         </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="deck-section lateral-dir">
+            <div class="deck-section-title">➡️ LADO DIREITO (3 VAGAS)</div>
+            <div id="posDir" class="fisherman-tags-container">--</div>
+          </div>
+          <div class="deck-section lateral-esq">
+            <div class="deck-section-title">⬅️ LADO ESQUERDO (3 VAGAS)</div>
+            <div id="posEsq" class="fisherman-tags-container">--</div>
+          </div>
+        </div>
+        <div class="deck-section banco-extra">
+          <div class="deck-section-title">💺 BANCO LATERAL EXTRA (3 VAGAS)</div>
+          <div id="posExtra" class="fisherman-tags-container">--</div>
+        </div>
+      </div>
+
+      <h3>📋 Tabela Completa de Turnos & Horários de Troca</h3>
+      <div class="rotacao-table-wrap">
+        <table class="rotacao-table">
+          <thead>
+            <tr>
+              <th>Turno</th>
+              <th>Início</th>
+              <th>Fim</th>
+              <th>Popa (4)</th>
+              <th>Lado Direito (3)</th>
+              <th>Lado Esquerdo (3)</th>
+              <th>Banco Extra (3)</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaCronogramaBody">
+            <tr><td colspan="7" class="empty">Clique em "Iniciar Rotação" para gerar o cronograma.</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -645,52 +679,110 @@ function render() {
   renderBoat();
 }
 
-/* ================= LÓGICA DA ABA 2: EXPEDIÇÃO 18H & TIMER ================= */
+/* ================= LÓGICA DA ABA 2: EXPEDIÇÃO 24H (13 PESCADORES) ================= */
 let timerInterval = null;
 let tempoRestanteSegundos = 0;
-let pescadores18h = [];
+let pescadores24h = [];
 let turnoIndex = 0;
-const VAGAS_POPA = 4;
+let cronogramaGlobal = [];
 
-function iniciarRotacao18h() {
+function iniciarRotacao24h() {
   const rawInput = document.getElementById('listaPescadores').value;
-  pescadores18h = rawInput.split(',').map(n => n.trim()).filter(n => n.length > 0);
-  if (pescadores18h.length < VAGAS_POPA) {
-    alert(`É necessário pelo menos ${VAGAS_POPA} pescadores para rotação de popa.`);
+  pescadores24h = rawInput.split(',').map(n => n.trim()).filter(n => n.length > 0);
+  
+  if (pescadores24h.length !== 13) {
+    alert(`A lista deve conter exatamente 13 pescadores. Atualmente possui ${pescadores24h.length}.`);
     return;
   }
-  const totalSegundos = 18 * 3600;
-  const duracaoTurnoSegundos = Math.floor(totalSegundos / pescadores18h.length);
+
+  const dataSaidaStr = document.getElementById('dataPesca').value || '2026-10-17';
+  const horaSaidaStr = document.getElementById('horaSaidaPorto').value || '10:00';
+  const [ano, mes, dia] = dataSaidaStr.split('-').map(Number);
+  const [hora, min] = horaSaidaStr.split(':').map(Number);
+
+  const dataSaidaPorto = new Date(ano, mes - 1, dia, hora, min);
+  const inicioPesca = new Date(dataSaidaPorto.getTime() + 3 * 3600 * 1000); // +3h viagem ida
+  const chegadaPorto = new Date(dataSaidaPorto.getTime() + 24 * 3600 * 1000); // 24h total
+  const fimPesca = new Date(chegadaPorto.getTime() - 3 * 3600 * 1000); // -3h viagem volta
+
+  const tempoTotalPescaMs = fimPesca - inicioPesca;
+  const duracaoTurnoMs = tempoTotalPescaMs / pescadores24h.length;
+  const duracaoTurnoSegundos = Math.floor(duracaoTurnoMs / 1000);
+
   document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoTurnoSegundos / 60)} min`;
+
+  // Gerar Cronograma
+  cronogramaGlobal = [];
+  let horaAtual = new Date(inicioPesca);
+
+  for (let i = 0; i < pescadores24h.length; i++) {
+    let horaFim = new Date(horaAtual.getTime() + duracaoTurnoMs);
+    let pescadoresTurno = [...pescadores24h.slice(i), ...pescadores24h.slice(0, i)];
+
+    cronogramaGlobal.push({
+      turno: i + 1,
+      inicio: new Date(horaAtual),
+      fim: new Date(horaFim),
+      popa: pescadoresTurno.slice(0, 4),
+      ladoDir: pescadoresTurno.slice(4, 7),
+      ladoEsq: pescadoresTurno.slice(7, 10),
+      bancoExtra: pescadoresTurno.slice(10, 13)
+    });
+
+    horaAtual = horaFim;
+  }
+
+  renderTabelaCronograma();
   turnoIndex = 0;
-  atualizarPosicoesEConves(duracaoTurnoSegundos);
+  ativarTurnoAtual(duracaoTurnoSegundos);
+  toast('Rotação de 24h iniciada com sucesso!');
 }
 
-function atualizarPosicoesEConves(duracaoSegundos) {
+function renderTabelaCronograma() {
+  const tbody = document.getElementById('tabelaCronogramaBody');
+  tbody.innerHTML = cronogramaGlobal.map(c => `
+    <tr id="row-turno-${c.turno}">
+      <td><strong>Turno ${c.turno}</strong></td>
+      <td>${formatarHoraData(c.inicio)}</td>
+      <td>${formatarHoraData(c.fim)}</td>
+      <td>${c.popa.join(', ')}</td>
+      <td>${c.ladoDir.join(', ')}</td>
+      <td>${c.ladoEsq.join(', ')}</td>
+      <td>${c.bancoExtra.join(', ')}</td>
+    </tr>
+  `).join('');
+}
+
+function ativarTurnoAtual(duracaoSegundos) {
   if (timerInterval) clearInterval(timerInterval);
   tempoRestanteSegundos = duracaoSegundos;
-  
-  document.getElementById('turnoAtual').textContent = `Turno ${turnoIndex + 1} de ${pescadores18h.length}`;
-  const listaRotacionada = [...pescadores18h.slice(turnoIndex), ...pescadores18h.slice(0, turnoIndex)];
-  
-  const popaPescadores = listaRotacionada.slice(0, VAGAS_POPA);
-  const restante = listaRotacionada.slice(VAGAS_POPA);
-  const metade = Math.ceil(restante.length / 2);
-  const proaPescadores = restante.slice(0, metade);
-  const meioPescadores = restante.slice(metade);
 
-  document.getElementById('posPopa').innerHTML = popaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
-  document.getElementById('posMeio').innerHTML = meioPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
-  document.getElementById('posProa').innerHTML = proaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
+  const item = cronogramaGlobal[turnoIndex];
+  document.getElementById('turnoAtual').textContent = `Turno ${item.turno} de ${pescadores24h.length}`;
+  
+  // Atualizar visual do barco
+  document.getElementById('posPopa').innerHTML = item.popa.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
+  document.getElementById('posDir').innerHTML = item.ladoDir.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
+  document.getElementById('posEsq').innerHTML = item.ladoEsq.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
+  document.getElementById('posExtra').innerHTML = item.bancoExtra.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
+
+  // Destacar linha na tabela
+  document.querySelectorAll('.rotacao-table tr').forEach(tr => tr.style.background = '');
+  const activeRow = document.getElementById(`row-turno-${item.turno}`);
+  if(activeRow) activeRow.style.background = 'rgba(56, 189, 248, 0.15)';
 
   timerInterval = setInterval(() => {
     tempoRestanteSegundos--;
     renderTimer(tempoRestanteSegundos);
     if (tempoRestanteSegundos <= 0) {
       clearInterval(timerInterval);
-      turnoIndex = (turnoIndex + 1) % pescadores18h.length;
+      turnoIndex++;
+      if(turnoIndex >= pescadores24h.length) {
+        alert('🏁 Fim da expedição de pesca!');
+        return;
+      }
       alert('🔔 HORA DE TROCAR DE POSIÇÃO NO BARCO!');
-      atualizarPosicoesEConves(duracaoSegundos);
+      ativarTurnoAtual(duracaoSegundos);
     }
   }, 1000);
 }
@@ -702,12 +794,20 @@ function renderTimer(segundos) {
   document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
 }
 
+function formatarHoraData(data) {
+  const d = String(data.getDate()).padStart(2, '0');
+  const m = String(data.getMonth() + 1).padStart(2, '0');
+  const h = String(data.getHours()).padStart(2, '0');
+  const min = String(data.getMinutes()).padStart(2, '0');
+  return `${d}/${m} ${h}:${min}`;
+}
+
 function salvarDadosEmbarque(e) {
   e.preventDefault();
   const dados = {
     data: document.getElementById('dataPesca').value,
+    horaSaida: document.getElementById('horaSaidaPorto').value,
     localSaida: document.getElementById('localSaida').value,
-    estacionamento: document.getElementById('estacionamento').value,
     pontoPesca: document.getElementById('pontoPesca').value,
   };
   localStorage.setItem('pescaria_dados_v3', JSON.stringify(dados));
@@ -750,9 +850,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const salvas = localStorage.getItem('pescaria_dados_v3');
   if (salvas) {
     const d = JSON.parse(salvas);
-    document.getElementById('dataPesca').value = d.data || '';
+    document.getElementById('dataPesca').value = d.data || '2026-10-17';
+    document.getElementById('horaSaidaPorto').value = d.horaSaida || '10:00';
     document.getElementById('localSaida').value = d.localSaida || '';
-    document.getElementById('estacionamento').value = d.estacionamento || '';
     document.getElementById('pontoPesca').value = d.pontoPesca || '';
   }
 
