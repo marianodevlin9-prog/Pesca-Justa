@@ -1,368 +1,420 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pesca Justa 🎣</title>
-<style>
-:root{
-  --primary:#0b5d7a;--primary2:#073e52;--bg:#f3f7f8;--card:#fff;--text:#17313b;
-  --muted:#6b7c83;--border:#d9e3e7;--danger:#b42318;--warning:#b54708;--success:#087443;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-header{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;padding:34px 18px;text-align:center}
-header h1{margin:0;font-size:34px} header p{margin:10px 0 0;opacity:.92}
-.container{max-width:1250px;margin:auto;padding:22px}
-.grid-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.summary .label{font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:bold}
-.summary .value{font-size:26px;font-weight:bold;margin-top:7px}
-h2{margin:0 0 14px;font-size:21px} h3{margin:18px 0 10px}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.form-row{display:flex;flex-wrap:wrap;gap:9px;align-items:end}
-.field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:150px}
-label{font-size:13px;font-weight:bold}
-input,select{height:40px;border:1px solid var(--border);border-radius:8px;padding:0 11px;background:#fff;font-size:14px;color:var(--text)}
-button{height:40px;border:0;border-radius:8px;padding:0 14px;cursor:pointer;background:var(--primary);color:#fff;font-weight:bold;font-size:14px}
-button:hover{filter:brightness(.95)} button.secondary{background:#e9f1f4;color:var(--text)} button.danger{background:#fff0f0;color:var(--danger)} button.small{height:32px;padding:0 9px;font-size:12px}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
-th{font-size:12px;text-transform:uppercase;color:var(--muted)}
-.actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
-.avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;background:#dbe9ee;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;border:1px solid var(--border)}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.badge{display:inline-block;padding:5px 8px;border-radius:999px;background:#eef3f5;font-size:12px;font-weight:bold}
-.status-paid{background:#e6f6ec;color:var(--success)}.status-partial{background:#fff4e5;color:var(--warning)}.status-pending{background:#fdecec;color:var(--danger)}
-.progress{height:13px;background:#e7eef0;border-radius:999px;overflow:hidden;margin-top:12px}.progress>div{height:100%;background:var(--primary);width:0%;transition:.3s}
-.boat-wrap{overflow-x:auto;padding-bottom:8px}
-.boat{position:relative;width:900px;height:760px;margin:auto;border:5px solid var(--primary);border-radius:150px 150px 70px 70px;background:linear-gradient(#e9f4f7,#d7e9ee);overflow:hidden}
-.boat-title{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-weight:bold;text-align:center;font-size:18px}
-.boat-sub{font-size:12px;margin-top:4px;color:var(--muted)}
-.side{position:absolute;top:105px;width:170px;height:400px;display:flex;flex-direction:column;justify-content:space-between}
-.side.left{left:30px}.side.right{right:30px}
-.center-line{position:absolute;left:50%;top:105px;transform:translateX(-50%);height:420px;border-left:3px dashed #9ab7c1}
-.slot{min-height:78px;background:#fff;border:2px solid #b7cbd2;border-radius:12px;padding:6px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:.15s}
-.slot:hover{transform:scale(1.02);border-color:var(--primary)}.slot.selected{outline:3px solid #f2b134;border-color:#d98d00}
-.slot-label{font-size:10px;color:var(--muted);font-weight:bold}.slot-name{font-size:12px;font-weight:bold;max-width:145px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.slot .avatar{width:30px;height:30px;font-size:10px}
-.back{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);width:86%;display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.bench{background:#f9fcfd;border:2px solid #b7cbd2;border-radius:14px;padding:10px}.bench-title{text-align:center;font-size:12px;font-weight:bold;margin-bottom:8px}
-.bench-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.bench .slot{min-height:90px}
-.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.result{background:#f5f8f9;border:1px solid var(--border);padding:10px;border-radius:9px;display:flex;justify-content:space-between;gap:8px;font-size:13px}
-.toast{position:fixed;right:18px;bottom:18px;background:#17313b;color:#fff;padding:13px 17px;border-radius:9px;box-shadow:0 4px 20px rgba(0,0,0,.18);display:none;z-index:1000}
-.toast.show{display:block}
-.muted{color:var(--muted);font-size:14px}.empty{padding:16px;color:var(--muted);text-align:center}
-footer{text-align:center;background:var(--primary2);color:#fff;padding:22px;margin-top:25px}
-@media(max-width:850px){.grid-summary{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.container{padding:12px}.result-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.grid-summary{grid-template-columns:1fr 1fr}.summary .value{font-size:19px}.form-row{flex-direction:column;align-items:stretch}.field{width:100%}.result-grid{grid-template-columns:1fr}}
-</style>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b5d7a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Pesca Justa">
-<link rel="apple-touch-icon" href="icon-192.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expedição de Pescaria - Painel Completo</title>
+  <style>
+    /* RESET & ESTILOS BASE */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 1. CAPA HERO COM O MAR E BARCO */
+    .hero-capa {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.95) 100%), 
+                  url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      border-bottom: 2px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .hero-capa h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .hero-capa p {
+      font-size: 1.2rem;
+      color: #7dd3fc;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+      max-width: 600px;
+    }
+
+    /* 2. ESTRUTURA E CARDS */
+    .container {
+      max-width: 950px;
+      margin: -50px auto 50px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+      display: grid;
+      gap: 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      color: #38bdf8;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* FORMULÁRIO DE DETALHES */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .form-group input, .form-group textarea {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #f8fafc;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: #38bdf8;
+    }
+
+    .btn-salvar {
+      margin-top: 16px;
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-salvar:hover {
+      background: #0369a1;
+    }
+
+    /* UPLOAD E GALERIA */
+    .upload-box {
+      border: 2px dashed #0284c7;
+      border-radius: 14px;
+      padding: 30px 20px;
+      text-align: center;
+      background: rgba(14, 165, 233, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .upload-box:hover {
+      background: rgba(14, 165, 233, 0.12);
+      border-color: #38bdf8;
+    }
+
+    .upload-box input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .galeria-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    .btn-limpar {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #f87171;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-limpar:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+    }
+
+    .img-container {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      height: 110px;
+    }
+
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .btn-remover-img {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ef4444;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 3. RODAPÉ - DEVLIN MARIANO */
+    footer {
+      background: #0b1e36;
+      padding: 28px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: auto;
+    }
+
+    .dev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(0, 210, 255, 0.35);
+      padding: 12px 26px;
+      border-radius: 50px;
+      backdrop-filter: blur(8px);
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .dev-badge:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 210, 255, 0.25);
+    }
+
+    .dev-badge strong {
+      color: #00e5ff;
+      font-weight: 700;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Pesca Justa 🎣</h1>
-  <p>Organização da pescaria, sorteio de posições, rodízio e controle financeiro.</p>
-  <div style="margin-top:12px"><span class="badge" id="roundBadge">Rodada 1</span></div>
-</header>
 
-<main class="container">
-  <section class="grid-summary">
-    <div class="card summary"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
-    <div class="card summary"><div class="label">Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
-    <div class="card summary"><div class="label">Arrecadado</div><div class="value" id="sumCollected">R$ 0,00</div></div>
-    <div class="card summary"><div class="label">Rateio por pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
-  </section>
+  <!-- Capa com fundo do Mar -->
+  <header class="hero-capa">
+    <h1>Expedição de Pescaria</h1>
+    <p>Painel de planejamento, detalhes da viagem e galeria do barco</p>
+  </header>
 
-  <section class="card">
-    <h2>📈 Progresso financeiro</h2>
-    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div><strong id="progressPercent">0%</strong> arrecadado</div>
-      <div>Falta: <strong id="sumPending">R$ 0,00</strong></div>
-    </div>
-    <div class="progress"><div id="progressBar"></div></div>
-    <div style="margin-top:14px"><button class="danger" onclick="clearAll()">🗑️ Zerar pescaria</button></div>
-  </section>
-
-  <section class="two-col">
-    <div class="card">
-      <h2>👥 Participantes</h2>
-      <div class="form-row">
-        <div class="field"><label>Nome do pescador</label><input id="participantName" placeholder="Digite o nome"></div>
-        <button onclick="addParticipant()">Adicionar</button>
-        <button class="secondary" onclick="loadDefaultNames()">Carregar lista</button>
-      </div>
-      <div class="table-wrap" style="margin-top:15px">
-        <table><thead><tr><th>Foto</th><th>Nome</th><th>Posições usadas</th><th></th></tr></thead>
-        <tbody id="participantsTable"></tbody></table>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>🧾 Despesas</h2>
-      <div class="form-row">
-        <div class="field"><label>Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
-        <div class="field"><label>Valor</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
-        <div class="field"><label>Categoria</label>
-          <select id="expenseCategory">
-            <option>Barco</option><option>Iscas</option><option>Alimentação</option><option>Bebidas</option><option>Gelo</option><option>Combustível</option><option>Outros</option>
-          </select>
+  <main class="container">
+    <!-- Formulário de Informações da Pescaria -->
+    <section class="card">
+      <h2>📋 Detalhes da Expedição</h2>
+      <form id="pescariaForm" onsubmit="salvarDadosPescaria(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="dataPesca">📅 Data da Pescaria</label>
+            <input type="date" id="dataPesca">
+          </div>
+          <div class="form-group">
+            <label for="localPesca">📍 Local / Ponto de Pesca</label>
+            <input type="text" id="localPesca" placeholder="Ex: Baía de Ilhabela / Alto Mar">
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="peixesAlvo">🐟 Espécies de Peixe Alvo</label>
+            <input type="text" id="peixesAlvo" placeholder="Ex: Robalo, Garoupa, Sororoca">
+          </div>
         </div>
-        <button onclick="addExpense()">Adicionar</button>
+        <button type="submit" class="btn-salvar">💾 Salvar Informações</button>
+      </form>
+    </section>
+
+    <!-- Seção de Fotos do Barco -->
+    <section class="card">
+      <h2>⛵ Fotos da Embarcação</h2>
+      <p style="color: #94a3b8; margin-bottom: 16px; font-size: 0.95rem;">
+        Envie as fotos do barco. Elas ficarão salvas automaticamente neste navegador.
+      </p>
+      
+      <div class="upload-box">
+        <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
+        <span style="font-size: 2rem; display: block; margin-bottom: 8px;">📸</span>
+        <div style="font-weight: 600; color: #e2e8f0;">Clique ou arraste as fotos do barco aqui</div>
       </div>
-      <div class="table-wrap" style="margin-top:15px">
-        <table><thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th></th></tr></thead>
-        <tbody id="expensesTable"></tbody></table>
+
+      <div class="galeria-header">
+        <span style="font-weight: 600; color: #7dd3fc;" id="totalFotos">Fotos carregadas (0)</span>
+        <button class="btn-limpar" onclick="limparTodasFotos()">🗑️ Limpar todas</button>
       </div>
+
+      <div class="preview-grid" id="previewGrid"></div>
+    </section>
+  </main>
+
+  <!-- Rodapé com Créditos do Desenvolvedor -->
+  <footer>
+    <div class="dev-badge">
+      <span>⚡ Desenvolvido por</span>
+      <strong>Devlin Mariano</strong>
     </div>
-  </section>
+  </footer>
 
-  <section class="card">
-    <h2>🚤 Sorteio e Mapa Visual do Barco</h2>
-    <div class="form-row">
-      <button onclick="drawPositions()">🎲 Sortear posições</button>
-      <button class="secondary" onclick="clearPositions()">Limpar posições</button>
-      <button class="secondary" onclick="newRound()">🔄 Nova rodada</button>
-    </div>
-    <p class="muted">O sorteio prioriza posições que cada pescador ainda não utilizou. Para trocar dois pescadores, clique em uma posição ocupada e depois na outra.</p>
+  <script>
+    // CHAVES DO LOCALSTORAGE
+    const KEY_DADOS = 'pescaria_dados';
+    const KEY_FOTOS = 'pescaria_fotos';
 
-    <div class="boat-wrap">
-      <div class="boat">
-        <div class="boat-title">🚤 PROA<div class="boat-sub">CORREDOR CENTRAL</div></div>
-        <div class="side left" id="leftSlots"></div>
-        <div class="center-line"></div>
-        <div class="side right" id="rightSlots"></div>
-        <div class="back">
-          <div class="bench"><div class="bench-title">BANCO DO FUNDO — ESQUERDA</div><div class="bench-slots" id="backLeftSlots"></div></div>
-          <div class="bench"><div class="bench-title">BANCO DO FUNDO — DIREITA</div><div class="bench-slots" id="backRightSlots"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <h3>📋 Resultado da rodada</h3>
-    <div id="drawResults" class="result-grid"></div>
-  </section>
-
-  <section class="card">
-    <h2>💳 Registrar pagamento</h2>
-    <div class="form-row">
-      <div class="field"><label>Pescador</label><select id="paymentParticipant"></select></div>
-      <div class="field"><label>Despesa</label><select id="paymentExpense"></select></div>
-      <div class="field"><label>Valor pago</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
-      <button onclick="addPayment()">Registrar pagamento</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>📊 Situação financeira por pescador</h2>
-    <div class="table-wrap"><table><thead><tr><th>Pescador</th><th>Deve pagar</th><th>Já pagou</th><th>Falta</th><th>Status</th></tr></thead><tbody id="financialTable"></tbody></table></div>
-  </section>
-
-  <section class="card">
-    <h2>📋 Controle por despesa</h2>
-    <div class="table-wrap"><table><thead><tr><th>Despesa</th><th>Categoria</th><th>Valor</th><th>Rateio/pessoa</th><th>Pago</th><th>Saldo</th><th>Status</th></tr></thead><tbody id="expenseControlTable"></tbody></table></div>
-  </section>
-
-  <section class="card">
-    <h2>🧾 Histórico de pagamentos</h2>
-    <div class="table-wrap"><table><thead><tr><th>Pescador</th><th>Despesa</th><th>Data</th><th>Valor</th><th></th></tr></thead><tbody id="paymentsTable"></tbody></table></div>
-  </section>
-
-  <section class="card">
-    <h2>🔄 Histórico de rodízio</h2>
-    <div class="table-wrap"><table><thead><tr><th>Rodada</th><th>Pescador</th><th>Posição</th><th>Data</th></tr></thead><tbody id="historyTable"></tbody></table></div>
-  </section>
-</main>
-<footer>© 2026 Pesca Justa 🎣</footer>
-<div class="toast" id="toast"></div>
-
-<script>
-const STORAGE_KEY='pesca-justa-html-v1';
-const POSITIONS=[
- {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},{id:'esq-4',name:'Esquerda 4',group:'left'},
- {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},{id:'dir-4',name:'Direita 4',group:'right'},
- {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},{id:'fundo-esq-3',name:'Fundo E3',group:'backLeft'},
- {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'},{id:'fundo-dir-3',name:'Fundo D3',group:'backRight'}
-];
-const DEFAULT_NAMES=['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
-let selectedPosition=null;
-let state={participants:[],expenses:[],payments:[],draw:[],history:[],round:1};
-
-function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
-function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
-function initials(name){return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('')}
-function numberBR(v){return Number(String(v).replace(/\./g,'').replace(',','.'))||0}
-function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2800)}
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
-function load(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY));if(x)state={...state,...x}}catch(e){}}
-function participant(id){return state.participants.find(x=>x.id===id)}
-function expense(id){return state.expenses.find(x=>x.id===id)}
-function pos(id){return POSITIONS.find(x=>x.id===id)}
-function assignment(positionId){return state.draw.find(x=>x.positionId===positionId)}
-
-function avatar(p){
- if(!p)return '';
- return `<div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:esc(initials(p.name))}</div>`;
-}
-function totals(){
- const expenses=state.expenses.reduce((s,x)=>s+x.value,0);
- const collected=state.payments.reduce((s,x)=>s+x.value,0);
- const share=state.participants.length?expenses/state.participants.length:0;
- return {expenses,collected,share,pending:Math.max(0,expenses-collected)};
-}
-
-function addParticipant(){
- const input=document.getElementById('participantName'),name=input.value.trim();
- if(!name)return toast('Informe o nome do pescador.');
- if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase()))return toast('Esse pescador já está cadastrado.');
- state.participants.push({id:id(),name});input.value='';save();render();toast('Pescador adicionado.');
-}
-function loadDefaultNames(){
- let n=0;const existing=new Set(state.participants.map(p=>p.name.toLowerCase()));
- DEFAULT_NAMES.forEach(name=>{if(!existing.has(name.toLowerCase())){state.participants.push({id:id(),name});n++}});
- save();render();toast(n?`${n} pescador(es) adicionado(s).`:'Todos já estão cadastrados.');
-}
-function editParticipant(pid){
- const p=participant(pid);const name=prompt('Novo nome:',p.name);if(name===null)return;
- const n=name.trim();if(!n)return toast('Nome inválido.');
- if(state.participants.some(x=>x.id!==pid&&x.name.toLowerCase()===n.toLowerCase()))return toast('Já existe esse nome.');
- p.name=n;save();render();toast('Nome atualizado.');
-}
-function deleteParticipant(pid){
- const p=participant(pid);if(!confirm(`Excluir ${p.name}?`))return;
- state.participants=state.participants.filter(x=>x.id!==pid);
- state.payments=state.payments.filter(x=>x.participantId!==pid);
- state.draw=state.draw.filter(x=>x.participantId!==pid);
- state.history=state.history.filter(x=>x.participantId!==pid);
- save();render();toast('Participante excluído.');
-}
-function changePhoto(pid,input){
- const file=input.files[0];if(!file)return;
- const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');let max=180,scale=Math.min(1,max/Math.max(img.width,img.height));c.width=img.width*scale;c.height=img.height*scale;c.getContext('2d').drawImage(img,0,0,c.width,c.height);participant(pid).photo=c.toDataURL('image/jpeg',.78);save();render();toast('Foto atualizada.')};img.src=e.target.result};r.readAsDataURL(file);
-}
-function addExpense(){
- const desc=document.getElementById('expenseDesc').value.trim();
- const value=numberBR(document.getElementById('expenseValue').value);
- const category=document.getElementById('expenseCategory').value;
- if(!desc)return toast('Informe a descrição.');
- if(value<=0)return toast('Informe um valor válido.');
- state.expenses.push({id:id(),desc,value,category});
- document.getElementById('expenseDesc').value='';document.getElementById('expenseValue').value='';
- save();render();toast('Despesa adicionada.');
-}
-function editExpense(eid){
- const e=expense(eid);const desc=prompt('Descrição:',e.desc);if(desc===null)return;
- const value=prompt('Valor:',String(e.value));if(value===null)return;
- const v=numberBR(value);if(!desc.trim()||v<=0)return toast('Dados inválidos.');
- e.desc=desc.trim();e.value=v;save();render();toast('Despesa atualizada.');
-}
-function deleteExpense(eid){
- if(!confirm('Excluir esta despesa e seus pagamentos vinculados?'))return;
- state.expenses=state.expenses.filter(x=>x.id!==eid);state.payments=state.payments.filter(x=>x.expenseId!==eid);save();render();toast('Despesa excluída.');
-}
-function drawPositions(){
- if(!state.participants.length)return toast('Cadastre os pescadores primeiro.');
- const people=shuffle(state.participants).slice(0,POSITIONS.length);
- const available=new Set(POSITIONS.map(x=>x.id));const result=[];
- people.forEach(p=>{
-   const used=new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId));
-   let choices=[...available].filter(x=>!used.has(x));if(!choices.length)choices=[...available];
-   const chosen=choices[Math.floor(Math.random()*choices.length)];
-   available.delete(chosen);result.push({positionId:chosen,participantId:p.id});
- });
- state.draw=result;
- result.forEach(x=>state.history.push({id:id(),round:state.round,date:new Date().toISOString(),positionId:x.positionId,participantId:x.participantId}));
- selectedPosition=null;save();render();toast(`Posições sorteadas para a rodada ${state.round}.`);
-}
-function clearPositions(){state.draw=[];selectedPosition=null;save();render();toast('Posições atuais removidas.')}
-function newRound(){state.round++;state.draw=[];selectedPosition=null;save();render();toast(`Nova rodada ${state.round} iniciada.`)}
-function clickPosition(positionId){
- const a=assignment(positionId);if(!a)return toast('Esta posição está vazia.');
- if(!selectedPosition){selectedPosition=positionId;renderBoat();toast('Agora clique na segunda posição para trocar.');return}
- if(selectedPosition===positionId){selectedPosition=null;renderBoat();return}
- const b=assignment(selectedPosition);if(!b){selectedPosition=null;renderBoat();return}
- [a.participantId,b.participantId]=[b.participantId,a.participantId];selectedPosition=null;save();render();toast('Posições trocadas.');
-}
-function addPayment(){
- const participantId=document.getElementById('paymentParticipant').value,expenseId=document.getElementById('paymentExpense').value,value=numberBR(document.getElementById('paymentValue').value);
- if(!participantId)return toast('Selecione um pescador.');if(!expenseId)return toast('Selecione uma despesa.');if(value<=0)return toast('Informe um valor válido.');
- state.payments.push({id:id(),participantId,expenseId,value,date:new Date().toISOString()});document.getElementById('paymentValue').value='';save();render();toast('Pagamento registrado.');
-}
-function deletePayment(pid){state.payments=state.payments.filter(x=>x.id!==pid);save();render();toast('Pagamento removido.')}
-function clearAll(){if(!confirm('Deseja apagar todos os dados do Pesca Justa?'))return;state={participants:[],expenses:[],payments:[],draw:[],history:[],round:1};selectedPosition=null;save();render();toast('Todos os dados foram apagados.');}
-
-function renderBoat(){
- const targets={left:'leftSlots',right:'rightSlots',backLeft:'backLeftSlots',backRight:'backRightSlots'};
- Object.entries(targets).forEach(([group,target])=>{
-   document.getElementById(target).innerHTML=POSITIONS.filter(p=>p.group===group).map(p=>{
-     const a=assignment(p.id),person=a?participant(a.participantId):null;
-     return `<button class="slot ${selectedPosition===p.id?'selected':''}" onclick="clickPosition('${p.id}')"><span class="slot-label">${esc(p.name)}</span>${person?avatar(person)+`<span class="slot-name">${esc(person.name)}</span>`:`<span class="muted">Vago</span>`}</button>`;
-   }).join('');
- });
- document.getElementById('drawResults').innerHTML=state.draw.length?state.draw.map(a=>{
-   const p=participant(a.participantId),po=pos(a.positionId);
-   return `<div class="result"><strong>${esc(po.name)}</strong><span>${esc(p?.name||'—')}</span></div>`;
- }).join(''):'<div class="empty">Nenhuma posição sorteada nesta rodada.</div>';
-}
-function render(){
- const t=totals();
- document.getElementById('sumParticipants').textContent=state.participants.length;
- document.getElementById('sumExpenses').textContent=money(t.expenses);
- document.getElementById('sumCollected').textContent=money(t.collected);
- document.getElementById('sumShare').textContent=money(t.share);
- document.getElementById('sumPending').textContent=money(t.pending);
- const pct=t.expenses?Math.min(100,t.collected/t.expenses*100):0;
- document.getElementById('progressPercent').textContent=pct.toFixed(1)+'%';
- document.getElementById('progressBar').style.width=pct+'%';
- document.getElementById('roundBadge').textContent='Rodada '+state.round;
-
- document.getElementById('participantsTable').innerHTML=state.participants.length?state.participants.map(p=>{
-   const used=new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId)).size;
-   return `<tr><td><label style="cursor:pointer">${avatar(p)}<input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}',this)"></label></td><td>${esc(p.name)}</td><td><span class="badge">${used}/14 posições</span></td><td><div class="actions"><button class="small secondary" onclick="editParticipant('${p.id}')">Editar</button><button class="small danger" onclick="deleteParticipant('${p.id}')">Excluir</button></div></td></tr>`;
- }).join(''):'<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
-
- document.getElementById('expensesTable').innerHTML=state.expenses.length?state.expenses.map(e=>`<tr><td>${esc(e.desc)}</td><td><span class="badge">${esc(e.category)}</span></td><td>${money(e.value)}</td><td><div class="actions"><button class="small secondary" onclick="editExpense('${e.id}')">Editar</button><button class="small danger" onclick="deleteExpense('${e.id}')">Excluir</button></div></td></tr>`).join(''):'<tr><td colspan="4" class="empty">Nenhuma despesa cadastrada.</td></tr>';
-
- document.getElementById('paymentParticipant').innerHTML=state.participants.length?state.participants.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join(''):'<option value="">Nenhum pescador</option>';
- document.getElementById('paymentExpense').innerHTML=state.expenses.length?state.expenses.map(e=>`<option value="${e.id}">${esc(e.desc)}</option>`).join(''):'<option value="">Nenhuma despesa</option>';
-
- document.getElementById('financialTable').innerHTML=state.participants.length?state.participants.map(p=>{
-   const paid=state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0),missing=Math.max(0,t.share-paid);
-   const status=missing<0.005?'Pago':paid>0?'Parcial':'Pendente',cls=status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-   return `<tr><td>${esc(p.name)}</td><td>${money(t.share)}</td><td>${money(paid)}</td><td>${money(missing)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
- }).join(''):'<tr><td colspan="5" class="empty">Cadastre participantes.</td></tr>';
-
- document.getElementById('expenseControlTable').innerHTML=state.expenses.length?state.expenses.map(e=>{
-   const paid=state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0),saldo=Math.max(0,e.value-paid),share=state.participants.length?e.value/state.participants.length:0;
-   const status=saldo<0.005?'Pago':paid>0?'Parcial':'Pendente',cls=status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-   return `<tr><td>${esc(e.desc)}</td><td>${esc(e.category)}</td><td>${money(e.value)}</td><td>${money(share)}</td><td>${money(paid)}</td><td>${money(saldo)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
- }).join(''):'<tr><td colspan="7" class="empty">Cadastre despesas.</td></tr>';
-
- document.getElementById('paymentsTable').innerHTML=state.payments.length?[...state.payments].reverse().map(x=>`<tr><td>${esc(participant(x.participantId)?.name||'—')}</td><td>${esc(expense(x.expenseId)?.desc||'—')}</td><td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${money(x.value)}</td><td><button class="small danger" onclick="deletePayment('${x.id}')">Remover</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
-
- document.getElementById('historyTable').innerHTML=state.history.length?[...state.history].reverse().slice(0,100).map(h=>`<tr><td>Rodada ${h.round}</td><td>${esc(participant(h.participantId)?.name||'—')}</td><td>${esc(pos(h.positionId)?.name||'—')}</td><td>${new Date(h.date).toLocaleString('pt-BR')}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">Ainda não existe histórico.</td></tr>';
- renderBoat();
-}
-load();render();
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js").catch(function (err) {
-      console.log("Service Worker não registrado:", err);
+    // AO CARREGAR A PÁGINA
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarDadosPescaria();
+      carregarFotosSalvas();
     });
-  });
-}
-</script>
+
+    // 1. SALVAR E CARREGAR FORMULÁRIO
+    function salvarDadosPescaria(e) {
+      e.preventDefault();
+      const dados = {
+        data: document.getElementById('dataPesca').value,
+        local: document.getElementById('localPesca').value,
+        peixes: document.getElementById('peixesAlvo').value
+      };
+      localStorage.setItem(KEY_DADOS, JSON.stringify(dados));
+      alert('Informações salvas com sucesso!');
+    }
+
+    function carregarDadosPescaria() {
+      const salvas = localStorage.getItem(KEY_DADOS);
+      if (salvas) {
+        const dados = JSON.parse(salvas);
+        document.getElementById('dataPesca').value = dados.data || '';
+        document.getElementById('localPesca').value = dados.local || '';
+        document.getElementById('peixesAlvo').value = dados.peixes || '';
+      }
+    }
+
+    // 2. PROCESSAR E PERSISTIR FOTOS NO LOCALSTORAGE
+    function processarFotos(event) {
+      const files = Array.from(event.target.files);
+      if (!files.length) return;
+
+      let fotosSalvas = JSON.parse(localStorage.getItem(KEY_FOTOS) || '[]');
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          fotosSalvas.push(e.target.result);
+          localStorage.setItem(KEY_FOTOS, JSON.stringify(fotosSalvas));
+          renderizarGaleria();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function carregarFotosSalvas() {
+      renderizarGaleria();
+    }
+
+    function renderizarGaleria() {
+      const grid = document.getElementById('previewGrid');
+      const counter = document.getElementById('totalFotos');
+      grid.innerHTML = '';
+
+      const fotosSalvas = JSON.parse(localStorage.getItem(KEY_FOTOS) || '[]');
+      counter.textContent = `Fotos carregadas (${fotosSalvas.length})`;
+
+      fotosSalvas.forEach((base64Img, index) => {
+        const container = document.createElement('div');
+        container.className = 'img-container';
+
+        const img = document.createElement('img');
+        img.src = base64Img;
+
+        const btnRemover = document.createElement('button');
+        btnRemover.className = 'btn-remover-img';
+        btnRemover.innerHTML = '&times;';
+        btnRemover.onclick = () => removerFoto(index);
+
+        container.appendChild(img);
+        container.appendChild(btnRemover);
+        grid.appendChild(container);
+      });
+    }
+
+    function removerFoto(index) {
+      let fotosSalvas = JSON.parse(localStorage.getItem(KEY_FOTOS) || '[]');
+      fotosSalvas.splice(index, 1);
+      localStorage.setItem(KEY_FOTOS, JSON.stringify(fotosSalvas));
+      renderizarGaleria();
+    }
+
+    function limparTodasFotos() {
+      if (confirm('Tem certeza que deseja apagar todas as fotos salvas do barco?')) {
+        localStorage.removeItem(KEY_FOTOS);
+        renderizarGaleria();
+      }
+    }
+  </script>
 </body>
 </html>
