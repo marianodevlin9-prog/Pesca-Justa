@@ -7,10 +7,10 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* FUNDO MARINHO ILUMINADO (SEM DEPENDER DE IMAGEM EXTERNA QUE BLOQUEIA) */
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
-      background: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.94)), 
-                  url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1920&q=80') center/cover fixed no-repeat;
+      background: radial-gradient(circle at top, #0f2b48 0%, #0a192f 60%, #020c1b 100%);
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
@@ -18,194 +18,176 @@
     }
 
     .hero-capa {
-      padding: 45px 20px 25px 20px;
+      padding: 40px 20px 20px 20px;
       text-align: center;
-      background: rgba(15, 23, 42, 0.5);
-      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 2px solid #38bdf8;
     }
 
     .hero-capa h1 {
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       font-weight: 800;
       color: #ffffff;
       text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
     }
 
-    .hero-capa p { font-size: 1.05rem; color: #7dd3fc; }
+    .hero-capa p { font-size: 1rem; color: #7dd3fc; margin-top: 5px; }
 
     .container {
-      max-width: 1000px;
-      margin: 25px auto;
-      padding: 0 20px;
+      max-width: 950px;
+      margin: 20px auto;
+      padding: 0 15px;
       width: 100%;
       flex: 1;
-      display: grid;
-      gap: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .card {
-      background: rgba(30, 41, 59, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
+      background: #1e293b;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 1;
     }
 
     .card h2 {
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       color: #38bdf8;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     /* FORMULÁRIO E INPUTS */
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
     }
 
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
     .form-group.full-width { grid-column: 1 / -1; }
-    .form-group label { font-size: 0.88rem; color: #cbd5e1; font-weight: 600; }
+    .form-group label { font-size: 0.85rem; color: #cbd5e1; font-weight: 600; }
 
     .form-group input {
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 10px 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px;
       color: #f8fafc;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       outline: none;
+      width: 100%;
     }
 
+    .form-group input:focus { border-color: #38bdf8; }
+
     .btn-action {
-      margin-top: 14px;
+      margin-top: 12px;
       background: #0284c7;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
+      padding: 10px 18px;
+      border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      display: inline-block;
     }
     .btn-action:hover { background: #0369a1; }
 
-    /* PAINEL DE ROTAÇÃO E TIMER */
+    /* PAINEL TIMER */
     .timer-panel {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      padding: 18px 24px;
-      border-radius: 12px;
-      margin-bottom: 20px;
+      background: #0f172a;
+      border: 1px solid #0284c7;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      gap: 10px;
     }
 
     .timer-box { text-align: center; }
-    .timer-val { font-size: 2.2rem; font-weight: 800; color: #38bdf8; font-family: monospace; }
-    .timer-lbl { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; }
+    .timer-val { font-size: 1.8rem; font-weight: 800; color: #38bdf8; font-family: monospace; }
+    .timer-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
 
-    /* PLANTA DO CONVÉS (VISTA SUPERIOR DA EMBARCAÇÃO) */
+    /* PLANTA DO CONVÉS (DESENHO DO BARCO) */
     .deck-view {
-      position: relative;
       width: 100%;
-      max-width: 480px;
-      height: 640px;
-      margin: 20px auto;
-      background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
-      border: 3px solid #38bdf8;
-      border-radius: 190px 190px 40px 40px;
-      box-shadow: 0 0 35px rgba(56, 189, 248, 0.25);
+      max-width: 420px;
+      min-height: 520px;
+      margin: 15px auto;
+      background: #091322;
+      border: 3px solid #0284c7;
+      border-radius: 160px 160px 25px 25px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 30px 20px;
+      padding: 25px 15px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
     }
 
     .deck-section {
       text-align: center;
-      padding: 12px;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border: 1px dashed #334155;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
     }
 
-    .deck-section-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
+    .deck-section-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
     .proa { color: #facc15; }
     .meio { color: #94a3b8; }
-    .popa { 
-      color: #4ade80; 
-      border-color: rgba(74, 222, 128, 0.5); 
-      background: rgba(74, 222, 128, 0.08); 
-      box-shadow: inset 0 0 15px rgba(74, 222, 128, 0.1);
-    }
+    .popa { color: #4ade80; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
 
     .fisherman-tags-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .fisherman-tag {
       background: #0284c7;
       color: white;
-      padding: 6px 12px;
-      border-radius: 14px;
-      font-size: 0.88rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.82rem;
       font-weight: 600;
     }
 
-    .popa .fisherman-tag { 
-      background: #16a34a; 
-      box-shadow: 0 0 10px rgba(22, 163, 74, 0.6); 
-      border: 1px solid #86efac;
-    }
+    .popa .fisherman-tag { background: #16a34a; border: 1px solid #4ade80; }
 
-    /* UPLOAD E FOTOS */
+    /* UPLOAD */
     .upload-box {
       border: 2px dashed #0284c7;
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 8px;
+      padding: 20px;
       text-align: center;
-      background: rgba(14, 165, 233, 0.05);
+      background: #0f172a;
       cursor: pointer;
       position: relative;
     }
     .upload-box input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-top: 14px; }
-    .img-container { position: relative; height: 90px; border-radius: 8px; overflow: hidden; }
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
+    .img-container { position: relative; height: 80px; border-radius: 6px; overflow: hidden; }
     .img-container img { width: 100%; height: 100%; object-fit: cover; }
 
     footer {
-      background: #0b1e36;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      background: #07111e;
+      padding: 15px;
+      text-align: center;
+      border-top: 1px solid #1e293b;
       margin-top: auto;
     }
-    .dev-badge {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      padding: 8px 20px;
-      border-radius: 50px;
-      color: #e2e8f0;
-      font-size: 0.9rem;
-    }
+    .dev-badge { color: #e2e8f0; font-size: 0.85rem; }
     .dev-badge strong { color: #38bdf8; }
   </style>
 </head>
@@ -213,12 +195,12 @@
 
   <header class="hero-capa">
     <h1>Expedição de Pescaria (18 Horas)</h1>
-    <p>Rodízio Automático com 4 Vagas na Popa & Cronômetro de Turnos</p>
+    <p>Rodízio Automático com 4 Vagas na Popa & Cronômetro</p>
   </header>
 
   <main class="container">
 
-    <!-- 1. INFORMAÇÕES DE SAÍDA -->
+    <!-- INFORMAÇÕES DE SAÍDA -->
     <section class="card">
       <h2>📋 Detalhes do Embarque</h2>
       <form id="pescariaForm" onsubmit="salvarDados(event)">
@@ -229,76 +211,74 @@
           </div>
           <div class="form-group">
             <label>⚓ Local de Saída / Marina</label>
-            <input type="text" id="localSaida" placeholder="Ex: Pier 3 - Marina da Glória">
+            <input type="text" id="localSaida" placeholder="Ex: Pier 3 - Marina">
           </div>
           <div class="form-group">
             <label>🅿️ Estacionamento</label>
-            <input type="text" id="estacionamento" placeholder="Ex: Reservado / R$ 30 o dia">
+            <input type="text" id="estacionamento" placeholder="Ex: R$ 30 no local">
           </div>
           <div class="form-group">
             <label>📍 Ponto de Pesca Destino</label>
-            <input type="text" id="pontoPesca" placeholder="Ex: Laje / Alto Mar">
+            <input type="text" id="pontoPesca" placeholder="Ex: Laje de Santos">
           </div>
         </div>
         <button type="submit" class="btn-action">💾 Salvar Informações</button>
       </form>
     </section>
 
-    <!-- 2. ROTAÇÃO COM 4 VAGAS NA POPA -->
+    <!-- ROTAÇÃO DO CONVÉS -->
     <section class="card">
-      <h2>⚓ Rodízio do Convés (4 Vagas Fixas na Popa)</h2>
-      <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 16px;">
-        As 18 horas serão divididas igualmente pelo total de pescadores. Exatamente <strong>4 pescadores ocuparão a Popa (Fundo)</strong> a cada turno.
+      <h2>⚓ Rodízio (4 Vagas Fixas na Popa)</h2>
+      <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 12px;">
+        Insira os pescadores separados por vírgula para iniciar a rotação de 18 horas.
       </p>
 
       <div class="form-group full-width">
-        <label>🎣 Lista de Pescadores (separados por vírgula)</label>
+        <label>🎣 Lista de Pescadores</label>
         <input type="text" id="listaPescadores" value="Devlin, Carlos, Roberto, André, Lucas, Marcelo, Fernando, Thiago">
       </div>
-      <button onclick="iniciarRotacao()" class="btn-action" style="background: #16a34a; margin-bottom: 20px;">▶️ Iniciar Rotação (18h)</button>
+      <button onclick="iniciarRotacao()" class="btn-action" style="background: #16a34a; margin-bottom: 10px;">▶️ Iniciar Rotação</button>
 
-      <!-- PAINEL DE CRONÔMETRO -->
       <div class="timer-panel">
         <div class="timer-box">
           <div class="timer-lbl">Turno Atual</div>
-          <div id="turnoAtual" class="timer-val" style="font-size: 1.4rem; color: #f8fafc;">Turno 1</div>
+          <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
         </div>
         <div class="timer-box">
           <div class="timer-lbl">Tempo Restante</div>
           <div id="timerDisplay" class="timer-val">00:00:00</div>
         </div>
         <div class="timer-box">
-          <div class="timer-lbl">Duração por Turno</div>
-          <div id="duracaoTurno" class="timer-val" style="font-size: 1.2rem; color: #7dd3fc;">-- min</div>
+          <div class="timer-lbl">Duração/Turno</div>
+          <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
         </div>
       </div>
 
-      <!-- VISTA SUPERIOR DO BARCO -->
       <div class="deck-view">
         <div class="deck-section proa">
-          <div class="deck-section-title">⛵ PROA (FRENTE DO BARCO)</div>
+          <div class="deck-section-title">⛵ PROA (FRENTE)</div>
           <div id="posProa" class="fisherman-tags-container">--</div>
         </div>
 
         <div class="deck-section meio">
-          <div class="deck-section-title">↔️ MEIO DO BARCO (BORESTE / BOMBORDO)</div>
+          <div class="deck-section-title">↔️ MEIO DO BARCO</div>
           <div id="posMeio" class="fisherman-tags-container">--</div>
         </div>
 
         <div class="deck-section popa">
-          <div class="deck-section-title">⭐ POPA (FUNDO DO BARCO - 4 VAGAS NOBRES)</div>
+          <div class="deck-section-title">⭐ POPA (FUNDO - 4 VAGAS)</div>
           <div id="posPopa" class="fisherman-tags-container">--</div>
         </div>
       </div>
     </section>
 
-    <!-- 3. FOTOS DO BARCO -->
+    <!-- FOTOS DA EMBARCAÇÃO -->
     <section class="card">
       <h2>📸 Fotos da Embarcação</h2>
       <div class="upload-box">
         <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
-        <span style="font-size: 1.8rem; display: block;">📷</span>
-        <span>Arraste ou clique para enviar fotos do barco</span>
+        <span style="font-size: 1.5rem; display: block;">📷</span>
+        <span style="font-size: 0.85rem;">Clique para selecionar ou enviar fotos</span>
       </div>
       <div class="preview-grid" id="previewGrid"></div>
     </section>
@@ -306,9 +286,7 @@
   </main>
 
   <footer>
-    <div class="dev-badge">
-      <span>⚡ Desenvolvido por <strong>Devlin Mariano</strong></span>
-    </div>
+    <div class="dev-badge">⚡ Desenvolvido por <strong>Devlin Mariano</strong></div>
   </footer>
 
   <script>
@@ -316,59 +294,49 @@
     let tempoRestanteSegundos = 0;
     let pescadores = [];
     let turnoIndex = 0;
-    const VAGAS_POPA = 4; // 4 vagas fixas no fundo
+    const VAGAS_POPA = 4;
 
     function iniciarRotacao() {
       const rawInput = document.getElementById('listaPescadores').value;
       pescadores = rawInput.split(',').map(n => n.trim()).filter(n => n.length > 0);
 
       if (pescadores.length < VAGAS_POPA) {
-        alert(`É necessário ter no mínimo ${VAGAS_POPA} pescadores cadastrados.`);
+        alert(`É necessário ter pelo menos ${VAGAS_POPA} pescadores.`);
         return;
       }
 
-      // 18 Horas = 64.800 Segundos divididos igualmente
-      const totalSegundosExpedicao = 18 * 3600;
-      const duracaoTurnoSegundos = Math.floor(totalSegundosExpedicao / pescadores.length);
+      const totalSegundos = 18 * 3600;
+      const duracaoTurnoSegundos = Math.floor(totalSegundos / pescadores.length);
 
-      const minutosTurno = Math.floor(duracaoTurnoSegundos / 60);
-      document.getElementById('duracaoTurno').textContent = `${minutosTurno} min`;
-
+      document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoTurnoSegundos / 60)} min`;
       turnoIndex = 0;
       atualizarPosicoesEConvés(duracaoTurnoSegundos);
     }
 
     function atualizarPosicoesEConvés(duracaoSegundos) {
       if (timerInterval) clearInterval(timerInterval);
-
       tempoRestanteSegundos = duracaoSegundos;
       document.getElementById('turnoAtual').textContent = `Turno ${turnoIndex + 1} de ${pescadores.length}`;
 
-      // Algoritmo de deslocamento contínuo
       const listaRotacionada = [...pescadores.slice(turnoIndex), ...pescadores.slice(0, turnoIndex)];
-
-      // 4 Pescadores alocados na Popa
       const popaPescadores = listaRotacionada.slice(0, VAGAS_POPA);
       const restante = listaRotacionada.slice(VAGAS_POPA);
+      const metade = Math.ceil(restante.length / 2);
+      const proaPescadores = restante.slice(0, metade);
+      const meioPescadores = restante.slice(metade);
 
-      // Metade do restante na Proa e a outra metade no Meio
-      const metadeRestante = Math.ceil(restante.length / 2);
-      const proaPescadores = restante.slice(0, metadeRestante);
-      const meioPescadores = restante.slice(metadeRestante);
-
-      // Atualiza os componentes do Convés
       document.getElementById('posPopa').innerHTML = popaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
-      document.getElementById('posMeio').innerHTML = meioPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || '<span style="color:#64748b;">Ninguém</span>';
-      document.getElementById('posProa').innerHTML = proaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || '<span style="color:#64748b;">Ninguém</span>';
+      document.getElementById('posMeio').innerHTML = meioPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
+      document.getElementById('posProa').innerHTML = proaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
 
-      // Cronômetro Regressivo
       timerInterval = setInterval(() => {
         tempoRestanteSegundos--;
         renderTimer(tempoRestanteSegundos);
-
         if (tempoRestanteSegundos <= 0) {
           clearInterval(timerInterval);
-          dispararAlertaTroca(duracaoSegundos, popaPescadores);
+          turnoIndex = (turnoIndex + 1) % pescadores.length;
+          alert('🔔 HORA DE TROCAR DE POSIÇÃO NO BARCO!');
+          atualizarPosicoesEConvés(duracaoSegundos);
         }
       }, 1000);
     }
@@ -380,29 +348,6 @@
       document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
     }
 
-    function dispararAlertaTroca(duracaoSegundos, popaAnterior) {
-      // Sinal Sonoro Web Audio API
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        osc.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 1.8);
-      } catch (e) {
-        console.log('Audio não suportado sem interação prévia.');
-      }
-
-      turnoIndex = (turnoIndex + 1) % pescadores.length;
-      
-      const novosNaPopa = [...pescadores.slice(turnoIndex), ...pescadores.slice(0, turnoIndex)].slice(0, VAGAS_POPA);
-      alert(`🔔 FIM DO TURNO!\n\nHora de realizar a troca de posições.\n\nNovos pescadores no FUNDO (POPA):\n- ${novosNaPopa.join('\n- ')}`);
-
-      atualizarPosicoesEConvés(duracaoSegundos);
-    }
-
-    // Persistência local das informações e fotos
     function salvarDados(e) {
       e.preventDefault();
       const dados = {
@@ -411,18 +356,18 @@
         estacionamento: document.getElementById('estacionamento').value,
         pontoPesca: document.getElementById('pontoPesca').value,
       };
-      localStorage.setItem('pescaria_dados_4vagas', JSON.stringify(dados));
+      localStorage.setItem('pescaria_dados_v3', JSON.stringify(dados));
       alert('Informações salvas com sucesso!');
     }
 
     function processarFotos(e) {
       const files = Array.from(e.target.files);
-      let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_4vagas') || '[]');
+      let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
       files.forEach(file => {
         const reader = new FileReader();
         reader.onload = function(evt) {
           fotosSalvas.push(evt.target.result);
-          localStorage.setItem('pescaria_fotos_4vagas', JSON.stringify(fotosSalvas));
+          localStorage.setItem('pescaria_fotos_v3', JSON.stringify(fotosSalvas));
           renderGaleria();
         };
         reader.readAsDataURL(file);
@@ -432,7 +377,7 @@
     function renderGaleria() {
       const grid = document.getElementById('previewGrid');
       grid.innerHTML = '';
-      const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_4vagas') || '[]');
+      const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
       fotosSalvas.forEach(imgSrc => {
         const div = document.createElement('div');
         div.className = 'img-container';
@@ -441,7 +386,17 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', renderGaleria);
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGaleria();
+      const salvas = localStorage.getItem('pescaria_dados_v3');
+      if (salvas) {
+        const d = JSON.parse(salvas);
+        document.getElementById('dataPesca').value = d.data || '';
+        document.getElementById('localSaida').value = d.localSaida || '';
+        document.getElementById('estacionamento').value = d.estacionamento || '';
+        document.getElementById('pontoPesca').value = d.pontoPesca || '';
+      }
+    });
   </script>
 </body>
 </html>
