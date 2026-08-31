@@ -1,512 +1,768 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="ocean">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesca Justa 🎣 - Sincronizado Firebase</title>
-  
-  <style>
-    :root[data-theme="ocean"] {
-      --primary: #0b5d7a; --primary2: #073e52; --bg: #0f172a; --card: #1e293b;
-      --text: #f8fafc; --muted: #94a3b8; --border: rgba(255, 255, 255, 0.15);
-      --danger: #ef4444; --warning: #f59e0b; --success: #10b981; --accent: #38bdf8;
-      --boat-bg: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
-    }
-    :root[data-theme="sunny"] {
-      --primary: #0284c7; --primary2: #0369a1; --bg: #f8fafc; --card: #ffffff;
-      --text: #0f172a; --muted: #64748b; --border: rgba(0, 0, 0, 0.12);
-      --danger: #dc2626; --warning: #d97706; --success: #059669; --accent: #0284c7;
-      --boat-bg: radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);
-    }
-    :root[data-theme="dark"] {
-      --primary: #111827; --primary2: #000000; --bg: #030712; --card: #111827;
-      --text: #f9fafb; --muted: #6b7280; --border: rgba(255, 255, 255, 0.1);
-      --danger: #f87171; --warning: #fbbf24; --success: #34d399; --accent: #60a5fa;
-      --boat-bg: radial-gradient(circle, #1f2937 0%, #030712 100%);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesca Justa 🎣 — Expedição & Controle</title>
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-    header { background: var(--primary2); border-bottom: 3px solid var(--accent); color: #fff; padding: 20px; text-align: center; position: relative; }
-    header h1 { margin: 0; font-size: 26px; }
-    header p { opacity: .9; color: var(--accent); font-size: 14px; }
+<!-- PWA Metadata -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b5d7a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pesca Justa">
+<link rel="apple-touch-icon" href="icon-192.png">
 
-    .theme-selector { position: absolute; top: 15px; right: 15px; display: flex; gap: 6px; }
-    .theme-btn { background: rgba(255,255,255,0.15); border: 1px solid var(--border); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; }
+<style>
+:root {
+  --primary: #0b5d7a;
+  --primary2: #073e52;
+  --bg: #0a192f;
+  --card: #1e293b;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: rgba(56, 189, 248, 0.25);
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #10b981;
+  --accent: #38bdf8;
+  --input-bg: #0f172a;
+}
 
-    .container { max-width: 1200px; margin: auto; padding: 20px; width: 100%; flex: 1; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-    
-    .grid-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px; }
-    .summary .label { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: bold; }
-    .summary .value { font-size: 22px; font-weight: bold; margin-top: 5px; color: var(--accent); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: radial-gradient(circle at top, #0f2b48 0%, #0a192f 60%, #020c1b 100%); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-    h2 { margin-bottom: 14px; font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .form-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
-    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 120px; }
-    
-    label { font-size: 12px; font-weight: bold; color: var(--muted); }
-    input, select { height: 38px; border: 1px solid var(--border); border-radius: 8px; padding: 0 10px; background: rgba(0, 0, 0, 0.2); font-size: 14px; color: var(--text); outline: none; width: 100%; }
-    
-    button { height: 38px; border: 0; border-radius: 8px; padding: 0 16px; cursor: pointer; background: var(--primary); color: #fff; font-weight: bold; font-size: 13px; }
-    button:hover { opacity: 0.9; }
-    button.secondary { background: var(--muted); }
-    button.success { background: var(--success); }
-    button.danger { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); }
-    button.danger:hover { background: var(--danger); color: #fff; }
-    button.small { height: 28px; padding: 0 8px; font-size: 11px; }
+header { background: rgba(15, 23, 42, 0.8); border-bottom: 2px solid var(--accent); color: #fff; padding: 24px 18px 16px; text-align: center; }
+header h1 { margin: 0; font-size: 2rem; font-weight: 800; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7); }
+header p { margin: 6px 0 0; color: var(--accent); font-size: 0.95rem; }
 
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
-    th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
+/* NAVEGAÇÃO POR ABAS */
+.nav-tabs { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+.tab-btn { background: var(--input-bg); color: var(--muted); border: 1px solid var(--border); padding: 8px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.tab-btn.active { background: var(--accent); color: #020c1b; border-color: var(--accent); }
 
-    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary2); border: 1px solid var(--accent); display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; color: var(--accent); }
+.container { max-width: 1100px; margin: 20px auto; padding: 0 15px; width: 100%; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.tab-content { display: none; flex-direction: column; gap: 20px; }
+.tab-content.active { display: flex; }
 
-    /* CRONÔMETRO */
-    .timer-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--accent); padding: 14px; border-radius: 12px; margin: 15px 0; text-align: center; }
-    .timer-val { font-size: 1.4rem; font-weight: 800; color: var(--accent); font-family: monospace; }
-    .timer-time { font-size: 1rem; font-weight: bold; color: var(--text); font-family: monospace; margin-top: 4px; }
-    .timer-lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: bold; }
+.grid-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+.summary .label { font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: bold; }
+.summary .value { font-size: 22px; font-weight: bold; margin-top: 5px; color: var(--accent); }
 
-    /* BARCO */
-    .boat-wrap { overflow-x: auto; padding: 10px 0; }
-    .boat { position: relative; min-width: 700px; max-width: 900px; min-height: 450px; margin: auto; border: 4px solid var(--accent); border-radius: 140px 140px 40px 40px; background: var(--boat-bg); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; }
-    .boat-title { text-align: center; font-weight: bold; font-size: 15px; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .boat-body { display: flex; justify-content: space-between; gap: 20px; flex: 1; }
-    .side { width: 200px; display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; }
-    
-    .slot { min-height: 55px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent); border-radius: 8px; padding: 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-    .slot-label { font-size: 10px; color: var(--accent); font-weight: bold; text-transform: uppercase; }
-    .slot-name { font-size: 12px; font-weight: bold; color: var(--text); }
-    
-    .back { margin-top: 15px; width: 100%; border-top: 2px dashed var(--border); padding-top: 12px; }
-    .bench-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 8px; color: var(--success); text-transform: uppercase; }
-    .bench-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+h2 { margin: 0 0 14px; font-size: 1.25rem; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+h3 { margin: 18px 0 10px; font-size: 1rem; color: var(--text); }
 
-    .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 12px 18px; border-radius: 99px; border: 1px solid var(--accent); display: none; z-index: 1000; }
-    .toast.show { display: block; }
-    
-    @media(max-width:768px) { .two-col { grid-template-columns: 1fr; } }
-  </style>
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-row, .form-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+.field, .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+.form-group.full-width { grid-column: 1 / -1; }
+label { font-size: 12px; font-weight: bold; color: var(--muted); }
+
+input, select { height: 40px; border: 1px solid #334155; border-radius: 8px; padding: 0 11px; background: var(--input-bg); font-size: 14px; color: var(--text); outline: none; }
+input:focus, select:focus { border-color: var(--accent); }
+
+button, .btn-action { height: 40px; border: 0; border-radius: 8px; padding: 0 16px; cursor: pointer; background: #0284c7; color: #fff; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+button:hover, .btn-action:hover { background: #0369a1; }
+button.secondary { background: #334155; color: var(--text); }
+button.danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #fca5a5; }
+button.small { height: 32px; padding: 0 10px; font-size: 12px; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 10px; border-bottom: 1px solid #334155; text-align: left; vertical-align: middle; }
+th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
+
+.actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: #334155; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 1px solid var(--border); color: var(--accent); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.badge { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #334155; font-size: 11px; font-weight: bold; color: #f8fafc; }
+.status-paid { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid var(--success); }
+.status-partial { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid var(--warning); }
+.status-pending { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid var(--danger); }
+
+.progress { height: 12px; background: #0f172a; border-radius: 999px; overflow: hidden; margin-top: 12px; border: 1px solid #334155; }
+.progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
+
+/* MAPA DO BARCO — TIPO 1 (POSIÇÕES ESPECÍFICAS) */
+.boat-wrap { overflow-x: auto; padding-bottom: 8px; margin-top: 15px; }
+.boat { position: relative; width: 850px; height: 720px; margin: auto; border: 4px solid var(--accent); border-radius: 150px 150px 50px 50px; background: radial-gradient(circle, #0f2b48 0%, #091322 100%); overflow: hidden; }
+.boat-title { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); font-weight: bold; text-align: center; font-size: 16px; color: #facc15; }
+.boat-sub { font-size: 11px; margin-top: 2px; color: var(--muted); }
+.side { position: absolute; top: 95px; width: 160px; height: 380px; display: flex; flex-direction: column; justify-content: space-between; }
+.side.left { left: 25px; } .side.right { right: 25px; }
+.center-line { position: absolute; left: 50%; top: 95px; transform: translateX(-50%); height: 390px; border-left: 2px dashed #334155; }
+.slot { min-height: 72px; background: var(--card); border: 2px solid #334155; border-radius: 10px; padding: 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; transition: .15s; color: var(--text); }
+.slot:hover { border-color: var(--accent); cursor: pointer; }
+.slot.selected { outline: 3px solid #facc15; border-color: #facc15; }
+.slot-label { font-size: 10px; color: var(--muted); font-weight: bold; }
+.slot-name { font-size: 11px; font-weight: bold; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.back { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); width: 88%; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.bench { background: rgba(15, 23, 42, 0.8); border: 2px solid #334155; border-radius: 12px; padding: 8px; }
+.bench-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 6px; color: var(--accent); }
+.bench-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.bench .slot { min-height: 80px; }
+
+.result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 9px; }
+.result { background: var(--input-bg); border: 1px solid #334155; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+
+/* TIMER E CONVÉS — TIPO 2 (ROTAÇÃO 18H) */
+.timer-panel { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; background: var(--input-bg); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; margin: 15px 0; gap: 10px; }
+.timer-box { text-align: center; }
+.timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
+.timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
+
+.deck-view { width: 100%; max-width: 420px; min-height: 500px; margin: 15px auto; background: #091322; border: 3px solid var(--accent); border-radius: 160px 160px 25px 25px; display: flex; flex-direction: column; justify-content: space-between; padding: 25px 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+.deck-section { text-align: center; padding: 10px; border: 1px dashed #334155; border-radius: 8px; background: rgba(255, 255, 255, 0.02); }
+.deck-section-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
+.proa { color: #facc15; } .meio { color: var(--muted); } .popa { color: #4ade80; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+.fisherman-tags-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+.fisherman-tag { background: #0284c7; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.82rem; font-weight: 600; }
+.popa .fisherman-tag { background: #16a34a; border: 1px solid #4ade80; }
+
+/* GALERIA DE FOTOS */
+.upload-box { border: 2px dashed var(--accent); border-radius: 8px; padding: 20px; text-align: center; background: var(--input-bg); cursor: pointer; position: relative; }
+.upload-box input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+.preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
+.img-container { position: relative; height: 80px; border-radius: 6px; overflow: hidden; border: 1px solid #334155; }
+.img-container img { width: 100%; height: 100%; object-fit: cover; }
+
+.toast { position: fixed; right: 18px; bottom: 18px; background: #0284c7; color: #fff; padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: none; z-index: 1000; font-weight: bold; }
+.toast.show { display: block; }
+.muted { color: var(--muted); font-size: 13px; }
+.empty { padding: 16px; color: var(--muted); text-align: center; }
+
+footer { background: #07111e; padding: 20px; text-align: center; border-top: 1px solid #1e293b; margin-top: auto; color: var(--muted); font-size: 0.85rem; }
+footer strong { color: var(--accent); }
+
+@media(max-width: 850px){ .two-col { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
 
 <header>
-  <div class="theme-selector">
-    <button class="theme-btn" onclick="setTheme('ocean')">🌊</button>
-    <button class="theme-btn" onclick="setTheme('sunny')">☀️</button>
-    <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
-  </div>
   <h1>Pesca Justa 🎣</h1>
-  <p>Sincronizado via Firebase em Tempo Real</p>
+  <p>Gestão de Pescaria, Controle Financeiro e Rotação de Convés</p>
+  
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('tab-gestao')">📊 Gestão & Sorteio</button>
+    <button class="tab-btn" onclick="switchTab('tab-expedicao')">⏱️ Expedição 18h & Timer</button>
+  </div>
 </header>
 
 <main class="container">
 
-  <!-- RESUMO -->
-  <section class="grid-summary">
-    <div class="card summary"><div class="label">Pescadores Lista</div><div class="value" id="sumParticipants">0</div></div>
-    <div class="card summary"><div class="label">Total Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
-    <div class="card summary"><div class="label">Arrecadado</div><div class="value" id="sumCollected">R$ 0,00</div></div>
-    <div class="card summary"><div class="label">Rateio p/ Pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
-  </section>
-
-  <!-- PARTICIPANTES & DESPESAS -->
-  <section class="two-col">
-    <div class="card">
-      <h2>👥 Lista de Pescadores (<span id="countPescadores">0</span>)</h2>
-      <div class="form-row">
-        <div class="field"><label for="participantName">Nome do Pescador</label><input id="participantName" placeholder="Ex.: Devlin" onkeydown="if(event.key==='Enter') addParticipant()"></div>
-        <button onclick="addParticipant()">Adicionar</button>
-      </div>
-      <div class="table-wrap" style="margin-top:15px">
-        <table>
-          <thead><tr><th>Pescador</th><th>Status</th><th>Ação</th></tr></thead>
-          <tbody id="participantsTable"></tbody>
-        </table>
-      </div>
+  <!-- ================= ABA 1: GESTÃO & SORTEIO ================= -->
+  <div id="tab-gestao" class="tab-content active">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span class="badge" id="roundBadge" style="font-size: 14px; padding: 6px 12px;">Rodada 1</span>
+      <button class="danger small" onclick="clearAll()">🗑️ Zerar Pescaria</button>
     </div>
 
-    <div class="card">
-      <h2>🧾 Custos da Pescaria</h2>
+    <!-- CARDS RESUMO -->
+    <section class="grid-summary">
+      <div class="card summary"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
+      <div class="card summary"><div class="label">Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
+      <div class="card summary"><div class="label">Arrecadado</div><div class="value" id="sumCollected">R$ 0,00</div></div>
+      <div class="card summary"><div class="label">Rateio p/ Pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
+    </section>
+
+    <!-- PROGRESSO -->
+    <section class="card">
+      <h2>📈 Progresso Financeiro</h2>
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+        <div><strong id="progressPercent">0%</strong> arrecadado</div>
+        <div>Falta: <strong id="sumPending" style="color: var(--danger);">R$ 0,00</strong></div>
+      </div>
+      <div class="progress"><div id="progressBar"></div></div>
+    </section>
+
+    <!-- PARTICIPANTES E DESPESAS -->
+    <section class="two-col">
+      <div class="card">
+        <h2>👥 Participantes</h2>
+        <div class="form-row">
+          <div class="field"><label>Nome do Pescador</label><input id="participantName" placeholder="Digite o nome"></div>
+          <button onclick="addParticipant()">Adicionar</button>
+          <button class="secondary" onclick="loadDefaultNames()">Lista Padrão</button>
+        </div>
+        <div class="table-wrap" style="margin-top:15px">
+          <table>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Posições</th><th></th></tr></thead>
+            <tbody id="participantsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧾 Despesas</h2>
+        <div class="form-row">
+          <div class="field"><label>Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
+          <div class="field"><label>Valor (R$)</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
+          <div class="field"><label>Categoria</label>
+            <select id="expenseCategory">
+              <option>Barco</option><option>Iscas</option><option>Alimentação</option><option>Bebidas</option><option>Gelo</option><option>Combustível</option><option>Outros</option>
+            </select>
+          </div>
+          <button onclick="addExpense()">Adicionar</button>
+        </div>
+        <div class="table-wrap" style="margin-top:15px">
+          <table>
+            <thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th></th></tr></thead>
+            <tbody id="expensesTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SORTEIO E MAPA DO BARCO -->
+    <section class="card">
+      <h2>🚤 Sorteio e Mapa Visual do Barco</h2>
+      <div class="form-row">
+        <button onclick="drawPositions()">🎲 Sortear Posições</button>
+        <button class="secondary" onclick="clearPositions()">Limpar Posições</button>
+        <button class="secondary" onclick="newRound()">🔄 Nova Rodada</button>
+      </div>
+      <p class="muted" style="margin-top: 8px;">O sorteio prioriza posições não utilizadas. Para trocar dois pescadores, clique em uma posição e depois na outra.</p>
+
+      <div class="boat-wrap">
+        <div class="boat">
+          <div class="boat-title">🚤 PROA<div class="boat-sub">CORREDOR CENTRAL</div></div>
+          <div class="side left" id="leftSlots"></div>
+          <div class="center-line"></div>
+          <div class="side right" id="rightSlots"></div>
+          <div class="back">
+            <div class="bench"><div class="bench-title">BANCO DO FUNDO — ESQUERDA</div><div class="bench-slots" id="backLeftSlots"></div></div>
+            <div class="bench"><div class="bench-title">BANCO DO FUNDO — DIREITA</div><div class="bench-slots" id="backRightSlots"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>📋 Resultado da Rodada</h3>
+      <div id="drawResults" class="result-grid"></div>
+    </section>
+
+    <!-- FINANCEIRO E PAGAMENTOS -->
+    <section class="card">
+      <h2>💳 Registrar Pagamento</h2>
+      <div class="form-row">
+        <div class="field"><label>Pescador</label><select id="paymentParticipant"></select></div>
+        <div class="field"><label>Despesa</label><select id="paymentExpense"></select></div>
+        <div class="field"><label>Valor Pago (R$)</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
+        <button onclick="addPayment()">Registrar</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📊 Situação Financeira por Pescador</h2>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Descrição</th><th>Valor (R$)</th></tr></thead>
-          <tbody id="expensesTable"></tbody>
+          <thead><tr><th>Pescador</th><th>Deve Pagar</th><th>Já Pagou</th><th>Falta</th><th>Status</th></tr></thead>
+          <tbody id="financialTable"></tbody>
         </table>
       </div>
-      <div class="form-row" style="margin-top:15px;">
-        <div class="field"><label for="customDesc">Outra Despesa</label><input id="customDesc" placeholder="Ex.: Extra"></div>
-        <div class="field"><label for="customVal">Valor</label><input id="customVal" type="number" placeholder="0"></div>
-        <button onclick="addCustomExpense()">+ Adicionar</button>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CONTROLADOR BARCO -->
-  <section class="card">
-    <h2>🚤 Distribuição dos Lugares (Turnos de 5h30min)</h2>
-    <div class="form-row" style="margin-bottom:15px;">
-      <button onclick="drawPositions()">🎲 Sortear Lugares</button>
-      <button class="success" onclick="iniciarTurno5h30()">▶️ Iniciar Turno (5h30)</button>
-      <button class="secondary" onclick="proximoTurno()">🔄 Próximo Turno (Girar)</button>
-    </div>
+    <section class="card">
+      <h2>📋 Controle por Despesa</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Despesa</th><th>Categoria</th><th>Valor</th><th>Rateio/Pessoa</th><th>Pago</th><th>Saldo</th><th>Status</th></tr></thead>
+          <tbody id="expenseControlTable"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <!-- CRONÔMETRO -->
-    <div class="timer-panel">
-      <div>
-        <div class="timer-lbl">Rodada</div>
-        <div id="turnoAtual" class="timer-val" style="color:var(--text)">Turno 1</div>
+    <section class="card">
+      <h2>🧾 Histórico de Pagamentos</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pescador</th><th>Despesa</th><th>Data</th><th>Valor</th><th></th></tr></thead>
+          <tbody id="paymentsTable"></tbody>
+        </table>
       </div>
-      <div>
-        <div class="timer-lbl">Início</div>
-        <div id="horaInicioTurno" class="timer-time">--:--:--</div>
-      </div>
-      <div>
-        <div class="timer-lbl">Término Previsto</div>
-        <div id="horaFimTurno" class="timer-time" style="color:var(--warning)">--:--:--</div>
-      </div>
-      <div>
-        <div class="timer-lbl">Tempo Restante</div>
-        <div id="timerDisplay" class="timer-val">05:30:00</div>
-      </div>
-    </div>
+    </section>
 
-    <!-- MAPA DO BARCO -->
-    <div class="boat-wrap">
-      <div class="boat">
-        <div class="boat-title">⚓ PROA (FRENTE DO BARCO) ⚓</div>
-        <div class="boat-body">
-          <div class="side">
-            <div style="text-align:center; font-size:10px; color:var(--muted); font-weight:bold; margin-bottom:4px;">LATERAL ESQUERDA</div>
-            <div id="leftSlots" style="display:flex; flex-direction:column; gap:8px;"></div>
+    <section class="card">
+      <h2>🔄 Histórico de Rodízio</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Rodada</th><th>Pescador</th><th>Posição</th><th>Data</th></tr></thead>
+          <tbody id="historyTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= ABA 2: EXPEDIÇÃO 18H & TIMER ================= -->
+  <div id="tab-expedicao" class="tab-content">
+    
+    <!-- EMBARQUE -->
+    <section class="card">
+      <h2>📋 Detalhes do Embarque</h2>
+      <form id="pescariaForm" onsubmit="salvarDadosEmbarque(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>📅 Data da Pescaria</label>
+            <input type="date" id="dataPesca">
           </div>
-          <div style="flex:1; border-left: 2px dashed var(--border); margin: 0 10px;"></div>
-          <div class="side">
-            <div style="text-align:center; font-size:10px; color:var(--muted); font-weight:bold; margin-bottom:4px;">LATERAL DIREITA</div>
-            <div id="rightSlots" style="display:flex; flex-direction:column; gap:8px;"></div>
+          <div class="form-group">
+            <label>⚓ Local de Saída / Marina</label>
+            <input type="text" id="localSaida" placeholder="Ex: Pier 3 - Marina">
+          </div>
+          <div class="form-group">
+            <label>🅿️ Estacionamento</label>
+            <input type="text" id="estacionamento" placeholder="Ex: R$ 30 no local">
+          </div>
+          <div class="form-group">
+            <label>📍 Ponto de Pesca Destino</label>
+            <input type="text" id="pontoPesca" placeholder="Ex: Laje de Santos">
           </div>
         </div>
-        <div class="back">
-          <div class="bench-title">🪑 BANCO DO FUNDO (EXCEDENTES)</div>
-          <div class="bench-slots" id="backSlots"></div>
+        <button type="submit" class="btn-action" style="margin-top: 15px;">💾 Salvar Informações</button>
+      </form>
+    </section>
+
+    <!-- ROTAÇÃO CONTINUA DE 18H -->
+    <section class="card">
+      <h2>⚓ Rodízio Automático (4 Vagas na Popa - 18 Horas)</h2>
+      <p class="muted" style="margin-bottom: 12px;">Insira os pescadores separados por vírgula para calcular os turnos divididos igualmente em 18 horas.</p>
+      
+      <div class="form-group full-width">
+        <label>🎣 Lista de Pescadores</label>
+        <input type="text" id="listaPescadores" value="Devlin, Carlos, Roberto, André, Lucas, Marcelo, Fernando, Thiago">
+      </div>
+      <button onclick="iniciarRotacao18h()" class="btn-action" style="background: #16a34a; margin-top: 10px;">▶️ Iniciar Rotação 18h</button>
+
+      <div class="timer-panel">
+        <div class="timer-box">
+          <div class="timer-lbl">Turno Atual</div>
+          <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
+        </div>
+        <div class="timer-box">
+          <div class="timer-lbl">Tempo Restante</div>
+          <div id="timerDisplay" class="timer-val">00:00:00</div>
+        </div>
+        <div class="timer-box">
+          <div class="timer-lbl">Duração/Turno</div>
+          <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
         </div>
       </div>
-    </div>
-  </section>
+
+      <div class="deck-view">
+        <div class="deck-section proa">
+          <div class="deck-section-title">⛵ PROA (FRENTE)</div>
+          <div id="posProa" class="fisherman-tags-container">--</div>
+        </div>
+        <div class="deck-section meio">
+          <div class="deck-section-title">↔️ MEIO DO BARCO</div>
+          <div id="posMeio" class="fisherman-tags-container">--</div>
+        </div>
+        <div class="deck-section popa">
+          <div class="deck-section-title">⭐ POPA (FUNDO - 4 VAGAS)</div>
+          <div id="posPopa" class="fisherman-tags-container">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOTOS DA EMBARCAÇÃO -->
+    <section class="card">
+      <h2>📸 Fotos da Embarcação</h2>
+      <div class="upload-box">
+        <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
+        <span style="font-size: 1.5rem; display: block;">📷</span>
+        <span style="font-size: 0.85rem; color: var(--muted);">Clique para selecionar ou enviar fotos</span>
+      </div>
+      <div class="preview-grid" id="previewGrid"></div>
+    </section>
+
+  </div>
 
 </main>
 
+<footer>
+  © 2026 Pesca Justa 🎣 — Desenvolvido por <strong>Devlin Mariano</strong>
+</footer>
+
 <div class="toast" id="toast"></div>
 
-<!-- SDKs do Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-
+<!-- LÓGICA E SCRIPTS INTEGRADOS -->
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAY9YVSdP3qtBSIaQnSvs26B70RrP6fMVE",
-  authDomain: "pescaria-justa.firebaseapp.com",
-  databaseURL: "https://pescaria-justa-default-rtdb.firebaseio.com",
-  projectId: "pescaria-justa",
-  storageBucket: "pescaria-justa.firebasestorage.app",
-  messagingSenderId: "1042867642805",
-  appId: "1:1042867642805:web:092fc9ca84613ead51b9fc"
-};
-
-let dbRef = null;
-let timerInterval = null;
-const TURNO_SEGUNDOS = (5 * 3600) + (30 * 60);
-
-const DEFAULT_EXPENSES = [
-  { id: 'exp_barco', desc: 'Barco', value: 0 },
-  { id: 'exp_reserva', desc: 'Reserva Barco', value: 0 },
-  { id: 'exp_churrasco', desc: 'Churrasco', value: 0 },
-  { id: 'exp_iscas', desc: 'Iscas', value: 0 },
-  { id: 'exp_gelo', desc: 'Gelo', value: 0 },
-  { id: 'exp_outros', desc: 'Outros', value: 0 }
+/* ================= ESTRUTURA DE DADOS E ESTADO GLOBAL ================= */
+const STORAGE_KEY = 'pesca-justa-html-v1';
+const POSITIONS = [
+  {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},{id:'esq-4',name:'Esquerda 4',group:'left'},
+  {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},{id:'dir-4',name:'Direita 4',group:'right'},
+  {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},{id:'fundo-esq-3',name:'Fundo E3',group:'backLeft'},
+  {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'},{id:'fundo-dir-3',name:'Fundo D3',group:'backRight'}
 ];
+const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
 
-let state = {
-  theme: 'ocean',
-  participants: [],
-  expenses: DEFAULT_EXPENSES,
-  payments: {},
-  draw: [],
-  round: 1,
-  turnoStartTime: null,
-  turnoEndTime: null
-};
+let selectedPosition = null;
+let state = { participants: [], expenses: [], payments: [], draw: [], history: [], round: 1 };
 
-function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function money(v) { return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-function shuffle(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
-function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+/* ================= FUNÇÕES UTILITÁRIAS ================= */
+function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function money(v) { return Number(v||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
+function initials(name) { return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join(''); }
+function numberBR(v) { return Number(String(v).replace(/\./g,'').replace(',','.')) || 0; }
+function shuffle(a) { const b=[...a]; for(let i=b.length-1; i>0; i--){ let j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
+function esc(s) { return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove('show'),2800); }
 
-function setTheme(t) {
-  state.theme = t; document.documentElement.setAttribute('data-theme', t); syncState();
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function load() { try { const x=JSON.parse(localStorage.getItem(STORAGE_KEY)); if(x) state={...state, ...x}; }catch(e){} }
+
+function participant(pid) { return state.participants.find(x=>x.id===pid); }
+function expense(eid) { return state.expenses.find(x=>x.id===eid); }
+function pos(pid) { return POSITIONS.find(x=>x.id===pid); }
+function assignment(positionId) { return state.draw.find(x=>x.positionId===positionId); }
+
+function avatar(p) {
+  if(!p) return '';
+  return `<div class="avatar">${p.photo ? `<img src="${p.photo}" alt="">` : esc(initials(p.name))}</div>`;
 }
 
-function initFirebase() {
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  dbRef = firebase.database().ref('pescaria_ativa');
-  
-  dbRef.on('value', snapshot => {
-    const data = snapshot.val();
-    if (data) {
-      state = data;
-      if (!state.participants) state.participants = [];
-      if (!state.expenses || !state.expenses.length) state.expenses = DEFAULT_EXPENSES;
-      if (!state.payments) state.payments = {};
-      if (state.theme) document.documentElement.setAttribute('data-theme', state.theme);
-      render();
-      atualizarCronometroAtivo();
-    }
-  });
+function totals() {
+  const expenses = state.expenses.reduce((s,x)=>s+x.value,0);
+  const collected = state.payments.reduce((s,x)=>s+x.value,0);
+  const share = state.participants.length ? expenses / state.participants.length : 0;
+  return { expenses, collected, share, pending: Math.max(0, expenses - collected) };
 }
 
-function syncState() {
-  if (dbRef) dbRef.set(state);
-  render();
+/* ================= NAVEGAÇÃO DE ABAS ================= */
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  event.target.classList.add('active');
 }
 
-/* PARTICIPANTES */
+/* ================= GESTÃO DE PARTICIPANTES & DESPESAS ================= */
 function addParticipant() {
-  const input = document.getElementById('participantName');
-  const name = input.value.trim();
-  if(!name) return;
-  
-  if (!state.participants) state.participants = [];
-  state.participants.push({ id: id(), name });
-  input.value = '';
-  syncState();
+  const input = document.getElementById('participantName'), name = input.value.trim();
+  if(!name) return toast('Informe o nome do pescador.');
+  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase())) return toast('Pescador já cadastrado.');
+  state.participants.push({id:id(), name});
+  input.value = ''; save(); render(); toast('Pescador adicionado.');
+}
+
+function loadDefaultNames() {
+  let n = 0; const existing = new Set(state.participants.map(p=>p.name.toLowerCase()));
+  DEFAULT_NAMES.forEach(name => { if(!existing.has(name.toLowerCase())){ state.participants.push({id:id(), name}); n++; } });
+  save(); render(); toast(n ? `${n} pescadores adicionados.` : 'Todos já estão cadastrados.');
+}
+
+function editParticipant(pid) {
+  const p = participant(pid); const name = prompt('Novo nome:', p.name); if(name===null) return;
+  const n = name.trim(); if(!n) return toast('Nome inválido.');
+  p.name = n; save(); render(); toast('Nome atualizado.');
 }
 
 function deleteParticipant(pid) {
-  state.participants = state.participants.filter(x => x.id !== pid);
-  if (state.draw) state.draw = state.draw.filter(x => x.participantId !== pid);
-  if (state.payments) delete state.payments[pid];
-  syncState();
+  const p = participant(pid); if(!confirm(`Excluir ${p.name}?`)) return;
+  state.participants = state.participants.filter(x=>x.id!==pid);
+  state.payments = state.payments.filter(x=>x.participantId!==pid);
+  state.draw = state.draw.filter(x=>x.participantId!==pid);
+  state.history = state.history.filter(x=>x.participantId!==pid);
+  save(); render(); toast('Participante excluído.');
 }
 
-function togglePayment(pid) {
-  if(!state.payments) state.payments = {};
-  state.payments[pid] = !state.payments[pid];
-  syncState();
+function changePhoto(pid, input) {
+  const file = input.files[0]; if(!file) return;
+  const r = new FileReader(); r.onload = e => {
+    const img = new Image(); img.onload = () => {
+      const c = document.createElement('canvas'); let max=180, scale=Math.min(1, max/Math.max(img.width, img.height));
+      c.width = img.width*scale; c.height = img.height*scale;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      participant(pid).photo = c.toDataURL('image/jpeg', .78);
+      save(); render(); toast('Foto atualizada.');
+    };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(file);
 }
 
-/* CUSTOS / DESPESAS */
-function updateExpense(eid, val) {
-  const numVal = parseFloat(val) || 0;
-  const item = state.expenses.find(x => x.id === eid);
-  if (item) {
-    item.value = numVal;
-    syncState();
-  }
+function addExpense() {
+  const desc = document.getElementById('expenseDesc').value.trim();
+  const value = numberBR(document.getElementById('expenseValue').value);
+  const category = document.getElementById('expenseCategory').value;
+  if(!desc) return toast('Informe a descrição.');
+  if(value <= 0) return toast('Informe um valor válido.');
+  state.expenses.push({id:id(), desc, value, category});
+  document.getElementById('expenseDesc').value = ''; document.getElementById('expenseValue').value = '';
+  save(); render(); toast('Despesa adicionada.');
 }
 
-function addCustomExpense() {
-  const descInput = document.getElementById('customDesc');
-  const valInput = document.getElementById('customVal');
-  const desc = descInput.value.trim();
-  const val = parseFloat(valInput.value) || 0;
-
-  if(!desc) return;
-  state.expenses.push({ id: id(), desc, value: val });
-  descInput.value = '';
-  valInput.value = '';
-  syncState();
+function editExpense(eid) {
+  const e = expense(eid); const desc = prompt('Descrição:', e.desc); if(desc===null) return;
+  const value = prompt('Valor:', String(e.value)); if(value===null) return;
+  const v = numberBR(value); if(!desc.trim() || v<=0) return toast('Dados inválidos.');
+  e.desc = desc.trim(); e.value = v; save(); render(); toast('Despesa atualizada.');
 }
 
-/* SORTEIO E TURNO */
-function gerarPosicoesDinamicas() {
-  const total = state.participants ? state.participants.length : 0;
-  const posicoes = [];
-  
-  const slotsEsq = Math.min(3, Math.ceil(total / 2));
-  const slotsDir = Math.min(3, Math.floor(total / 2));
-  const noFundo = Math.max(0, total - (slotsEsq + slotsDir));
-
-  for(let i=1; i<=slotsEsq; i++) posicoes.push({ id: `esq-${i}`, name: `Esq ${i}`, group: 'left' });
-  for(let i=1; i<=slotsDir; i++) posicoes.push({ id: `dir-${i}`, name: `Dir ${i}`, group: 'right' });
-  for(let i=1; i<=noFundo; i++) posicoes.push({ id: `fundo-${i}`, name: `Fundo ${i}`, group: 'back' });
-
-  return posicoes;
+function deleteExpense(eid) {
+  if(!confirm('Excluir esta despesa e seus pagamentos?')) return;
+  state.expenses = state.expenses.filter(x=>x.id!==eid);
+  state.payments = state.payments.filter(x=>x.expenseId!==eid);
+  save(); render(); toast('Despesa excluída.');
 }
 
+/* ================= SORTEIO E MAPA ESPECÍFICO ================= */
 function drawPositions() {
-  if(!state.participants || !state.participants.length) return toast('Adicione pescadores primeiro.');
+  if(!state.participants.length) return toast('Cadastre pescadores primeiro.');
+  const people = shuffle(state.participants).slice(0, POSITIONS.length);
+  const available = new Set(POSITIONS.map(x=>x.id)); const result = [];
   
-  const posicoes = gerarPosicoesDinamicas();
-  const embaralhados = shuffle(state.participants);
+  people.forEach(p => {
+    const used = new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId));
+    let choices = [...available].filter(x=>!used.has(x)); if(!choices.length) choices = [...available];
+    const chosen = choices[Math.floor(Math.random()*choices.length)];
+    available.delete(chosen); result.push({positionId:chosen, participantId:p.id});
+  });
   
-  state.draw = posicoes.map((pos, idx) => ({
-    positionId: pos.id,
-    participantId: embaralhados[idx] ? embaralhados[idx].id : null
-  }));
-
-  syncState();
-  toast('Lugares sorteados!');
+  state.draw = result;
+  result.forEach(x => state.history.push({id:id(), round:state.round, date:new Date().toISOString(), positionId:x.positionId, participantId:x.participantId}));
+  selectedPosition = null; save(); render(); toast(`Posições sorteadas para Rodada ${state.round}.`);
 }
 
-function rotacionarLugares() {
-  if (!state.draw || !state.draw.length) return;
-  const participantesAtuais = state.draw.map(d => d.participantId);
-  if (participantesAtuais.length > 1) {
-    const primeiro = participantesAtuais.shift();
-    participantesAtuais.push(primeiro);
+function clearPositions() { state.draw = []; selectedPosition = null; save(); render(); toast('Posições removidas.'); }
+function newRound() { state.round++; state.draw = []; selectedPosition = null; save(); render(); toast(`Nova rodada ${state.round} iniciada.`); }
 
-    state.draw.forEach((slot, index) => {
-      slot.participantId = participantesAtuais[index];
-    });
-  }
-}
-
-function iniciarTurno5h30() {
-  if(!state.participants || !state.participants.length) return toast('Adicione pescadores para iniciar.');
-  if(!state.draw || !state.draw.length) drawPositions();
-
-  const agora = Date.now();
-  state.turnoStartTime = agora;
-  state.turnoEndTime = agora + (TURNO_SEGUNDOS * 1000);
-
-  syncState();
-  toast(`Turno ${state.round || 1} iniciado!`);
-}
-
-function proximoTurno() {
-  state.round = (state.round || 1) + 1;
-  rotacionarLugares();
+function clickPosition(positionId) {
+  const a = assignment(positionId); if(!a) return toast('Posição vazia.');
+  if(!selectedPosition) { selectedPosition = positionId; renderBoat(); toast('Clique na segunda posição para trocar.'); return; }
+  if(selectedPosition === positionId) { selectedPosition = null; renderBoat(); return; }
   
-  const agora = Date.now();
-  state.turnoStartTime = agora;
-  state.turnoEndTime = agora + (TURNO_SEGUNDOS * 1000);
-
-  syncState();
-  toast(`Iniciado Turno ${state.round}! Lugares alterados.`);
+  const b = assignment(selectedPosition); if(!b) { selectedPosition = null; renderBoat(); return; }
+  [a.participantId, b.participantId] = [b.participantId, a.participantId];
+  selectedPosition = null; save(); render(); toast('Posições trocadas.');
 }
 
-function atualizarCronometroAtivo() {
-  if (timerInterval) clearInterval(timerInterval);
-
-  if (!state.turnoStartTime || !state.turnoEndTime) {
-    document.getElementById('timerDisplay').textContent = "05:30:00";
-    document.getElementById('horaInicioTurno').textContent = "--:--:--";
-    document.getElementById('horaFimTurno').textContent = "--:--:--";
-    return;
-  }
-
-  const dtInicio = new Date(state.turnoStartTime);
-  const dtFim = new Date(state.turnoEndTime);
-
-  document.getElementById('horaInicioTurno').textContent = dtInicio.toLocaleTimeString('pt-BR');
-  document.getElementById('horaFimTurno').textContent = dtFim.toLocaleTimeString('pt-BR');
-
-  timerInterval = setInterval(() => {
-    const agora = Date.now();
-    const restante = Math.floor((state.turnoEndTime - agora) / 1000);
-
-    if (restante <= 0) {
-      clearInterval(timerInterval);
-      document.getElementById('timerDisplay').textContent = "00:00:00";
-      alert(`🔔 Fim do Turno ${state.round || 1}! Girando posições...`);
-      proximoTurno();
-    } else {
-      const h = String(Math.floor(restante / 3600)).padStart(2, '0');
-      const m = String(Math.floor((restante % 3600) / 60)).padStart(2, '0');
-      const s = String(restante % 60).padStart(2, '0');
-      document.getElementById('timerDisplay').textContent = `${h}:${m}:${s}`;
-    }
-  }, 1000);
+function renderBoat() {
+  const targets = {left:'leftSlots', right:'rightSlots', backLeft:'backLeftSlots', backRight:'backRightSlots'};
+  Object.entries(targets).forEach(([group, target]) => {
+    document.getElementById(target).innerHTML = POSITIONS.filter(p=>p.group===group).map(p => {
+      const a = assignment(p.id), person = a ? participant(a.participantId) : null;
+      return `<button class="slot ${selectedPosition===p.id?'selected':''}" onclick="clickPosition('${p.id}')">
+        <span class="slot-label">${esc(p.name)}</span>
+        ${person ? avatar(person)+`<span class="slot-name">${esc(person.name)}</span>` : `<span class="muted">Vago</span>`}
+      </button>`;
+    }).join('');
+  });
+  
+  document.getElementById('drawResults').innerHTML = state.draw.length ? state.draw.map(a => {
+    const p = participant(a.participantId), po = pos(a.positionId);
+    return `<div class="result"><strong>${esc(po.name)}</strong><span>${esc(p?.name||'—')}</span></div>`;
+  }).join('') : '<div class="empty">Nenhuma posição sorteada nesta rodada.</div>';
 }
 
-/* RENDER TELA */
+/* ================= PAGAMENTOS ================= */
+function addPayment() {
+  const participantId = document.getElementById('paymentParticipant').value;
+  const expenseId = document.getElementById('paymentExpense').value;
+  const value = numberBR(document.getElementById('paymentValue').value);
+  if(!participantId) return toast('Selecione um pescador.');
+  if(!expenseId) return toast('Selecione uma despesa.');
+  if(value <= 0) return toast('Informe um valor válido.');
+  
+  state.payments.push({id:id(), participantId, expenseId, value, date:new Date().toISOString()});
+  document.getElementById('paymentValue').value = ''; save(); render(); toast('Pagamento registrado.');
+}
+
+function deletePayment(pid) { state.payments = state.payments.filter(x=>x.id!==pid); save(); render(); toast('Pagamento removido.'); }
+function clearAll() { if(!confirm('Deseja apagar TODOS os dados?')) return; state={participants:[],expenses:[],payments:[],draw:[],history:[],round:1}; selectedPosition=null; save(); render(); toast('Dados zerados.'); }
+
+/* ================= RENDERIZAÇÃO GERAL ================= */
 function render() {
-  const participants = state.participants || [];
-  const expenses = state.expenses || DEFAULT_EXPENSES;
-  const payments = state.payments || {};
-
-  document.getElementById('countPescadores').textContent = participants.length;
-  document.getElementById('sumParticipants').textContent = participants.length;
-  document.getElementById('turnoAtual').textContent = `Turno ${state.round || 1}`;
+  const t = totals();
+  document.getElementById('sumParticipants').textContent = state.participants.length;
+  document.getElementById('sumExpenses').textContent = money(t.expenses);
+  document.getElementById('sumCollected').textContent = money(t.collected);
+  document.getElementById('sumShare').textContent = money(t.share);
+  document.getElementById('sumPending').textContent = money(t.pending);
   
-  const totalExp = expenses.reduce((s,x)=>s+(parseFloat(x.value)||0), 0);
-  const share = participants.length ? totalExp / participants.length : 0;
+  const pct = t.expenses ? Math.min(100, t.collected/t.expenses*100) : 0;
+  document.getElementById('progressPercent').textContent = pct.toFixed(1) + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('roundBadge').textContent = 'Rodada ' + state.round;
   
-  let paidCount = 0;
-  participants.forEach(p => { if(payments[p.id]) paidCount++; });
-  const totalCollected = paidCount * share;
+  // Tabela Participantes
+  document.getElementById('participantsTable').innerHTML = state.participants.length ? state.participants.map(p => {
+    const used = new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId)).size;
+    return `<tr>
+      <td><label style="cursor:pointer">${avatar(p)}<input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}',this)"></label></td>
+      <td>${esc(p.name)}</td>
+      <td><span class="badge">${used}/14 posições</span></td>
+      <td><div class="actions"><button class="small secondary" onclick="editParticipant('${p.id}')">Editar</button><button class="small danger" onclick="deleteParticipant('${p.id}')">Excluir</button></div></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
 
-  document.getElementById('sumExpenses').textContent = money(totalExp);
-  document.getElementById('sumCollected').textContent = money(totalCollected);
-  document.getElementById('sumShare').textContent = money(share);
+  // Tabela Despesas
+  document.getElementById('expensesTable').innerHTML = state.expenses.length ? state.expenses.map(e => `<tr>
+    <td>${esc(e.desc)}</td><td><span class="badge">${esc(e.category)}</span></td><td>${money(e.value)}</td>
+    <td><div class="actions"><button class="small secondary" onclick="editExpense('${e.id}')">Editar</button><button class="small danger" onclick="deleteExpense('${e.id}')">Excluir</button></div></td>
+  </tr>`).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa cadastrada.</td></tr>';
 
-  // Tabela Pescadores
-  const pTable = document.getElementById('participantsTable');
-  pTable.innerHTML = participants.map(p => {
-    const isPaid = !!payments[p.id];
-    return `
-      <tr>
-        <td>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <div class="avatar">${p.name.slice(0,2).toUpperCase()}</div>
-            <strong>${p.name}</strong>
-          </div>
-        </td>
-        <td>
-          <button class="small ${isPaid ? 'success' : 'secondary'}" onclick="togglePayment('${p.id}')">
-            ${isPaid ? 'PAGO' : 'PENDENTE'}
-          </button>
-        </td>
-        <td><button class="small danger" onclick="deleteParticipant('${p.id}')">🗑️</button></td>
-      </tr>
-    `;
-  }).join('');
+  // Selects
+  document.getElementById('paymentParticipant').innerHTML = state.participants.length ? state.participants.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option value="">Nenhum pescador</option>';
+  document.getElementById('paymentExpense').innerHTML = state.expenses.length ? state.expenses.map(e => `<option value="${e.id}">${esc(e.desc)}</option>`).join('') : '<option value="">Nenhuma despesa</option>';
 
-  // Tabela Custos Fixo / Editáveis
-  const eTable = document.getElementById('expensesTable');
-  eTable.innerHTML = expenses.map(e => `
-    <tr>
-      <td><strong>${e.desc}</strong></td>
-      <td>
-        <input type="number" style="height:30px; width:100px;" value="${e.value || ''}" placeholder="0,00" onchange="updateExpense('${e.id}', this.value)">
-      </td>
-    </tr>
-  `).join('');
+  // Situação Financeira
+  document.getElementById('financialTable').innerHTML = state.participants.length ? state.participants.map(p => {
+    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0), missing = Math.max(0, t.share - paid);
+    const status = missing < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente';
+    const cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
+    return `<tr><td>${esc(p.name)}</td><td>${money(t.share)}</td><td>${money(paid)}</td><td>${money(missing)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
+  }).join('') : '<tr><td colspan="5" class="empty">Cadastre participantes.</td></tr>';
+
+  // Controle por Despesa
+  document.getElementById('expenseControlTable').innerHTML = state.expenses.length ? state.expenses.map(e => {
+    const paid = state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0), saldo = Math.max(0, e.value - paid), share = state.participants.length ? e.value/state.participants.length : 0;
+    const status = saldo < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente';
+    const cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
+    return `<tr><td>${esc(e.desc)}</td><td>${esc(e.category)}</td><td>${money(e.value)}</td><td>${money(share)}</td><td>${money(paid)}</td><td>${money(saldo)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
+  }).join('') : '<tr><td colspan="7" class="empty">Cadastre despesas.</td></tr>';
+
+  // Histórico Pagamentos
+  document.getElementById('paymentsTable').innerHTML = state.payments.length ? [...state.payments].reverse().map(x => `<tr>
+    <td>${esc(participant(x.participantId)?.name||'—')}</td><td>${esc(expense(x.expenseId)?.desc||'—')}</td>
+    <td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${money(x.value)}</td>
+    <td><button class="small danger" onclick="deletePayment('${x.id}')">Remover</button></td>
+  </tr>`).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
+
+  // Histórico Rodízio
+  document.getElementById('historyTable').innerHTML = state.history.length ? [...state.history].reverse().slice(0,100).map(h => `<tr>
+    <td>Rodada ${h.round}</td><td>${esc(participant(h.participantId)?.name||'—')}</td><td>${esc(pos(h.positionId)?.name||'—')}</td><td>${new Date(h.date).toLocaleString('pt-BR')}</td>
+  </tr>`).join('') : '<tr><td colspan="4" class="empty">Sem histórico de rodízio.</td></tr>';
 
   renderBoat();
 }
 
-function renderBoat() {
-  const posicoes = gerarPosicoesDinamicas();
-  const participants = state.participants || [];
-  
-  const renderGroup = (containerId, group) => {
-    const el = document.getElementById(containerId);
-    if(!el) return;
-    el.innerHTML = posicoes.filter(p => p.group === group).map(pos => {
-      const assignment = (state.draw || []).find(d => d.positionId === pos.id);
-      const part = assignment ? participants.find(x => x.id === assignment.participantId) : null;
-      return `
-        <div class="slot">
-          <div class="slot-label">${pos.name}</div>
-          <div class="slot-name">${part ? part.name : '<span style="opacity:0.3">Vazio</span>'}</div>
-        </div>
-      `;
-    }).join('');
-  };
+/* ================= LÓGICA DA ABA 2: EXPEDIÇÃO 18H & TIMER ================= */
+let timerInterval = null;
+let tempoRestanteSegundos = 0;
+let pescadores18h = [];
+let turnoIndex = 0;
+const VAGAS_POPA = 4;
 
-  renderGroup('leftSlots', 'left');
-  renderGroup('rightSlots', 'right');
-  renderGroup('backSlots', 'back');
+function iniciarRotacao18h() {
+  const rawInput = document.getElementById('listaPescadores').value;
+  pescadores18h = rawInput.split(',').map(n => n.trim()).filter(n => n.length > 0);
+  if (pescadores18h.length < VAGAS_POPA) {
+    alert(`É necessário pelo menos ${VAGAS_POPA} pescadores para rotação de popa.`);
+    return;
+  }
+  const totalSegundos = 18 * 3600;
+  const duracaoTurnoSegundos = Math.floor(totalSegundos / pescadores18h.length);
+  document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoTurnoSegundos / 60)} min`;
+  turnoIndex = 0;
+  atualizarPosicoesEConves(duracaoTurnoSegundos);
 }
 
-window.onload = () => {
-  initFirebase();
-};
+function atualizarPosicoesEConves(duracaoSegundos) {
+  if (timerInterval) clearInterval(timerInterval);
+  tempoRestanteSegundos = duracaoSegundos;
+  
+  document.getElementById('turnoAtual').textContent = `Turno ${turnoIndex + 1} de ${pescadores18h.length}`;
+  const listaRotacionada = [...pescadores18h.slice(turnoIndex), ...pescadores18h.slice(0, turnoIndex)];
+  
+  const popaPescadores = listaRotacionada.slice(0, VAGAS_POPA);
+  const restante = listaRotacionada.slice(VAGAS_POPA);
+  const metade = Math.ceil(restante.length / 2);
+  const proaPescadores = restante.slice(0, metade);
+  const meioPescadores = restante.slice(metade);
+
+  document.getElementById('posPopa').innerHTML = popaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('');
+  document.getElementById('posMeio').innerHTML = meioPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
+  document.getElementById('posProa').innerHTML = proaPescadores.map(p => `<span class="fisherman-tag">${p}</span>`).join('') || 'Ninguém';
+
+  timerInterval = setInterval(() => {
+    tempoRestanteSegundos--;
+    renderTimer(tempoRestanteSegundos);
+    if (tempoRestanteSegundos <= 0) {
+      clearInterval(timerInterval);
+      turnoIndex = (turnoIndex + 1) % pescadores18h.length;
+      alert('🔔 HORA DE TROCAR DE POSIÇÃO NO BARCO!');
+      atualizarPosicoesEConves(duracaoSegundos);
+    }
+  }, 1000);
+}
+
+function renderTimer(segundos) {
+  const hrs = String(Math.floor(segundos / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
+  const secs = String(segundos % 60).padStart(2, '0');
+  document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
+}
+
+function salvarDadosEmbarque(e) {
+  e.preventDefault();
+  const dados = {
+    data: document.getElementById('dataPesca').value,
+    localSaida: document.getElementById('localSaida').value,
+    estacionamento: document.getElementById('estacionamento').value,
+    pontoPesca: document.getElementById('pontoPesca').value,
+  };
+  localStorage.setItem('pescaria_dados_v3', JSON.stringify(dados));
+  toast('Dados de embarque salvos!');
+}
+
+function processarFotos(e) {
+  const files = Array.from(e.target.files);
+  let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      fotosSalvas.push(evt.target.result);
+      localStorage.setItem('pescaria_fotos_v3', JSON.stringify(fotosSalvas));
+      renderGaleria();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderGaleria() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
+  fotosSalvas.forEach(imgSrc => {
+    const div = document.createElement('div');
+    div.className = 'img-container';
+    div.innerHTML = `<img src="${imgSrc}">`;
+    grid.appendChild(div);
+  });
+}
+
+/* ================= INICIALIZAÇÃO DA APLICAÇÃO ================= */
+document.addEventListener('DOMContentLoaded', () => {
+  load();
+  render();
+  renderGaleria();
+
+  // Carregar dados salvos da expedição
+  const salvas = localStorage.getItem('pescaria_dados_v3');
+  if (salvas) {
+    const d = JSON.parse(salvas);
+    document.getElementById('dataPesca').value = d.data || '';
+    document.getElementById('localSaida').value = d.localSaida || '';
+    document.getElementById('estacionamento').value = d.estacionamento || '';
+    document.getElementById('pontoPesca').value = d.pontoPesca || '';
+  }
+
+  // Registrar Service Worker para PWA Offline
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js").catch(err => {
+      console.log("Service Worker não registrado:", err);
+    });
+  }
+});
 </script>
 </body>
 </html>
