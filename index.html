@@ -14,13 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -152,7 +145,7 @@ function usePescaria() {
         });
       }
     } catch {
-      // ignora se falhar
+      // ignora erros de parse
     }
     setCarregado(true);
   }, []);
@@ -204,20 +197,6 @@ function Index() {
     [participantes, pagamentos, totais.rateio],
   );
 
-  useEffect(() => {
-    if (participantes.length && !participantes.some((p) => p.id === pescadorId)) {
-      setPescadorId(participantes[0]!.id);
-    }
-    if (!participantes.length) setPescadorId("");
-  }, [participantes, pescadorId]);
-
-  useEffect(() => {
-    if (despesas.length && !despesas.some((d) => d.id === despesaPagamentoId)) {
-      setDespesaPagamentoId(despesas[0]!.id);
-    }
-    if (!despesas.length) setDespesaPagamentoId("");
-  }, [despesas, despesaPagamentoId]);
-
   const despesaLinhas = useMemo(
     () =>
       despesas.map((d) => {
@@ -268,7 +247,8 @@ function Index() {
     }
   }
 
-  function adicionarParticipante() {
+  function handleAdicionarParticipante(e?: React.FormEvent) {
+    if (e) e.preventDefault();
     const limpo = nome.trim().slice(0, 60);
     if (!limpo) {
       toast.error("Informe o nome do pescador.");
@@ -278,9 +258,9 @@ function Index() {
       toast.error("Esse pescador já está na lista.");
       return;
     }
-    setEstado((e) => ({
-      ...e,
-      participantes: [...e.participantes, { id: uid(), nome: limpo }],
+    setEstado((prev) => ({
+      ...prev,
+      participantes: [...prev.participantes, { id: uid(), nome: limpo }],
     }));
     setNome("");
     toast.success(`${limpo} adicionado.`);
@@ -295,7 +275,8 @@ function Index() {
     setSorteados([]);
   }
 
-  function adicionarDespesa() {
+  function handleAdicionarDespesa(e?: React.FormEvent) {
+    if (e) e.preventDefault();
     const desc = descDespesa.trim().slice(0, 80);
     const valor = Number(valorDespesa.replace(",", "."));
     if (!desc) {
@@ -303,15 +284,16 @@ function Index() {
       return;
     }
     if (!Number.isFinite(valor) || valor <= 0) {
-      toast.error("Informe um valor maior que zero.");
+      toast.error("Informe um valor válido maior que zero.");
       return;
     }
-    setEstado((e) => ({
-      ...e,
-      despesas: [...e.despesas, { id: uid(), desc, valor, categoria: categoriaDespesa }],
+    setEstado((prev) => ({
+      ...prev,
+      despesas: [...prev.despesas, { id: uid(), desc, valor, categoria: categoriaDespesa }],
     }));
     setDescDespesa("");
     setValorDespesa("");
+    toast.success("Despesa adicionada.");
   }
 
   function excluirDespesa(id: string) {
@@ -322,7 +304,8 @@ function Index() {
     }));
   }
 
-  function realizarSorteio() {
+  function handleRealizarSorteio(e?: React.FormEvent) {
+    if (e) e.preventDefault();
     const qtd = Math.floor(Number(vagas));
     if (!participantes.length) {
       toast.error("Cadastre participantes primeiro.");
@@ -340,13 +323,17 @@ function Index() {
     setSorteados(embaralhado.slice(0, Math.min(qtd, embaralhado.length)).map((p) => p.nome));
   }
 
-  function registrarPagamento() {
+  function handleRegistrarPagamento(e?: React.FormEvent) {
+    if (e) e.preventDefault();
     const valor = Number(valorPagamento.replace(",", "."));
-    if (!pescadorId) {
+    const idPescador = pescadorId || participantes[0]?.id;
+    const idDespesa = despesaPagamentoId || despesas[0]?.id;
+
+    if (!idPescador) {
       toast.error("Selecione um pescador.");
       return;
     }
-    if (!despesaPagamentoId) {
+    if (!idDespesa) {
       toast.error("Selecione a despesa.");
       return;
     }
@@ -354,14 +341,14 @@ function Index() {
       toast.error("Informe um valor maior que zero.");
       return;
     }
-    setEstado((e) => ({
-      ...e,
+    setEstado((prev) => ({
+      ...prev,
       pagamentos: [
-        ...e.pagamentos,
+        ...prev.pagamentos,
         {
           id: uid(),
-          participanteId: pescadorId,
-          despesaId: despesaPagamentoId,
+          participanteId: idPescador,
+          despesaId: idDespesa,
           valor,
           data: new Date().toISOString(),
         },
@@ -424,7 +411,7 @@ function Index() {
                   {brl(totais.pendente)}
                 </span>
               </p>
-              <Button variant="outline" onClick={limparTudo}>
+              <Button type="button" variant="outline" onClick={limparTudo}>
                 Zerar pescaria
               </Button>
             </CardContent>
@@ -438,22 +425,19 @@ function Index() {
               <CardTitle>👥 Participantes</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex flex-wrap gap-2">
+              <form onSubmit={handleAdicionarParticipante} className="flex flex-wrap gap-2">
                 <Input
                   value={nome}
                   maxLength={60}
                   placeholder="Nome do pescador"
                   onChange={(e) => setNome(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && adicionarParticipante()}
                   className="min-w-40 flex-1"
                 />
-                <Button type="button" onClick={adicionarParticipante}>
-                  Adicionar
-                </Button>
+                <Button type="submit">Adicionar</Button>
                 <Button type="button" variant="outline" onClick={carregarNomesPadrao}>
                   Carregar lista
                 </Button>
-              </div>
+              </form>
               {participantes.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Nenhum pescador cadastrado.</p>
               ) : (
@@ -474,6 +458,7 @@ function Index() {
                         <TableCell>{p.nome}</TableCell>
                         <TableCell className="text-right">
                           <Button
+                            type="button"
                             size="sm"
                             variant="ghost"
                             onClick={() => excluirParticipante(p.id)}
@@ -495,7 +480,7 @@ function Index() {
               <CardTitle>🧾 Despesas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex flex-wrap gap-2">
+              <form onSubmit={handleAdicionarDespesa} className="flex flex-wrap gap-2">
                 <Input
                   value={descDespesa}
                   maxLength={80}
@@ -505,32 +490,23 @@ function Index() {
                 />
                 <Input
                   value={valorDespesa}
-                  type="text"
-                  inputMode="decimal"
                   placeholder="R$ 0,00"
                   onChange={(e) => setValorDespesa(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && adicionarDespesa()}
                   className="w-28"
                 />
-                <Select
+                <select
                   value={categoriaDespesa}
-                  onValueChange={(v) => setCategoriaDespesa(v as Categoria)}
+                  onChange={(e) => setCategoriaDespesa(e.target.value as Categoria)}
+                  className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
-                  <SelectTrigger className="w-36">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIAS.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button type="button" onClick={adicionarDespesa}>
-                  Adicionar
-                </Button>
-              </div>
+                  {CATEGORIAS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                <Button type="submit">Adicionar</Button>
+              </form>
               {despesas.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Nenhuma despesa lançada.</p>
               ) : (
@@ -552,7 +528,12 @@ function Index() {
                         </TableCell>
                         <TableCell className="text-right">{brl(d.valor)}</TableCell>
                         <TableCell className="text-right">
-                          <Button size="sm" variant="ghost" onClick={() => excluirDespesa(d.id)}>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => excluirDespesa(d.id)}
+                          >
                             Excluir
                           </Button>
                         </TableCell>
@@ -571,7 +552,7 @@ function Index() {
             <CardTitle>🎲 Sorteio de vagas</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-wrap items-end gap-3">
+            <form onSubmit={handleRealizarSorteio} className="flex flex-wrap items-end gap-3">
               <div className="space-y-1">
                 <Label htmlFor="vagas">Quantidade de vagas</Label>
                 <Input
@@ -583,10 +564,8 @@ function Index() {
                   className="w-28"
                 />
               </div>
-              <Button type="button" onClick={realizarSorteio}>
-                Realizar sorteio
-              </Button>
-            </div>
+              <Button type="submit">Realizar sorteio</Button>
+            </form>
             {sorteados.length > 0 && (
               <ol className="grid gap-2 sm:grid-cols-2">
                 {sorteados.map((s, i) => (
@@ -630,9 +609,7 @@ function Index() {
                     <TableRow key={d.id}>
                       <TableCell>{d.desc}</TableCell>
                       <TableCell className="text-right">{brl(d.valor)}</TableCell>
-                      <TableCell className="text-right">
-                        {brl(d.rateioDespesa)}
-                      </TableCell>
+                      <TableCell className="text-right">{brl(d.rateioDespesa)}</TableCell>
                       <TableCell className="text-right">{brl(d.pagoDespesa)}</TableCell>
                       <TableCell className="text-right">{brl(d.saldo)}</TableCell>
                       <TableCell className="text-right">
@@ -662,62 +639,60 @@ function Index() {
             <CardTitle>💳 Pagamentos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex flex-wrap items-end gap-3">
+            <form onSubmit={handleRegistrarPagamento} className="flex flex-wrap items-end gap-3">
               <div className="space-y-1">
                 <Label>Pescador</Label>
-                <Select
-                  value={pescadorId}
-                  onValueChange={setPescadorId}
+                <select
+                  value={pescadorId || (participantes[0]?.id ?? "")}
+                  onChange={(e) => setPescadorId(e.target.value)}
                   disabled={!participantes.length}
+                  className="h-10 w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {participantes.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
+                  {participantes.length === 0 ? (
+                    <option value="">Nenhum pescador</option>
+                  ) : (
+                    participantes.map((p) => (
+                      <option key={p.id} value={p.id}>
                         {p.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
+
               <div className="space-y-1">
                 <Label>Despesa</Label>
-                <Select
-                  value={despesaPagamentoId}
-                  onValueChange={setDespesaPagamentoId}
+                <select
+                  value={despesaPagamentoId || (despesas[0]?.id ?? "")}
+                  onChange={(e) => setDespesaPagamentoId(e.target.value)}
                   disabled={!despesas.length}
+                  className="h-10 w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {despesas.map((d) => (
-                      <SelectItem key={d.id} value={d.id}>
+                  {despesas.length === 0 ? (
+                    <option value="">Nenhuma despesa</option>
+                  ) : (
+                    despesas.map((d) => (
+                      <option key={d.id} value={d.id}>
                         {d.desc}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
+
               <div className="space-y-1">
                 <Label htmlFor="valorPg">Valor pago</Label>
                 <Input
                   id="valorPg"
-                  type="text"
-                  inputMode="decimal"
                   placeholder="R$ 0,00"
                   value={valorPagamento}
                   onChange={(e) => setValorPagamento(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && registrarPagamento()}
                   className="w-32"
                 />
               </div>
-              <Button type="button" onClick={registrarPagamento}>
-                Registrar
-              </Button>
-            </div>
+
+              <Button type="submit">Registrar</Button>
+            </form>
 
             <div>
               <h3 className="mb-2 text-sm font-semibold text-foreground">Tabela geral</h3>
@@ -792,6 +767,7 @@ function Index() {
                         <TableCell className="text-right">{brl(pg.valor)}</TableCell>
                         <TableCell className="text-right">
                           <Button
+                            type="button"
                             size="sm"
                             variant="ghost"
                             onClick={() => excluirPagamento(pg.id)}
