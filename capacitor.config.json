@@ -1,0 +1,8 @@
+{
+  "appId": "com.pescajusta.app",
+  "appName": "Pesca Justa",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
