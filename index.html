@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesca Justa 🎣 - Rodízio & Gestão Financeira Pro</title>
+  <title>Pesca Justa 🎣 - Rodízio 13 Pescadores (16h)</title>
   
-  <!-- METADADOS PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#0b5d7a">
   <meta name="mobile-web-app-capable" content="yes">
@@ -15,7 +14,6 @@
   <link rel="apple-touch-icon" href="icon-192.png">
 
   <style>
-    /* TEMAS DE COR */
     :root[data-theme="ocean"] {
       --primary: #0b5d7a;
       --primary2: #073e52;
@@ -73,7 +71,6 @@
       transition: background 0.3s, color 0.3s;
     }
 
-    /* HEADER HERO */
     header {
       background: var(--primary2);
       border-bottom: 3px solid var(--accent);
@@ -85,24 +82,9 @@
     header h1 { margin: 0; font-size: 30px; font-weight: 800; }
     header p { margin: 6px 0 0; opacity: .9; color: var(--accent); }
 
-    .theme-selector {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      display: flex;
-      gap: 6px;
-    }
-    .theme-btn {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid var(--border);
-      color: #fff;
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 12px;
-      cursor: pointer;
-    }
+    .theme-selector { position: absolute; top: 15px; right: 15px; display: flex; gap: 6px; }
+    .theme-btn { background: rgba(255,255,255,0.15); border: 1px solid var(--border); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; }
 
-    /* LAYOUT & CARDS */
     .container { max-width: 1250px; margin: auto; padding: 22px; width: 100%; flex: 1; }
     .grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
     
@@ -158,14 +140,12 @@
     button.danger:hover { background: var(--danger); color: #fff; }
     button.small { height: 32px; padding: 0 9px; font-size: 12px; }
 
-    /* TABELAS */
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
     th { font-size: 12px; text-transform: uppercase; color: var(--muted); }
     .actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
 
-    /* COMPONENTES DE INTERFACE */
     .avatar {
       width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
       background: var(--border); display: inline-flex; align-items: center; justify-content: center;
@@ -181,7 +161,6 @@
     .progress { height: 12px; background: rgba(0,0,0,0.1); border-radius: 999px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border); }
     .progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
 
-    /* TIMER DE RODÍZIO */
     .timer-panel {
       display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
       background: rgba(0,0,0,0.15); border: 1px solid var(--accent); padding: 16px;
@@ -191,10 +170,10 @@
     .timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
     .timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
 
-    /* MAPA ANATÔMICO DO BARCO */
+    /* LAYOUT EMBARCAÇÃO - 13 POSIÇÕES */
     .boat-wrap { overflow-x: auto; padding-bottom: 8px; }
     .boat {
-      position: relative; width: 900px; height: 760px; margin: auto;
+      position: relative; width: 920px; height: 760px; margin: auto;
       border: 4px solid var(--accent); border-radius: 160px 160px 60px 60px;
       background: var(--boat-bg); overflow: hidden;
       box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
@@ -202,12 +181,12 @@
     .boat-title { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); font-weight: bold; text-align: center; font-size: 18px; color: var(--accent); }
     .boat-sub { font-size: 12px; margin-top: 4px; color: var(--muted); }
     
-    .side { position: absolute; top: 105px; width: 170px; height: 400px; display: flex; flex-direction: column; justify-content: space-between; }
+    .side { position: absolute; top: 110px; width: 170px; height: 350px; display: flex; flex-direction: column; justify-content: space-between; }
     .side.left { left: 30px; } .side.right { right: 30px; }
-    .center-line { position: absolute; left: 50%; top: 105px; transform: translateX(-50%); height: 420px; border-left: 2px dashed var(--accent); opacity: 0.4; }
+    .center-line { position: absolute; left: 50%; top: 110px; transform: translateX(-50%); height: 360px; border-left: 2px dashed var(--accent); opacity: 0.4; }
 
     .slot {
-      min-height: 78px; background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+      min-height: 80px; background: rgba(0,0,0,0.2); border: 1px solid var(--border);
       border-radius: 12px; padding: 6px; text-align: center; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: .15s; color: var(--text);
     }
@@ -217,17 +196,18 @@
     .slot-name { font-size: 12px; font-weight: bold; max-width: 145px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .slot .avatar { width: 30px; height: 30px; font-size: 10px; }
 
-    /* BANCOS DO FUNDO (2 OCUPANTES POR BANCO - TOTAL 4 PESSOAS) */
-    .back { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); width: 86%; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    /* BANCOS DO FUNDO (3 ESQUERDA, 4 DIREITA) */
+    .back { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); width: 94%; display: grid; grid-template-columns: 3fr 4fr; gap: 12px; }
     .bench { background: rgba(0,0,0,0.15); border: 1px solid rgba(74, 222, 128, 0.4); border-radius: 14px; padding: 10px; }
     .bench-title { text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 8px; color: var(--success); }
-    .bench-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .bench .slot { min-height: 90px; }
+    .bench-slots { display: grid; gap: 6px; }
+    .bench-slots.esq { grid-template-columns: repeat(3, 1fr); }
+    .bench-slots.dir { grid-template-columns: repeat(4, 1fr); }
+    .bench .slot { min-height: 80px; }
 
     .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-    .result { background: rgba(0,0,0,0.1); border: 1px solid var(--border); padding: 10px; border-radius: 9px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+    .result { background: rgba(0,0,0,0.1); border: 1px solid var(--border); padding: 10px; border-radius: 99px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
 
-    /* GALERIA & TOAST */
     .upload-box { border: 2px dashed var(--accent); border-radius: 10px; padding: 20px; text-align: center; background: rgba(14, 165, 233, 0.05); cursor: pointer; position: relative; }
     .upload-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
     .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 12px; }
@@ -235,7 +215,7 @@
     .img-container img { width: 100%; height: 100%; object-fit: cover; }
     .btn-del-img { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #f87171; border: 0; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; }
 
-    .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 13px 17px; border-radius: 9px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: none; z-index: 1000; border: 1px solid var(--accent); }
+    .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 13px 17px; border-radius: 99px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: none; z-index: 1000; border: 1px solid var(--accent); }
     .toast.show { display: block; }
     .muted { color: var(--muted); font-size: 14px; }
     .empty { padding: 16px; color: var(--muted); text-align: center; }
@@ -256,7 +236,7 @@
     <button class="theme-btn" onclick="setTheme('dark')">🌙 Escuro</button>
   </div>
   <h1>Pesca Justa 🎣 Pro</h1>
-  <p>Gestão Financeira, Rodízio Inteligente & Prestação de Contas</p>
+  <p>Gestão Financeira & Rodízio de 16 Horas (13 Pescadores)</p>
   <div style="margin-top:12px"><span class="badge" id="roundBadge">Rodada 1</span></div>
 </header>
 
@@ -320,7 +300,7 @@
       <div class="form-row">
         <div class="field"><label for="participantName">Nome do pescador</label><input id="participantName" placeholder="Digite o nome"></div>
         <button onclick="addParticipant()">Adicionar</button>
-        <button class="secondary" onclick="loadDefaultNames()">Lista Padrão</button>
+        <button class="secondary" onclick="loadDefaultNames()">Lista (13 Nomes)</button>
       </div>
       <div class="table-wrap" style="margin-top:15px">
         <table>
@@ -351,12 +331,12 @@
     </div>
   </section>
 
-  <!-- SORTEIO, RODÍZIO DE 18H & MAPA DO BARCO -->
+  <!-- SORTEIO, RODÍZIO DE 16H & MAPA DO BARCO -->
   <section class="card">
-    <h2>🚤 Sorteio & Rodízio do Convés (18h)</h2>
+    <h2>🚤 Sorteio & Rodízio do Convés (16 Horas - 13 Posições)</h2>
     <div class="form-row">
       <button onclick="drawPositions()">🎲 Sortear posições</button>
-      <button onclick="iniciarCronometro18h()" style="background:#16a34a;">⏱️ Iniciar Cronômetro 18h</button>
+      <button onclick="iniciarCronometro16h()" style="background:#16a34a;">⏱️ Iniciar Cronômetro 16h</button>
       <button class="secondary" onclick="clearPositions()">Limpar posições</button>
       <button class="secondary" onclick="newRound()">🔄 Nova rodada</button>
     </div>
@@ -378,7 +358,7 @@
       </div>
     </div>
 
-    <!-- MAPA VISUAL DA EMBARCAÇÃO -->
+    <!-- MAPA VISUAL DA EMBARCAÇÃO (13 POSIÇÕES) -->
     <div class="boat-wrap">
       <div class="boat">
         <div class="boat-title">🚤 PROA<div class="boat-sub">CORREDOR CENTRAL</div></div>
@@ -386,8 +366,8 @@
         <div class="center-line"></div>
         <div class="side right" id="rightSlots"></div>
         <div class="back">
-          <div class="bench"><div class="bench-title">BANCO FUNDO — ESQUERDA (2)</div><div class="bench-slots" id="backLeftSlots"></div></div>
-          <div class="bench"><div class="bench-title">BANCO FUNDO — DIREITA (2)</div><div class="bench-slots" id="backRightSlots"></div></div>
+          <div class="bench"><div class="bench-title">BANCO FUNDO — ESQ (3)</div><div class="bench-slots esq" id="backLeftSlots"></div></div>
+          <div class="bench"><div class="bench-title">BANCO FUNDO — DIR (4)</div><div class="bench-slots dir" id="backRightSlots"></div></div>
         </div>
       </div>
     </div>
@@ -453,7 +433,7 @@
     <h2>🔄 Histórico de Rodízio</h2>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Rodada</th><th>Pescador</th><th>Posição</th><th>Data</th></tr></thead>
+        <thead><tr><th>Rodada</th><th>Pescador</th><th>Posição</th><th>Entrada</th><th>Saída</th></tr></thead>
         <tbody id="historyTable"></tbody>
       </table>
     </div>
@@ -467,17 +447,17 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'pesca-justa-unificado-v4';
+const STORAGE_KEY = 'pesca-justa-13p-16h-v1';
 
-/* CONFIGURAÇÃO DAS 12 POSIÇÕES DA EMBARCAÇÃO (4 NO BANCO DO FUNDO) */
+/* 13 POSIÇÕES: 3 ESQUERDA, 3 DIREITA, 3 BANCO FUNDO ESQUERDA, 4 BANCO FUNDO DIREITA */
 const POSITIONS = [
-  {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},{id:'esq-4',name:'Esquerda 4',group:'left'},
-  {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},{id:'dir-4',name:'Direita 4',group:'right'},
-  {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},
-  {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'}
+  {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},
+  {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},
+  {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},{id:'fundo-esq-3',name:'Fundo E3',group:'backLeft'},
+  {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'},{id:'fundo-dir-3',name:'Fundo D3',group:'backRight'},{id:'fundo-dir-4',name:'Fundo D4',group:'backRight'}
 ];
 
-const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo'];
+const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','Pescador 13'];
 
 let selectedPosition = null;
 let timerInterval = null;
@@ -631,12 +611,18 @@ function addPayment() {
 
 function deletePayment(pid) { state.payments = state.payments.filter(x=>x.id!==pid); save(); render(); toast('Pagamento removido.'); }
 
-/* SORTEIO & RODÍZIO DA EMBARCAÇÃO */
+/* SORTEIO & RODÍZIO DA EMBARCAÇÃO COM CÁLCULO DE 16 HORAS */
 function drawPositions() {
   if(!state.participants.length) return toast('Cadastre os pescadores primeiro.');
   const people = shuffle(state.participants).slice(0, POSITIONS.length);
   const available = new Set(POSITIONS.map(x=>x.id)); const result = [];
   
+  // Cálculo da janela de tempo por turno com base em 16 HORAS
+  const totalSegundos = 16 * 3600;
+  const duracaoTurnoSegundos = Math.floor(totalSegundos / state.participants.length);
+  const startTime = new Date();
+  const endTime = new Date(startTime.getTime() + (duracaoTurnoSegundos * 1000));
+
   people.forEach(p => {
     const used = new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId));
     let choices = [...available].filter(x=>!used.has(x)); if(!choices.length) choices = [...available];
@@ -645,7 +631,14 @@ function drawPositions() {
   });
 
   state.draw = result;
-  result.forEach(x => state.history.push({id:id(), round:state.round, date: new Date().toISOString(), positionId:x.positionId, participantId:x.participantId}));
+  result.forEach(x => state.history.push({
+    id: id(),
+    round: state.round,
+    entryTime: startTime.toISOString(),
+    exitTime: endTime.toISOString(),
+    positionId: x.positionId,
+    participantId: x.participantId
+  }));
   selectedPosition = null; save(); render(); toast(`Posições sorteadas para a rodada ${state.round}.`);
 }
 
@@ -661,7 +654,7 @@ function clickPosition(positionId) {
   selectedPosition = null; save(); render(); toast('Posições trocadas.');
 }
 
-/* CRONÔMETRO DE 18 HORAS COM ÁUDIO */
+/* CRONÔMETRO DE 16 HORAS */
 function playSoundAlert() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -674,9 +667,9 @@ function playSoundAlert() {
   } catch(e){}
 }
 
-function iniciarCronometro18h() {
+function iniciarCronometro16h() {
   if(!state.participants.length) return toast('Cadastre os pescadores primeiro.');
-  const totalSegundos = 18 * 3600;
+  const totalSegundos = 16 * 3600;
   const duracaoTurnoSegundos = Math.floor(totalSegundos / state.participants.length);
   document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoTurnoSegundos / 60)} min`;
   
@@ -692,10 +685,10 @@ function iniciarCronometro18h() {
       alert('🔔 FIM DO TURNO! Hora de girar as posições da pescaria.');
       newRound();
       drawPositions();
-      iniciarCronometro18h();
+      iniciarCronometro16h();
     }
   }, 1000);
-  toast('Cronômetro de 18 horas iniciado!');
+  toast('Cronômetro de 16 horas iniciado!');
 }
 
 function renderTimer(seg) {
@@ -779,7 +772,6 @@ function shareWhatsApp() {
   window.open(url, '_blank');
 }
 
-/* EXPORTAR E IMPORTAR BACKUP */
 function exportData() {
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
   const dl = document.createElement('a');
@@ -848,7 +840,6 @@ function render() {
   document.getElementById('roundBadge').textContent = `Rodada ${state.round}`;
   const t = totals();
   
-  // Resumo
   document.getElementById('sumParticipants').textContent = state.participants.length;
   document.getElementById('sumExpenses').textContent = money(t.expenses);
   document.getElementById('sumCollected').textContent = money(t.collected);
@@ -859,7 +850,6 @@ function render() {
   document.getElementById('progressPercent').textContent = `${pct}%`;
   document.getElementById('progressBar').style.width = `${pct}%`;
 
-  // Tabela Participantes
   const partTbody = document.getElementById('participantsTable');
   partTbody.innerHTML = state.participants.length ? state.participants.map(p => {
     const posCount = state.history.filter(h=>h.participantId===p.id).length;
@@ -881,7 +871,6 @@ function render() {
     `;
   }).join('') : '<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
 
-  // Tabela Despesas
   const expTbody = document.getElementById('expensesTable');
   expTbody.innerHTML = state.expenses.length ? state.expenses.map(e => `
     <tr>
@@ -895,14 +884,12 @@ function render() {
     </tr>
   `).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa lançada.</td></tr>';
 
-  // Selects do Pagamento
   const partSelect = document.getElementById('paymentParticipant');
   partSelect.innerHTML = '<option value="">Selecione...</option>' + state.participants.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
   
   const expSelect = document.getElementById('paymentExpense');
   expSelect.innerHTML = '<option value="">Selecione...</option>' + state.expenses.map(e => `<option value="${e.id}">${esc(e.desc)} (${money(e.value)})</option>`).join('');
 
-  // Tabela Financeira por Pescador
   const finTbody = document.getElementById('financialTable');
   finTbody.innerHTML = state.participants.length ? state.participants.map(p => {
     const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0);
@@ -921,7 +908,6 @@ function render() {
     `;
   }).join('') : '<tr><td colspan="5" class="empty">Nenhum dado financeiro.</td></tr>';
 
-  // Controle por Despesa
   const expCtrlTbody = document.getElementById('expenseControlTable');
   expCtrlTbody.innerHTML = state.expenses.length ? state.expenses.map(e => {
     const perPerson = state.participants.length ? e.value / state.participants.length : 0;
@@ -943,7 +929,6 @@ function render() {
     `;
   }).join('') : '<tr><td colspan="7" class="empty">Nenhuma despesa.</td></tr>';
 
-  // Histórico Pagamentos
   const payTbody = document.getElementById('paymentsTable');
   payTbody.innerHTML = state.payments.length ? state.payments.slice().reverse().map(p => {
     const part = participant(p.participantId);
@@ -960,23 +945,27 @@ function render() {
     `;
   }).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
 
-  // Histórico Rodízio
   const histTbody = document.getElementById('historyTable');
   histTbody.innerHTML = state.history.length ? state.history.slice().reverse().map(h => {
     const part = participant(h.participantId);
     const position = pos(h.positionId);
-    const d = new Date(h.date);
+    const entryDate = h.entryTime ? new Date(h.entryTime) : (h.date ? new Date(h.date) : null);
+    const exitDate = h.exitTime ? new Date(h.exitTime) : null;
+    
+    const timeStrEntry = entryDate ? `${entryDate.toLocaleDateString()} ${entryDate.toLocaleTimeString().slice(0,5)}` : '--:--';
+    const timeStrExit = exitDate ? `${exitDate.toLocaleDateString()} ${exitDate.toLocaleTimeString().slice(0,5)}` : '--:--';
+
     return `
       <tr>
         <td><span class="badge">Rodada ${h.round}</span></td>
         <td><strong>${part ? esc(part.name) : 'Excluído'}</strong></td>
         <td>${position ? esc(position.name) : h.positionId}</td>
-        <td>${d.toLocaleDateString()} ${d.toLocaleTimeString().slice(0,5)}</td>
+        <td><span style="color:var(--success); font-weight:bold;">${timeStrEntry}</span></td>
+        <td><span style="color:var(--danger); font-weight:bold;">${timeStrExit}</span></td>
       </tr>
     `;
-  }).join('') : '<tr><td colspan="4" class="empty">Nenhum histórico de sorteio.</td></tr>';
+  }).join('') : '<tr><td colspan="5" class="empty">Nenhum histórico de sorteio.</td></tr>';
 
-  // Sorteio Atual Resultado
   const drawRes = document.getElementById('drawResults');
   drawRes.innerHTML = state.draw.length ? state.draw.map(d => {
     const position = pos(d.positionId);
