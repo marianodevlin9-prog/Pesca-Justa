@@ -1,793 +1,625 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+```tsx
+{/* =================================================
+    SORTEIO E MAPA DO BARCO
+================================================= */}
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Pesca Justa — Rateio e Sorteio de Pescaria" },
-      {
-        name: "description",
-        content:
-          "Organize sua pescaria: cadastre participantes, sorteie vagas, lance despesas e controle o rateio e os pagamentos de cada pescador.",
-      },
-    ],
-  }),
-  component: Index,
-});
+<Card>
+  <CardHeader>
+    <CardTitle>
+      🎲 Sorteio de posições no barco
+    </CardTitle>
+  </CardHeader>
 
-const CATEGORIAS = ["Barco", "Iscas", "Alimentação", "Outros"] as const;
-type Categoria = (typeof CATEGORIAS)[number];
+  <CardContent className="space-y-6">
 
-type Participante = { id: string; nome: string; foto?: string };
-type Despesa = { id: string; desc: string; valor: number; categoria: Categoria };
-type Pagamento = {
-  id: string;
-  participanteId: string;
-  despesaId: string;
-  valor: number;
-  data: string;
-};
+    <div className="flex flex-wrap gap-3">
 
-type Estado = {
-  participantes: Participante[];
-  despesas: Despesa[];
-  pagamentos: Pagamento[];
-};
-
-const STORAGE_KEY = "pesca-justa:v1";
-const vazio: Estado = { participantes: [], despesas: [], pagamentos: [] };
-
-const uid = () => {
-  if (typeof window !== "undefined" && window.crypto?.randomUUID) {
-    return window.crypto.randomUUID();
-  }
-  return Math.random().toString(36).slice(2, 10);
-};
-
-const brl = (n: number) =>
-  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-const NOMES_PADRAO = [
-  "Adhamo", "Gabriel", "Claudio", "Emiliano", "Wesnex Tattoo", "Devlin",
-  "Valtair", "Roderley", "Padrasto Rafa", "Rafa", "Willian",
-  "Marcelo Rastoldo", "João Darço",
-];
-
-const iniciais = (nome: string) =>
-  nome.split(" ").filter(Boolean).slice(0, 2).map((p) => p[0]!.toUpperCase()).join("");
-
-async function comprimirImagem(file: File, max = 160): Promise<string> {
-  const bitmap = await createImageBitmap(file);
-  const escala = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
-  const w = Math.max(1, Math.round(bitmap.width * escala));
-  const h = Math.max(1, Math.round(bitmap.height * escala));
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  canvas.getContext("2d")!.drawImage(bitmap, 0, 0, w, h);
-  bitmap.close?.();
-  return canvas.toDataURL("image/jpeg", 0.7);
-}
-
-function FotoPescador({
-  participante,
-  onSelecionar,
-}: {
-  participante: Participante;
-  onSelecionar: (id: string, file: File | null | undefined) => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  return (
-    <div className="flex items-center gap-2">
-      <button
+      <Button
         type="button"
-        onClick={() => inputRef.current?.click()}
-        title="Adicionar/alterar foto"
-        className="size-10 shrink-0 overflow-hidden rounded-full border border-border bg-muted text-xs font-semibold text-muted-foreground transition hover:opacity-80"
+        onClick={realizarSorteio}
+        disabled={participantes.length === 0}
       >
-        {participante.foto ? (
-          <img
-            src={participante.foto}
-            alt={`Foto de ${participante.nome}`}
-            className="size-full object-cover"
-          />
-        ) : (
-          <span>{iniciais(participante.nome) || "?"}</span>
-        )}
-      </button>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(ev) => {
-          onSelecionar(participante.id, ev.target.files?.[0]);
-          ev.target.value = "";
+        🎲 Sortear posições
+      </Button>
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => {
+          setResultadoSorteio([]);
+          setSorteados([]);
         }}
-      />
+      >
+        Limpar posições
+      </Button>
+
     </div>
-  );
-}
 
-function usePescaria() {
-  const [estado, setEstado] = useState<Estado>(vazio);
-  const [carregado, setCarregado] = useState(false);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Partial<Estado>;
-        setEstado({
-          participantes: parsed.participantes ?? [],
-          despesas: (parsed.despesas ?? []).map((d) => ({
-            ...d,
-            categoria: CATEGORIAS.includes(d.categoria as Categoria) ? (d.categoria as Categoria) : "Outros",
-          })),
-          pagamentos: (parsed.pagamentos ?? []).map((pg) => ({
-            ...pg,
-            despesaId: pg.despesaId ?? "",
-          })),
-        });
-      }
-    } catch {
-      // ignora erros de parse
-    }
-    setCarregado(true);
-  }, []);
+    {/* =============================================
+        MAPA VISUAL DO BARCO
+    ============================================== */}
 
-  useEffect(() => {
-    if (carregado) localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
-  }, [estado, carregado]);
+    <div
+      className="
+        relative
+        mx-auto
+        min-h-[700px]
+        max-w-3xl
+        overflow-hidden
+        rounded-[80px]
+        border-4
+        border-primary
+        bg-muted
+        p-6
+        shadow-lg
+      "
+    >
 
-  return { estado, setEstado };
-}
+      {/* PROA */}
 
-function Index() {
-  const { estado, setEstado } = usePescaria();
-  const { participantes, despesas, pagamentos } = estado;
+      <div
+        className="
+          absolute
+          left-1/2
+          top-4
+          -translate-x-1/2
+          text-center
+          text-lg
+          font-bold
+        "
+      >
+        🚤 PROA
+      </div>
 
-  // Estados dos inputs dos formulários
-  const [nome, setNome] = useState("");
-  const [descDespesa, setDescDespesa] = useState("");
-  const [valorDespesa, setValorDespesa] = useState("");
-  const [categoriaDespesa, setCategoriaDespesa] = useState<Categoria>("Barco");
-  const [vagas, setVagas] = useState("2");
-  const [sorteados, setSorteados] = useState<string[]>([]);
-  const [pescadorId, setPescadorId] = useState("");
-  const [despesaPagamentoId, setDespesaPagamentoId] = useState("");
-  const [valorPagamento, setValorPagamento] = useState("");
 
-  const totais = useMemo(() => {
-    const totalDespesas = despesas.reduce((s, d) => s + d.valor, 0);
-    const totalArrecadado = pagamentos.reduce((s, p) => s + p.valor, 0);
-    const rateio = participantes.length ? totalDespesas / participantes.length : 0;
-    return {
-      totalDespesas,
-      totalArrecadado,
-      pendente: Math.max(totalDespesas - totalArrecadado, 0),
-      rateio,
-    };
-  }, [despesas, pagamentos, participantes]);
+      {/* LATERAL ESQUERDA */}
 
-  const linhas = useMemo(
-    () =>
-      participantes.map((p) => {
-        const pago = pagamentos
-          .filter((pg) => pg.participanteId === p.id)
-          .reduce((s, pg) => s + pg.valor, 0);
-        const falta = totais.rateio - pago;
-        const status = falta <= 0.005 ? "Pago" : pago > 0 ? "Parcial" : "Pendente";
-        return { ...p, pago, falta: Math.max(falta, 0), status };
-      }),
-    [participantes, pagamentos, totais.rateio],
-  );
+      <div
+        className="
+          absolute
+          left-6
+          top-28
+          flex
+          h-[480px]
+          flex-col
+          justify-around
+        "
+      >
 
-  const despesaLinhas = useMemo(
-    () =>
-      despesas.map((d) => {
-        const rateioDespesa = participantes.length
-          ? d.valor / participantes.length
-          : 0;
-        const pagoDespesa = pagamentos
-          .filter((pg) => pg.despesaId === d.id)
-          .reduce((s, pg) => s + pg.valor, 0);
-        const saldo = d.valor - pagoDespesa;
-        const status =
-          saldo <= 0.005 ? "Pago" : pagoDespesa > 0 ? "Parcial" : "Pendente";
-        return { ...d, rateioDespesa, pagoDespesa, saldo: Math.max(saldo, 0), status };
-      }),
-    [despesas, participantes, pagamentos],
-  );
+        {[
+          "esq-1",
+          "esq-2",
+          "esq-3",
+          "esq-4",
+        ].map((posicaoId) => {
 
-  function carregarNomesPadrao() {
-    setEstado((e) => {
-      const existentes = new Set(e.participantes.map((p) => p.nome.toLowerCase()));
-      const novos = NOMES_PADRAO.filter((n) => !existentes.has(n.toLowerCase())).map(
-        (nomePadrao) => ({ id: uid(), nome: nomePadrao }),
-      );
-      if (!novos.length) {
-        toast.info("Todos os pescadores da lista já estão cadastrados.");
-        return e;
-      }
-      toast.success(`${novos.length} pescador(es) adicionado(s).`);
-      return { ...e, participantes: [...e.participantes, ...novos] };
-    });
-  }
+          const posicao =
+            POSICOES_BARCO.find(
+              (p) =>
+                p.id === posicaoId,
+            );
 
-  async function definirFoto(id: string, file: File | null | undefined) {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast.error("Selecione um arquivo de imagem.");
-      return;
-    }
-    try {
-      const foto = await comprimirImagem(file);
-      setEstado((e) => ({
-        ...e,
-        participantes: e.participantes.map((p) => (p.id === id ? { ...p, foto } : p)),
-      }));
-      toast.success("Foto atualizada.");
-    } catch {
-      toast.error("Não foi possível processar a imagem.");
-    }
-  }
+          const resultado =
+            resultadoSorteio.find(
+              (r) =>
+                r.posicaoId ===
+                posicaoId,
+            );
 
-  function handleAdicionarParticipante(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    const limpo = nome.trim().slice(0, 60);
-    if (!limpo) {
-      toast.error("Informe o nome do pescador.");
-      return;
-    }
-    if (participantes.some((p) => p.nome.toLowerCase() === limpo.toLowerCase())) {
-      toast.error("Esse pescador já está na lista.");
-      return;
-    }
-    setEstado((prev) => ({
-      ...prev,
-      participantes: [...prev.participantes, { id: uid(), nome: limpo }],
-    }));
-    setNome("");
-    toast.success(`${limpo} adicionado.`);
-  }
+          const participante =
+            participantes.find(
+              (p) =>
+                p.id ===
+                resultado?.participanteId,
+            );
 
-  function excluirParticipante(id: string) {
-    setEstado((e) => ({
-      ...e,
-      participantes: e.participantes.filter((p) => p.id !== id),
-      pagamentos: e.pagamentos.filter((pg) => pg.participanteId !== id),
-    }));
-    setSorteados([]);
-  }
+          return (
 
-  function handleAdicionarDespesa(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    const desc = descDespesa.trim().slice(0, 80);
-    const valor = Number(valorDespesa.replace(",", "."));
-    if (!desc) {
-      toast.error("Informe a descrição da despesa.");
-      return;
-    }
-    if (!Number.isFinite(valor) || valor <= 0) {
-      toast.error("Informe um valor válido maior que zero.");
-      return;
-    }
-    setEstado((prev) => ({
-      ...prev,
-      despesas: [...prev.despesas, { id: uid(), desc, valor, categoria: categoriaDespesa }],
-    }));
-    setDescDespesa("");
-    setValorDespesa("");
-    toast.success("Despesa adicionada.");
-  }
+            <div
+              key={posicaoId}
+              className="
+                flex
+                min-h-[70px]
+                w-36
+                flex-col
+                justify-center
+                rounded-lg
+                border-2
+                bg-background
+                p-2
+                text-center
+                shadow
+              "
+            >
 
-  function excluirDespesa(id: string) {
-    setEstado((e) => ({
-      ...e,
-      despesas: e.despesas.filter((d) => d.id !== id),
-      pagamentos: e.pagamentos.filter((pg) => pg.despesaId !== id),
-    }));
-  }
+              <span
+                className="
+                  text-xs
+                  font-semibold
+                  text-muted-foreground
+                "
+              >
+                {posicao?.nome}
+              </span>
 
-  function handleRealizarSorteio(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    const qtd = Math.floor(Number(vagas));
-    if (!participantes.length) {
-      toast.error("Cadastre participantes primeiro.");
-      return;
-    }
-    if (!Number.isFinite(qtd) || qtd < 1) {
-      toast.error("Quantidade de vagas inválida.");
-      return;
-    }
-    const embaralhado = [...participantes];
-    for (let i = embaralhado.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [embaralhado[i], embaralhado[j]] = [embaralhado[j]!, embaralhado[i]!];
-    }
-    setSorteados(embaralhado.slice(0, Math.min(qtd, embaralhado.length)).map((p) => p.nome));
-  }
+              <span
+                className="
+                  mt-1
+                  text-sm
+                  font-bold
+                "
+              >
+                {participante?.nome ??
+                  "Vago"}
+              </span>
 
-  function handleRegistrarPagamento(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    const valor = Number(valorPagamento.replace(",", "."));
-    const idPescador = pescadorId || participantes[0]?.id;
-    const idDespesa = despesaPagamentoId || despesas[0]?.id;
+            </div>
 
-    if (!idPescador) {
-      toast.error("Selecione um pescador.");
-      return;
-    }
-    if (!idDespesa) {
-      toast.error("Selecione a despesa.");
-      return;
-    }
-    if (!Number.isFinite(valor) || valor <= 0) {
-      toast.error("Informe um valor maior que zero.");
-      return;
-    }
-    setEstado((prev) => ({
-      ...prev,
-      pagamentos: [
-        ...prev.pagamentos,
-        {
-          id: uid(),
-          participanteId: idPescador,
-          despesaId: idDespesa,
-          valor,
-          data: new Date().toISOString(),
-        },
-      ],
-    }));
-    setValorPagamento("");
-    toast.success("Pagamento registrado.");
-  }
+          );
 
-  function excluirPagamento(id: string) {
-    setEstado((e) => ({ ...e, pagamentos: e.pagamentos.filter((p) => p.id !== id) }));
-  }
+        })}
 
-  function limparTudo() {
-    setEstado(vazio);
-    setSorteados([]);
-    toast.success("Dados da pescaria apagados.");
-  }
+      </div>
 
-  const nomePorId = (id: string) =>
-    participantes.find((p) => p.id === id)?.nome ?? "—";
 
-  const nomeDespesaPorId = (id: string) =>
-    despesas.find((d) => d.id === id)?.desc ?? "—";
+      {/* LATERAL DIREITA */}
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-primary px-6 py-14 text-center text-primary-foreground">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Pesca Justa 🎣</h1>
-        <p className="mx-auto mt-3 max-w-xl text-sm opacity-90 sm:text-base">
-          Organize sua pescaria: participantes, sorteio de vagas, despesas e rateio justo.
+      <div
+        className="
+          absolute
+          right-6
+          top-28
+          flex
+          h-[480px]
+          flex-col
+          justify-around
+        "
+      >
+
+        {[
+          "dir-1",
+          "dir-2",
+          "dir-3",
+          "dir-4",
+        ].map((posicaoId) => {
+
+          const posicao =
+            POSICOES_BARCO.find(
+              (p) =>
+                p.id === posicaoId,
+            );
+
+          const resultado =
+            resultadoSorteio.find(
+              (r) =>
+                r.posicaoId ===
+                posicaoId,
+            );
+
+          const participante =
+            participantes.find(
+              (p) =>
+                p.id ===
+                resultado?.participanteId,
+            );
+
+          return (
+
+            <div
+              key={posicaoId}
+              className="
+                flex
+                min-h-[70px]
+                w-36
+                flex-col
+                justify-center
+                rounded-lg
+                border-2
+                bg-background
+                p-2
+                text-center
+                shadow
+              "
+            >
+
+              <span
+                className="
+                  text-xs
+                  font-semibold
+                  text-muted-foreground
+                "
+              >
+                {posicao?.nome}
+              </span>
+
+              <span
+                className="
+                  mt-1
+                  text-sm
+                  font-bold
+                "
+              >
+                {participante?.nome ??
+                  "Vago"}
+              </span>
+
+            </div>
+
+          );
+
+        })}
+
+      </div>
+
+
+      {/* CORREDOR CENTRAL */}
+
+      <div
+        className="
+          absolute
+          left-1/2
+          top-24
+          h-[500px]
+          w-32
+          -translate-x-1/2
+          rounded-full
+          border
+          border-dashed
+          border-muted-foreground
+          opacity-40
+        "
+      />
+
+
+      {/* BANCOS DO FUNDO */}
+
+      <div
+        className="
+          absolute
+          bottom-8
+          left-1/2
+          w-[90%]
+          -translate-x-1/2
+        "
+      >
+
+        <p
+          className="
+            mb-3
+            text-center
+            text-sm
+            font-bold
+          "
+        >
+          🔙 FUNDO DO BARCO
         </p>
-      </header>
 
-      <main className="mx-auto grid max-w-5xl gap-6 px-4 py-10">
-        <section aria-labelledby="resumo" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <h2 id="resumo" className="sr-only">
-            Resumo
-          </h2>
-          {[
-            { label: "Participantes", value: String(participantes.length) },
-            { label: "Total de despesas", value: brl(totais.totalDespesas) },
-            { label: "Arrecadado", value: brl(totais.totalArrecadado) },
-            { label: "Rateio por pessoa", value: brl(totais.rateio) },
-          ].map((item) => (
-            <Card key={item.label}>
-              <CardContent className="p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {item.label}
-                </p>
-                <p className="mt-2 text-2xl font-semibold text-foreground">{item.value}</p>
-              </CardContent>
-            </Card>
-          ))}
-          <Card className="sm:col-span-2 lg:col-span-4">
-            <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
-              <p className="text-sm text-muted-foreground">
-                Valor pendente:{" "}
-                <span className="text-base font-semibold text-foreground">
-                  {brl(totais.pendente)}
-                </span>
-              </p>
-              <Button type="button" variant="outline" onClick={limparTudo}>
-                Zerar pescaria
-              </Button>
-            </CardContent>
-          </Card>
-        </section>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* PARTICIPANTES */}
-          <Card>
-            <CardHeader>
-              <CardTitle>👥 Participantes</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleAdicionarParticipante} className="flex flex-wrap gap-2">
-                <Input
-                  value={nome}
-                  maxLength={60}
-                  placeholder="Nome do pescador"
-                  onChange={(e) => setNome(e.target.value)}
-                  className="min-w-40 flex-1"
-                />
-                <Button type="submit">Adicionar</Button>
-                <Button type="button" variant="outline" onClick={carregarNomesPadrao}>
-                  Carregar lista
-                </Button>
-              </form>
-              {participantes.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Nenhum pescador cadastrado.</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-14">Foto</TableHead>
-                      <TableHead>Nome</TableHead>
-                      <TableHead className="w-20" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {participantes.map((p) => (
-                      <TableRow key={p.id}>
-                        <TableCell>
-                          <FotoPescador participante={p} onSelecionar={definirFoto} />
-                        </TableCell>
-                        <TableCell>{p.nome}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => excluirParticipante(p.id)}
-                          >
-                            Excluir
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+        <div
+          className="
+            grid
+            grid-cols-2
+            gap-6
+          "
+        >
 
-          {/* DESPESAS */}
-          <Card>
-            <CardHeader>
-              <CardTitle>🧾 Despesas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleAdicionarDespesa} className="flex flex-wrap gap-2">
-                <Input
-                  value={descDespesa}
-                  maxLength={80}
-                  placeholder="Descrição"
-                  onChange={(e) => setDescDespesa(e.target.value)}
-                  className="min-w-32 flex-1"
-                />
-                <Input
-                  value={valorDespesa}
-                  placeholder="R$ 0,00"
-                  onChange={(e) => setValorDespesa(e.target.value)}
-                  className="w-28"
-                />
-                <select
-                  value={categoriaDespesa}
-                  onChange={(e) => setCategoriaDespesa(e.target.value as Categoria)}
-                  className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                >
-                  {CATEGORIAS.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                <Button type="submit">Adicionar</Button>
-              </form>
-              {despesas.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Nenhuma despesa lançada.</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
-                      <TableHead className="w-20" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {despesas.map((d) => (
-                      <TableRow key={d.id}>
-                        <TableCell>{d.desc}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">{d.categoria}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">{brl(d.valor)}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => excluirDespesa(d.id)}
-                          >
-                            Excluir
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+
+          {/* BANCO ESQUERDO */}
+
+          <div
+            className="
+              rounded-xl
+              border-2
+              bg-background
+              p-3
+              shadow
+            "
+          >
+
+            <p
+              className="
+                mb-2
+                text-center
+                text-xs
+                font-bold
+              "
+            >
+              BANCO TRASEIRO ESQUERDO
+            </p>
+
+
+            <div
+              className="
+                grid
+                grid-cols-3
+                gap-2
+              "
+            >
+
+              {[
+                "fundo-esq-1",
+                "fundo-esq-2",
+                "fundo-esq-3",
+              ].map((posicaoId) => {
+
+                const posicao =
+                  POSICOES_BARCO.find(
+                    (p) =>
+                      p.id === posicaoId,
+                  );
+
+                const resultado =
+                  resultadoSorteio.find(
+                    (r) =>
+                      r.posicaoId ===
+                      posicaoId,
+                  );
+
+                const participante =
+                  participantes.find(
+                    (p) =>
+                      p.id ===
+                      resultado?.participanteId,
+                  );
+
+                return (
+
+                  <div
+                    key={posicaoId}
+                    className="
+                      min-h-[80px]
+                      rounded-lg
+                      border
+                      bg-muted
+                      p-2
+                      text-center
+                    "
+                  >
+
+                    <div
+                      className="
+                        text-xs
+                        text-muted-foreground
+                      "
+                    >
+                      {posicao?.nome}
+                    </div>
+
+                    <div
+                      className="
+                        mt-2
+                        text-sm
+                        font-bold
+                      "
+                    >
+                      {participante?.nome ??
+                        "Vago"}
+                    </div>
+
+                  </div>
+
+                );
+
+              })}
+
+            </div>
+
+          </div>
+
+
+          {/* BANCO DIREITO */}
+
+          <div
+            className="
+              rounded-xl
+              border-2
+              bg-background
+              p-3
+              shadow
+            "
+          >
+
+            <p
+              className="
+                mb-2
+                text-center
+                text-xs
+                font-bold
+              "
+            >
+              BANCO TRASEIRO DIREITO
+            </p>
+
+
+            <div
+              className="
+                grid
+                grid-cols-3
+                gap-2
+              "
+            >
+
+              {[
+                "fundo-dir-1",
+                "fundo-dir-2",
+                "fundo-dir-3",
+              ].map((posicaoId) => {
+
+                const posicao =
+                  POSICOES_BARCO.find(
+                    (p) =>
+                      p.id === posicaoId,
+                  );
+
+                const resultado =
+                  resultadoSorteio.find(
+                    (r) =>
+                      r.posicaoId ===
+                      posicaoId,
+                  );
+
+                const participante =
+                  participantes.find(
+                    (p) =>
+                      p.id ===
+                      resultado?.participanteId,
+                  );
+
+                return (
+
+                  <div
+                    key={posicaoId}
+                    className="
+                      min-h-[80px]
+                      rounded-lg
+                      border
+                      bg-muted
+                      p-2
+                      text-center
+                    "
+                  >
+
+                    <div
+                      className="
+                        text-xs
+                        text-muted-foreground
+                      "
+                    >
+                      {posicao?.nome}
+                    </div>
+
+                    <div
+                      className="
+                        mt-2
+                        text-sm
+                        font-bold
+                      "
+                    >
+                      {participante?.nome ??
+                        "Vago"}
+                    </div>
+
+                  </div>
+
+                );
+
+              })}
+
+            </div>
+
+          </div>
+
         </div>
 
-        {/* SORTEIO */}
-        <Card>
-          <CardHeader>
-            <CardTitle>🎲 Sorteio de vagas</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <form onSubmit={handleRealizarSorteio} className="flex flex-wrap items-end gap-3">
-              <div className="space-y-1">
-                <Label htmlFor="vagas">Quantidade de vagas</Label>
-                <Input
-                  id="vagas"
-                  type="number"
-                  min="1"
-                  value={vagas}
-                  onChange={(e) => setVagas(e.target.value)}
-                  className="w-28"
-                />
-              </div>
-              <Button type="submit">Realizar sorteio</Button>
-            </form>
-            {sorteados.length > 0 && (
-              <ol className="grid gap-2 sm:grid-cols-2">
-                {sorteados.map((s, i) => (
-                  <li
-                    key={s}
-                    className="flex items-center gap-3 rounded-lg border border-border bg-muted px-4 py-2 text-sm font-medium"
-                  >
-                    <span className="text-muted-foreground">{i + 1}º</span>
-                    {s}
-                  </li>
-                ))}
-              </ol>
-            )}
-          </CardContent>
-        </Card>
+      </div>
 
-        {/* PAGAMENTOS POR DESPESA */}
-        <Card>
-          <CardHeader>
-            <CardTitle>📊 Pagamentos por despesa</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {despesaLinhas.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                Cadastre despesas para ver o detalhamento por tipo.
-              </p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Despesa</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                    <TableHead className="text-right">Rateio/pessoa</TableHead>
-                    <TableHead className="text-right">Pago</TableHead>
-                    <TableHead className="text-right">Saldo</TableHead>
-                    <TableHead className="text-right">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {despesaLinhas.map((d) => (
-                    <TableRow key={d.id}>
-                      <TableCell>{d.desc}</TableCell>
-                      <TableCell className="text-right">{brl(d.valor)}</TableCell>
-                      <TableCell className="text-right">{brl(d.rateioDespesa)}</TableCell>
-                      <TableCell className="text-right">{brl(d.pagoDespesa)}</TableCell>
-                      <TableCell className="text-right">{brl(d.saldo)}</TableCell>
-                      <TableCell className="text-right">
-                        <Badge
-                          variant={
-                            d.status === "Pago"
-                              ? "default"
-                              : d.status === "Parcial"
-                                ? "secondary"
-                                : "destructive"
-                          }
-                        >
-                          {d.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
 
-        {/* REGISTRO DE PAGAMENTOS */}
-        <Card>
-          <CardHeader>
-            <CardTitle>💳 Pagamentos</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleRegistrarPagamento} className="flex flex-wrap items-end gap-3">
-              <div className="space-y-1">
-                <Label>Pescador</Label>
-                <select
-                  value={pescadorId || (participantes[0]?.id ?? "")}
-                  onChange={(e) => setPescadorId(e.target.value)}
-                  disabled={!participantes.length}
-                  className="h-10 w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {participantes.length === 0 ? (
-                    <option value="">Nenhum pescador</option>
-                  ) : (
-                    participantes.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.nome}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
+      {/* LEGENDA */}
 
-              <div className="space-y-1">
-                <Label>Despesa</Label>
-                <select
-                  value={despesaPagamentoId || (despesas[0]?.id ?? "")}
-                  onChange={(e) => setDespesaPagamentoId(e.target.value)}
-                  disabled={!despesas.length}
-                  className="h-10 w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {despesas.length === 0 ? (
-                    <option value="">Nenhuma despesa</option>
-                  ) : (
-                    despesas.map((d) => (
-                      <option key={d.id} value={d.id}>
-                        {d.desc}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
+      <div
+        className="
+          absolute
+          bottom-2
+          left-1/2
+          -translate-x-1/2
+          text-xs
+          text-muted-foreground
+        "
+      >
+        Cada posição recebe apenas um pescador.
+      </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="valorPg">Valor pago</Label>
-                <Input
-                  id="valorPg"
-                  placeholder="R$ 0,00"
-                  value={valorPagamento}
-                  onChange={(e) => setValorPagamento(e.target.value)}
-                  className="w-32"
-                />
-              </div>
-
-              <Button type="submit">Registrar</Button>
-            </form>
-
-            <div>
-              <h3 className="mb-2 text-sm font-semibold text-foreground">Tabela geral</h3>
-              {linhas.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Cadastre participantes e despesas para ver o rateio.
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Pescador</TableHead>
-                      <TableHead className="text-right">Deve pagar</TableHead>
-                      <TableHead className="text-right">Já pagou</TableHead>
-                      <TableHead className="text-right">Falta</TableHead>
-                      <TableHead className="text-right">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {linhas.map((l) => (
-                      <TableRow key={l.id}>
-                        <TableCell>{l.nome}</TableCell>
-                        <TableCell className="text-right">{brl(totais.rateio)}</TableCell>
-                        <TableCell className="text-right">{brl(l.pago)}</TableCell>
-                        <TableCell className="text-right">{brl(l.falta)}</TableCell>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant={
-                              l.status === "Pago"
-                                ? "default"
-                                : l.status === "Parcial"
-                                  ? "secondary"
-                                  : "destructive"
-                            }
-                          >
-                            {l.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-
-            <div>
-              <h3 className="mb-2 text-sm font-semibold text-foreground">Histórico</h3>
-              {pagamentos.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Nenhum pagamento registrado.</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Pescador</TableHead>
-                      <TableHead>Despesa</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
-                      <TableHead className="w-20" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[...pagamentos].reverse().map((pg) => (
-                      <TableRow key={pg.id}>
-                        <TableCell>{nomePorId(pg.participanteId)}</TableCell>
-                        <TableCell>{nomeDespesaPorId(pg.despesaId)}</TableCell>
-                        <TableCell>
-                          {new Date(pg.data).toLocaleString("pt-BR", {
-                            dateStyle: "short",
-                            timeStyle: "short",
-                          })}
-                        </TableCell>
-                        <TableCell className="text-right">{brl(pg.valor)}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => excluirPagamento(pg.id)}
-                          >
-                            Remover
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-
-      <footer className="mt-6 bg-primary py-6 text-center text-sm text-primary-foreground">
-        © 2026 Pesca Justa
-      </footer>
     </div>
-  );
-}
+
+
+    {/* LISTA DO RESULTADO */}
+
+    {resultadoSorteio.length > 0 && (
+
+      <div>
+
+        <h3
+          className="
+            mb-3
+            text-sm
+            font-semibold
+          "
+        >
+          📋 Resultado do sorteio
+        </h3>
+
+
+        <div
+          className="
+            grid
+            gap-2
+            sm:grid-cols-2
+          "
+        >
+
+          {resultadoSorteio.map(
+            (resultado) => {
+
+              const posicao =
+                POSICOES_BARCO.find(
+                  (p) =>
+                    p.id ===
+                    resultado.posicaoId,
+                );
+
+              const participante =
+                participantes.find(
+                  (p) =>
+                    p.id ===
+                    resultado.participanteId,
+                );
+
+              return (
+
+                <div
+                  key={
+                    resultado.posicaoId
+                  }
+
+                  className="
+                    flex
+                    justify-between
+                    rounded-lg
+                    border
+                    bg-muted
+                    px-4
+                    py-3
+                    text-sm
+                  "
+                >
+
+                  <span
+                    className="
+                      font-semibold
+                    "
+                  >
+                    {posicao?.nome}
+                  </span>
+
+
+                  <span>
+                    {participante?.nome}
+                  </span>
+
+                </div>
+
+              );
+
+            },
+          )}
+
+        </div>
+
+      </div>
+
+    )}
+
+  </CardContent>
+</Card>
+```
