@@ -3,308 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesca Justa 🎣 - Rodízio 13 Pescadores (16h)</title>
+  <title>Pesca Justa 🎣 - Sincronizado Firebase</title>
   
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#0b5d7a">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Pesca Justa">
-  <link rel="apple-touch-icon" href="icon-192.png">
-
   <style>
     :root[data-theme="ocean"] {
-      --primary: #0b5d7a;
-      --primary2: #073e52;
-      --bg: #0f172a;
-      --card: #1e293b;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --border: rgba(255, 255, 255, 0.15);
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --success: #10b981;
-      --accent: #38bdf8;
+      --primary: #0b5d7a; --primary2: #073e52; --bg: #0f172a; --card: #1e293b;
+      --text: #f8fafc; --muted: #94a3b8; --border: rgba(255, 255, 255, 0.15);
+      --danger: #ef4444; --warning: #f59e0b; --success: #10b981; --accent: #38bdf8;
       --boat-bg: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
     }
-
     :root[data-theme="sunny"] {
-      --primary: #0284c7;
-      --primary2: #0369a1;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: rgba(0, 0, 0, 0.12);
-      --danger: #dc2626;
-      --warning: #d97706;
-      --success: #059669;
-      --accent: #0284c7;
+      --primary: #0284c7; --primary2: #0369a1; --bg: #f8fafc; --card: #ffffff;
+      --text: #0f172a; --muted: #64748b; --border: rgba(0, 0, 0, 0.12);
+      --danger: #dc2626; --warning: #d97706; --success: #059669; --accent: #0284c7;
       --boat-bg: radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);
     }
-
     :root[data-theme="dark"] {
-      --primary: #111827;
-      --primary2: #000000;
-      --bg: #030712;
-      --card: #111827;
-      --text: #f9fafb;
-      --muted: #6b7280;
-      --border: rgba(255, 255, 255, 0.1);
-      --danger: #f87171;
-      --warning: #fbbf24;
-      --success: #34d399;
-      --accent: #60a5fa;
+      --primary: #111827; --primary2: #000000; --bg: #030712; --card: #111827;
+      --text: #f9fafb; --muted: #6b7280; --border: rgba(255, 255, 255, 0.1);
+      --danger: #f87171; --warning: #fbbf24; --success: #34d399; --accent: #60a5fa;
       --boat-bg: radial-gradient(circle, #1f2937 0%, #030712 100%);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    header {
-      background: var(--primary2);
-      border-bottom: 3px solid var(--accent);
-      color: #fff;
-      padding: 24px 18px;
-      text-align: center;
-      position: relative;
-    }
-    header h1 { margin: 0; font-size: 30px; font-weight: 800; }
-    header p { margin: 6px 0 0; opacity: .9; color: var(--accent); }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: var(--primary2); border-bottom: 3px solid var(--accent); color: #fff; padding: 20px; text-align: center; position: relative; }
+    header h1 { margin: 0; font-size: 26px; }
+    header p { opacity: .9; color: var(--accent); font-size: 14px; }
 
     .theme-selector { position: absolute; top: 15px; right: 15px; display: flex; gap: 6px; }
     .theme-btn { background: rgba(255,255,255,0.15); border: 1px solid var(--border); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; }
 
-    .container { max-width: 1250px; margin: auto; padding: 22px; width: 100%; flex: 1; }
-    .grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+    .container { max-width: 1200px; margin: auto; padding: 20px; width: 100%; flex: 1; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
     
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-
+    .grid-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px; }
     .summary .label { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: bold; }
-    .summary .value { font-size: 24px; font-weight: bold; margin-top: 7px; color: var(--accent); }
+    .summary .value { font-size: 22px; font-weight: bold; margin-top: 5px; color: var(--accent); }
 
-    h2 { margin: 0 0 14px; font-size: 20px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-    h3 { margin: 18px 0 10px; color: var(--text); }
-    
+    h2 { margin-bottom: 14px; font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .form-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
-    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 150px; }
+    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
     
-    label { font-size: 13px; font-weight: bold; color: var(--muted); }
-    input, select {
-      height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0 11px;
-      background: rgba(0, 0, 0, 0.05);
-      font-size: 14px;
-      color: var(--text);
-      outline: none;
-    }
-    input:focus, select:focus { border-color: var(--accent); }
-
-    button {
-      height: 40px;
-      border: 0;
-      border-radius: 8px;
-      padding: 0 16px;
-      cursor: pointer;
-      background: var(--primary);
-      color: #fff;
-      font-weight: bold;
-      font-size: 14px;
-      transition: opacity .2s, transform .1s;
-    }
+    label { font-size: 12px; font-weight: bold; color: var(--muted); }
+    input, select { height: 38px; border: 1px solid var(--border); border-radius: 8px; padding: 0 10px; background: rgba(0, 0, 0, 0.1); font-size: 14px; color: var(--text); outline: none; }
+    
+    button { height: 38px; border: 0; border-radius: 8px; padding: 0 16px; cursor: pointer; background: var(--primary); color: #fff; font-weight: bold; font-size: 13px; }
     button:hover { opacity: 0.9; }
-    button:active { transform: scale(0.98); }
-    button.secondary { background: var(--muted); color: #fff; }
-    button.success { background: var(--success); color: #fff; }
+    button.secondary { background: var(--muted); }
+    button.success { background: var(--success); }
     button.danger { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); }
     button.danger:hover { background: var(--danger); color: #fff; }
-    button.small { height: 32px; padding: 0 9px; font-size: 12px; }
+    button.small { height: 28px; padding: 0 8px; font-size: 11px; }
 
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
-    th { font-size: 12px; text-transform: uppercase; color: var(--muted); }
-    .actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 
-    .avatar {
-      width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
-      background: var(--border); display: inline-flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 12px; border: 1px solid var(--border); color: var(--accent);
-    }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.1); font-size: 12px; font-weight: bold; }
-    .status-paid { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
-    .status-partial { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
-    .status-pending { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--border); display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 11px; color: var(--accent); overflow: hidden; }
 
-    .progress { height: 12px; background: rgba(0,0,0,0.1); border-radius: 999px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border); }
-    .progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
+    /* PAINEL DE CRONÔMETRO DE TURNO */
+    .timer-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--accent); padding: 16px; border-radius: 12px; margin: 15px 0; text-align: center; }
+    .timer-val { font-size: 1.5rem; font-weight: 800; color: var(--accent); font-family: monospace; }
+    .timer-time { font-size: 1.1rem; font-weight: bold; color: var(--text); font-family: monospace; margin-top: 4px; }
+    .timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: bold; }
 
-    .timer-panel {
-      display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
-      background: rgba(0,0,0,0.15); border: 1px solid var(--accent); padding: 16px;
-      border-radius: 10px; margin: 15px 0; gap: 10px;
-    }
-    .timer-box { text-align: center; }
-    .timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
-    .timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
-
-    /* LAYOUT EMBARCAÇÃO - 13 POSIÇÕES */
+    /* LAYOUT EMBARCAÇÃO DINÂMICO */
     .boat-wrap { overflow-x: auto; padding-bottom: 8px; }
-    .boat {
-      position: relative; width: 920px; height: 760px; margin: auto;
-      border: 4px solid var(--accent); border-radius: 160px 160px 60px 60px;
-      background: var(--boat-bg); overflow: hidden;
-      box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
-    }
-    .boat-title { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); font-weight: bold; text-align: center; font-size: 18px; color: var(--accent); }
-    .boat-sub { font-size: 12px; margin-top: 4px; color: var(--muted); }
+    .boat { position: relative; width: 900px; min-height: 480px; margin: auto; border: 4px solid var(--accent); border-radius: 140px 140px 40px 40px; background: var(--boat-bg); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+    .boat-title { text-align: center; font-weight: bold; font-size: 16px; color: var(--accent); margin-bottom: 15px; }
     
-    .side { position: absolute; top: 110px; width: 170px; height: 350px; display: flex; flex-direction: column; justify-content: space-between; }
-    .side.left { left: 30px; } .side.right { right: 30px; }
-    .center-line { position: absolute; left: 50%; top: 110px; transform: translateX(-50%); height: 360px; border-left: 2px dashed var(--accent); opacity: 0.4; }
+    .boat-body { display: flex; justify-content: space-between; gap: 20px; flex: 1; }
+    .side { width: 160px; display: flex; flex-direction: column; gap: 8px; justify-content: flex-start; }
+    
+    .slot { min-height: 65px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 5px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+    .slot-label { font-size: 9px; color: var(--muted); font-weight: bold; }
+    .slot-name { font-size: 11px; font-weight: bold; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .back { margin-top: 15px; width: 100%; border-top: 2px dashed var(--border); padding-top: 15px; }
+    .bench-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 8px; color: var(--success); }
+    .bench-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; }
 
-    .slot {
-      min-height: 80px; background: rgba(0,0,0,0.2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 6px; text-align: center; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: .15s; color: var(--text);
-    }
-    .slot:hover { transform: scale(1.02); border-color: var(--accent); }
-    .slot.selected { outline: 3px solid var(--warning); border-color: var(--warning); }
-    .slot-label { font-size: 10px; color: var(--muted); font-weight: bold; }
-    .slot-name { font-size: 12px; font-weight: bold; max-width: 145px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .slot .avatar { width: 30px; height: 30px; font-size: 10px; }
-
-    /* BANCOS DO FUNDO (3 ESQUERDA, 4 DIREITA) */
-    .back { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); width: 94%; display: grid; grid-template-columns: 3fr 4fr; gap: 12px; }
-    .bench { background: rgba(0,0,0,0.15); border: 1px solid rgba(74, 222, 128, 0.4); border-radius: 14px; padding: 10px; }
-    .bench-title { text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 8px; color: var(--success); }
-    .bench-slots { display: grid; gap: 6px; }
-    .bench-slots.esq { grid-template-columns: repeat(3, 1fr); }
-    .bench-slots.dir { grid-template-columns: repeat(4, 1fr); }
-    .bench .slot { min-height: 80px; }
-
-    .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-    .result { background: rgba(0,0,0,0.1); border: 1px solid var(--border); padding: 10px; border-radius: 99px; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
-
-    .upload-box { border: 2px dashed var(--accent); border-radius: 10px; padding: 20px; text-align: center; background: rgba(14, 165, 233, 0.05); cursor: pointer; position: relative; }
-    .upload-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 12px; }
-    .img-container { position: relative; height: 90px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-    .img-container img { width: 100%; height: 100%; object-fit: cover; }
-    .btn-del-img { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #f87171; border: 0; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; }
-
-    .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 13px 17px; border-radius: 99px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: none; z-index: 1000; border: 1px solid var(--accent); }
+    .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 12px 18px; border-radius: 99px; border: 1px solid var(--accent); display: none; z-index: 1000; }
     .toast.show { display: block; }
-    .muted { color: var(--muted); font-size: 14px; }
-    .empty { padding: 16px; color: var(--muted); text-align: center; }
-
-    footer { text-align: center; background: var(--primary2); color: #fff; padding: 22px; margin-top: 25px; border-top: 1px solid var(--border); }
-    .dev-badge strong { color: var(--accent); }
-
-    @media(max-width:850px) { .grid-summary { grid-template-columns: repeat(2, 1fr); } .two-col { grid-template-columns: 1fr; } .container { padding: 12px; } .result-grid { grid-template-columns: 1fr 1fr; } }
-    @media(max-width:520px) { .grid-summary { grid-template-columns: 1fr 1fr; } .summary .value { font-size: 19px; } .form-row { flex-direction: column; align-items: stretch; } .field { width: 100%; } .result-grid { grid-template-columns: 1fr; } .theme-selector { position: static; justify-content: center; margin-top: 10px; } }
+    
+    @media(max-width:768px) { .two-col { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
 <header>
   <div class="theme-selector">
-    <button class="theme-btn" onclick="setTheme('ocean')">🌊 Oceano</button>
-    <button class="theme-btn" onclick="setTheme('sunny')">☀️ Dia</button>
-    <button class="theme-btn" onclick="setTheme('dark')">🌙 Escuro</button>
+    <button class="theme-btn" onclick="setTheme('ocean')">🌊</button>
+    <button class="theme-btn" onclick="setTheme('sunny')">☀️</button>
+    <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
   </div>
-  <h1>Pesca Justa 🎣 Pro</h1>
-  <p>Gestão Financeira & Rodízio de 16 Horas (13 Pescadores)</p>
-  <div style="margin-top:12px"><span class="badge" id="roundBadge">Rodada 1</span></div>
+  <h1>Pesca Justa 🎣</h1>
+  <p>Rodízio com Turnos Fixos de 5h30min & Sincronização Firebase</p>
 </header>
 
 <main class="container">
 
-  <!-- DADOS DA VIAGEM DE PESCA -->
-  <section class="card">
-    <h2>⛵ Cadastro da Viagem & Embarcação</h2>
+  <!-- CONFIGURAÇÕES FIREBASE -->
+  <section class="card" id="firebaseConfigCard">
+    <h2>🔑 Sincronização em Nuvem (Firebase)</h2>
     <div class="form-row">
-      <div class="field">
-        <label for="boatName">Nome da Embarcação</label>
-        <input id="boatName" placeholder="Ex.: Pérola do Mar II" onchange="saveTripInfo()">
+      <div class="field" style="flex:2">
+        <label for="fbConfigInput">Configuração do Firebase (firebaseConfig)</label>
+        <input id="fbConfigInput" placeholder='{"apiKey": "...", "databaseURL": "...", ...}'>
       </div>
-      <div class="field">
-        <label for="tripDate">Dia da Pesca</label>
-        <input id="tripDate" type="date" onchange="saveTripInfo()">
-      </div>
-      <div class="field">
-        <label for="tripTime">Horário de Saída</label>
-        <input id="tripTime" type="time" onchange="saveTripInfo()">
-      </div>
-    </div>
-    <div class="form-row" style="margin-top: 10px;">
-      <div class="field" style="width: 100%;">
-        <label for="departureAddress">Endereço / Local de Embarque (Ponto de Saída)</label>
-        <input id="departureAddress" placeholder="Ex.: Marina Trapiche - Cais 04, Av. Beira Mar, nº 1000" onchange="saveTripInfo()">
-      </div>
+      <button onclick="salvarConfigFirebase()">Conectar Nuvem</button>
     </div>
   </section>
 
-  <!-- RESUMO FINANCEIRO -->
+  <!-- RESUMO DA VIAGEM -->
   <section class="grid-summary">
-    <div class="card summary"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
-    <div class="card summary"><div class="label">Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
+    <div class="card summary"><div class="label">Pescadores Lista</div><div class="value" id="sumParticipants">0</div></div>
+    <div class="card summary"><div class="label">Total Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
     <div class="card summary"><div class="label">Arrecadado</div><div class="value" id="sumCollected">R$ 0,00</div></div>
-    <div class="card summary"><div class="label">Rateio por pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
-  </section>
-
-  <!-- PROGRESSO, EXPORTAÇÃO & REINÍCIO -->
-  <section class="card">
-    <h2>📈 Progresso Financeiro & Ações</h2>
-    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div><strong id="progressPercent">0%</strong> arrecadado</div>
-      <div>Falta: <strong id="sumPending">R$ 0,00</strong></div>
-    </div>
-    <div class="progress"><div id="progressBar"></div></div>
-    
-    <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="success" onclick="shareWhatsApp()">📲 WhatsApp Resumo</button>
-      <button class="secondary" onclick="exportData()">💾 Salvar Backup</button>
-      <button class="secondary" onclick="document.getElementById('fileBackup').click()">📂 Restaurar</button>
-      <input type="file" id="fileBackup" accept=".json" style="display:none" onchange="importData(event)">
-      <button class="danger" onclick="clearAll()">🗑️ Zerar Pescaria</button>
-    </div>
+    <div class="card summary"><div class="label">Rateio p/ Pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
   </section>
 
   <!-- PARTICIPANTES & DESPESAS -->
   <section class="two-col">
     <div class="card">
-      <h2>👥 Participantes</h2>
+      <h2>👥 Pescadores (<span id="countPescadores">0</span>)</h2>
       <div class="form-row">
-        <div class="field"><label for="participantName">Nome do pescador</label><input id="participantName" placeholder="Digite o nome"></div>
+        <div class="field"><label for="participantName">Nome do Pescador</label><input id="participantName" placeholder="Ex.: Devlin"></div>
         <button onclick="addParticipant()">Adicionar</button>
-        <button class="secondary" onclick="loadDefaultNames()">Lista (13 Nomes)</button>
       </div>
       <div class="table-wrap" style="margin-top:15px">
         <table>
-          <thead><tr><th>Foto</th><th>Nome</th><th>Posições</th><th></th></tr></thead>
+          <thead><tr><th>Avatar</th><th>Nome</th><th>Ações</th></tr></thead>
           <tbody id="participantsTable"></tbody>
         </table>
       </div>
@@ -314,678 +146,338 @@
       <h2>🧾 Despesas</h2>
       <div class="form-row">
         <div class="field"><label for="expenseDesc">Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
-        <div class="field"><label for="expenseValue">Valor</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
-        <div class="field"><label for="expenseCategory">Categoria</label>
-          <select id="expenseCategory">
-            <option>Barco</option><option>Iscas</option><option>Alimentação</option><option>Bebidas</option><option>Gelo</option><option>Combustível</option><option>Outros</option>
-          </select>
-        </div>
+        <div class="field"><label for="expenseValue">Valor</label><input id="expenseValue" placeholder="0,00"></div>
         <button onclick="addExpense()">Adicionar</button>
       </div>
       <div class="table-wrap" style="margin-top:15px">
         <table>
-          <thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th></th></tr></thead>
+          <thead><tr><th>Descrição</th><th>Valor</th><th>Ações</th></tr></thead>
           <tbody id="expensesTable"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- SORTEIO, RODÍZIO DE 16H & MAPA DO BARCO -->
+  <!-- CONTROLE DE TURNOS DE 5H30 E SORTEIO -->
   <section class="card">
-    <h2>🚤 Sorteio & Rodízio do Convés (16 Horas - 13 Posições)</h2>
+    <h2>🚤 Controle de Rodízio (Turnos Fixos de 5h30min)</h2>
     <div class="form-row">
-      <button onclick="drawPositions()">🎲 Sortear posições</button>
-      <button onclick="iniciarCronometro16h()" style="background:#16a34a;">⏱️ Iniciar Cronômetro 16h</button>
-      <button class="secondary" onclick="clearPositions()">Limpar posições</button>
-      <button class="secondary" onclick="newRound()">🔄 Nova rodada</button>
+      <button onclick="drawPositions()">🎲 Sortear Posições Iniciais</button>
+      <button class="success" onclick="iniciarTurno5h30()">▶️ Iniciar Turno (5h30)</button>
+      <button class="secondary" onclick="proximoTurno()">🔄 Encerrar Turno & Girar Lugares</button>
     </div>
-    <p class="muted" style="margin-top:10px;">Para trocar a posição de dois pescadores, clique no primeiro quadro e depois no segundo.</p>
 
-    <!-- PAINEL DO CRONÔMETRO -->
+    <!-- EXIBIÇÃO DOS HORÁRIOS DE INÍCIO, FIM E CRONÔMETRO -->
     <div class="timer-panel">
-      <div class="timer-box">
-        <div class="timer-lbl">Turno Atual</div>
-        <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: var(--text);">Turno 1</div>
+      <div>
+        <div class="timer-lbl">Rodada / Turno</div>
+        <div id="turnoAtual" class="timer-val" style="color:var(--text)">Turno 1</div>
       </div>
-      <div class="timer-box">
-        <div class="timer-lbl">Tempo Restante</div>
-        <div id="timerDisplay" class="timer-val">00:00:00</div>
+      <div>
+        <div class="timer-lbl">Início do Turno</div>
+        <div id="horaInicioTurno" class="timer-time">--:--:--</div>
       </div>
-      <div class="timer-box">
-        <div class="timer-lbl">Duração/Turno</div>
-        <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: var(--accent);">-- min</div>
+      <div>
+        <div class="timer-lbl">Término Previsto</div>
+        <div id="horaFimTurno" class="timer-time" style="color:var(--warning)">--:--:--</div>
+      </div>
+      <div>
+        <div class="timer-lbl">Contagem Regressiva</div>
+        <div id="timerDisplay" class="timer-val">05:30:00</div>
       </div>
     </div>
 
-    <!-- MAPA VISUAL DA EMBARCAÇÃO (13 POSIÇÕES) -->
+    <!-- MAPA VISUAL DA EMBARCAÇÃO DINÂMICO -->
     <div class="boat-wrap">
       <div class="boat">
-        <div class="boat-title">🚤 PROA<div class="boat-sub">CORREDOR CENTRAL</div></div>
-        <div class="side left" id="leftSlots"></div>
-        <div class="center-line"></div>
-        <div class="side right" id="rightSlots"></div>
+        <div class="boat-title">🚤 PROA (FRENTE DO BARCO)</div>
+        <div class="boat-body">
+          <div class="side" id="leftSlots"></div>
+          <div style="flex:1; border-left: 1px dashed var(--border); margin: 0 10px;"></div>
+          <div class="side" id="rightSlots"></div>
+        </div>
         <div class="back">
-          <div class="bench"><div class="bench-title">BANCO FUNDO — ESQ (3)</div><div class="bench-slots esq" id="backLeftSlots"></div></div>
-          <div class="bench"><div class="bench-title">BANCO FUNDO — DIR (4)</div><div class="bench-slots dir" id="backRightSlots"></div></div>
+          <div class="bench-title">BANCO DO FUNDO (EXCEDENTES)</div>
+          <div class="bench-slots" id="backSlots"></div>
         </div>
       </div>
     </div>
-
-    <h3>📋 Resultado da Rodada Atual</h3>
-    <div id="drawResults" class="result-grid"></div>
   </section>
 
-  <!-- PAGAMENTOS E FINANCEIRO POR PESCADOR -->
-  <section class="card">
-    <h2>💳 Registrar Pagamento</h2>
-    <div class="form-row">
-      <div class="field"><label for="paymentParticipant">Pescador</label><select id="paymentParticipant"></select></div>
-      <div class="field"><label for="paymentExpense">Despesa</label><select id="paymentExpense"></select></div>
-      <div class="field"><label for="paymentValue">Valor pago</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
-      <button onclick="addPayment()">Registrar pagamento</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>📊 Situação Financeira por Pescador</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Pescador</th><th>Deve pagar</th><th>Já pagou</th><th>Falta</th><th>Status</th></tr></thead>
-        <tbody id="financialTable"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>📋 Controle por Despesa</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Despesa</th><th>Categoria</th><th>Valor</th><th>Rateio/pessoa</th><th>Pago</th><th>Saldo</th><th>Status</th></tr></thead>
-        <tbody id="expenseControlTable"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- GALERIA DE FOTOS DA EMBARCAÇÃO -->
-  <section class="card">
-    <h2>📸 Fotos da Pescaria & Embarcação</h2>
-    <div class="upload-box">
-      <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
-      <span style="font-size: 1.5rem; display: block;">📷</span>
-      <span style="font-size: 0.85rem;">Clique para selecionar ou enviar fotos</span>
-    </div>
-    <div class="preview-grid" id="previewGrid"></div>
-  </section>
-
-  <!-- HISTÓRICOS -->
-  <section class="card">
-    <h2>🧾 Histórico de Pagamentos</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Pescador</th><th>Despesa</th><th>Data</th><th>Valor</th><th></th></tr></thead>
-        <tbody id="paymentsTable"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>🔄 Histórico de Rodízio</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Rodada</th><th>Pescador</th><th>Posição</th><th>Entrada</th><th>Saída</th></tr></thead>
-        <tbody id="historyTable"></tbody>
-      </table>
-    </div>
-  </section>
 </main>
-
-<footer>
-  <div class="dev-badge">⚡ Desenvolvido por <strong>Devlin Mariano</strong> — © 2026 Pesca Justa 🎣</div>
-</footer>
 
 <div class="toast" id="toast"></div>
 
+<!-- SDKs do Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
 <script>
-const STORAGE_KEY = 'pesca-justa-13p-16h-v1';
-
-/* 13 POSIÇÕES: 3 ESQUERDA, 3 DIREITA, 3 BANCO FUNDO ESQUERDA, 4 BANCO FUNDO DIREITA */
-const POSITIONS = [
-  {id:'esq-1',name:'Esquerda 1',group:'left'},{id:'esq-2',name:'Esquerda 2',group:'left'},{id:'esq-3',name:'Esquerda 3',group:'left'},
-  {id:'dir-1',name:'Direita 1',group:'right'},{id:'dir-2',name:'Direita 2',group:'right'},{id:'dir-3',name:'Direita 3',group:'right'},
-  {id:'fundo-esq-1',name:'Fundo E1',group:'backLeft'},{id:'fundo-esq-2',name:'Fundo E2',group:'backLeft'},{id:'fundo-esq-3',name:'Fundo E3',group:'backLeft'},
-  {id:'fundo-dir-1',name:'Fundo D1',group:'backRight'},{id:'fundo-dir-2',name:'Fundo D2',group:'backRight'},{id:'fundo-dir-3',name:'Fundo D3',group:'backRight'},{id:'fundo-dir-4',name:'Fundo D4',group:'backRight'}
-];
-
-const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','Pescador 13'];
-
-let selectedPosition = null;
+let dbRef = null;
 let timerInterval = null;
-let tempoRestanteSegundos = 0;
+const TURNO_SEGUNDOS = (5 * 3600) + (30 * 60); // 5 horas e 30 minutos em segundos = 19800s
 
 let state = {
   theme: 'ocean',
-  trip: { boatName: '', date: '', time: '', address: '' },
   participants: [],
   expenses: [],
   payments: [],
   draw: [],
-  history: [],
-  photos: [],
-  round: 1
+  round: 1,
+  turnoStartTime: null, // Timestamp do início do turno
+  turnoEndTime: null    // Timestamp do fim do turno
 };
 
-function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function money(v) { return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-function initials(name) { return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join(''); }
 function numberBR(v) { return Number(String(v).replace(/\./g,'').replace(',','.'))||0; }
 function shuffle(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
-function esc(s) { return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove('show'),2800); }
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 
 function setTheme(t) {
-  state.theme = t;
-  document.documentElement.setAttribute('data-theme', t);
-  save();
+  state.theme = t; document.documentElement.setAttribute('data-theme', t); syncState();
 }
 
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function load() {
+/* FIREBASE CONFIGURATON & SINCRONIZAÇÃO EM TEMPO REAL */
+function salvarConfigFirebase() {
+  const input = document.getElementById('fbConfigInput').value.trim();
   try {
-    const x = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(x) state = {...state, ...x};
-    if(!state.trip) state.trip = { boatName: '', date: '', time: '', address: '' };
-    if(state.theme) document.documentElement.setAttribute('data-theme', state.theme);
-  } catch(e){}
-}
-
-function saveTripInfo() {
-  state.trip = {
-    boatName: document.getElementById('boatName').value,
-    date: document.getElementById('tripDate').value,
-    time: document.getElementById('tripTime').value,
-    address: document.getElementById('departureAddress').value
-  };
-  save();
-  toast('Informações da viagem salvas.');
-}
-
-function loadTripInputs() {
-  if(state.trip) {
-    document.getElementById('boatName').value = state.trip.boatName || '';
-    document.getElementById('tripDate').value = state.trip.date || '';
-    document.getElementById('tripTime').value = state.trip.time || '';
-    document.getElementById('departureAddress').value = state.trip.address || '';
+    const cfg = JSON.parse(input);
+    localStorage.setItem('pesca_fb_cfg', JSON.stringify(cfg));
+    initFirebase(cfg);
+    toast('Nuvem conectada!');
+  } catch(e) {
+    toast('JSON do Firebase inválido.');
   }
 }
 
-function participant(pid) { return state.participants.find(x=>x.id===pid); }
-function expense(eid) { return state.expenses.find(x=>x.id===eid); }
-function pos(pid) { return POSITIONS.find(x=>x.id===pid); }
-function assignment(positionId) { return state.draw.find(x=>x.positionId===positionId); }
-
-function avatar(p) {
-  if(!p) return '';
-  return `<div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:esc(initials(p.name))}</div>`;
+function initFirebase(cfg) {
+  if (!firebase.apps.length) firebase.initializeApp(cfg);
+  dbRef = firebase.database().ref('pescaria_ativa');
+  
+  dbRef.on('value', snapshot => {
+    const data = snapshot.val();
+    if (data) {
+      state = data;
+      if (state.theme) document.documentElement.setAttribute('data-theme', state.theme);
+      render();
+      atualizarCronometroAtivo();
+    }
+  });
 }
 
-function totals() {
-  const expenses = state.expenses.reduce((s,x)=>s+x.value,0);
-  const collected = state.payments.reduce((s,x)=>s+x.value,0);
-  const share = state.participants.length ? expenses/state.participants.length : 0;
-  return { expenses, collected, share, pending: Math.max(0, expenses-collected) };
+function syncState() {
+  if (dbRef) dbRef.set(state);
+  else render();
 }
 
-/* PARTICIPANTES & FOTOS */
+/* REGRAS DE POSICIONAMENTO DINÂMICO */
+function gerarPosicoesDinamicas() {
+  const total = state.participants.length;
+  const posicoes = [];
+  
+  // Máximo de 3 pessoas em cada lateral
+  const slotsEsq = Math.min(3, Math.ceil(total / 2));
+  const slotsDir = Math.min(3, Math.floor(total / 2));
+  const noFundo = Math.max(0, total - (slotsEsq + slotsDir));
+
+  for(let i=1; i<=slotsEsq; i++) posicoes.push({ id: `esq-${i}`, name: `Esq ${i}`, group: 'left' });
+  for(let i=1; i<=slotsDir; i++) posicoes.push({ id: `dir-${i}`, name: `Dir ${i}`, group: 'right' });
+  for(let i=1; i<=noFundo; i++) posicoes.push({ id: `fundo-${i}`, name: `Fundo ${i}`, group: 'back' });
+
+  return posicoes;
+}
+
+function drawPositions() {
+  if(!state.participants.length) return toast('Adicione pescadores primeiro.');
+  
+  const posicoes = gerarPosicoesDinamicas();
+  const embaralhados = shuffle(state.participants);
+  
+  state.draw = posicoes.map((pos, idx) => ({
+    positionId: pos.id,
+    participantId: embaralhados[idx] ? embaralhados[idx].id : null
+  }));
+
+  syncState();
+  toast('Lugares sorteados com sucesso!');
+}
+
+/* ROTAÇÃO DE POSIÇÕES ENTRE TURNOS */
+function rotacionarLugares() {
+  if (!state.draw || !state.draw.length) return;
+  // Desloca o primeiro participante para o final da fila (rotativo)
+  const participantesAtuais = state.draw.map(d => d.participantId);
+  if (participantesAtuais.length > 1) {
+    const primeiro = participantesAtuais.shift();
+    participantesAtuais.push(primeiro);
+
+    state.draw.forEach((slot, index) => {
+      slot.participantId = participantesAtuais[index];
+    });
+  }
+}
+
+/* CONTROLE DOS TURNOS DE 5H30MIN */
+function iniciarTurno5h30() {
+  if(!state.participants.length) return toast('Adicione pescadores para iniciar.');
+  if(!state.draw || !state.draw.length) drawPositions();
+
+  const agora = Date.now();
+  state.turnoStartTime = agora;
+  state.turnoEndTime = agora + (TURNO_SEGUNDOS * 1000);
+
+  syncState();
+  toast(`Turno ${state.round || 1} iniciado! Duração: 5h30min.`);
+}
+
+function proximoTurno() {
+  state.round = (state.round || 1) + 1;
+  rotacionarLugares();
+  
+  // O novo turno se inicia no exato momento do término
+  const agora = Date.now();
+  state.turnoStartTime = agora;
+  state.turnoEndTime = agora + (TURNO_SEGUNDOS * 1000);
+
+  syncState();
+  toast(`Iniciado Turno ${state.round}! Lugares rotacionados.`);
+}
+
+function atualizarCronometroAtivo() {
+  if (timerInterval) clearInterval(timerInterval);
+
+  if (!state.turnoStartTime || !state.turnoEndTime) {
+    document.getElementById('timerDisplay').textContent = "05:30:00";
+    document.getElementById('horaInicioTurno').textContent = "--:--:--";
+    document.getElementById('horaFimTurno').textContent = "--:--:--";
+    return;
+  }
+
+  // Formatar Horários de Início e Término
+  const dtInicio = new Date(state.turnoStartTime);
+  const dtFim = new Date(state.turnoEndTime);
+
+  document.getElementById('horaInicioTurno').textContent = dtInicio.toLocaleTimeString('pt-BR');
+  document.getElementById('horaFimTurno').textContent = dtFim.toLocaleTimeString('pt-BR');
+
+  timerInterval = setInterval(() => {
+    const agora = Date.now();
+    const restante = Math.floor((state.turnoEndTime - agora) / 1000);
+
+    if (restante <= 0) {
+      clearInterval(timerInterval);
+      document.getElementById('timerDisplay').textContent = "00:00:00";
+      alert(`🔔 Fim do Turno ${state.round || 1}! Realizando rotação de lugares...`);
+      proximoTurno();
+    } else {
+      const h = String(Math.floor(restante / 3600)).padStart(2, '0');
+      const m = String(Math.floor((restante % 3600) / 60)).padStart(2, '0');
+      const s = String(restante % 60).padStart(2, '0');
+      document.getElementById('timerDisplay').textContent = `${h}:${m}:${s}`;
+    }
+  }, 1000);
+}
+
+/* MANIPULAÇÃO DE LISTAS */
 function addParticipant() {
-  const input = document.getElementById('participantName'), name = input.value.trim();
-  if(!name) return toast('Informe o nome do pescador.');
-  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase())) return toast('Esse pescador já está cadastrado.');
-  state.participants.push({id:id(), name}); input.value=''; save(); render(); toast('Pescador adicionado.');
-}
-
-function loadDefaultNames() {
-  let n = 0; const existing = new Set(state.participants.map(p=>p.name.toLowerCase()));
-  DEFAULT_NAMES.forEach(name => { if(!existing.has(name.toLowerCase())){ state.participants.push({id:id(), name}); n++; } });
-  save(); render(); toast(n?`${n} pescador(es) adicionado(s).`:'Todos já estão cadastrados.');
-}
-
-function editParticipant(pid) {
-  const p = participant(pid); const name = prompt('Novo nome:', p.name); if(name===null) return;
-  const n = name.trim(); if(!n) return toast('Nome inválido.');
-  if(state.participants.some(x=>x.id!==pid&&x.name.toLowerCase()===n.toLowerCase())) return toast('Já existe esse nome.');
-  p.name = n; save(); render(); toast('Nome atualizado.');
+  const nameInput = document.getElementById('participantName');
+  const name = nameInput.value.trim();
+  if(!name) return;
+  state.participants.push({ id: id(), name });
+  nameInput.value = '';
+  syncState();
 }
 
 function deleteParticipant(pid) {
-  const p = participant(pid); if(!confirm(`Excluir ${p.name}?`)) return;
-  state.participants = state.participants.filter(x=>x.id!==pid);
-  state.payments = state.payments.filter(x=>x.participantId!==pid);
-  state.draw = state.draw.filter(x=>x.participantId!==pid);
-  state.history = state.history.filter(x=>x.participantId!==pid);
-  save(); render(); toast('Participante excluído.');
+  state.participants = state.participants.filter(x => x.id !== pid);
+  state.draw = (state.draw || []).filter(x => x.participantId !== pid);
+  syncState();
 }
 
-function changePhoto(pid, input) {
-  const file = input.files[0]; if(!file) return;
-  const r = new FileReader(); r.onload = e => {
-    const img = new Image(); img.onload = () => {
-      const c = document.createElement('canvas'); let max = 180, scale = Math.min(1, max/Math.max(img.width, img.height));
-      c.width = img.width*scale; c.height = img.height*scale;
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      participant(pid).photo = c.toDataURL('image/jpeg', .78); save(); render(); toast('Foto atualizada.');
-    }; img.src = e.target.result;
-  }; r.readAsDataURL(file);
-}
-
-/* DESPESAS & PAGAMENTOS */
 function addExpense() {
   const desc = document.getElementById('expenseDesc').value.trim();
-  const value = numberBR(document.getElementById('expenseValue').value);
-  const category = document.getElementById('expenseCategory').value;
-  if(!desc) return toast('Informe a descrição.');
-  if(value<=0) return toast('Informe um valor válido.');
-  state.expenses.push({id:id(), desc, value, category});
-  document.getElementById('expenseDesc').value=''; document.getElementById('expenseValue').value='';
-  save(); render(); toast('Despesa adicionada.');
-}
-
-function editExpense(eid) {
-  const e = expense(eid); const desc = prompt('Descrição:', e.desc); if(desc===null) return;
-  const value = prompt('Valor:', String(e.value)); if(value===null) return;
-  const v = numberBR(value); if(!desc.trim()||v<=0) return toast('Dados inválidos.');
-  e.desc = desc.trim(); e.value = v; save(); render(); toast('Despesa atualizada.');
+  const val = numberBR(document.getElementById('expenseValue').value);
+  if(!desc || val <= 0) return;
+  if(!state.expenses) state.expenses = [];
+  state.expenses.push({ id: id(), desc, value: val });
+  document.getElementById('expenseDesc').value = '';
+  document.getElementById('expenseValue').value = '';
+  syncState();
 }
 
 function deleteExpense(eid) {
-  if(!confirm('Excluir esta despesa e seus pagamentos vinculados?')) return;
-  state.expenses = state.expenses.filter(x=>x.id!==eid); state.payments = state.payments.filter(x=>x.expenseId!==eid); save(); render(); toast('Despesa excluída.');
+  state.expenses = state.expenses.filter(x => x.id !== eid);
+  syncState();
 }
 
-function addPayment() {
-  const participantId = document.getElementById('paymentParticipant').value, expenseId = document.getElementById('paymentExpense').value, value = numberBR(document.getElementById('paymentValue').value);
-  if(!participantId) return toast('Selecione um pescador.'); if(!expenseId) return toast('Selecione uma despesa.'); if(value<=0) return toast('Informe um valor válido.');
-  state.payments.push({id:id(), participantId, expenseId, value, date: new Date().toISOString()});
-  document.getElementById('paymentValue').value=''; save(); render(); toast('Pagamento registrado.');
-}
-
-function deletePayment(pid) { state.payments = state.payments.filter(x=>x.id!==pid); save(); render(); toast('Pagamento removido.'); }
-
-/* SORTEIO & RODÍZIO DA EMBARCAÇÃO COM CÁLCULO DE 16 HORAS */
-function drawPositions() {
-  if(!state.participants.length) return toast('Cadastre os pescadores primeiro.');
-  const people = shuffle(state.participants).slice(0, POSITIONS.length);
-  const available = new Set(POSITIONS.map(x=>x.id)); const result = [];
+/* RENDERIZAÇÃO DA TELA */
+function render() {
+  document.getElementById('countPescadores').textContent = state.participants.length;
+  document.getElementById('sumParticipants').textContent = state.participants.length;
+  document.getElementById('turnoAtual').textContent = `Turno ${state.round || 1}`;
   
-  // Cálculo da janela de tempo por turno com base em 16 HORAS
-  const totalSegundos = 16 * 3600;
-  const duracaoTurnoSegundos = Math.floor(totalSegundos / state.participants.length);
-  const startTime = new Date();
-  const endTime = new Date(startTime.getTime() + (duracaoTurnoSegundos * 1000));
+  const totalExp = (state.expenses || []).reduce((s,x)=>s+x.value, 0);
+  const totalColl = (state.payments || []).reduce((s,x)=>s+x.value, 0);
+  const share = state.participants.length ? totalExp / state.participants.length : 0;
 
-  people.forEach(p => {
-    const used = new Set(state.history.filter(h=>h.participantId===p.id).map(h=>h.positionId));
-    let choices = [...available].filter(x=>!used.has(x)); if(!choices.length) choices = [...available];
-    const chosen = choices[Math.floor(Math.random()*choices.length)];
-    available.delete(chosen); result.push({positionId:chosen, participantId:p.id});
-  });
+  document.getElementById('sumExpenses').textContent = money(totalExp);
+  document.getElementById('sumCollected').textContent = money(totalColl);
+  document.getElementById('sumShare').textContent = money(share);
 
-  state.draw = result;
-  result.forEach(x => state.history.push({
-    id: id(),
-    round: state.round,
-    entryTime: startTime.toISOString(),
-    exitTime: endTime.toISOString(),
-    positionId: x.positionId,
-    participantId: x.participantId
-  }));
-  selectedPosition = null; save(); render(); toast(`Posições sorteadas para a rodada ${state.round}.`);
-}
-
-function clearPositions() { state.draw = []; selectedPosition = null; save(); render(); toast('Posições atuais removidas.'); }
-function newRound() { state.round++; state.draw = []; selectedPosition = null; save(); render(); toast(`Nova rodada ${state.round} iniciada.`); }
-
-function clickPosition(positionId) {
-  const a = assignment(positionId); if(!a) return toast('Esta posição está vazia.');
-  if(!selectedPosition) { selectedPosition = positionId; renderBoat(); toast('Clique na segunda posição para trocar.'); return; }
-  if(selectedPosition === positionId) { selectedPosition = null; renderBoat(); return; }
-  const b = assignment(selectedPosition); if(!b) { selectedPosition = null; renderBoat(); return; }
-  [a.participantId, b.participantId] = [b.participantId, a.participantId];
-  selectedPosition = null; save(); render(); toast('Posições trocadas.');
-}
-
-/* CRONÔMETRO DE 16 HORAS */
-function playSoundAlert() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 1.5);
-  } catch(e){}
-}
-
-function iniciarCronometro16h() {
-  if(!state.participants.length) return toast('Cadastre os pescadores primeiro.');
-  const totalSegundos = 16 * 3600;
-  const duracaoTurnoSegundos = Math.floor(totalSegundos / state.participants.length);
-  document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoTurnoSegundos / 60)} min`;
-  
-  if(timerInterval) clearInterval(timerInterval);
-  tempoRestanteSegundos = duracaoTurnoSegundos;
-
-  timerInterval = setInterval(() => {
-    tempoRestanteSegundos--;
-    renderTimer(tempoRestanteSegundos);
-    if(tempoRestanteSegundos <= 0) {
-      clearInterval(timerInterval);
-      playSoundAlert();
-      alert('🔔 FIM DO TURNO! Hora de girar as posições da pescaria.');
-      newRound();
-      drawPositions();
-      iniciarCronometro16h();
-    }
-  }, 1000);
-  toast('Cronômetro de 16 horas iniciado!');
-}
-
-function renderTimer(seg) {
-  const hrs = String(Math.floor(seg / 3600)).padStart(2, '0');
-  const mins = String(Math.floor((seg % 3600) / 60)).padStart(2, '0');
-  const secs = String(seg % 60).padStart(2, '0');
-  document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
-}
-
-/* GALERIA DE FOTOS */
-function processarFotos(evt) {
-  const files = Array.from(evt.target.files);
-  if(!files.length) return;
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        const c = document.createElement('canvas');
-        let max = 800, scale = Math.min(1, max/Math.max(img.width, img.height));
-        c.width = img.width * scale;
-        c.height = img.height * scale;
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-        state.photos.push({ id: id(), data: c.toDataURL('image/jpeg', 0.8) });
-        save(); renderPhotos();
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-  toast('Foto(s) adicionada(s).');
-}
-
-function deletePhoto(photoId) {
-  state.photos = state.photos.filter(p => p.id !== photoId);
-  save(); renderPhotos(); toast('Foto removida.');
-}
-
-function renderPhotos() {
-  const grid = document.getElementById('previewGrid');
-  if(!state.photos || !state.photos.length) {
-    grid.innerHTML = '<div class="empty" style="grid-column: 1/-1;">Nenhuma foto cadastrada.</div>';
-    return;
-  }
-  grid.innerHTML = state.photos.map(p => `
-    <div class="img-container">
-      <img src="${p.data}" alt="Foto da pescaria">
-      <button class="btn-del-img" onclick="deletePhoto('${p.id}')">✕</button>
-    </div>
+  // Tabela Pescadores
+  const pTable = document.getElementById('participantsTable');
+  pTable.innerHTML = state.participants.map(p => `
+    <tr>
+      <td><div class="avatar">${p.name.slice(0,2).toUpperCase()}</div></td>
+      <td><strong>${p.name}</strong></td>
+      <td><button class="small danger" onclick="deleteParticipant('${p.id}')">🗑️</button></td>
+    </tr>
   `).join('');
+
+  // Tabela Despesas
+  const eTable = document.getElementById('expensesTable');
+  eTable.innerHTML = (state.expenses || []).map(e => `
+    <tr>
+      <td>${e.desc}</td>
+      <td>${money(e.value)}</td>
+      <td><button class="small danger" onclick="deleteExpense('${e.id}')">🗑️</button></td>
+    </tr>
+  `).join('');
+
+  renderBoat();
 }
 
-/* COMPARTILHAR RESUMO NO WHATSAPP */
-function shareWhatsApp() {
-  const t = totals();
-  let msg = `*🎣 PESCA JUSTA - PRESTAÇÃO DE CONTAS*\n\n`;
-  if(state.trip) {
-    if(state.trip.boatName) msg += `⛵ *Barco:* ${state.trip.boatName}\n`;
-    if(state.trip.date) {
-      const [y, m, d] = state.trip.date.split('-');
-      msg += `📅 *Data:* ${d}/${m}/${y}\n`;
-    }
-    if(state.trip.time) msg += `⏰ *Saída:* ${state.trip.time}\n`;
-    if(state.trip.address) msg += `📍 *Embarque:* ${state.trip.address}\n`;
-    msg += `\n`;
-  }
-  msg += `👥 *Participantes:* ${state.participants.length}\n`;
-  msg += `💸 *Total Despesas:* ${money(t.expenses)}\n`;
-  msg += `📊 *Rateio por Pessoa:* ${money(t.share)}\n`;
-  msg += `✅ *Total Arrecadado:* ${money(t.collected)}\n\n`;
-  msg += `*SITUAÇÃO POR PESCADOR:*\n`;
-  
-  state.participants.forEach(p => {
-    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0);
-    const missing = Math.max(0, t.share - paid);
-    const st = missing < 0.01 ? '✅ Pago' : `⚠️ Falta ${money(missing)}`;
-    msg += `• ${p.name}: ${st}\n`;
-  });
-
-  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
-}
-
-function exportData() {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-  const dl = document.createElement('a');
-  dl.setAttribute("href", dataStr);
-  dl.setAttribute("download", `pesca_justa_backup_${new Date().toISOString().slice(0,10)}.json`);
-  dl.click();
-}
-
-function importData(evt) {
-  const file = evt.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if(data && data.participants) {
-        state = {...state, ...data};
-        save(); loadTripInputs(); render(); toast('Backup restaurado com sucesso!');
-      } else { toast('Arquivo de backup inválido.'); }
-    } catch(err) { toast('Erro ao ler o arquivo JSON.'); }
-  };
-  reader.readAsText(file);
-}
-
-function clearAll() {
-  if(!confirm('Atenção: Todos os dados da pescaria (pescadores, despesas, pagamentos e fotos) serão apagados! Confirmar?')) return;
-  state = {
-    theme: state.theme,
-    trip: { boatName: '', date: '', time: '', address: '' },
-    participants: [],
-    expenses: [],
-    payments: [],
-    draw: [],
-    history: [],
-    photos: [],
-    round: 1
-  };
-  save(); loadTripInputs(); render(); toast('Pescaria zerada.');
-}
-
-/* RENDERIZAÇÃO DA INTERFACE */
 function renderBoat() {
-  const renderSlots = (containerId, group) => {
-    const container = document.getElementById(containerId);
-    container.innerHTML = POSITIONS.filter(p=>p.group===group).map(p => {
-      const a = assignment(p.id);
-      const part = a ? participant(a.participantId) : null;
-      const sel = selectedPosition === p.id ? 'selected' : '';
+  const posicoes = gerarPosicoesDinamicas();
+  
+  const renderGroup = (containerId, group) => {
+    const el = document.getElementById(containerId);
+    el.innerHTML = posicoes.filter(p => p.group === group).map(pos => {
+      const assignment = (state.draw || []).find(d => d.positionId === pos.id);
+      const part = assignment ? state.participants.find(x => x.id === assignment.participantId) : null;
       return `
-        <div class="slot ${sel}" onclick="clickPosition('${p.id}')">
-          <div class="slot-label">${esc(p.name)}</div>
-          ${part ? avatar(part) : ''}
-          <div class="slot-name">${part ? esc(part.name) : '<span style="opacity:0.4">Vazio</span>'}</div>
+        <div class="slot">
+          <div class="slot-label">${pos.name}</div>
+          <div class="slot-name">${part ? part.name : '<span style="opacity:0.3">Vazio</span>'}</div>
         </div>
       `;
     }).join('');
   };
 
-  renderSlots('leftSlots', 'left');
-  renderSlots('rightSlots', 'right');
-  renderSlots('backLeftSlots', 'backLeft');
-  renderSlots('backRightSlots', 'backRight');
-}
-
-function render() {
-  document.getElementById('roundBadge').textContent = `Rodada ${state.round}`;
-  const t = totals();
-  
-  document.getElementById('sumParticipants').textContent = state.participants.length;
-  document.getElementById('sumExpenses').textContent = money(t.expenses);
-  document.getElementById('sumCollected').textContent = money(t.collected);
-  document.getElementById('sumShare').textContent = money(t.share);
-  document.getElementById('sumPending').textContent = money(t.pending);
-  
-  const pct = t.expenses > 0 ? Math.min(100, Math.round((t.collected / t.expenses) * 100)) : 0;
-  document.getElementById('progressPercent').textContent = `${pct}%`;
-  document.getElementById('progressBar').style.width = `${pct}%`;
-
-  const partTbody = document.getElementById('participantsTable');
-  partTbody.innerHTML = state.participants.length ? state.participants.map(p => {
-    const posCount = state.history.filter(h=>h.participantId===p.id).length;
-    return `
-      <tr>
-        <td style="width:50px">
-          <label style="cursor:pointer">
-            ${avatar(p)}
-            <input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}', this)">
-          </label>
-        </td>
-        <td><strong>${esc(p.name)}</strong></td>
-        <td><span class="badge">${posCount} trocas</span></td>
-        <td class="actions">
-          <button class="small secondary" onclick="editParticipant('${p.id}')">✏️</button>
-          <button class="small danger" onclick="deleteParticipant('${p.id}')">🗑️</button>
-        </td>
-      </tr>
-    `;
-  }).join('') : '<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
-
-  const expTbody = document.getElementById('expensesTable');
-  expTbody.innerHTML = state.expenses.length ? state.expenses.map(e => `
-    <tr>
-      <td><strong>${esc(e.desc)}</strong></td>
-      <td><span class="badge">${esc(e.category)}</span></td>
-      <td>${money(e.value)}</td>
-      <td class="actions">
-        <button class="small secondary" onclick="editExpense('${e.id}')">✏️</button>
-        <button class="small danger" onclick="deleteExpense('${e.id}')">🗑️</button>
-      </td>
-    </tr>
-  `).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa lançada.</td></tr>';
-
-  const partSelect = document.getElementById('paymentParticipant');
-  partSelect.innerHTML = '<option value="">Selecione...</option>' + state.participants.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
-  
-  const expSelect = document.getElementById('paymentExpense');
-  expSelect.innerHTML = '<option value="">Selecione...</option>' + state.expenses.map(e => `<option value="${e.id}">${esc(e.desc)} (${money(e.value)})</option>`).join('');
-
-  const finTbody = document.getElementById('financialTable');
-  finTbody.innerHTML = state.participants.length ? state.participants.map(p => {
-    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0);
-    const missing = t.share - paid;
-    let statusClass = 'status-pending', statusText = 'Pendente';
-    if(missing <= 0.01) { statusClass = 'status-paid'; statusText = 'Pago'; }
-    else if(paid > 0) { statusClass = 'status-partial'; statusText = 'Parcial'; }
-    return `
-      <tr>
-        <td><strong>${esc(p.name)}</strong></td>
-        <td>${money(t.share)}</td>
-        <td>${money(paid)}</td>
-        <td>${money(Math.max(0, missing))}</td>
-        <td><span class="badge ${statusClass}">${statusText}</span></td>
-      </tr>
-    `;
-  }).join('') : '<tr><td colspan="5" class="empty">Nenhum dado financeiro.</td></tr>';
-
-  const expCtrlTbody = document.getElementById('expenseControlTable');
-  expCtrlTbody.innerHTML = state.expenses.length ? state.expenses.map(e => {
-    const perPerson = state.participants.length ? e.value / state.participants.length : 0;
-    const paid = state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0);
-    const balance = e.value - paid;
-    let stClass = 'status-pending', stText = 'Pendente';
-    if(balance <= 0.01) { stClass = 'status-paid'; stText = 'Quitado'; }
-    else if(paid > 0) { stClass = 'status-partial'; stText = 'Parcial'; }
-    return `
-      <tr>
-        <td><strong>${esc(e.desc)}</strong></td>
-        <td><span class="badge">${esc(e.category)}</span></td>
-        <td>${money(e.value)}</td>
-        <td>${money(perPerson)}</td>
-        <td>${money(paid)}</td>
-        <td>${money(Math.max(0, balance))}</td>
-        <td><span class="badge ${stClass}">${stText}</span></td>
-      </tr>
-    `;
-  }).join('') : '<tr><td colspan="7" class="empty">Nenhuma despesa.</td></tr>';
-
-  const payTbody = document.getElementById('paymentsTable');
-  payTbody.innerHTML = state.payments.length ? state.payments.slice().reverse().map(p => {
-    const part = participant(p.participantId);
-    const exp = expense(p.expenseId);
-    const d = new Date(p.date);
-    return `
-      <tr>
-        <td><strong>${part ? esc(part.name) : 'Excluído'}</strong></td>
-        <td>${exp ? esc(exp.desc) : 'Excluído'}</td>
-        <td>${d.toLocaleDateString()} ${d.toLocaleTimeString().slice(0,5)}</td>
-        <td>${money(p.value)}</td>
-        <td class="actions"><button class="small danger" onclick="deletePayment('${p.id}')">🗑️</button></td>
-      </tr>
-    `;
-  }).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
-
-  const histTbody = document.getElementById('historyTable');
-  histTbody.innerHTML = state.history.length ? state.history.slice().reverse().map(h => {
-    const part = participant(h.participantId);
-    const position = pos(h.positionId);
-    const entryDate = h.entryTime ? new Date(h.entryTime) : (h.date ? new Date(h.date) : null);
-    const exitDate = h.exitTime ? new Date(h.exitTime) : null;
-    
-    const timeStrEntry = entryDate ? `${entryDate.toLocaleDateString()} ${entryDate.toLocaleTimeString().slice(0,5)}` : '--:--';
-    const timeStrExit = exitDate ? `${exitDate.toLocaleDateString()} ${exitDate.toLocaleTimeString().slice(0,5)}` : '--:--';
-
-    return `
-      <tr>
-        <td><span class="badge">Rodada ${h.round}</span></td>
-        <td><strong>${part ? esc(part.name) : 'Excluído'}</strong></td>
-        <td>${position ? esc(position.name) : h.positionId}</td>
-        <td><span style="color:var(--success); font-weight:bold;">${timeStrEntry}</span></td>
-        <td><span style="color:var(--danger); font-weight:bold;">${timeStrExit}</span></td>
-      </tr>
-    `;
-  }).join('') : '<tr><td colspan="5" class="empty">Nenhum histórico de sorteio.</td></tr>';
-
-  const drawRes = document.getElementById('drawResults');
-  drawRes.innerHTML = state.draw.length ? state.draw.map(d => {
-    const position = pos(d.positionId);
-    const part = participant(d.participantId);
-    return `
-      <div class="result">
-        <span><strong>${position ? esc(position.name) : ''}</strong></span>
-        <span>${part ? esc(part.name) : 'Vazio'}</span>
-      </div>
-    `;
-  }).join('') : '<div class="empty" style="grid-column: 1/-1;">Nenum sorteio realizado na rodada atual.</div>';
-
-  renderBoat();
-  renderPhotos();
+  renderGroup('leftSlots', 'left');
+  renderGroup('rightSlots', 'right');
+  renderGroup('backSlots', 'back');
 }
 
 window.onload = () => {
-  load();
-  loadTripInputs();
-  render();
+  const savedCfg = localStorage.getItem('pesca_fb_cfg');
+  if (savedCfg) {
+    document.getElementById('fbConfigInput').value = savedCfg;
+    initFirebase(JSON.parse(savedCfg));
+  } else {
+    render();
+  }
 };
 </script>
 </body>
