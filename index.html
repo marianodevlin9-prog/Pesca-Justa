@@ -44,10 +44,10 @@
     h2 { margin-bottom: 14px; font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .form-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
-    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 120px; }
     
     label { font-size: 12px; font-weight: bold; color: var(--muted); }
-    input, select { height: 38px; border: 1px solid var(--border); border-radius: 8px; padding: 0 10px; background: rgba(0, 0, 0, 0.1); font-size: 14px; color: var(--text); outline: none; }
+    input, select { height: 38px; border: 1px solid var(--border); border-radius: 8px; padding: 0 10px; background: rgba(0, 0, 0, 0.2); font-size: 14px; color: var(--text); outline: none; width: 100%; }
     
     button { height: 38px; border: 0; border-radius: 8px; padding: 0 16px; cursor: pointer; background: var(--primary); color: #fff; font-weight: bold; font-size: 13px; }
     button:hover { opacity: 0.9; }
@@ -59,36 +59,32 @@
 
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
     th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 
-    .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary2); border: 1px solid var(--accent); display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; color: var(--accent); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary2); border: 1px solid var(--accent); display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; color: var(--accent); }
 
-    .badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; display: inline-block; }
-    .badge-paid { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
-    .badge-pending { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    /* CRONÔMETRO */
+    .timer-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--accent); padding: 14px; border-radius: 12px; margin: 15px 0; text-align: center; }
+    .timer-val { font-size: 1.4rem; font-weight: 800; color: var(--accent); font-family: monospace; }
+    .timer-time { font-size: 1rem; font-weight: bold; color: var(--text); font-family: monospace; margin-top: 4px; }
+    .timer-lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: bold; }
 
-    /* PAINEL DE CRONÔMETRO DE TURNO */
-    .timer-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--accent); padding: 16px; border-radius: 12px; margin: 15px 0; text-align: center; }
-    .timer-val { font-size: 1.5rem; font-weight: 800; color: var(--accent); font-family: monospace; }
-    .timer-time { font-size: 1.1rem; font-weight: bold; color: var(--text); font-family: monospace; margin-top: 4px; }
-    .timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: bold; }
-
-    /* LAYOUT EMBARCAÇÃO DINÂMICO */
+    /* BARCO */
     .boat-wrap { overflow-x: auto; padding: 10px 0; }
-    .boat { position: relative; min-width: 750px; max-width: 900px; min-height: 480px; margin: auto; border: 4px solid var(--accent); border-radius: 140px 140px 40px 40px; background: var(--boat-bg); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; }
-    .boat-title { text-align: center; font-weight: bold; font-size: 16px; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+    .boat { position: relative; min-width: 700px; max-width: 900px; min-height: 450px; margin: auto; border: 4px solid var(--accent); border-radius: 140px 140px 40px 40px; background: var(--boat-bg); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; }
+    .boat-title { text-align: center; font-weight: bold; font-size: 15px; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
     
     .boat-body { display: flex; justify-content: space-between; gap: 20px; flex: 1; }
-    .side { width: 220px; display: flex; flex-direction: column; gap: 12px; justify-content: flex-start; }
+    .side { width: 200px; display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; }
     
-    .slot { min-height: 60px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent); border-radius: 8px; padding: 8px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+    .slot { min-height: 55px; background: rgba(0,0,0,0.3); border: 1px dashed var(--accent); border-radius: 8px; padding: 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
     .slot-label { font-size: 10px; color: var(--accent); font-weight: bold; text-transform: uppercase; }
-    .slot-name { font-size: 13px; font-weight: bold; color: var(--text); }
+    .slot-name { font-size: 12px; font-weight: bold; color: var(--text); }
     
-    .back { margin-top: 20px; width: 100%; border-top: 2px dashed var(--border); padding-top: 15px; }
-    .bench-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 10px; color: var(--success); text-transform: uppercase; }
-    .bench-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+    .back { margin-top: 15px; width: 100%; border-top: 2px dashed var(--border); padding-top: 12px; }
+    .bench-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 8px; color: var(--success); text-transform: uppercase; }
+    .bench-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
 
     .toast { position: fixed; right: 18px; bottom: 18px; background: var(--primary2); color: #fff; padding: 12px 18px; border-radius: 99px; border: 1px solid var(--accent); display: none; z-index: 1000; }
     .toast.show { display: block; }
@@ -110,7 +106,7 @@
 
 <main class="container">
 
-  <!-- RESUMO DA VIAGEM -->
+  <!-- RESUMO -->
   <section class="grid-summary">
     <div class="card summary"><div class="label">Pescadores Lista</div><div class="value" id="sumParticipants">0</div></div>
     <div class="card summary"><div class="label">Total Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
@@ -123,43 +119,43 @@
     <div class="card">
       <h2>👥 Lista de Pescadores (<span id="countPescadores">0</span>)</h2>
       <div class="form-row">
-        <div class="field"><label for="participantName">Nome do Pescador</label><input id="participantName" placeholder="Ex.: Devlin"></div>
+        <div class="field"><label for="participantName">Nome do Pescador</label><input id="participantName" placeholder="Ex.: Devlin" onkeydown="if(event.key==='Enter') addParticipant()"></div>
         <button onclick="addParticipant()">Adicionar</button>
       </div>
       <div class="table-wrap" style="margin-top:15px">
         <table>
-          <thead><tr><th>Pescador</th><th>Pagamento</th><th>Ações</th></tr></thead>
+          <thead><tr><th>Pescador</th><th>Status</th><th>Ação</th></tr></thead>
           <tbody id="participantsTable"></tbody>
         </table>
       </div>
     </div>
 
     <div class="card">
-      <h2>🧾 Despesas do Barco</h2>
-      <div class="form-row">
-        <div class="field"><label for="expenseDesc">Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco, Isca, Bebida"></div>
-        <div class="field"><label for="expenseValue">Valor (R$)</label><input id="expenseValue" placeholder="0,00"></div>
-        <button onclick="addExpense()">Adicionar</button>
-      </div>
-      <div class="table-wrap" style="margin-top:15px">
+      <h2>🧾 Custos da Pescaria</h2>
+      <div class="table-wrap">
         <table>
-          <thead><tr><th>Descrição</th><th>Valor</th><th>Ações</th></tr></thead>
+          <thead><tr><th>Descrição</th><th>Valor (R$)</th></tr></thead>
           <tbody id="expensesTable"></tbody>
         </table>
+      </div>
+      <div class="form-row" style="margin-top:15px;">
+        <div class="field"><label for="customDesc">Outra Despesa</label><input id="customDesc" placeholder="Ex.: Extra"></div>
+        <div class="field"><label for="customVal">Valor</label><input id="customVal" type="number" placeholder="0"></div>
+        <button onclick="addCustomExpense()">+ Adicionar</button>
       </div>
     </div>
   </section>
 
-  <!-- CONTROLE DE TURNOS DE 5H30 E SORTEIO DE LUGARES -->
+  <!-- CONTROLADOR BARCO -->
   <section class="card">
     <h2>🚤 Distribuição dos Lugares (Turnos de 5h30min)</h2>
     <div class="form-row" style="margin-bottom:15px;">
       <button onclick="drawPositions()">🎲 Sortear Lugares</button>
       <button class="success" onclick="iniciarTurno5h30()">▶️ Iniciar Turno (5h30)</button>
-      <button class="secondary" onclick="proximoTurno()">🔄 Proximo Turno (Girar)</button>
+      <button class="secondary" onclick="proximoTurno()">🔄 Próximo Turno (Girar)</button>
     </div>
 
-    <!-- EXIBIÇÃO DO CRONÔMETRO -->
+    <!-- CRONÔMETRO -->
     <div class="timer-panel">
       <div>
         <div class="timer-lbl">Rodada</div>
@@ -179,18 +175,18 @@
       </div>
     </div>
 
-    <!-- MAPA VISUAL DO BARCO -->
+    <!-- MAPA DO BARCO -->
     <div class="boat-wrap">
       <div class="boat">
         <div class="boat-title">⚓ PROA (FRENTE DO BARCO) ⚓</div>
         <div class="boat-body">
           <div class="side">
-            <div style="text-align:center; font-size:11px; color:var(--muted); font-weight:bold; margin-bottom:5px;">LATERAL ESQUERDA</div>
+            <div style="text-align:center; font-size:10px; color:var(--muted); font-weight:bold; margin-bottom:4px;">LATERAL ESQUERDA</div>
             <div id="leftSlots" style="display:flex; flex-direction:column; gap:8px;"></div>
           </div>
           <div style="flex:1; border-left: 2px dashed var(--border); margin: 0 10px;"></div>
           <div class="side">
-            <div style="text-align:center; font-size:11px; color:var(--muted); font-weight:bold; margin-bottom:5px;">LATERAL DIREITA</div>
+            <div style="text-align:center; font-size:10px; color:var(--muted); font-weight:bold; margin-bottom:4px;">LATERAL DIREITA</div>
             <div id="rightSlots" style="display:flex; flex-direction:column; gap:8px;"></div>
           </div>
         </div>
@@ -225,10 +221,19 @@ let dbRef = null;
 let timerInterval = null;
 const TURNO_SEGUNDOS = (5 * 3600) + (30 * 60);
 
+const DEFAULT_EXPENSES = [
+  { id: 'exp_barco', desc: 'Barco', value: 0 },
+  { id: 'exp_reserva', desc: 'Reserva Barco', value: 0 },
+  { id: 'exp_churrasco', desc: 'Churrasco', value: 0 },
+  { id: 'exp_iscas', desc: 'Iscas', value: 0 },
+  { id: 'exp_gelo', desc: 'Gelo', value: 0 },
+  { id: 'exp_outros', desc: 'Outros', value: 0 }
+];
+
 let state = {
   theme: 'ocean',
   participants: [],
-  expenses: [],
+  expenses: DEFAULT_EXPENSES,
   payments: {},
   draw: [],
   round: 1,
@@ -238,7 +243,6 @@ let state = {
 
 function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function money(v) { return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-function numberBR(v) { return Number(String(v).replace(/\./g,'').replace(',','.'))||0; }
 function shuffle(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
 function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 
@@ -254,6 +258,8 @@ function initFirebase() {
     const data = snapshot.val();
     if (data) {
       state = data;
+      if (!state.participants) state.participants = [];
+      if (!state.expenses || !state.expenses.length) state.expenses = DEFAULT_EXPENSES;
       if (!state.payments) state.payments = {};
       if (state.theme) document.documentElement.setAttribute('data-theme', state.theme);
       render();
@@ -264,9 +270,58 @@ function initFirebase() {
 
 function syncState() {
   if (dbRef) dbRef.set(state);
-  else render();
+  render();
 }
 
+/* PARTICIPANTES */
+function addParticipant() {
+  const input = document.getElementById('participantName');
+  const name = input.value.trim();
+  if(!name) return;
+  
+  if (!state.participants) state.participants = [];
+  state.participants.push({ id: id(), name });
+  input.value = '';
+  syncState();
+}
+
+function deleteParticipant(pid) {
+  state.participants = state.participants.filter(x => x.id !== pid);
+  if (state.draw) state.draw = state.draw.filter(x => x.participantId !== pid);
+  if (state.payments) delete state.payments[pid];
+  syncState();
+}
+
+function togglePayment(pid) {
+  if(!state.payments) state.payments = {};
+  state.payments[pid] = !state.payments[pid];
+  syncState();
+}
+
+/* CUSTOS / DESPESAS */
+function updateExpense(eid, val) {
+  const numVal = parseFloat(val) || 0;
+  const item = state.expenses.find(x => x.id === eid);
+  if (item) {
+    item.value = numVal;
+    syncState();
+  }
+}
+
+function addCustomExpense() {
+  const descInput = document.getElementById('customDesc');
+  const valInput = document.getElementById('customVal');
+  const desc = descInput.value.trim();
+  const val = parseFloat(valInput.value) || 0;
+
+  if(!desc) return;
+  state.expenses.push({ id: id(), desc, value: val });
+  descInput.value = '';
+  valInput.value = '';
+  syncState();
+}
+
+/* SORTEIO E TURNO */
 function gerarPosicoesDinamicas() {
   const total = state.participants ? state.participants.length : 0;
   const posicoes = [];
@@ -368,55 +423,17 @@ function atualizarCronometroAtivo() {
   }, 1000);
 }
 
-function togglePayment(pid) {
-  if(!state.payments) state.payments = {};
-  state.payments[pid] = !state.payments[pid];
-  syncState();
-}
-
-function addParticipant() {
-  const nameInput = document.getElementById('participantName');
-  const name = nameInput.value.trim();
-  if(!name) return;
-  if(!state.participants) state.participants = [];
-  state.participants.push({ id: id(), name });
-  nameInput.value = '';
-  syncState();
-}
-
-function deleteParticipant(pid) {
-  state.participants = state.participants.filter(x => x.id !== pid);
-  state.draw = (state.draw || []).filter(x => x.participantId !== pid);
-  if(state.payments) delete state.payments[pid];
-  syncState();
-}
-
-function addExpense() {
-  const desc = document.getElementById('expenseDesc').value.trim();
-  const val = numberBR(document.getElementById('expenseValue').value);
-  if(!desc || val <= 0) return;
-  if(!state.expenses) state.expenses = [];
-  state.expenses.push({ id: id(), desc, value: val });
-  document.getElementById('expenseDesc').value = '';
-  document.getElementById('expenseValue').value = '';
-  syncState();
-}
-
-function deleteExpense(eid) {
-  state.expenses = state.expenses.filter(x => x.id !== eid);
-  syncState();
-}
-
+/* RENDER TELA */
 function render() {
   const participants = state.participants || [];
-  const expenses = state.expenses || [];
+  const expenses = state.expenses || DEFAULT_EXPENSES;
   const payments = state.payments || {};
 
   document.getElementById('countPescadores').textContent = participants.length;
   document.getElementById('sumParticipants').textContent = participants.length;
   document.getElementById('turnoAtual').textContent = `Turno ${state.round || 1}`;
   
-  const totalExp = expenses.reduce((s,x)=>s+x.value, 0);
+  const totalExp = expenses.reduce((s,x)=>s+(parseFloat(x.value)||0), 0);
   const share = participants.length ? totalExp / participants.length : 0;
   
   let paidCount = 0;
@@ -449,13 +466,14 @@ function render() {
     `;
   }).join('');
 
-  // Tabela Despesas
+  // Tabela Custos Fixo / Editáveis
   const eTable = document.getElementById('expensesTable');
   eTable.innerHTML = expenses.map(e => `
     <tr>
-      <td>${e.desc}</td>
-      <td><strong>${money(e.value)}</strong></td>
-      <td><button class="small danger" onclick="deleteExpense('${e.id}')">🗑️</button></td>
+      <td><strong>${e.desc}</strong></td>
+      <td>
+        <input type="number" style="height:30px; width:100px;" value="${e.value || ''}" placeholder="0,00" onchange="updateExpense('${e.id}', this.value)">
+      </td>
     </tr>
   `).join('');
 
