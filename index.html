@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes"
+>
 
 <meta name="theme-color" content="#102033">
 
 <title>Pesca Justa</title>
 
 <style>
-
 :root{
   --bg:#0f1722;
   --panel:#1b2738;
@@ -20,7 +21,7 @@ content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes
   --text:#eef5ff;
   --muted:#9db0c8;
   --accent:#38bdf8;
-  --accent2:#22c55e;
+  --success:#22c55e;
   --danger:#ef4444;
   --warning:#f59e0b;
   --input:#121c2b;
@@ -197,7 +198,7 @@ table{
   width:100%;
   border-collapse:collapse;
   font-size:12px;
-  min-width:820px;
+  min-width:850px;
 }
 
 th{
@@ -225,6 +226,10 @@ tr:last-child td{
   background:#25364d;
   margin:2px;
   font-size:11px;
+}
+
+.pill.empty{
+  opacity:.55;
 }
 
 .paid{
@@ -262,6 +267,15 @@ tr:last-child td{
   color:var(--muted);
 }
 
+.note{
+  font-size:12px;
+  color:#cbd5e1;
+  background:#172536;
+  padding:10px;
+  border-radius:8px;
+  border-left:3px solid var(--accent);
+}
+
 .boat-wrap{
   overflow:auto;
   padding:10px;
@@ -289,8 +303,7 @@ tr:last-child td{
   );
 
   border:5px solid #0f172a;
-  box-shadow:
-  inset 0 0 0 8px rgba(15,23,42,.3);
+  box-shadow:inset 0 0 0 8px rgba(15,23,42,.3);
 }
 
 .boat-title{
@@ -309,7 +322,6 @@ tr:last-child td{
   top:95px;
   bottom:70px;
   width:150px;
-
   display:flex;
   flex-direction:column;
   gap:13px;
@@ -326,10 +338,9 @@ tr:last-child td{
 
 .popa{
   position:absolute;
-  left:260px;
-  right:260px;
+  left:250px;
+  right:250px;
   bottom:40px;
-
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:12px;
@@ -344,11 +355,9 @@ tr:last-child td{
   color:white;
   font-size:11px;
   text-align:center;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   font-weight:bold;
   box-shadow:0 3px 6px rgba(0,0,0,.25);
 }
@@ -363,15 +372,6 @@ tr:last-child td{
   opacity:.8;
 }
 
-.note{
-  font-size:12px;
-  color:#cbd5e1;
-  background:#172536;
-  padding:10px;
-  border-radius:8px;
-  border-left:3px solid var(--accent);
-}
-
 .toast{
   position:fixed;
   bottom:18px;
@@ -383,10 +383,36 @@ tr:last-child td{
   border-radius:9px;
   z-index:100;
   display:none;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
 }
 
 .toast.show{
   display:block;
+}
+
+.modal-back{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  padding:15px;
+}
+
+.modal-back.show{
+  display:flex;
+}
+
+.modal{
+  width:min(560px,100%);
+  background:#182536;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px;
+  max-height:90vh;
+  overflow:auto;
 }
 
 @media(max-width:700px){
@@ -423,7 +449,6 @@ tr:last-child td{
   }
 
 }
-
 </style>
 </head>
 
@@ -435,40 +460,28 @@ tr:last-child td{
 
 <div class="brand">
 🎣 Pesca Justa
-<small>
-Organização, financeiro, vagas e revezamento inteligente
-</small>
+<small>Organização, financeiro, vagas e revezamento inteligente</small>
 </div>
 
 <nav>
 
-<button
-class="nav-btn active"
-data-view="dashboard">
+<button class="nav-btn active" data-view="dashboard">
 Início
 </button>
 
-<button
-class="nav-btn"
-data-view="participantes">
+<button class="nav-btn" data-view="participantes">
 Participantes
 </button>
 
-<button
-class="nav-btn"
-data-view="vagas">
+<button class="nav-btn" data-view="vagas">
 Vagas & Barco
 </button>
 
-<button
-class="nav-btn"
-data-view="turnos">
+<button class="nav-btn" data-view="turnos">
 Turnos
 </button>
 
-<button
-class="nav-btn"
-data-view="financeiro">
+<button class="nav-btn" data-view="financeiro">
 Financeiro
 </button>
 
@@ -484,14 +497,9 @@ Financeiro
 
 <!-- DASHBOARD -->
 
-<section
-id="dashboard"
-class="view active">
+<section id="dashboard" class="view active">
 
-<div
-class="stats"
-id="dashboardStats">
-</div>
+<div class="stats" id="dashboardStats"></div>
 
 
 <div class="card">
@@ -500,39 +508,27 @@ id="dashboardStats">
 
 <p class="sub">
 Cadastre participantes, configure as vagas do barco,
-informe os custos e gere o revezamento inteligente.
+informe os custos e gere o revezamento.
 </p>
+
 
 <div class="grid">
 
 <div>
-
 <label>Nome do evento</label>
-
 <input id="eventName">
-
 </div>
 
 
 <div>
-
 <label>Data de início</label>
-
-<input
-type="datetime-local"
-id="tripStart">
-
+<input type="datetime-local" id="tripStart">
 </div>
 
 
 <div>
-
 <label>Data de término</label>
-
-<input
-type="datetime-local"
-id="tripEnd">
-
+<input type="datetime-local" id="tripEnd">
 </div>
 
 </div>
@@ -540,12 +536,8 @@ id="tripEnd">
 
 <div class="actions">
 
-<button
-class="primary"
-onclick="saveTripInfo()">
-
+<button class="primary" onclick="saveTripInfo()">
 Salvar informações
-
 </button>
 
 </div>
@@ -555,40 +547,24 @@ Salvar informações
 
 <div class="card">
 
-<h3>🎯 Revezamento Inteligente</h3>
+<h3>📋 Regras do revezamento</h3>
 
 <div class="note">
 
-<b>Regra principal:</b>
-
-cada área do barco possui histórico próprio.
-
-<br><br>
-
-<b>Popa/Fundo:</b>
-quem já pescou no fundo não volta para essa área
-enquanto existirem pescadores que ainda não tiveram
-a oportunidade.
+<b>Regra da Popa/Fundo:</b>
+um pescador que já ocupou o fundo não volta a ocupar
+o fundo enquanto todos os demais participantes
+não tiverem recebido a oportunidade.
 
 <br><br>
 
-<b>Exemplo com 12 pescadores e 4 vagas na Popa:</b>
-
-<br>
-
-Turno 1 → 4 pescadores
-
-<br>
-
-Turno 2 → outros 4
-
-<br>
-
-Turno 3 → outros 4
+A quantidade de vagas é sempre definida pela configuração
+do barco. Se houver menos pescadores que vagas,
+as vagas restantes ficam vazias.
 
 <br><br>
 
-Somente depois disso inicia uma nova rodada.
+Nenhum pescador pode ocupar duas vagas no mesmo turno.
 
 </div>
 
@@ -600,20 +576,15 @@ Somente depois disso inicia uma nova rodada.
 
 <!-- PARTICIPANTES -->
 
-<section
-id="participantes"
-class="view">
+<section id="participantes" class="view">
 
 <div class="card">
 
 <h2>👥 Participantes</h2>
 
 <p class="sub">
-
-Adicione, edite ou remova pescadores.
-
+Adicione, edite ou remova os pescadores.
 Nomes duplicados não são permitidos.
-
 </p>
 
 
@@ -625,7 +596,8 @@ Nomes duplicados não são permitidos.
 
 <input
 id="newParticipant"
-placeholder="Digite o nome do pescador">
+placeholder="Digite o nome do pescador"
+>
 
 </div>
 
@@ -634,12 +606,8 @@ placeholder="Digite o nome do pescador">
 
 <div class="actions">
 
-<button
-class="primary"
-onclick="addParticipant()">
-
+<button class="primary" onclick="addParticipant()">
 Adicionar participante
-
 </button>
 
 </div>
@@ -657,11 +625,9 @@ Adicionar participante
 
 
 
-<!-- BARCO -->
+<!-- VAGAS -->
 
-<section
-id="vagas"
-class="view">
+<section id="vagas" class="view">
 
 
 <div class="card">
@@ -669,13 +635,7 @@ class="view">
 <h2>🛥️ Configuração das Vagas</h2>
 
 <p class="sub">
-
-A quantidade cadastrada aqui define
-as posições disponíveis no barco.
-
-O número de pescadores pode ser menor ou igual
-ao número de vagas.
-
+Defina a quantidade real de posições disponíveis no barco.
 </p>
 
 
@@ -688,7 +648,8 @@ ao número de vagas.
 <input
 type="number"
 min="0"
-id="vEsq">
+id="vEsq"
+>
 
 </div>
 
@@ -700,19 +661,21 @@ id="vEsq">
 <input
 type="number"
 min="0"
-id="vDir">
+id="vDir"
+>
 
 </div>
 
 
 <div>
 
-<label>Vagas na Popa</label>
+<label>Vagas na Popa / Fundo</label>
 
 <input
 type="number"
 min="0"
-id="vPopa">
+id="vPopa"
+>
 
 </div>
 
@@ -723,10 +686,9 @@ id="vPopa">
 
 <button
 class="primary"
-onclick="saveBoatConfig()">
-
+onclick="saveBoatConfig()"
+>
 Salvar configuração
-
 </button>
 
 </div>
@@ -740,10 +702,8 @@ Salvar configuração
 <h3>Vista superior do barco</h3>
 
 <p class="sub">
-
-Os nomes aparecem diretamente
-nas posições do turno selecionado.
-
+Os nomes aparecem diretamente nas posições
+quando um turno é selecionado.
 </p>
 
 
@@ -755,8 +715,8 @@ nas posições do turno selecionado.
 
 <select
 id="boatTurnSelect"
-onchange="renderBoat()">
-</select>
+onchange="renderBoat()"
+></select>
 
 </div>
 
@@ -767,8 +727,8 @@ onchange="renderBoat()">
 
 <div
 class="boat"
-id="boat">
-</div>
+id="boat"
+></div>
 
 </div>
 
@@ -780,25 +740,22 @@ id="boat">
 
 <!-- TURNOS -->
 
-<section
-id="turnos"
-class="view">
+<section id="turnos" class="view">
 
 
 <div class="card">
 
-<h2>🎲 Turnos e Revezamento</h2>
+<h2>🎲 Tabela de Turnos & Cronograma</h2>
 
 <p class="sub">
-
-O sistema gera automaticamente
-as posições respeitando o histórico
-de cada área.
-
+O sistema utiliza rodízio inteligente,
+priorizando a oportunidade de todos pescarem
+na Popa/Fundo antes de repetir participantes.
 </p>
 
 
 <div class="grid">
+
 
 <div>
 
@@ -808,7 +765,8 @@ de cada área.
 type="number"
 min="1"
 step="0.5"
-id="turnHours">
+id="turnHours"
+>
 
 </div>
 
@@ -819,7 +777,8 @@ id="turnHours">
 
 <input
 type="datetime-local"
-id="inicioPescaInput">
+id="inicioPescaInput"
+>
 
 </div>
 
@@ -830,7 +789,8 @@ id="inicioPescaInput">
 
 <input
 type="datetime-local"
-id="fimPescaInput">
+id="fimPescaInput"
+>
 
 </div>
 
@@ -841,19 +801,17 @@ id="fimPescaInput">
 
 <button
 class="primary"
-onclick="generateSchedule()">
-
-Gerar Revezamento Inteligente
-
+onclick="generateSchedule()"
+>
+Gerar Cronograma Inteligente
 </button>
 
 
 <button
 class="danger"
-onclick="clearSchedule()">
-
+onclick="clearSchedule()"
+>
 Limpar cronograma
-
 </button>
 
 </div>
@@ -882,17 +840,16 @@ Limpar cronograma
 
 <th>Direita</th>
 
-<th>Popa</th>
+<th>Popa / Fundo</th>
 
-<th>Fora / Vaga</th>
+<th>Fora / Descansando</th>
 
 </tr>
 
 </thead>
 
-<tbody
-id="scheduleBody">
-</tbody>
+
+<tbody id="scheduleBody"></tbody>
 
 </table>
 
@@ -904,7 +861,8 @@ id="scheduleBody">
 
 <div class="card">
 
-<h3>📊 Histórico de oportunidades</h3>
+<h3>📊 Equilíbrio do revezamento</h3>
+
 
 <div class="table-wrap">
 
@@ -916,7 +874,7 @@ id="scheduleBody">
 
 <th>Pescador</th>
 
-<th>Total Turnos</th>
+<th>Turnos</th>
 
 <th>Esquerda</th>
 
@@ -924,13 +882,14 @@ id="scheduleBody">
 
 <th>Popa</th>
 
+<th>Descansos</th>
+
 </tr>
 
 </thead>
 
-<tbody
-id="fairnessBody">
-</tbody>
+
+<tbody id="fairnessBody"></tbody>
 
 </table>
 
@@ -944,14 +903,19 @@ id="fairnessBody">
 
 <!-- FINANCEIRO -->
 
-<section
-id="financeiro"
-class="view">
+<section id="financeiro" class="view">
 
 
 <div class="card">
 
 <h2>💰 Financeiro & Rateio</h2>
+
+<p class="sub">
+Cadastre despesas por categoria.
+O sistema calcula automaticamente
+a parte de cada pescador.
+</p>
+
 
 <div class="grid">
 
@@ -963,19 +927,12 @@ class="view">
 <select id="expenseCategory">
 
 <option>Barco</option>
-
 <option>Isca</option>
-
 <option>Gelo</option>
-
 <option>Alimentação</option>
-
 <option>Bebidas</option>
-
 <option>Churrasco</option>
-
 <option>Combustível</option>
-
 <option>Outros</option>
 
 </select>
@@ -989,7 +946,8 @@ class="view">
 
 <input
 id="expenseDescription"
-placeholder="Ex.: Aluguel do barco">
+placeholder="Ex.: Aluguel do barco"
+>
 
 </div>
 
@@ -1002,7 +960,8 @@ placeholder="Ex.: Aluguel do barco">
 id="expenseValue"
 type="number"
 min="0"
-step="0.01">
+step="0.01"
+>
 
 </div>
 
@@ -1013,10 +972,9 @@ step="0.01">
 
 <button
 class="primary"
-onclick="addExpense()">
-
+onclick="addExpense()"
+>
 Adicionar despesa
-
 </button>
 
 </div>
@@ -1029,6 +987,7 @@ Adicionar despesa
 
 <h3>💵 Registrar pagamento</h3>
 
+
 <div class="grid">
 
 
@@ -1036,8 +995,21 @@ Adicionar despesa
 
 <label>Pescador</label>
 
-<select
-id="paymentParticipant">
+<select id="paymentParticipant"></select>
+
+</div>
+
+
+<div>
+
+<label>Categoria / referência</label>
+
+<select id="paymentCategory">
+
+<option value="Geral">
+Geral
+</option>
+
 </select>
 
 </div>
@@ -1045,25 +1017,14 @@ id="paymentParticipant">
 
 <div>
 
-<label>Categoria</label>
-
-<select
-id="paymentCategory">
-<option value="Geral">Geral</option>
-</select>
-
-</div>
-
-
-<div>
-
-<label>Valor pago</label>
+<label>Valor pago (R$)</label>
 
 <input
 id="paymentValue"
 type="number"
 min="0.01"
-step="0.01">
+step="0.01"
+>
 
 </div>
 
@@ -1074,10 +1035,9 @@ step="0.01">
 
 <button
 class="success"
-onclick="addPayment()">
-
+onclick="addPayment()"
+>
 Registrar pagamento
-
 </button>
 
 </div>
@@ -1110,9 +1070,7 @@ Registrar pagamento
 
 </thead>
 
-<tbody
-id="expenseBody">
-</tbody>
+<tbody id="expenseBody"></tbody>
 
 </table>
 
@@ -1148,9 +1106,7 @@ id="expenseBody">
 
 </thead>
 
-<tbody
-id="financialBody">
-</tbody>
+<tbody id="financialBody"></tbody>
 
 </table>
 
@@ -1186,9 +1142,7 @@ id="financialBody">
 
 </thead>
 
-<tbody
-id="paymentBody">
-</tbody>
+<tbody id="paymentBody"></tbody>
 
 </table>
 
@@ -1198,20 +1152,22 @@ id="paymentBody">
 
 </section>
 
+
 </main>
 
 
 
 <div
 id="toast"
-class="toast">
-</div>
+class="toast"
+></div>
 
 
 
 <div
 class="modal-back"
-id="editModal">
+id="editModal"
+>
 
 <div class="modal">
 
@@ -1219,22 +1175,19 @@ id="editModal">
 
 <input id="editParticipantName">
 
+
 <div class="actions">
 
 <button
 class="primary"
-onclick="confirmEditParticipant()">
-
+onclick="confirmEditParticipant()"
+>
 Salvar
-
 </button>
 
 
-<button
-onclick="closeModal()">
-
+<button onclick="closeModal()">
 Cancelar
-
 </button>
 
 </div>
@@ -1247,23 +1200,26 @@ Cancelar
 
 <script>
 
-
 /* =========================================================
    CONFIGURAÇÃO
 ========================================================= */
 
-const STORAGE_KEY = "pescaJusta_v6";
+const STORAGE_KEY = 'pescaJusta_v6';
 
 let editingParticipantId = null;
 
 
+/* =========================================================
+   ESTADO PADRÃO
+========================================================= */
+
 const defaultState = {
 
-  eventName:"Pesca Justa",
+  eventName:'Pesca Justa',
 
-  tripStart:"2026-10-17T10:00",
+  tripStart:'2026-10-17T10:00',
 
-  tripEnd:"2026-10-18T10:00",
+  tripEnd:'2026-10-18T10:00',
 
   participants:[],
 
@@ -1278,48 +1234,62 @@ const defaultState = {
   expenses:[],
 
   payments:[]
+
 };
 
 
-
-let state = loadState();
-
+let state = load();
 
 
 /* =========================================================
    STORAGE
 ========================================================= */
 
-function loadState(){
+function clone(obj){
+
+  return JSON.parse(
+    JSON.stringify(obj)
+  );
+
+}
+
+
+function load(){
 
   try{
 
-    const saved =
-    JSON.parse(
+    const saved = JSON.parse(
       localStorage.getItem(STORAGE_KEY)
     );
 
     if(saved){
 
       return {
-        ...structuredClone(defaultState),
+
+        ...clone(defaultState),
+
         ...saved,
 
         boatConfig:{
           ...defaultState.boatConfig,
           ...(saved.boatConfig || {})
         }
+
       };
 
     }
 
   }
-  catch(e){}
 
-  return structuredClone(defaultState);
+  catch(e){
+
+    console.error(e);
+
+  }
+
+  return clone(defaultState);
 
 }
-
 
 
 function persist(){
@@ -1332,37 +1302,53 @@ function persist(){
 }
 
 
-
 /* =========================================================
-   UTILIDADES
+   UTILITÁRIOS
 ========================================================= */
 
 function uid(){
 
-  return Date.now()
-  .toString(36)
+  return Date.now().toString(36)
   +
-  Math.random()
-  .toString(36)
-  .slice(2,8);
+  Math.random().toString(36).slice(2,9);
 
 }
-
 
 
 function money(value){
 
   return Number(value || 0)
   .toLocaleString(
-    "pt-BR",
+    'pt-BR',
     {
-      style:"currency",
-      currency:"BRL"
+      style:'currency',
+      currency:'BRL'
     }
   );
 
 }
 
+
+function toast(message){
+
+  const el =
+  document.getElementById('toast');
+
+  el.textContent = message;
+
+  el.classList.add('show');
+
+  clearTimeout(
+    window.__toastTimer
+  );
+
+  window.__toastTimer =
+  setTimeout(
+    ()=>el.classList.remove('show'),
+    3500
+  );
+
+}
 
 
 function escapeHtml(value){
@@ -1372,15 +1358,11 @@ function escapeHtml(value){
     /[&<>"']/g,
     char => ({
 
-      "&":"&amp;",
-
-      "<":"&lt;",
-
-      ">":"&gt;",
-
-      '"':"&quot;",
-
-      "'":"&#039;"
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
 
     }[char])
   );
@@ -1388,51 +1370,21 @@ function escapeHtml(value){
 }
 
 
-
 function fmtDate(value){
 
   const d = new Date(value);
 
   return d.toLocaleString(
-    "pt-BR",
+    'pt-BR',
     {
-      day:"2-digit",
-      month:"2-digit",
-      hour:"2-digit",
-      minute:"2-digit"
+      day:'2-digit',
+      month:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit'
     }
   );
 
 }
-
-
-
-function toast(message){
-
-  const element =
-  document.getElementById("toast");
-
-  element.textContent = message;
-
-  element.classList.add("show");
-
-  clearTimeout(
-    window.__toastTimer
-  );
-
-  window.__toastTimer =
-  setTimeout(
-    () => {
-
-      element.classList
-      .remove("show");
-
-    },
-    3500
-  );
-
-}
-
 
 
 function shuffle(array){
@@ -1460,40 +1412,39 @@ function shuffle(array){
 }
 
 
-
 /* =========================================================
    NAVEGAÇÃO
 ========================================================= */
 
 document
-.querySelectorAll(".nav-btn")
-.forEach(button => {
+.querySelectorAll('.nav-btn')
+.forEach(button=>{
 
   button.addEventListener(
-    "click",
-    () => {
+    'click',
+    ()=>{
 
       document
-      .querySelectorAll(".nav-btn")
+      .querySelectorAll('.nav-btn')
       .forEach(
-        b => b.classList.remove("active")
+        b=>b.classList.remove('active')
       );
 
       document
-      .querySelectorAll(".view")
+      .querySelectorAll('.view')
       .forEach(
-        v => v.classList.remove("active")
+        v=>v.classList.remove('active')
       );
 
-      button.classList
-      .add("active");
+
+      button.classList.add('active');
+
 
       document
       .getElementById(
         button.dataset.view
       )
-      .classList
-      .add("active");
+      .classList.add('active');
 
     }
   );
@@ -1501,42 +1452,41 @@ document
 });
 
 
-
 /* =========================================================
-   EVENTO
+   INFORMAÇÕES DA PESCARIA
 ========================================================= */
 
 function saveTripInfo(){
 
   state.eventName =
   document
-  .getElementById("eventName")
+  .getElementById('eventName')
   .value
   .trim()
   ||
-  "Pesca Justa";
+  'Pesca Justa';
 
 
   state.tripStart =
   document
-  .getElementById("tripStart")
+  .getElementById('tripStart')
   .value;
 
 
   state.tripEnd =
   document
-  .getElementById("tripEnd")
+  .getElementById('tripEnd')
   .value;
 
 
   document
-  .getElementById("inicioPescaInput")
+  .getElementById('inicioPescaInput')
   .value =
   state.tripStart;
 
 
   document
-  .getElementById("fimPescaInput")
+  .getElementById('fimPescaInput')
   .value =
   state.tripEnd;
 
@@ -1544,11 +1494,10 @@ function saveTripInfo(){
   persist();
 
   toast(
-    "Informações salvas."
+    'Informações salvas.'
   );
 
 }
-
 
 
 /* =========================================================
@@ -1559,9 +1508,7 @@ function addParticipant(){
 
   const input =
   document
-  .getElementById(
-    "newParticipant"
-  );
+  .getElementById('newParticipant');
 
 
   const name =
@@ -1571,7 +1518,7 @@ function addParticipant(){
   if(!name){
 
     toast(
-      "Digite o nome do participante."
+      'Digite o nome do participante.'
     );
 
     return;
@@ -1581,8 +1528,8 @@ function addParticipant(){
 
   const exists =
   state.participants.some(
-    participant =>
-    participant.name
+    p =>
+    p.name
     .toLowerCase()
     ===
     name.toLowerCase()
@@ -1592,7 +1539,7 @@ function addParticipant(){
   if(exists){
 
     toast(
-      "Este participante já está cadastrado."
+      'Este participante já está cadastrado.'
     );
 
     return;
@@ -1609,7 +1556,7 @@ function addParticipant(){
   });
 
 
-  input.value = "";
+  input.value = '';
 
 
   state.schedule = [];
@@ -1622,31 +1569,25 @@ function addParticipant(){
 
 
   toast(
-    "Participante adicionado."
+    'Participante adicionado.'
   );
 
 }
 
 
-
 function renderParticipants(){
 
   const box =
-  document.getElementById(
-    "participantsList"
+  document
+  .getElementById(
+    'participantsList'
   );
 
 
-  if(
-    !state.participants.length
-  ){
+  if(!state.participants.length){
 
     box.innerHTML =
-    `
-    <p class="sub">
-    Nenhum participante cadastrado.
-    </p>
-    `;
+    '<p class="sub">Nenhum participante cadastrado.</p>';
 
     return;
 
@@ -1654,92 +1595,85 @@ function renderParticipants(){
 
 
   box.innerHTML =
-  `
-  <div class="table-wrap">
+  '<div class="table-wrap">' +
 
-  <table>
+  '<table>' +
 
-  <thead>
+  '<thead>' +
 
-  <tr>
+  '<tr>' +
 
-  <th>#</th>
+  '<th>#</th>' +
 
-  <th>Nome</th>
+  '<th>Nome</th>' +
 
-  <th>Ações</th>
+  '<th>Ações</th>' +
 
-  </tr>
+  '</tr>' +
 
-  </thead>
+  '</thead>' +
 
-  <tbody>
+  '<tbody>' +
 
-  ${
-    state.participants
-    .map(
-      (participant,index) =>
-      `
-      <tr>
+  state.participants
+  .map(
+    (p,index)=>`
 
-      <td>
-      ${index + 1}
-      </td>
+    <tr>
 
-      <td>
-      ${escapeHtml(participant.name)}
-      </td>
+    <td>
+    ${index + 1}
+    </td>
 
-      <td>
+    <td>
+    ${escapeHtml(p.name)}
+    </td>
 
-      <button
-      class="small primary"
-      onclick="editParticipant('${participant.id}')">
+    <td>
 
-      Editar
+    <button
+    class="small primary"
+    onclick="editParticipant('${p.id}')"
+    >
+    Editar
+    </button>
 
-      </button>
+    <button
+    class="small danger"
+    onclick="removeParticipant('${p.id}')"
+    >
+    Excluir
+    </button>
 
+    </td>
 
-      <button
-      class="small danger"
-      onclick="removeParticipant('${participant.id}')">
+    </tr>
 
-      Excluir
+    `
+  )
+  .join('')
 
-      </button>
+  +
 
-      </td>
+  '</tbody>' +
 
-      </tr>
-      `
-    )
-    .join("")
-  }
+  '</table>' +
 
-  </tbody>
-
-  </table>
-
-  </div>
-  `;
+  '</div>';
 
 }
-
 
 
 function editParticipant(id){
 
   const participant =
-  state.participants
-  .find(
-    p => p.id === id
+  state.participants.find(
+    p=>p.id===id
   );
 
 
-  if(!participant){
-    return;
-  }
+  if(!participant)
+  return;
 
 
   editingParticipantId = id;
@@ -1747,7 +1681,7 @@ function editParticipant(id){
 
   document
   .getElementById(
-    "editParticipantName"
+    'editParticipantName'
   )
   .value =
   participant.name;
@@ -1755,44 +1689,39 @@ function editParticipant(id){
 
   document
   .getElementById(
-    "editModal"
+    'editModal'
   )
-  .classList
-  .add("show");
+  .classList.add('show');
 
 }
-
 
 
 function closeModal(){
 
   editingParticipantId = null;
 
+
   document
   .getElementById(
-    "editModal"
+    'editModal'
   )
-  .classList
-  .remove("show");
+  .classList.remove('show');
 
 }
-
 
 
 function confirmEditParticipant(){
 
   const participant =
-  state.participants
-  .find(
-    p =>
-    p.id === editingParticipantId
+  state.participants.find(
+    p=>p.id===editingParticipantId
   );
 
 
   const name =
   document
   .getElementById(
-    "editParticipantName"
+    'editParticipantName'
   )
   .value
   .trim();
@@ -1801,7 +1730,7 @@ function confirmEditParticipant(){
   if(!participant || !name){
 
     toast(
-      "Digite um nome válido."
+      'Digite um nome válido.'
     );
 
     return;
@@ -1809,22 +1738,21 @@ function confirmEditParticipant(){
   }
 
 
-  const duplicate =
+  const exists =
   state.participants.some(
-    p =>
+    p=>
     p.id !== participant.id
     &&
-    p.name
-    .toLowerCase()
+    p.name.toLowerCase()
     ===
     name.toLowerCase()
   );
 
 
-  if(duplicate){
+  if(exists){
 
     toast(
-      "Já existe participante com esse nome."
+      'Já existe participante com esse nome.'
     );
 
     return;
@@ -1848,27 +1776,25 @@ function confirmEditParticipant(){
 
 
   toast(
-    "Nome atualizado. Cronograma apagado."
+    'Nome atualizado. Cronograma anterior removido.'
   );
 
 }
-
 
 
 function removeParticipant(id){
 
   if(
     !confirm(
-      "Excluir este participante?"
+      'Excluir este participante?'
     )
-  ){
-    return;
-  }
+  )
+  return;
 
 
   state.participants =
   state.participants.filter(
-    p => p.id !== id
+    p=>p.id!==id
   );
 
 
@@ -1880,8 +1806,12 @@ function removeParticipant(id){
 
   renderAll();
 
-}
 
+  toast(
+    'Participante removido.'
+  );
+
+}
 
 
 /* =========================================================
@@ -1895,7 +1825,7 @@ function saveBoatConfig(){
     0,
     parseInt(
       document
-      .getElementById("vEsq")
+      .getElementById('vEsq')
       .value
     )
     ||
@@ -1908,7 +1838,7 @@ function saveBoatConfig(){
     0,
     parseInt(
       document
-      .getElementById("vDir")
+      .getElementById('vDir')
       .value
     )
     ||
@@ -1921,7 +1851,7 @@ function saveBoatConfig(){
     0,
     parseInt(
       document
-      .getElementById("vPopa")
+      .getElementById('vPopa')
       .value
     )
     ||
@@ -1929,12 +1859,14 @@ function saveBoatConfig(){
   );
 
 
-  if(
-    left + right + popa <= 0
-  ){
+  const total =
+  left + right + popa;
+
+
+  if(total <= 0){
 
     toast(
-      "Informe pelo menos uma vaga."
+      'Informe pelo menos uma vaga.'
     );
 
     return;
@@ -1944,11 +1876,11 @@ function saveBoatConfig(){
 
   state.boatConfig = {
 
-    left,
+    left:left,
 
-    right,
+    right:right,
 
-    popa
+    popa:popa
 
   };
 
@@ -1963,175 +1895,47 @@ function saveBoatConfig(){
 
 
   toast(
-    "Configuração salva."
+    'Configuração salva.'
   );
 
 }
 
 
-
 function fillBoatInputs(){
 
   document
-  .getElementById("vEsq")
+  .getElementById('vEsq')
   .value =
   state.boatConfig.left;
 
 
   document
-  .getElementById("vDir")
+  .getElementById('vDir')
   .value =
   state.boatConfig.right;
 
 
   document
-  .getElementById("vPopa")
+  .getElementById('vPopa')
   .value =
   state.boatConfig.popa;
 
 }
 
 
-
 /* =========================================================
-   ESCOLHA INTELIGENTE POR ÁREA
-========================================================= */
-
-/*
-
-Esta função é a parte mais importante
-do revezamento.
-
-Ela procura primeiro quem possui
-MENOR quantidade de participações
-na área específica.
-
-Depois evita repetição consecutiva.
-
-*/
-
-function chooseForArea(
-  candidates,
-  count,
-  area,
-  history,
-  previousArea
-){
-
-  if(count <= 0){
-    return [];
-  }
-
-
-  const sorted =
-  [...candidates]
-  .sort(
-    (a,b) => {
-
-      const A =
-      history[a];
-
-      const B =
-      history[b];
-
-
-      /* PRIORIDADE 1:
-         quem menos usou a área */
-
-      if(
-        A[area] !== B[area]
-      ){
-
-        return (
-          A[area]
-          -
-          B[area]
-        );
-
-      }
-
-
-      /* PRIORIDADE 2:
-         evitar mesma área
-         no turno anterior */
-
-      const repeatA =
-      previousArea[a] === area
-      ? 1
-      : 0;
-
-
-      const repeatB =
-      previousArea[b] === area
-      ? 1
-      : 0;
-
-
-      if(
-        repeatA !== repeatB
-      ){
-
-        return (
-          repeatA
-          -
-          repeatB
-        );
-
-      }
-
-
-      /* PRIORIDADE 3:
-         quem teve menos turnos */
-
-      if(
-        A.total !== B.total
-      ){
-
-        return (
-          A.total
-          -
-          B.total
-        );
-
-      }
-
-
-      /* DESEMPATE */
-
-      return (
-        A.tie
-        -
-        B.tie
-      );
-
-    }
-  );
-
-
-  return sorted.slice(
-    0,
-    Math.min(
-      count,
-      sorted.length
-    )
-  );
-
-}
-
-
-
-/* =========================================================
-   GERAÇÃO DO CRONOGRAMA
+   GERADOR DE REVEZAMENTO
 ========================================================= */
 
 function generateSchedule(){
 
-  const names =
-  state.participants
-  .map(
-    p => p.name.trim()
-  )
-  .filter(Boolean);
+  const participants =
+  state.participants.map(
+    p=>({
+      id:p.id,
+      name:p.name
+    })
+  );
 
 
   const cfg =
@@ -2146,10 +1950,10 @@ function generateSchedule(){
   cfg.popa;
 
 
-  if(!names.length){
+  if(!participants.length){
 
     toast(
-      "Cadastre os participantes."
+      'Cadastre os participantes primeiro.'
     );
 
     return;
@@ -2160,7 +1964,7 @@ function generateSchedule(){
   if(totalSeats <= 0){
 
     toast(
-      "Configure as vagas do barco."
+      'Configure as vagas do barco.'
     );
 
     return;
@@ -2169,17 +1973,23 @@ function generateSchedule(){
 
 
   /*
-    Agora pescadores podem ser
-    MENOR OU IGUAL às vagas.
+    REGRA:
+
+    Pode haver menos pescadores
+    que vagas.
+
+    Não pode haver mais pescadores
+    do que vagas.
   */
 
   if(
-    names.length > totalSeats
+    participants.length
+    >
+    totalSeats
   ){
 
     toast(
-      `Há ${names.length} pescadores e apenas ${totalSeats} vagas. ` +
-      `Aumente as vagas ou reduza os participantes.`
+      `Há ${participants.length} pescadores, mas apenas ${totalSeats} vagas. Ajuste o barco ou reduza participantes.`
     );
 
     return;
@@ -2190,9 +2000,7 @@ function generateSchedule(){
   const hours =
   parseFloat(
     document
-    .getElementById(
-      "turnHours"
-    )
+    .getElementById('turnHours')
     .value
   )
   ||
@@ -2203,7 +2011,7 @@ function generateSchedule(){
   new Date(
     document
     .getElementById(
-      "inicioPescaInput"
+      'inicioPescaInput'
     )
     .value
   );
@@ -2213,26 +2021,32 @@ function generateSchedule(){
   new Date(
     document
     .getElementById(
-      "fimPescaInput"
+      'fimPescaInput'
     )
     .value
   );
 
 
   if(
+
     Number.isNaN(
       startDate.getTime()
     )
+
     ||
+
     Number.isNaN(
       endDate.getTime()
     )
+
     ||
+
     endDate <= startDate
+
   ){
 
     toast(
-      "Informe datas válidas."
+      'Informe datas válidas.'
     );
 
     return;
@@ -2246,35 +2060,39 @@ function generateSchedule(){
 
   const turns =
   Math.ceil(
-    (
-      endDate
-      -
-      startDate
-    )
+    (endDate - startDate)
     /
     duration
   );
 
 
-  /* =====================================================
-     HISTÓRICO
-  ===================================================== */
+  /*
+    =====================================================
 
-  const history = {};
+    ESTATÍSTICAS
+
+    =====================================================
+  */
+
+  const stats = {};
 
 
-  names.forEach(
-    (name,index) => {
+  participants.forEach(
+    (p,index)=>{
 
-      history[name] = {
+      stats[p.id] = {
 
-        total:0,
+        turns:0,
 
         left:0,
 
         right:0,
 
         popa:0,
+
+        rests:0,
+
+        lastArea:null,
 
         tie:index
 
@@ -2285,34 +2103,44 @@ function generateSchedule(){
 
 
   /*
-    Última área de cada pescador.
+    =====================================================
+
+    FILAS DE RODÍZIO
+
+    A FILA DA POPA É A MAIS IMPORTANTE.
+
+    QUEM SAI DA FILA PARA A POPA
+    VAI PARA O FINAL.
+
+    ISSO IMPEDE QUE UM PESCADOR
+    VOLTE AO FUNDO ANTES DOS OUTROS.
+
+    =====================================================
   */
 
-  const previousArea = {};
 
-
-  names.forEach(
-    name => {
-
-      previousArea[name] =
-      null;
-
-    }
+  let popaQueue =
+  shuffle(
+    participants.map(
+      p=>p.id
+    )
   );
 
 
-  /*
-    CONTROLE ESPECIAL DA POPA
+  let leftQueue =
+  shuffle(
+    participants.map(
+      p=>p.id
+    )
+  );
 
-    popaRound contém quem ainda
-    NÃO pescou na Popa na rodada atual.
 
-    Quando todos tiverem passado,
-    uma nova rodada começa.
-  */
-
-  let popaRound =
-  shuffle([...names]);
+  let rightQueue =
+  shuffle(
+    participants.map(
+      p=>p.id
+    )
+  );
 
 
   let now =
@@ -2322,7 +2150,104 @@ function generateSchedule(){
   const schedule = [];
 
 
+  /*
+    =====================================================
+
+    FUNÇÃO PARA PEGAR PESSOADORES
+    DE UMA FILA
+
+    =====================================================
+  */
+
+  function takeFromQueue(
+    queue,
+    count,
+    available
+  ){
+
+    const picked = [];
+
+
+    let safety = 0;
+
+
+    while(
+
+      picked.length < count
+
+      &&
+
+      available.length
+
+      &&
+
+      safety < 1000
+
+    ){
+
+      safety++;
+
+
+      const id =
+      queue.shift();
+
+
+      if(
+        id === undefined
+      )
+      break;
+
+
+      /*
+        Recoloca no final da fila.
+      */
+
+      queue.push(id);
+
+
+      if(
+        available.includes(id)
+        &&
+        !picked.includes(id)
+      ){
+
+        picked.push(id);
+
+
+        const index =
+        available.indexOf(id);
+
+
+        if(index >= 0){
+
+          available.splice(
+            index,
+            1
+          );
+
+        }
+
+      }
+
+    }
+
+
+    return picked;
+
+  }
+
+
+  /*
+    =====================================================
+
+    GERAÇÃO DOS TURNOS
+
+    =====================================================
+  */
+
+
   for(
+
     let turn = 1;
 
     turn <= turns
@@ -2330,309 +2255,187 @@ function generateSchedule(){
     now < endDate;
 
     turn++
+
   ){
 
 
     const finish =
     new Date(
+
       Math.min(
+
         now.getTime()
         +
         duration,
 
         endDate.getTime()
+
       )
+
     );
 
 
     /*
-      Participantes disponíveis.
+      Todos os pescadores podem
+      participar porque a quantidade
+      de pescadores é menor ou igual
+      à quantidade de vagas.
     */
 
     let available =
-    shuffle([...names]);
-
-
-    /* ===================================================
-       POPA
-    =================================================== */
-
-    let popa = [];
-
-
-    if(
-      cfg.popa > 0
-    ){
-
-
-      /*
-        Primeiro pegamos quem ainda
-        NÃO passou pela Popa.
-      */
-
-      const eligible =
-      popaRound
-      .filter(
-        name =>
-        available.includes(name)
-      );
-
-
-      /*
-        Seleciona até o limite
-        de vagas.
-      */
-
-      popa =
-      eligible.slice(
-        0,
-        Math.min(
-          cfg.popa,
-          eligible.length
-        )
-      );
-
-
-      /*
-        Remove os escolhidos
-        da fila da rodada.
-      */
-
-      popaRound =
-      popaRound.filter(
-        name =>
-        !popa.includes(name)
-      );
-
-
-      /*
-        Se ainda faltar vaga,
-        significa que todos
-        da rodada atual já tiveram
-        oportunidade.
-
-        Então inicia nova rodada.
-      */
-
-      if(
-        popa.length < cfg.popa
-      ){
-
-
-        /*
-          Nova rodada.
-
-          IMPORTANTE:
-
-          Quem acabou de pescar
-          na Popa fica no final
-          da prioridade.
-        */
-
-        const alreadyUsed =
-        [...popa];
-
-
-        const newRound =
-        shuffle(
-          names.filter(
-            name =>
-            !alreadyUsed.includes(name)
-          )
-        );
-
-
-        popaRound =
-        [
-          ...newRound,
-          ...shuffle(alreadyUsed)
-        ];
-
-
-        const missing =
-        cfg.popa
-        -
-        popa.length;
-
-
-        const extra =
-        popaRound
-        .filter(
-          name =>
-          !popa.includes(name)
-          &&
-          available.includes(name)
-        )
-        .slice(
-          0,
-          missing
-        );
-
-
-        popa.push(
-          ...extra
-        );
-
-
-        popaRound =
-        popaRound
-        .filter(
-          name =>
-          !extra.includes(name)
-        );
-
-      }
-
-    }
+    participants.map(
+      p=>p.id
+    );
 
 
     /*
-      Remove pescadores da Popa
-      das demais áreas.
+      -------------------------------------------------
+
+      POPA
+
+      A FILA É UTILIZADA PARA QUE TODOS
+      PASSEM PELO FUNDO ANTES DE QUALQUER
+      REPETIÇÃO.
+
+      -------------------------------------------------
     */
 
-    available =
-    available.filter(
-      name =>
-      !popa.includes(name)
+    const popaCount =
+    Math.min(
+      cfg.popa,
+      available.length
     );
 
 
+    const popa =
+    takeFromQueue(
+      popaQueue,
+      popaCount,
+      available
+    );
 
-    /* ===================================================
-       ESQUERDA
-    =================================================== */
+
+    /*
+      -------------------------------------------------
+
+      ESQUERDA
+
+      -------------------------------------------------
+    */
+
+    const leftCount =
+    Math.min(
+      cfg.left,
+      available.length
+    );
+
 
     const left =
-    chooseForArea(
-
-      available,
-
-      cfg.left,
-
-      "left",
-
-      history,
-
-      previousArea
-
+    takeFromQueue(
+      leftQueue,
+      leftCount,
+      available
     );
 
 
-    available =
-    available.filter(
-      name =>
-      !left.includes(name)
+    /*
+      -------------------------------------------------
+
+      DIREITA
+
+      -------------------------------------------------
+    */
+
+    const rightCount =
+    Math.min(
+      cfg.right,
+      available.length
     );
 
-
-
-    /* ===================================================
-       DIREITA
-    =================================================== */
 
     const right =
-    chooseForArea(
-
-      available,
-
-      cfg.right,
-
-      "right",
-
-      history,
-
-      previousArea
-
+    takeFromQueue(
+      rightQueue,
+      rightCount,
+      available
     );
 
 
-    available =
-    available.filter(
-      name =>
-      !right.includes(name)
-    );
+    /*
+      Se sobrar alguém por alguma
+      configuração, fica descansando.
+    */
+
+    const resting =
+    [...available];
 
 
+    /*
+      -------------------------------------------------
 
-    /* ===================================================
-       ATUALIZAR HISTÓRICO
-    =================================================== */
+      ATUALIZA ESTATÍSTICAS
 
-    const chosen =
-    [
-      ...left,
-      ...right,
-      ...popa
-    ];
+      -------------------------------------------------
+    */
 
+    popa.forEach(
+      id=>{
 
-    chosen.forEach(
-      name => {
+        stats[id].turns++;
 
-        history[name].total++;
+        stats[id].popa++;
+
+        stats[id].lastArea =
+        'popa';
 
       }
     );
 
 
     left.forEach(
-      name => {
+      id=>{
 
-        history[name].left++;
+        stats[id].turns++;
 
-        previousArea[name] =
-        "left";
+        stats[id].left++;
+
+        stats[id].lastArea =
+        'left';
 
       }
     );
 
 
     right.forEach(
-      name => {
+      id=>{
 
-        history[name].right++;
+        stats[id].turns++;
 
-        previousArea[name] =
-        "right";
+        stats[id].right++;
+
+        stats[id].lastArea =
+        'right';
 
       }
     );
 
 
-    popa.forEach(
-      name => {
+    resting.forEach(
+      id=>{
 
-        history[name].popa++;
-
-        previousArea[name] =
-        "popa";
+        stats[id].rests++;
 
       }
     );
 
 
     /*
-      Quem não foi escolhido
-      fica sem área anterior.
+      -------------------------------------------------
+
+      SALVA TURNO
+
+      -------------------------------------------------
     */
-
-    names.forEach(
-      name => {
-
-        if(
-          !chosen.includes(name)
-        ){
-
-          previousArea[name] =
-          null;
-
-        }
-
-      }
-    );
-
-
 
     schedule.push({
 
@@ -2650,11 +2453,7 @@ function generateSchedule(){
 
       popa:popa,
 
-      resting:
-      names.filter(
-        name =>
-        !chosen.includes(name)
-      )
+      resting:resting
 
     });
 
@@ -2662,7 +2461,6 @@ function generateSchedule(){
     now = finish;
 
   }
-
 
 
   state.schedule =
@@ -2676,26 +2474,26 @@ function generateSchedule(){
 
 
   toast(
-    "Revezamento inteligente gerado."
+    'Cronograma gerado com rodízio inteligente.'
   );
 
 }
 
 
-
 /* =========================================================
-   LIMPAR
+   LIMPAR CRONOGRAMA
 ========================================================= */
 
 function clearSchedule(){
 
   if(
+
     !confirm(
-      "Limpar todo o cronograma?"
+      'Limpar o cronograma?'
     )
-  ){
-    return;
-  }
+
+  )
+  return;
 
 
   state.schedule = [];
@@ -2709,9 +2507,29 @@ function clearSchedule(){
 }
 
 
+/* =========================================================
+   BUSCAR PARTICIPANTE
+========================================================= */
+
+function getParticipantName(id){
+
+  const participant =
+  state.participants.find(
+    p=>p.id===id
+  );
+
+
+  return participant
+  ?
+  participant.name
+  :
+  'Participante removido';
+
+}
+
 
 /* =========================================================
-   TABELA DE TURNOS
+   RENDER TURNOS
 ========================================================= */
 
 function renderSchedule(){
@@ -2719,46 +2537,39 @@ function renderSchedule(){
   const body =
   document
   .getElementById(
-    "scheduleBody"
+    'scheduleBody'
   );
 
 
-  if(
-    !state.schedule.length
-  ){
+  if(!state.schedule.length){
 
     body.innerHTML =
-    `
-    <tr>
 
-    <td
-    colspan="7"
-    class="sub">
+    '<tr>' +
 
-    Nenhum cronograma gerado.
+    '<td colspan="7" class="sub">' +
 
-    </td>
+    'Nenhum cronograma gerado.' +
 
-    </tr>
-    `;
+    '</td>' +
+
+    '</tr>';
 
   }
-  else{
 
+  else{
 
     body.innerHTML =
     state.schedule
     .map(
-      schedule =>
-      `
+      schedule=>`
+
       <tr>
 
       <td>
-
       <b>
       Turno ${schedule.turn}
       </b>
-
       </td>
 
 
@@ -2775,18 +2586,22 @@ function renderSchedule(){
       <td>
 
       ${
+        schedule.left.length
+        ?
+
         schedule.left
         .map(
-          name =>
-          `
+          id=>`
           <span class="pill">
-          ${escapeHtml(name)}
+          ${escapeHtml(getParticipantName(id))}
           </span>
           `
         )
-        .join("")
-        ||
-        "-"
+        .join('')
+
+        :
+
+        '<span class="pill empty">Vaga vazia</span>'
       }
 
       </td>
@@ -2795,18 +2610,22 @@ function renderSchedule(){
       <td>
 
       ${
+        schedule.right.length
+        ?
+
         schedule.right
         .map(
-          name =>
-          `
+          id=>`
           <span class="pill">
-          ${escapeHtml(name)}
+          ${escapeHtml(getParticipantName(id))}
           </span>
           `
         )
-        .join("")
-        ||
-        "-"
+        .join('')
+
+        :
+
+        '<span class="pill empty">Vaga vazia</span>'
       }
 
       </td>
@@ -2815,18 +2634,22 @@ function renderSchedule(){
       <td>
 
       ${
+        schedule.popa.length
+        ?
+
         schedule.popa
         .map(
-          name =>
-          `
+          id=>`
           <span class="pill">
-          ${escapeHtml(name)}
+          ${escapeHtml(getParticipantName(id))}
           </span>
           `
         )
-        .join("")
-        ||
-        "-"
+        .join('')
+
+        :
+
+        '<span class="pill empty">Vaga vazia</span>'
       }
 
       </td>
@@ -2835,49 +2658,67 @@ function renderSchedule(){
       <td>
 
       ${
+        schedule.resting.length
+        ?
+
         schedule.resting
         .map(
-          name =>
-          `
+          id=>`
           <span class="pill">
-          ${escapeHtml(name)}
+          ${escapeHtml(getParticipantName(id))}
           </span>
           `
         )
-        .join("")
-        ||
-        "Todos pescando"
+        .join('')
+
+        :
+
+        '<span class="pill empty">
+        Todos embarcados
+        </span>'
       }
 
       </td>
 
       </tr>
+
       `
     )
-    .join("");
+    .join('');
 
   }
 
 
+  renderFairness();
+
+}
+
+
+/* =========================================================
+   EQUILÍBRIO
+========================================================= */
+
+function renderFairness(){
 
   const stats = {};
 
 
-  state.participants
-  .forEach(
-    participant => {
+  state.participants.forEach(
+    p=>{
 
-      stats[
-        participant.name
-      ] = {
+      stats[p.id] = {
 
-        total:0,
+        name:p.name,
+
+        turns:0,
 
         left:0,
 
         right:0,
 
-        popa:0
+        popa:0,
+
+        rests:0
 
       };
 
@@ -2885,55 +2726,59 @@ function renderSchedule(){
   );
 
 
-
-  state.schedule
-  .forEach(
-    schedule => {
+  state.schedule.forEach(
+    schedule=>{
 
 
-      schedule.left
-      .forEach(
-        name => {
+      schedule.left.forEach(
+        id=>{
 
-          if(stats[name]){
+          if(!stats[id])
+          return;
 
-            stats[name].total++;
+          stats[id].turns++;
 
-            stats[name].left++;
-
-          }
+          stats[id].left++;
 
         }
       );
 
 
-      schedule.right
-      .forEach(
-        name => {
+      schedule.right.forEach(
+        id=>{
 
-          if(stats[name]){
+          if(!stats[id])
+          return;
 
-            stats[name].total++;
+          stats[id].turns++;
 
-            stats[name].right++;
-
-          }
+          stats[id].right++;
 
         }
       );
 
 
-      schedule.popa
-      .forEach(
-        name => {
+      schedule.popa.forEach(
+        id=>{
 
-          if(stats[name]){
+          if(!stats[id])
+          return;
 
-            stats[name].total++;
+          stats[id].turns++;
 
-            stats[name].popa++;
+          stats[id].popa++;
 
-          }
+        }
+      );
+
+
+      schedule.resting.forEach(
+        id=>{
+
+          if(!stats[id])
+          return;
+
+          stats[id].rests++;
 
         }
       );
@@ -2942,45 +2787,65 @@ function renderSchedule(){
   );
 
 
-
   document
   .getElementById(
-    "fairnessBody"
+    'fairnessBody'
   )
   .innerHTML =
-  Object.entries(stats)
+
+  Object.values(stats)
   .map(
-    ([name,data]) =>
-    `
+    person=>`
+
     <tr>
 
     <td>
-    ${escapeHtml(name)}
+    ${escapeHtml(person.name)}
     </td>
 
     <td>
-    ${data.total}
+    ${person.turns}
     </td>
 
     <td>
-    ${data.left}
+    ${person.left}
     </td>
 
     <td>
-    ${data.right}
+    ${person.right}
     </td>
 
     <td>
-    ${data.popa}
+    <b>
+    ${person.popa}
+    </b>
+    </td>
+
+    <td>
+    ${person.rests}
     </td>
 
     </tr>
+
     `
   )
-  .join("");
+  .join('')
+
+  ||
+
+  '<tr>' +
+
+  '<td colspan="6" class="sub">' +
+
+  'Cadastre participantes.'
+
+  +
+
+  '</td>' +
+
+  '</tr>';
 
 }
-
 
 
 /* =========================================================
@@ -2992,50 +2857,54 @@ function renderBoatSelect(){
   const select =
   document
   .getElementById(
-    "boatTurnSelect"
+    'boatTurnSelect'
   );
 
 
-  const old =
+  const oldValue =
   select.value;
 
 
   select.innerHTML =
-  `
-  <option value="">
-  Sem turno selecionado
-  </option>
-  `
+
+  '<option value="">Sem turno selecionado</option>'
+
   +
+
   state.schedule
   .map(
-    schedule =>
-    `
-    <option value="${schedule.turn}">
+    schedule=>`
+
+    <option
+    value="${schedule.turn}"
+    >
 
     Turno ${schedule.turn}
     —
     ${fmtDate(schedule.start)}
 
     </option>
+
     `
   )
-  .join("");
+  .join('');
 
 
   const exists =
   [...select.options]
   .some(
-    option =>
-    option.value === old
+    option=>
+    option.value===oldValue
   );
 
 
   if(exists){
 
-    select.value = old;
+    select.value =
+    oldValue;
 
   }
+
   else if(
     state.schedule.length
   ){
@@ -3048,22 +2917,21 @@ function renderBoatSelect(){
 }
 
 
-
 /* =========================================================
-   DESENHO DO BARCO
+   BARCO
 ========================================================= */
 
 function renderBoat(){
 
-  const selected =
-  state.schedule
-  .find(
-    schedule =>
+  const selectedTurn =
+  state.schedule.find(
+    schedule=>
+
     String(schedule.turn)
     ===
     document
     .getElementById(
-      "boatTurnSelect"
+      'boatTurnSelect'
     )
     .value
   );
@@ -3072,102 +2940,121 @@ function renderBoat(){
   const boat =
   document
   .getElementById(
-    "boat"
+    'boat'
   );
 
 
-  function seats(
-    people,
-    count,
-    area
+  function makeSeats(
+    ids,
+    area,
+    total
   ){
 
-    const result = [];
+    let html = '';
 
 
     for(
       let i = 0;
-      i < count;
+      i < total;
       i++
     ){
 
-      const person =
-      people[i];
+      const id =
+      ids[i];
 
 
-      result.push(
+      if(id){
+
+        html +=
+
         `
-        <div
-        class="seat ${person ? "" : "empty"}">
+        <div class="seat">
 
         <span>
 
         <span class="pos">
-
         ${area} ${i + 1}
-
         </span>
 
-        ${person
-          ?
-          escapeHtml(person)
-          :
-          "Vaga"
-        }
+        ${escapeHtml(
+          getParticipantName(id)
+        )}
 
         </span>
 
         </div>
+        `;
+
+      }
+
+      else{
+
+        html +=
+
         `
-      );
+        <div class="seat empty">
+
+        <span>
+
+        <span class="pos">
+        ${area} ${i + 1}
+        </span>
+
+        Vaga
+
+        </span>
+
+        </div>
+        `;
+
+      }
 
     }
 
 
-    return result.join("");
+    return html;
 
   }
 
 
-
   const left =
-  selected
+  selectedTurn
   ?
-  selected.left
+  selectedTurn.left
   :
   [];
 
 
   const right =
-  selected
+  selectedTurn
   ?
-  selected.right
+  selectedTurn.right
   :
   [];
 
 
   const popa =
-  selected
+  selectedTurn
   ?
-  selected.popa
+  selectedTurn.popa
   :
   [];
 
 
   boat.innerHTML =
-  `
 
+  `
   <div class="boat-title">
 
   🎣
   ${escapeHtml(state.eventName)}
 
   ${
-    selected
+    selectedTurn
     ?
-    " — Turno " + selected.turn
+    ' — Turno ' + selectedTurn.turn
     :
-    ""
+    ''
   }
 
   </div>
@@ -3175,50 +3062,42 @@ function renderBoat(){
 
   <div class="side left-side">
 
-  ${
-    seats(
-      left,
-      state.boatConfig.left,
-      "Esquerda"
-    )
-  }
+  ${makeSeats(
+    left,
+    'Esquerda',
+    state.boatConfig.left
+  )}
 
   </div>
 
 
   <div class="side right-side">
 
-  ${
-    seats(
-      right,
-      state.boatConfig.right,
-      "Direita"
-    )
-  }
+  ${makeSeats(
+    right,
+    'Direita',
+    state.boatConfig.right
+  )}
 
   </div>
 
 
   <div class="popa">
 
-  ${
-    seats(
-      popa,
-      state.boatConfig.popa,
-      "Popa"
-    )
-  }
+  ${makeSeats(
+    popa,
+    'Popa',
+    state.boatConfig.popa
+  )}
 
   </div>
-
   `;
 
 }
 
 
-
 /* =========================================================
-   FINANCEIRO
+   FINANCEIRO - DESPESAS
 ========================================================= */
 
 function addExpense(){
@@ -3226,7 +3105,7 @@ function addExpense(){
   const category =
   document
   .getElementById(
-    "expenseCategory"
+    'expenseCategory'
   )
   .value;
 
@@ -3234,7 +3113,7 @@ function addExpense(){
   const description =
   document
   .getElementById(
-    "expenseDescription"
+    'expenseDescription'
   )
   .value
   .trim();
@@ -3244,7 +3123,7 @@ function addExpense(){
   parseFloat(
     document
     .getElementById(
-      "expenseValue"
+      'expenseValue'
     )
     .value
   );
@@ -3257,7 +3136,7 @@ function addExpense(){
   ){
 
     toast(
-      "Informe descrição e valor."
+      'Informe descrição e valor.'
     );
 
     return;
@@ -3269,27 +3148,27 @@ function addExpense(){
 
     id:uid(),
 
-    category,
+    category:category,
 
-    description,
+    description:description,
 
-    value
+    value:value
 
   });
 
 
   document
   .getElementById(
-    "expenseDescription"
+    'expenseDescription'
   )
-  .value = "";
+  .value = '';
 
 
   document
   .getElementById(
-    "expenseValue"
+    'expenseValue'
   )
-  .value = "";
+  .value = '';
 
 
   persist();
@@ -3297,16 +3176,20 @@ function addExpense(){
 
   renderFinance();
 
-}
 
+  toast(
+    'Despesa adicionada.'
+  );
+
+}
 
 
 function removeExpense(id){
 
   state.expenses =
   state.expenses.filter(
-    expense =>
-    expense.id !== id
+    expense=>
+    expense.id!==id
   );
 
 
@@ -3318,13 +3201,16 @@ function removeExpense(id){
 }
 
 
+/* =========================================================
+   FINANCEIRO - PAGAMENTOS
+========================================================= */
 
 function addPayment(){
 
   const participant =
   document
   .getElementById(
-    "paymentParticipant"
+    'paymentParticipant'
   )
   .value;
 
@@ -3332,7 +3218,7 @@ function addPayment(){
   const category =
   document
   .getElementById(
-    "paymentCategory"
+    'paymentCategory'
   )
   .value;
 
@@ -3341,7 +3227,7 @@ function addPayment(){
   parseFloat(
     document
     .getElementById(
-      "paymentValue"
+      'paymentValue'
     )
     .value
   );
@@ -3354,7 +3240,7 @@ function addPayment(){
   ){
 
     toast(
-      "Informe pescador e valor."
+      'Selecione o pescador e informe o valor.'
     );
 
     return;
@@ -3366,11 +3252,11 @@ function addPayment(){
 
     id:uid(),
 
-    participant,
+    participant:participant,
 
-    category,
+    category:category,
 
-    value,
+    value:value,
 
     date:
     new Date()
@@ -3381,9 +3267,9 @@ function addPayment(){
 
   document
   .getElementById(
-    "paymentValue"
+    'paymentValue'
   )
-  .value = "";
+  .value = '';
 
 
   persist();
@@ -3392,20 +3278,22 @@ function addPayment(){
   renderFinance();
 
 
+  renderDashboard();
+
+
   toast(
-    "Pagamento registrado."
+    'Pagamento registrado.'
   );
 
 }
-
 
 
 function removePayment(id){
 
   state.payments =
   state.payments.filter(
-    payment =>
-    payment.id !== id
+    payment=>
+    payment.id!==id
   );
 
 
@@ -3414,221 +3302,269 @@ function removePayment(id){
 
   renderFinance();
 
+
+  renderDashboard();
+
 }
 
 
+/* =========================================================
+   RENDER FINANCEIRO
+========================================================= */
 
 function renderFinance(){
 
   const participants =
-  state.participants
-  .map(
-    participant =>
-    participant.name
-  );
+  state.participants;
 
 
-  const total =
-  state.expenses
-  .reduce(
-    (sum,expense) =>
-    sum
+  const totalExpenses =
+  state.expenses.reduce(
+    (total,expense)=>
+
+    total
     +
     Number(expense.value),
+
     0
   );
 
 
-  const perPerson =
+  const valuePerPerson =
   participants.length
   ?
-  total / participants.length
+  totalExpenses
+  /
+  participants.length
   :
   0;
 
 
+  /*
+    DESPESAS
+  */
 
   document
   .getElementById(
-    "expenseBody"
+    'expenseBody'
   )
   .innerHTML =
+
   state.expenses
   .map(
-    expense =>
-    `
+    expense=>`
+
     <tr>
 
     <td>
-    ${escapeHtml(expense.category)}
+    ${escapeHtml(
+      expense.category
+    )}
     </td>
 
-    <td>
-    ${escapeHtml(expense.description)}
-    </td>
 
     <td>
-    ${money(expense.value)}
+    ${escapeHtml(
+      expense.description
+    )}
     </td>
+
+
+    <td>
+    ${money(
+      expense.value
+    )}
+    </td>
+
 
     <td>
 
     <button
     class="small danger"
-    onclick="removeExpense('${expense.id}')">
-
+    onclick="removeExpense('${expense.id}')"
+    >
     Excluir
-
     </button>
 
     </td>
 
     </tr>
+
     `
   )
-  .join("")
+  .join('')
+
   ||
-  `
-  <tr>
 
-  <td
-  colspan="4"
-  class="sub">
+  '<tr>' +
 
-  Nenhuma despesa cadastrada.
+  '<td colspan="4" class="sub">' +
 
-  </td>
+  'Nenhuma despesa cadastrada.'
 
-  </tr>
-  `;
+  +
+
+  '</td>' +
+
+  '</tr>';
 
 
+  /*
+    SELECT PARTICIPANTES
+  */
 
   const paymentSelect =
   document
   .getElementById(
-    "paymentParticipant"
+    'paymentParticipant'
   );
 
 
   paymentSelect.innerHTML =
-  `
-  <option value="">
-  Selecione
-  </option>
-  `
+
+  '<option value="">Selecione</option>'
+
   +
+
   participants
   .map(
-    name =>
-    `
-    <option>
-    ${escapeHtml(name)}
+    participant=>`
+
+    <option
+    value="${participant.id}"
+    >
+
+    ${escapeHtml(
+      participant.name
+    )}
+
     </option>
+
     `
   )
-  .join("");
+  .join('');
 
 
+  /*
+    CATEGORIAS
+  */
 
   const categories =
   [
+
     ...new Set(
-      state.expenses
-      .map(
-        expense =>
+
+      state.expenses.map(
+        expense=>
         expense.category
       )
+
     )
+
   ];
 
 
-
   document
   .getElementById(
-    "paymentCategory"
+    'paymentCategory'
   )
   .innerHTML =
-  `
-  <option value="Geral">
-  Geral
-  </option>
-  `
+
+  '<option value="Geral">Geral</option>'
+
   +
+
   categories
   .map(
-    category =>
-    `
+    category=>`
+
     <option>
     ${escapeHtml(category)}
     </option>
+
     `
   )
-  .join("");
+  .join('');
 
 
+  /*
+    SITUAÇÃO FINANCEIRA
+  */
 
   document
   .getElementById(
-    "financialBody"
+    'financialBody'
   )
   .innerHTML =
+
   participants
   .map(
-    name => {
+    participant=>{
 
 
       const paid =
       state.payments
       .filter(
-        payment =>
-        payment.participant === name
+        payment=>
+
+        payment.participant
+        ===
+        participant.id
       )
       .reduce(
-        (sum,payment) =>
-        sum
+        (total,payment)=>
+
+        total
         +
         Number(payment.value),
+
         0
       );
 
 
       const balance =
-      perPerson
+      valuePerPerson
       -
       paid;
 
 
       const status =
       balance <= 0.009
+
       ?
-      `
-      <span class="paid">
-      PAGO
-      </span>
-      `
+
+      '<span class="paid">PAGO</span>'
+
       :
+
+      '<span class="due">PENDENTE</span>';
+
+
+      return
+
       `
-      <span class="due">
-      PENDENTE
-      </span>
-      `;
-
-
-      return `
       <tr>
 
       <td>
-      ${escapeHtml(name)}
+      ${escapeHtml(
+        participant.name
+      )}
       </td>
 
-      <td>
-      ${money(perPerson)}
-      </td>
 
       <td>
-      ${money(paid)}
+      ${money(
+        valuePerPerson
+      )}
       </td>
+
+
+      <td>
+      ${money(
+        paid
+      )}
+      </td>
+
 
       <td>
       ${money(
@@ -3639,6 +3575,7 @@ function renderFinance(){
       )}
       </td>
 
+
       <td>
       ${status}
       </td>
@@ -3648,78 +3585,73 @@ function renderFinance(){
 
     }
   )
-  .join("")
+  .join('')
+
   ||
-  `
-  <tr>
 
-  <td
-  colspan="5"
-  class="sub">
+  '<tr>' +
 
-  Cadastre participantes.
+  '<td colspan="5" class="sub">' +
 
-  </td>
+  'Cadastre participantes.'
 
-  </tr>
-  `;
+  +
+
+  '</td>' +
+
+  '</tr>';
 
 
+  /*
+    HISTÓRICO
+  */
 
   document
   .getElementById(
-    "paymentBody"
+    'paymentBody'
   )
   .innerHTML =
+
   state.payments
   .map(
-    payment =>
-    `
+    payment=>`
+
     <tr>
 
     <td>
 
-    ${
-      new Date(
-        payment.date
-      )
-      .toLocaleString(
-        "pt-BR"
-      )
-    }
+    ${new Date(
+      payment.date
+    ).toLocaleString('pt-BR')}
 
     </td>
 
 
     <td>
 
-    ${
-      escapeHtml(
+    ${escapeHtml(
+      getParticipantName(
         payment.participant
       )
-    }
+    )}
 
     </td>
 
 
     <td>
 
-    ${
-      escapeHtml(
-        payment.category
-      )
-    }
+    ${escapeHtml(
+      payment.category
+    )}
 
     </td>
 
 
     <td>
 
-    ${
-      money(
-        payment.value
-      )
-    }
+    ${money(
+      payment.value
+    )}
 
     </td>
 
@@ -3728,35 +3660,34 @@ function renderFinance(){
 
     <button
     class="small danger"
-    onclick="removePayment('${payment.id}')">
-
+    onclick="removePayment('${payment.id}')"
+    >
     Excluir
-
     </button>
 
     </td>
 
     </tr>
+
     `
   )
-  .join("")
+  .join('')
+
   ||
-  `
-  <tr>
 
-  <td
-  colspan="5"
-  class="sub">
+  '<tr>' +
 
-  Nenhum pagamento registrado.
+  '<td colspan="5" class="sub">' +
 
-  </td>
+  'Nenhum pagamento registrado.'
 
-  </tr>
-  `;
+  +
+
+  '</td>' +
+
+  '</tr>';
 
 }
-
 
 
 /* =========================================================
@@ -3766,28 +3697,30 @@ function renderFinance(){
 function renderDashboard(){
 
   const totalExpenses =
-  state.expenses
-  .reduce(
-    (sum,expense) =>
-    sum
+  state.expenses.reduce(
+    (total,expense)=>
+
+    total
     +
     Number(expense.value),
+
     0
   );
 
 
   const totalPaid =
-  state.payments
-  .reduce(
-    (sum,payment) =>
-    sum
+  state.payments.reduce(
+    (total,payment)=>
+
+    total
     +
     Number(payment.value),
+
     0
   );
 
 
-  const seats =
+  const totalSeats =
   Number(
     state.boatConfig.left
   )
@@ -3803,9 +3736,10 @@ function renderDashboard(){
 
   document
   .getElementById(
-    "dashboardStats"
+    'dashboardStats'
   )
   .innerHTML =
+
   `
 
   <div class="stat">
@@ -3824,7 +3758,7 @@ function renderDashboard(){
   <div class="stat">
 
   <b>
-  ${seats}
+  ${totalSeats}
   </b>
 
   <span>
@@ -3877,17 +3811,15 @@ function renderDashboard(){
 }
 
 
-
 /* =========================================================
-   RENDERIZAÇÃO GERAL
+   RENDER GERAL
 ========================================================= */
 
 function renderAll(){
 
-
   document
   .getElementById(
-    "eventName"
+    'eventName'
   )
   .value =
   state.eventName;
@@ -3895,7 +3827,7 @@ function renderAll(){
 
   document
   .getElementById(
-    "tripStart"
+    'tripStart'
   )
   .value =
   state.tripStart;
@@ -3903,7 +3835,7 @@ function renderAll(){
 
   document
   .getElementById(
-    "tripEnd"
+    'tripEnd'
   )
   .value =
   state.tripEnd;
@@ -3911,7 +3843,7 @@ function renderAll(){
 
   document
   .getElementById(
-    "inicioPescaInput"
+    'inicioPescaInput'
   )
   .value =
   state.tripStart;
@@ -3919,26 +3851,27 @@ function renderAll(){
 
   document
   .getElementById(
-    "fimPescaInput"
+    'fimPescaInput'
   )
   .value =
   state.tripEnd;
 
 
   if(
+
     !document
     .getElementById(
-      "turnHours"
+      'turnHours'
     )
     .value
+
   ){
 
     document
     .getElementById(
-      "turnHours"
+      'turnHours'
     )
-    .value =
-    4;
+    .value = 4;
 
   }
 
@@ -3966,16 +3899,13 @@ function renderAll(){
 }
 
 
-
 /* =========================================================
    INICIALIZAÇÃO
 ========================================================= */
 
 renderAll();
 
-
 </script>
 
 </body>
-
 </html>
