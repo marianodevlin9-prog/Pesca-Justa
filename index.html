@@ -2,911 +2,3573 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pesca Justa 🎣 — Gestão & Expedição</title>
 
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b5d7a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Pesca Justa">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes"
+>
+
+<meta name="theme-color" content="#102033">
+
+<title>Pesca Justa</title>
 
 <style>
-:root {
-  --primary: #0b5d7a;
-  --primary2: #073e52;
-  --bg: #0a192f;
-  --card: #1e293b;
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --border: rgba(56, 189, 248, 0.25);
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --success: #10b981;
-  --accent: #38bdf8;
-  --input-bg: #0f172a;
+
+:root{
+  --bg:#0f1722;
+  --panel:#1b2738;
+  --panel2:#243247;
+  --line:#3a4b63;
+  --text:#eef5ff;
+  --muted:#9db0c8;
+  --accent:#38bdf8;
+  --success:#22c55e;
+  --danger:#ef4444;
+  --input:#121c2b;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: radial-gradient(circle at top, #0f2b48 0%, #0a192f 60%, #020c1b 100%); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+*{
+  box-sizing:border-box;
+}
 
-header { background: rgba(15, 23, 42, 0.8); border-bottom: 2px solid var(--accent); color: #fff; padding: 24px 18px 16px; text-align: center; }
-header h1 { margin: 0; font-size: 2rem; font-weight: 800; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7); }
-header p { margin: 6px 0 0; color: var(--accent); font-size: 0.95rem; }
+body{
+  margin:0;
+  background:linear-gradient(180deg,#0b1320,#101a28);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
 
-.nav-tabs { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-.tab-btn { background: var(--input-bg); color: var(--muted); border: 1px solid var(--border); padding: 8px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.tab-btn.active { background: var(--accent); color: #020c1b; border-color: var(--accent); }
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(15,23,34,.97);
+  border-bottom:1px solid var(--line);
+}
 
-.container { max-width: 1200px; margin: 20px auto; padding: 0 15px; width: 100%; flex: 1; display: flex; flex-direction: column; gap: 20px; }
-.tab-content { display: none; flex-direction: column; gap: 20px; }
-.tab-content.active { display: flex; }
+.top{
+  max-width:1250px;
+  margin:auto;
+  padding:14px 18px;
+  display:flex;
+  gap:15px;
+  align-items:center;
+  justify-content:space-between;
+}
 
-.grid-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-.summary .label { font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: bold; }
-.summary .value { font-size: 20px; font-weight: bold; margin-top: 5px; color: var(--accent); }
+.brand{
+  font-size:22px;
+  font-weight:800;
+  color:#7dd3fc;
+}
 
-h2 { margin: 0 0 14px; font-size: 1.25rem; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-h3 { margin: 18px 0 10px; font-size: 1rem; color: var(--text); }
+.brand small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:400;
+  margin-top:2px;
+}
 
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.form-row, .form-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
-.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+nav{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
 
-.field, .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
-label { font-size: 12px; font-weight: bold; color: var(--muted); }
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  background:#334155;
+  color:white;
+}
 
-input, select, textarea { height: 40px; border: 1px solid #334155; border-radius: 8px; padding: 0 11px; background: var(--input-bg); font-size: 14px; color: var(--text); outline: none; font-family: inherit; }
-textarea { height: auto; padding: 8px; resize: vertical; }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+button:hover{
+  filter:brightness(1.1);
+}
 
-button, .btn-action { height: 40px; border: 0; border-radius: 8px; padding: 0 16px; cursor: pointer; background: #0284c7; color: #fff; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-button:hover, .btn-action:hover { background: #0369a1; }
-button.secondary { background: #334155; color: var(--text); }
-button.danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #fca5a5; }
-button.small { height: 32px; padding: 0 10px; font-size: 12px; }
+button.primary{
+  background:#0284c7;
+}
 
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th, td { padding: 10px; border-bottom: 1px solid #334155; text-align: left; vertical-align: middle; }
-th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
+button.success{
+  background:#15803d;
+}
 
-.actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
-.avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: #334155; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 1px solid var(--border); color: var(--accent); }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
+button.danger{
+  background:#b91c1c;
+}
 
-.badge { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #334155; font-size: 11px; font-weight: bold; color: #f8fafc; }
-.status-paid { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid var(--success); }
-.status-partial { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid var(--warning); }
-.status-pending { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid var(--danger); }
+button.small{
+  padding:6px 9px;
+  font-size:12px;
+}
 
-.progress { height: 12px; background: #0f172a; border-radius: 999px; overflow: hidden; margin-top: 12px; border: 1px solid #334155; }
-.progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
+.nav-btn.active{
+  background:#0284c7;
+}
 
-.boat-layout-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; margin-top: 15px; }
-@media(max-width: 900px) { .boat-layout-container { grid-template-columns: 1fr; } }
+main{
+  max-width:1250px;
+  margin:auto;
+  padding:18px;
+}
 
-.boat-controls-panel { background: #2563eb; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-.boat-ctrl-box { background: #fce7f3; border-radius: 8px; padding: 8px 12px; color: #1e293b; display: flex; flex-direction: column; gap: 4px; }
-.boat-ctrl-box label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; }
-.boat-ctrl-box input { height: 35px; background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: bold; text-align: center; }
+.view{
+  display:none;
+}
 
-.boat-hull { position: relative; width: 100%; max-width: 750px; height: 750px; margin: auto; border: 4px solid var(--accent); border-radius: 220px 220px 30px 30px; background: #1d4ed8; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); }
-.boat-top-turns { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-.turn-card-mini { background: #1e40af; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 12px; min-width: 170px; font-size: 11px; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-.turn-card-mini strong { display: block; color: #fde047; margin-bottom: 2px; }
+.view.active{
+  display:block;
+}
 
-.boat-deck-area { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; margin-top: 10px; }
-.boat-row-middle { display: flex; justify-content: space-between; align-items: center; flex: 1; padding: 0 10px; }
-.side-label { background: #fce7f3; color: #1e293b; font-size: 11px; font-weight: bold; padding: 15px 6px; border-radius: 6px; writing-mode: vertical-lr; text-orientation: mixed; text-align: center; }
-.popa-label { background: #fce7f3; color: #1e293b; font-size: 11px; font-weight: bold; padding: 6px 20px; border-radius: 6px; text-align: center; margin: 5px auto; width: fit-content; }
+.card{
+  background:rgba(27,39,56,.97);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:15px;
+}
 
-.seats-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.boat-seat { background: #1e40af; border: 2px solid #93c5fd; border-radius: 8px; width: 110px; height: 55px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: bold; padding: 4px; text-align: center; }
-.boat-seat span { font-size: 9px; color: #fde047; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+.card h2,
+.card h3{
+  margin:0 0 8px;
+}
 
-.timer-panel { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; background: var(--input-bg); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; margin: 15px 0; gap: 10px; }
-.timer-box { text-align: center; }
-.timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
-.timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
+.sub{
+  color:var(--muted);
+  font-size:13px;
+  margin:0 0 14px;
+}
 
-.deck-view { width: 100%; max-width: 600px; min-height: 620px; margin: 15px auto; background: #1d4ed8; border: 3px solid var(--accent); border-radius: 180px 180px 30px 30px; display: flex; flex-direction: column; justify-content: space-between; padding: 35px 20px 20px 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-.deck-section { text-align: center; padding: 10px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.05); }
-.deck-section-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: #facc15; text-transform: uppercase; }
-.fisherman-tags-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.fisherman-tag { background: #0284c7; color: white; padding: 6px 12px; border-radius: 12px; font-size: 0.82rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.fisherman-tag span { font-size: 0.68rem; color: #fde047; font-weight: normal; }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
 
-.rotacao-table-wrap { margin-top: 15px; overflow-x: auto; }
-.rotacao-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-.rotacao-table th, .rotacao-table td { border: 1px solid #334155; padding: 8px 10px; }
-.rotacao-table th { background: #07111e; color: var(--accent); }
-.rotacao-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+label{
+  font-size:12px;
+  font-weight:700;
+  color:#b7c9df;
+  display:block;
+  margin-bottom:5px;
+}
 
-.upload-box { border: 2px dashed var(--accent); border-radius: 8px; padding: 20px; text-align: center; background: var(--input-bg); cursor: pointer; position: relative; }
-.upload-box input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-.preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
-.img-container { position: relative; height: 80px; border-radius: 6px; overflow: hidden; border: 1px solid #334155; }
-.img-container img { width: 100%; height: 100%; object-fit: cover; }
+input,
+select{
+  width:100%;
+  background:var(--input);
+  border:1px solid var(--line);
+  border-radius:7px;
+  color:white;
+  padding:10px;
+  min-height:40px;
+}
 
-.toast { position: fixed; right: 18px; bottom: 18px; background: #0284c7; color: #fff; padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: none; z-index: 1000; font-weight: bold; }
-.toast.show { display: block; }
-.muted { color: var(--muted); font-size: 13px; }
-.empty { padding: 16px; color: var(--muted); text-align: center; }
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
 
-footer { background: #07111e; padding: 20px; text-align: center; border-top: 1px solid #1e293b; margin-top: auto; color: var(--muted); font-size: 0.85rem; }
-footer strong { color: var(--accent); }
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+}
 
-@media(max-width: 850px){ .two-col { grid-template-columns: 1fr; } }
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+  min-width:820px;
+}
+
+th{
+  background:#172233;
+  color:#8fd3ff;
+  text-align:left;
+}
+
+th,
+td{
+  padding:8px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+
+.pill{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#25364d;
+  margin:2px;
+  font-size:11px;
+}
+
+.empty-pill{
+  background:#475569;
+  color:#cbd5e1;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.stat{
+  padding:14px;
+  border-radius:10px;
+  background:#182536;
+  border:1px solid var(--line);
+}
+
+.stat b{
+  display:block;
+  font-size:22px;
+  color:#7dd3fc;
+}
+
+.stat span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.note{
+  font-size:12px;
+  color:#cbd5e1;
+  background:#172536;
+  padding:12px;
+  border-radius:8px;
+  border-left:3px solid var(--accent);
+}
+
+.boat-wrap{
+  overflow:auto;
+  padding:10px;
+  background:#0d1724;
+  border-radius:10px;
+  border:1px solid var(--line);
+}
+
+.boat{
+  position:relative;
+  width:900px;
+  height:430px;
+  margin:auto;
+
+  background:linear-gradient(
+    90deg,
+    #dbeafe,
+    #93c5fd
+  );
+
+  clip-path:polygon(
+    18% 2%,
+    82% 2%,
+    96% 22%,
+    92% 88%,
+    76% 98%,
+    24% 98%,
+    8% 88%,
+    4% 22%
+  );
+}
+
+.boat-title{
+  position:absolute;
+  left:0;
+  right:0;
+  top:12px;
+
+  text-align:center;
+
+  color:#0f172a;
+  font-weight:900;
+  font-size:18px;
+}
+
+.side{
+  position:absolute;
+  top:95px;
+  bottom:70px;
+  width:150px;
+
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+  justify-content:center;
+}
+
+.left-side{
+  left:70px;
+}
+
+.right-side{
+  right:70px;
+}
+
+.popa{
+  position:absolute;
+
+  left:280px;
+  right:280px;
+  bottom:40px;
+
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.seat{
+  min-height:52px;
+
+  background:#8b5a2b;
+
+  border:3px solid #5b3518;
+
+  border-radius:8px;
+
+  padding:6px;
+
+  color:white;
+
+  font-size:11px;
+
+  text-align:center;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-weight:bold;
+}
+
+.seat.empty{
+  background:#64748b;
+}
+
+.seat .pos{
+  display:block;
+  font-size:9px;
+  opacity:.8;
+}
+
+.modal-back{
+  position:fixed;
+  inset:0;
+
+  background:rgba(0,0,0,.65);
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  z-index:50;
+
+  padding:15px;
+}
+
+.modal-back.show{
+  display:flex;
+}
+
+.modal{
+  width:min(560px,100%);
+  background:#182536;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px;
+}
+
+.toast{
+  position:fixed;
+
+  bottom:18px;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  background:#0b1220;
+
+  border:1px solid var(--accent);
+
+  padding:11px 16px;
+
+  border-radius:9px;
+
+  z-index:100;
+
+  display:none;
+}
+
+.toast.show{
+  display:block;
+}
+
+.paid{
+  color:#86efac;
+  font-weight:bold;
+}
+
+.due{
+  color:#fca5a5;
+  font-weight:bold;
+}
+
+@media(max-width:700px){
+
+  .top{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .top nav{
+    width:100%;
+  }
+
+  .nav-btn{
+    flex:1;
+    padding:9px 6px;
+    font-size:11px;
+  }
+
+  main{
+    padding:10px;
+  }
+
+  .card{
+    padding:12px;
+  }
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .grid .wide{
+    grid-column:1/-1;
+  }
+
+}
+
 </style>
 </head>
+
 <body>
 
 <header>
-  <h1>Pesca Justa 🎣</h1>
-  <p>Gestão de Pescaria, Cadastro do Barco & Rotação de Convés</p>
-  
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('tab-gestao')">📊 Gestão & Cadastro</button>
-    <button class="tab-btn" onclick="switchTab('tab-expedicao')">⏱️ Expedição & Timer 24h</button>
-  </div>
+
+<div class="top">
+
+<div class="brand">
+
+🎣 Pesca Justa
+
+<small>
+Organização, financeiro, vagas e revezamento inteligente
+</small>
+
+</div>
+
+<nav>
+
+<button class="nav-btn active" data-view="dashboard">
+Início
+</button>
+
+<button class="nav-btn" data-view="participantes">
+Participantes
+</button>
+
+<button class="nav-btn" data-view="vagas">
+Vagas & Barco
+</button>
+
+<button class="nav-btn" data-view="turnos">
+Turnos
+</button>
+
+<button class="nav-btn" data-view="financeiro">
+Financeiro
+</button>
+
+</nav>
+
+</div>
+
 </header>
 
-<main class="container">
 
-  <!-- ================= ABA 1: GESTÃO & CADASTRO ================= -->
-  <div id="tab-gestao" class="tab-content active">
-    
-    <section class="card">
-      <h2>⚓ Informações da Pesca & Resumo</h2>
-      <form id="pescaInfoForm" onsubmit="salvarInfoPesca(event)">
-        <div class="form-grid" style="margin-bottom: 15px;">
-          <div class="form-group"><label>📍 Local da Pesca</label><input type="text" id="infoLocal" placeholder="Ex: Laje de Santos"></div>
-          <div class="form-group"><label>📅 Data de Saída</label><input type="date" id="infoDataSaida" value="2026-10-17"></div>
-          <div class="form-group"><label>⏰ Horário de Saída</label><input type="time" id="infoHoraSaida" value="10:00"></div>
-          <div class="form-group"><label>📅 Data de Retorno</label><input type="date" id="infoDataRetorno" value="2026-10-18"></div>
-          <div class="form-group"><label>⏰ Horário de Retorno</label><input type="time" id="infoHoraRetorno" value="04:00"></div>
-        </div>
-        <button type="submit" class="btn-action small">💾 Salvar Dados da Pesca</button>
-      </form>
+<main>
 
-      <div class="grid-summary" style="margin-top: 20px;">
-        <div class="card summary" style="background: #0f172a;"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
-        <div class="card summary" style="background: #0f172a;"><div class="label">Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
-        <div class="card summary" style="background: #0f172a;"><div class="label">Arrecadado</div><div class="value" id="sumCollected">R$ 0,00</div></div>
-        <div class="card summary" style="background: #0f172a;"><div class="label">Rateio p/ Pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
-      </div>
-    </section>
 
-    <section class="card">
-      <h2>📈 Progresso Financeiro</h2>
-      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
-        <div><strong id="progressPercent">0%</strong> arrecadado</div>
-        <div>Falta: <strong id="sumPending" style="color: var(--danger);">R$ 0,00</strong></div>
-      </div>
-      <div class="progress"><div id="progressBar"></div></div>
-    </section>
+<!-- DASHBOARD -->
 
-    <!-- CADASTRO DO BARCO -->
-    <section class="card">
-      <h2>🚤 Cadastro e Configuração do Barco</h2>
-      
-      <div class="boat-layout-container">
-        <div class="boat-controls-panel">
-          <div class="boat-ctrl-box">
-            <label>Quantidade de bancos popa</label>
-            <input type="number" id="cfgBancosPopa" value="2" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco popa</label>
-            <input type="number" id="cfgCapPopa" value="2" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Quantidade de bancos lado esquerdo</label>
-            <input type="number" id="cfgBancosEsq" value="3" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco esquerdo</label>
-            <input type="number" id="cfgCapEsq" value="1" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Quantidade de bancos lado direito</label>
-            <input type="number" id="cfgBancosDir" value="3" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco direito</label>
-            <input type="number" id="cfgCapDir" value="1" min="0" onchange="atualizarConfigBarco()">
-          </div>
-        </div>
+<section id="dashboard" class="view active">
 
-        <div>
-          <div class="boat-top-turns" id="boatTopTurnsContainer"></div>
-          
-          <div class="boat-hull" style="margin-top: 15px;">
-            <div class="boat-deck-area">
-              <div class="boat-row-middle">
-                <div class="side-label">Lado esquerdo do barco</div>
-                <div style="display:flex; flex-direction:column; gap:8px;" id="mapSeatsEsq"></div>
-                <div style="display:flex; flex-direction:column; gap:8px;" id="mapSeatsDir"></div>
-                <div class="side-label">Lado direito do barco</div>
-              </div>
+<div class="stats" id="dashboardStats"></div>
 
-              <div>
-                <div class="seats-row" id="mapSeatsPopa"></div>
-                <div class="popa-label">Popa</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- PARTICIPANTES E DESPESAS -->
-    <section class="two-col">
-      <div class="card">
-        <h2>👥 Participantes & Mensagens</h2>
-        <div class="form-row">
-          <div class="field"><label>Nome do Pescador</label><input id="participantName" placeholder="Digite o nome"></div>
-          <button onclick="addParticipant()">Adicionar</button>
-          <button class="secondary" onclick="loadDefaultNames()">Lista Padrão (13)</button>
-        </div>
-        <div class="table-wrap" style="margin-top:15px">
-          <table>
-            <thead><tr><th>Foto</th><th>Nome / Msg Admin</th><th>Posições</th><th></th></tr></thead>
-            <tbody id="participantsTable"></tbody>
-          </table>
-        </div>
-      </div>
+<div class="card">
 
-      <div class="card">
-        <h2>🧾 Despesas</h2>
-        <div class="form-row">
-          <div class="field"><label>Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
-          <div class="field"><label>Valor (R$)</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
-          <div class="field"><label>Categoria</label>
-            <select id="expenseCategory">
-              <option>Barco</option><option>Iscas</option><option>Alimentação</option><option>Bebidas</option><option>Gelo</option><option>Combustível</option><option>Outros</option>
-            </select>
-          </div>
-          <button onclick="addExpense()">Adicionar</button>
-        </div>
-        <div class="table-wrap" style="margin-top:15px">
-          <table>
-            <thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th></th></tr></thead>
-            <tbody id="expensesTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+<h2>🛥️ Resumo da Pescaria</h2>
 
-    <!-- TABELA DE TURNOS & CRONOGRAMA -->
-    <section class="card">
-      <h2>⏱️ Tabela de Turnos & Cronograma</h2>
-      <p class="muted" style="margin-bottom: 12px;">Defina a quantidade de horas por turno e calcule automaticamente o cronograma de revezamento.</p>
-      
-      <div class="form-grid">
-        <div class="form-group"><label>Horas por Turno</label><input type="number" id="horasPorTurnoInput" value="4" min="0.5" step="0.5"></div>
-        <div class="form-group"><label>Início da Pesca</label><input type="datetime-local" id="inicioPescaInput" value="2026-10-17T10:00"></div>
-        <div class="form-group"><label>Fim da Pesca</label><input type="datetime-local" id="fimPescaInput" value="2026-10-18T04:00"></div>
-      </div>
-      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-        <button onclick="gerarCronogramaTurnos()" class="btn-action">Gerar Cronograma de Turnos</button>
-      </div>
+<div class="grid">
 
-      <div class="rotacao-table-wrap" style="margin-top:15px;">
-        <table class="rotacao-table">
-          <thead>
-            <tr>
-              <th>Turno</th>
-              <th>Início</th>
-              <th>Fim (Saída)</th>
-              <th>Lado Esquerdo</th>
-              <th>Lado Direito</th>
-              <th>Popa</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaCronogramaBody">
-            <tr><td colspan="6" class="empty">Clique em "Gerar Cronograma de Turnos" para montar a tabela.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+<div>
 
-    <!-- GALERIA, FINANCEIRO, ETC -->
-    <section class="card">
-      <h2>📸 Fotos da Embarcação</h2>
-      <div class="upload-box">
-        <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
-        <span style="font-size: 1.5rem; display: block;">📷</span>
-        <span style="font-size: 0.85rem; color: var(--muted);">Clique para selecionar ou enviar fotos</span>
-      </div>
-      <div class="preview-grid" id="previewGrid"></div>
-    </section>
+<label>Nome do evento</label>
 
-    <section class="card">
-      <h2>💳 Registrar Pagamento</h2>
-      <div class="form-row">
-        <div class="field"><label>Pescador</label><select id="paymentParticipant"></select></div>
-        <div class="field"><label>Despesa</label><select id="paymentExpense"></select></div>
-        <div class="field"><label>Valor Pago (R$)</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
-        <button onclick="addPayment()">Registrar</button>
-      </div>
-    </section>
+<input id="eventName">
 
-    <section class="card">
-      <h2>📊 Situação Financeira por Pescador</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Pescador</th><th>Deve Pagar</th><th>Já Pagou</th><th>Falta</th><th>Status</th></tr></thead>
-          <tbody id="financialTable"></tbody>
-        </table>
-      </div>
-    </section>
+</div>
 
-    <section class="card">
-      <h2>📋 Controle por Despesa</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Despesa</th><th>Categoria</th><th>Valor</th><th>Rateio/Pessoa</th><th>Pago</th><th>Saldo</th><th>Status</th></tr></thead>
-          <tbody id="expenseControlTable"></tbody>
-        </table>
-      </div>
-    </section>
 
-    <section class="card">
-      <h2>🧾 Histórico de Pagamentos</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Pescador</th><th>Despesa</th><th>Data</th><th>Valor</th><th></th></tr></thead>
-          <tbody id="paymentsTable"></tbody>
-        </table>
-      </div>
-    </section>
+<div>
 
-  </div>
+<label>Data de início</label>
 
-  <!-- ================= ABA 2: EXPEDIÇÃO & TIMER ================= -->
-  <div id="tab-expedicao" class="tab-content">
-    <section class="card">
-      <h2>⏱️ Controle de Turnos & Timer em Tempo Real</h2>
-      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-        <button onclick="iniciarRotacao24h()" class="btn-action" style="background: #16a34a;">▶️ Iniciar Timer Automático</button>
-        <button onclick="pararRotacao24h()" class="btn-action secondary" style="background: #ef4444;">⏹️ Pausar Timer</button>
-      </div>
+<input
+type="datetime-local"
+id="tripStart"
+>
 
-      <div class="timer-panel">
-        <div class="timer-box">
-          <div class="timer-lbl">Turno Atual</div>
-          <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
-        </div>
-        <div class="timer-box">
-          <div class="timer-lbl">Tempo Restante do Turno</div>
-          <div id="timerDisplay" class="timer-val">00:00:00</div>
-        </div>
-        <div class="timer-box">
-          <div class="timer-lbl">Duração por Turno</div>
-          <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
-        </div>
-      </div>
+</div>
 
-      <div class="deck-view">
-        <div class="deck-section" style="border-color: #facc15; background: rgba(250, 204, 21, 0.05);">
-          <div class="deck-section-title" style="color: #facc15;">🌊 FRENTE DO BARCO (PROA)</div>
-          <div id="posDeckProa" class="fisherman-tags-container">--</div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="deck-section">
-            <div class="deck-section-title">⬅️ Lado Esquerdo</div>
-            <div id="posDeckEsq" class="fisherman-tags-container">--</div>
-          </div>
-          <div class="deck-section">
-            <div class="deck-section-title">➡️ Lado Direito</div>
-            <div id="posDeckDir" class="fisherman-tags-container">--</div>
-          </div>
-        </div>
-        <div class="deck-section">
-          <div class="deck-section-title">💺 Popa / Fundo</div>
-          <div id="posDeckPopa" class="fisherman-tags-container">--</div>
-        </div>
-      </div>
-    </section>
-  </div>
+
+<div>
+
+<label>Data de término</label>
+
+<input
+type="datetime-local"
+id="tripEnd"
+>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="primary"
+onclick="saveTripInfo()"
+>
+Salvar informações
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>📋 Regras do revezamento inteligente</h3>
+
+<div class="note">
+
+<b>1.</b> Um pescador aparece apenas uma vez em cada turno.<br><br>
+
+<b>2.</b> A quantidade de pescadores pode ser menor ou igual à quantidade de vagas.<br><br>
+
+<b>3.</b> Um pescador não deve repetir uma área antes de passar pelas demais áreas disponíveis.<br><br>
+
+<b>4.</b> Dentro da mesma área, o sistema tenta evitar repetir a mesma posição.<br><br>
+
+<b>5.</b> Se houver vagas vazias, elas também são distribuídas entre as posições.
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- PARTICIPANTES -->
+
+<section id="participantes" class="view">
+
+<div class="card">
+
+<h2>👥 Participantes</h2>
+
+<div class="grid">
+
+<div class="wide">
+
+<label>Nome do participante</label>
+
+<input
+id="newParticipant"
+placeholder="Digite o nome do pescador"
+>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="primary"
+onclick="addParticipant()"
+>
+Adicionar participante
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div id="participantsList"></div>
+
+</div>
+
+</section>
+
+
+
+<!-- VAGAS -->
+
+<section id="vagas" class="view">
+
+<div class="card">
+
+<h2>🛥️ Configuração das Vagas</h2>
+
+<div class="grid">
+
+<div>
+
+<label>Vagas lado esquerdo</label>
+
+<input
+type="number"
+min="0"
+id="vEsq"
+>
+
+</div>
+
+
+<div>
+
+<label>Vagas lado direito</label>
+
+<input
+type="number"
+min="0"
+id="vDir"
+>
+
+</div>
+
+
+<div>
+
+<label>Vagas Fundo / Popa</label>
+
+<input
+type="number"
+min="0"
+id="vPopa"
+>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="primary"
+onclick="saveBoatConfig()"
+>
+Salvar configuração
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Vista superior do barco</h3>
+
+<div class="grid">
+
+<div>
+
+<label>Visualizar turno</label>
+
+<select
+id="boatTurnSelect"
+onchange="renderBoat()"
+></select>
+
+</div>
+
+</div>
+
+
+<div class="boat-wrap">
+
+<div
+class="boat"
+id="boat"
+></div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- TURNOS -->
+
+<section id="turnos" class="view">
+
+<div class="card">
+
+<h2>🎲 Revezamento Inteligente</h2>
+
+
+<div class="grid">
+
+<div>
+
+<label>Horas por turno</label>
+
+<input
+type="number"
+min="1"
+step="0.5"
+id="turnHours"
+>
+
+</div>
+
+
+<div>
+
+<label>Início da pesca</label>
+
+<input
+type="datetime-local"
+id="inicioPescaInput"
+>
+
+</div>
+
+
+<div>
+
+<label>Fim da pesca</label>
+
+<input
+type="datetime-local"
+id="fimPescaInput"
+>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="primary"
+onclick="generateSchedule()"
+>
+Gerar Revezamento
+</button>
+
+
+<button
+class="danger"
+onclick="clearSchedule()"
+>
+Limpar cronograma
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Turno</th>
+
+<th>Início</th>
+
+<th>Fim</th>
+
+<th>Esquerda</th>
+
+<th>Direita</th>
+
+<th>Fundo / Popa</th>
+
+<th>Vagas vazias</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="scheduleBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>📊 Histórico do Revezamento</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Pescador</th>
+
+<th>Turnos</th>
+
+<th>Esquerda</th>
+
+<th>Direita</th>
+
+<th>Fundo</th>
+
+<th>Última Área</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="fairnessBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- FINANCEIRO -->
+
+<section id="financeiro" class="view">
+
+<div class="card">
+
+<h2>💰 Financeiro & Rateio</h2>
+
+
+<div class="grid">
+
+<div>
+
+<label>Categoria</label>
+
+<select id="expenseCategory">
+
+<option>Barco</option>
+
+<option>Isca</option>
+
+<option>Gelo</option>
+
+<option>Alimentação</option>
+
+<option>Bebidas</option>
+
+<option>Churrasco</option>
+
+<option>Combustível</option>
+
+<option>Outros</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Descrição</label>
+
+<input id="expenseDescription">
+
+</div>
+
+
+<div>
+
+<label>Valor total</label>
+
+<input
+id="expenseValue"
+type="number"
+step="0.01"
+min="0"
+>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="primary"
+onclick="addExpense()"
+>
+Adicionar despesa
+</button>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>💵 Registrar pagamento</h3>
+
+
+<div class="grid">
+
+<div>
+
+<label>Pescador</label>
+
+<select id="paymentParticipant"></select>
+
+</div>
+
+
+<div>
+
+<label>Categoria</label>
+
+<select id="paymentCategory">
+
+<option value="Geral">
+Geral
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Valor pago</label>
+
+<input
+id="paymentValue"
+type="number"
+step="0.01"
+min="0.01"
+>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="success"
+onclick="addPayment()"
+>
+Registrar pagamento
+</button>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Despesas cadastradas</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Categoria</th>
+
+<th>Descrição</th>
+
+<th>Valor</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody id="expenseBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>📌 Situação por pescador</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Pescador</th>
+
+<th>Deve pagar</th>
+
+<th>Já pagou</th>
+
+<th>Saldo</th>
+
+<th>Situação</th>
+
+</tr>
+
+</thead>
+
+<tbody id="financialBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Histórico de pagamentos</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Data</th>
+
+<th>Pescador</th>
+
+<th>Categoria</th>
+
+<th>Valor</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody id="paymentBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
 
 </main>
 
-<footer>
-  © 2026 Pesca Justa 🎣 — Desenvolvido por <strong>Devlin Mariano</strong>
-</footer>
 
-<div class="toast" id="toast"></div>
+<div
+id="toast"
+class="toast"
+></div>
+
+
+
+<div
+class="modal-back"
+id="editModal"
+>
+
+<div class="modal">
+
+<h3>Editar participante</h3>
+
+<input id="editParticipantName">
+
+
+<div class="actions">
+
+<button
+class="primary"
+onclick="confirmEditParticipant()"
+>
+Salvar
+</button>
+
+
+<button
+onclick="closeModal()"
+>
+Cancelar
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
 
 <script>
-const STORAGE_KEY = 'pesca-justa-html-v6';
-const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
 
-let state = {
-  participants: [],
-  expenses: [],
-  payments: [],
-  barcoConfig: { bancosPopa: 2, capPopa: 2, bancosEsq: 3, capEsq: 1, bancosDir: 3, capDir: 1 },
-  infoPesca: { local: 'Laje de Santos', dataSaida: '2026-10-17', horaSaida: '10:00', dataRetorno: '2026-10-18', horaRetorno: '04:00' },
-  cronograma: []
+
+const STORAGE_KEY = "pescaJusta_v5";
+
+
+const defaultState = {
+
+eventName:"Pesca Justa",
+
+tripStart:"2026-10-17T10:00",
+
+tripEnd:"2026-10-18T10:00",
+
+participants:[],
+
+boatConfig:{
+left:3,
+right:3,
+popa:4
+},
+
+schedule:[],
+
+expenses:[],
+
+payments:[]
+
 };
 
-function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-function money(v) { return Number(v||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
-function initials(name) { return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join(''); }
-function numberBR(v) { return Number(String(v).replace(/\./g,'').replace(',','.')) || 0; }
-function esc(s) { return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove('show'),2800); }
 
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function load() {
-  try {
-    const x = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(x) state = {...state, ...x};
-  } catch(e){}
+let editingParticipantId = null;
+
+let state = load();
+
+
+
+function load(){
+
+try{
+
+const saved =
+JSON.parse(
+localStorage.getItem(STORAGE_KEY)
+);
+
+return saved
+?
+{
+...structuredClone(defaultState),
+...saved
+}
+:
+structuredClone(defaultState);
+
 }
 
-function participant(pid) { return state.participants.find(x=>x.id===pid); }
-function expense(eid) { return state.expenses.find(x=>x.id===eid); }
+catch(e){
 
-function avatar(p) {
-  if(!p) return '';
-  return `<div class="avatar">${p.photo ? `<img src="${p.photo}" alt="">` : esc(initials(p.name))}</div>`;
+return structuredClone(defaultState);
+
 }
 
-function totals() {
-  const expenses = state.expenses.reduce((s,x)=>s+x.value,0);
-  const collected = state.payments.reduce((s,x)=>s+x.value,0);
-  const share = state.participants.length ? expenses / state.participants.length : 0;
-  return { expenses, collected, share, pending: Math.max(0, expenses - collected) };
 }
 
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  event.target.classList.add('active');
+
+
+function persist(){
+
+localStorage.setItem(
+STORAGE_KEY,
+JSON.stringify(state)
+);
+
 }
 
-function salvarInfoPesca(e) {
-  e.preventDefault();
-  state.infoPesca = {
-    local: document.getElementById('infoLocal').value,
-    dataSaida: document.getElementById('infoDataSaida').value,
-    horaSaida: document.getElementById('infoHoraSaida').value,
-    dataRetorno: document.getElementById('infoDataRetorno').value,
-    horaRetorno: document.getElementById('infoHoraRetorno').value
-  };
-  save();
-  toast('Informações da pesca salvas!');
+
+
+function uid(){
+
+return (
+Date.now().toString(36)
++
+Math.random()
+.toString(36)
+.slice(2,8)
+);
+
 }
 
-function atualizarConfigBarco() {
-  state.barcoConfig = {
-    bancosPopa: parseInt(document.getElementById('cfgBancosPopa').value) || 0,
-    capPopa: parseInt(document.getElementById('cfgCapPopa').value) || 0,
-    bancosEsq: parseInt(document.getElementById('cfgBancosEsq').value) || 0,
-    capEsq: parseInt(document.getElementById('cfgCapEsq').value) || 0,
-    bancosDir: parseInt(document.getElementById('cfgBancosDir').value) || 0,
-    capDir: parseInt(document.getElementById('cfgCapDir').value) || 0
-  };
-  save();
-  renderMapaBarco();
+
+
+function money(v){
+
+return Number(v || 0)
+.toLocaleString(
+"pt-BR",
+{
+style:"currency",
+currency:"BRL"
+}
+);
+
 }
 
-function renderMapaBarco() {
-  const cfg = state.barcoConfig;
-  let htmlEsq = '';
-  for(let i=1; i<=cfg.bancosEsq; i++) htmlEsq += `<div class="boat-seat">Banco Esq ${i}<span>(${cfg.capEsq} pes.)</span></div>`;
-  document.getElementById('mapSeatsEsq').innerHTML = htmlEsq || '<div class="muted">Nenhum</div>';
 
-  let htmlDir = '';
-  for(let i=1; i<=cfg.bancosDir; i++) htmlDir += `<div class="boat-seat">Banco Dir ${i}<span>(${cfg.capDir} pes.)</span></div>`;
-  document.getElementById('mapSeatsDir').innerHTML = htmlDir || '<div class="muted">Nenhum</div>';
 
-  let htmlPopa = '';
-  for(let i=1; i<=cfg.bancosPopa; i++) htmlPopa += `<div class="boat-seat">Popa ${i}<span>(${cfg.capPopa} pes.)</span></div>`;
-  document.getElementById('mapSeatsPopa').innerHTML = htmlPopa || '<div class="muted">Nenhum</div>';
+function toast(msg){
+
+const el =
+document.getElementById("toast");
+
+el.textContent = msg;
+
+el.classList.add("show");
+
+clearTimeout(window.toastTimer);
+
+window.toastTimer =
+setTimeout(
+()=>el.classList.remove("show"),
+3200
+);
+
 }
 
-function addParticipant() {
-  const input = document.getElementById('participantName'), name = input.value.trim();
-  if(!name) return toast('Informe o nome do pescador.');
-  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase())) return toast('Pescador já cadastrado.');
-  state.participants.push({id:id(), name, msg: ''});
-  input.value = ''; save(); render(); toast('Pescador adicionado.');
+
+
+function escapeHtml(s){
+
+return String(s)
+.replace(
+/[&<>"']/g,
+m=>({
+
+"&":"&amp;",
+
+"<":"&lt;",
+
+">":"&gt;",
+
+'"':"&quot;",
+
+"'":"&#039;"
+
+}[m])
+);
+
 }
 
-function loadDefaultNames() {
-  let n = 0; const existing = new Set(state.participants.map(p=>p.name.toLowerCase()));
-  DEFAULT_NAMES.forEach(name => { if(!existing.has(name.toLowerCase())){ state.participants.push({id:id(), name, msg:''}); n++; } });
-  save(); render(); toast(n ? `${n} pescadores adicionados.` : 'Todos já estão cadastrados.');
+
+
+function fmtDate(v){
+
+return new Date(v)
+.toLocaleString(
+"pt-BR",
+{
+day:"2-digit",
+month:"2-digit",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
 }
 
-function updateParticipantMsg(pid, val) {
-  const p = participant(pid);
-  if(p) { p.msg = val; save(); }
+
+
+/* ================================
+NAVEGAÇÃO
+================================ */
+
+document
+.querySelectorAll(".nav-btn")
+.forEach(btn=>{
+
+btn.addEventListener(
+"click",
+()=>{
+
+document
+.querySelectorAll(".nav-btn")
+.forEach(
+b=>b.classList.remove("active")
+);
+
+document
+.querySelectorAll(".view")
+.forEach(
+v=>v.classList.remove("active")
+);
+
+btn.classList.add("active");
+
+document
+.getElementById(
+btn.dataset.view
+)
+.classList.add("active");
+
 }
+);
 
-function editParticipant(pid) {
-  const p = participant(pid); const name = prompt('Novo nome:', p.name); if(name===null) return;
-  const n = name.trim(); if(!n) return toast('Nome inválido.');
-  p.name = n; save(); render(); toast('Nome atualizado.');
-}
-
-function deleteParticipant(pid) {
-  const p = participant(pid); if(!confirm(`Excluir ${p.name}?`)) return;
-  state.participants = state.participants.filter(x=>x.id!==pid);
-  state.payments = state.payments.filter(x=>x.participantId!==pid);
-  save(); render(); toast('Participante excluído.');
-}
-
-function changePhoto(pid, input) {
-  const file = input.files[0]; if(!file) return;
-  const r = new FileReader(); r.onload = e => {
-    const img = new Image(); img.onload = () => {
-      const c = document.createElement('canvas'); let max=180, scale=Math.min(1, max/Math.max(img.width, img.height));
-      c.width = img.width*scale; c.height = img.height*scale;
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      participant(pid).photo = c.toDataURL('image/jpeg', .78);
-      save(); render(); toast('Foto atualizada.');
-    };
-    img.src = e.target.result;
-  };
-  r.readAsDataURL(file);
-}
-
-function addExpense() {
-  const desc = document.getElementById('expenseDesc').value.trim();
-  const value = numberBR(document.getElementById('expenseValue').value);
-  const category = document.getElementById('expenseCategory').value;
-  if(!desc) return toast('Informe a descrição.');
-  if(value <= 0) return toast('Informe um valor válido.');
-  state.expenses.push({id:id(), desc, value, category});
-  document.getElementById('expenseDesc').value = ''; document.getElementById('expenseValue').value = '';
-  save(); render(); toast('Despesa adicionada.');
-}
-
-function editExpense(eid) {
-  const e = expense(eid); const desc = prompt('Descrição:', e.desc); if(desc===null) return;
-  const value = prompt('Valor:', String(e.value)); if(value===null) return;
-  const v = numberBR(value); if(!desc.trim() || v<=0) return toast('Dados inválidos.');
-  e.desc = desc.trim(); e.value = v; save(); render(); toast('Despesa atualizada.');
-}
-
-function deleteExpense(eid) {
-  if(!confirm('Excluir esta despesa e seus pagamentos?')) return;
-  state.expenses = state.expenses.filter(x=>x.id!==eid);
-  state.payments = state.payments.filter(x=>x.expenseId!==eid);
-  save(); render(); toast('Despesa excluída.');
-}
-
-function addPayment() {
-  const participantId = document.getElementById('paymentParticipant').value;
-  const expenseId = document.getElementById('paymentExpense').value;
-  const value = numberBR(document.getElementById('paymentValue').value);
-  if(!participantId) return toast('Selecione um pescador.');
-  if(!expenseId) return toast('Selecione uma despesa.');
-  if(value <= 0) return toast('Informe um valor válido.');
-  
-  state.payments.push({id:id(), participantId, expenseId, value, date:new Date().toISOString()});
-  document.getElementById('paymentValue').value = ''; save(); render(); toast('Pagamento registrado.');
-}
-
-function deletePayment(pid) { state.payments = state.payments.filter(x=>x.id!==pid); save(); render(); toast('Pagamento removido.'); }
-
-function render() {
-  const t = totals();
-  document.getElementById('sumParticipants').textContent = state.participants.length;
-  document.getElementById('sumExpenses').textContent = money(t.expenses);
-  document.getElementById('sumCollected').textContent = money(t.collected);
-  document.getElementById('sumShare').textContent = money(t.share);
-  document.getElementById('sumPending').textContent = money(t.pending);
-  
-  const pct = t.expenses ? Math.min(100, t.collected/t.expenses*100) : 0;
-  document.getElementById('progressPercent').textContent = pct.toFixed(1) + '%';
-  document.getElementById('progressBar').style.width = pct + '%';
-  
-  document.getElementById('infoLocal').value = state.infoPesca.local || '';
-  document.getElementById('infoDataSaida').value = state.infoPesca.dataSaida || '';
-  document.getElementById('infoHoraSaida').value = state.infoPesca.horaSaida || '';
-  document.getElementById('infoDataRetorno').value = state.infoPesca.dataRetorno || '';
-  document.getElementById('infoHoraRetorno').value = state.infoPesca.horaRetorno || '';
-
-  document.getElementById('cfgBancosPopa').value = state.barcoConfig.bancosPopa;
-  document.getElementById('cfgCapPopa').value = state.barcoConfig.capPopa;
-  document.getElementById('cfgBancosEsq').value = state.barcoConfig.bancosEsq;
-  document.getElementById('cfgCapEsq').value = state.barcoConfig.capEsq;
-  document.getElementById('cfgBancosDir').value = state.barcoConfig.bancosDir;
-  document.getElementById('cfgCapDir').value = state.barcoConfig.capDir;
-  renderMapaBarco();
-
-  document.getElementById('participantsTable').innerHTML = state.participants.length ? state.participants.map(p => {
-    return `<tr>
-      <td><label style="cursor:pointer">${avatar(p)}<input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}',this)"></label></td>
-      <td>
-        <strong>${esc(p.name)}</strong><br>
-        <input type="text" value="${esc(p.msg||'')}" placeholder="Msg do adm ao pescador..." onchange="updateParticipantMsg('${p.id}', this.value)" style="margin-top:4px; font-size:12px; height:30px; width:100%;">
-      </td>
-      <td><span class="badge">Ativo</span></td>
-      <td><div class="actions"><button class="small secondary" onclick="editParticipant('${p.id}')">Editar</button><button class="small danger" onclick="deleteParticipant('${p.id}')">Excluir</button></div></td>
-    </tr>`;
-  }).join('') : '<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
-
-  document.getElementById('expensesTable').innerHTML = state.expenses.length ? state.expenses.map(e => `<tr>
-    <td>${esc(e.desc)}</td><td><span class="badge">${esc(e.category)}</span></td><td>${money(e.value)}</td>
-    <td><div class="actions"><button class="small secondary" onclick="editExpense('${e.id}')">Editar</button><button class="small danger" onclick="deleteExpense('${e.id}')">Excluir</button></div></td>
-  </tr>`).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa cadastrada.</td></tr>';
-
-  document.getElementById('paymentParticipant').innerHTML = state.participants.length ? state.participants.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option value="">Nenhum pescador</option>';
-  document.getElementById('paymentExpense').innerHTML = state.expenses.length ? state.expenses.map(e => `<option value="${e.id}">${esc(e.desc)}</option>`).join('') : '<option value="">Nenhuma despesa</option>';
-
-  document.getElementById('financialTable').innerHTML = state.participants.length ? state.participants.map(p => {
-    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0), missing = Math.max(0, t.share - paid);
-    const status = missing < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente';
-    const cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-    return `<tr><td>${esc(p.name)}</td><td>${money(t.share)}</td><td>${money(paid)}</td><td>${money(missing)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
-  }).join('') : '<tr><td colspan="5" class="empty">Cadastre participantes.</td></tr>';
-
-  document.getElementById('expenseControlTable').innerHTML = state.expenses.length ? state.expenses.map(e => {
-    const paid = state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0), saldo = Math.max(0, e.value - paid), share = state.participants.length ? e.value/state.participants.length : 0;
-    const status = saldo < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente';
-    const cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-    return `<tr><td>${esc(e.desc)}</td><td>${esc(e.category)}</td><td>${money(e.value)}</td><td>${money(share)}</td><td>${money(paid)}</td><td>${money(saldo)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
-  }).join('') : '<tr><td colspan="7" class="empty">Cadastre despesas.</td></tr>';
-
-  document.getElementById('paymentsTable').innerHTML = state.payments.length ? [...state.payments].reverse().map(x => `<tr>
-    <td>${esc(participant(x.participantId)?.name||'—')}</td><td>${esc(expense(x.expenseId)?.desc||'—')}</td>
-    <td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${money(x.value)}</td>
-    <td><button class="small danger" onclick="deletePayment('${x.id}')">Remover</button></td>
-  </tr>`).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
-
-  renderCardsTopoBarco();
-}
-
-/* ================= CRONOGRAMA & ROTAÇÃO BASEADA EM HORAS ================= */
-let timerInterval = null;
-let tempoRestanteSegundos = 0;
-let turnoIndex = 0;
-
-function dispararAlarmeSonoro() {
-  try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.8);
-  } catch(e) {}
-}
-
-function gerarCronogramaTurnos() {
-  const nomes = state.participants.map(p => p.name);
-  if(nomes.length === 0) return toast('Cadastre pescadores primeiro.');
-
-  const horasPorTurno = parseFloat(document.getElementById('horasPorTurnoInput').value) || 4;
-  const inicioStr = document.getElementById('inicioPescaInput').value;
-  const fimStr = document.getElementById('fimPescaInput').value;
-
-  const inicioMs = new Date(inicioStr).getTime();
-  const fimMs = new Date(fimStr).getTime();
-  if(fimMs <= inicioMs) return toast('A data/hora final deve ser posterior ao início.');
-
-  const duracaoTotalHoras = (fimMs - inicioMs) / (1000 * 60 * 60);
-  const duracaoTurnoMs = horasPorTurno * 3600 * 1000;
-  const numTurnos = Math.ceil(duracaoTotalHoras / horasPorTurno);
-
-  const cfg = state.barcoConfig;
-  const esqCount = cfg.bancosEsq * cfg.capEsq;
-  const dirCount = cfg.bancosDir * cfg.capDir;
-  const popaCount = cfg.bancosPopa * cfg.capPopa;
-  const totalVagas = esqCount + dirCount + popaCount;
-
-  state.cronograma = [];
-  let horaAtual = new Date(inicioMs);
-
-  for(let i=0; i<numTurnos; i++) {
-    let proximaHoraMs = horaAtual.getTime() + duracaoTurnoMs;
-    if (proximaHoraMs > fimMs) proximaHoraMs = fimMs; // Ajusta o último turno parcial se necessário (ex: 2h restantes)
-    let horaFim = new Date(proximaHoraMs);
-    
-    let pescadoresTurno = [];
-    for(let j=0; j<totalVagas; j++) {
-      let indexPessoa = (i + j) % nomes.length;
-      pescadoresTurno.push(nomes[indexPessoa]);
-    }
-
-    let pEsq = pescadoresTurno.slice(0, esqCount);
-    let pDir = pescadoresTurno.slice(esqCount, esqCount + dirCount);
-    let pPopa = pescadoresTurno.slice(esqCount + dirCount, totalVagas);
-
-    state.cronograma.push({
-      turno: i + 1,
-      inicio: new Date(horaAtual),
-      fim: new Date(horaFim),
-      esq: pEsq,
-      dir: pDir,
-      popa: pPopa
-    });
-
-    horaAtual = horaFim;
-    if (horaAtual.getTime() >= fimMs) break;
-  }
-
-  save();
-  renderTabelaCronograma();
-  renderCardsTopoBarco();
-  toast('Cronograma gerado com sucesso!');
-}
-
-function renderCardsTopoBarco() {
-  const container = document.getElementById('boatTopTurnsContainer');
-  
-  let despesasHtml = '<div style="margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.3); font-size:10px; color:#f8fafc;"><strong>Despesas:</strong> ';
-  if(state.expenses.length > 0) {
-    despesasHtml += state.expenses.map(e => `${e.desc} (${money(e.value)})`).join(', ');
-  } else {
-    despesasHtml += 'Nenhuma cadastrada';
-  }
-  despesasHtml += '</div>';
-
-  if(!state.cronograma.length) {
-    container.innerHTML = `<div class="turn-card-mini"><strong>Turnos & Despesas</strong>Gere o cronograma abaixo.${despesasHtml}</div>`;
-    return;
-  }
-
-  container.innerHTML = state.cronograma.map(c => `
-    <div class="turn-card-mini">
-      <strong>Turno ${c.turno}</strong>
-      Inicia às: ${formatarHoraCurta(new Date(c.inicio))}<br>
-      Finaliza às: ${formatarHoraCurta(new Date(c.fim))}
-      ${despesasHtml}
-    </div>
-  `).join('');
-}
-
-function renderTabelaCronograma() {
-  const tbody = document.getElementById('tabelaCronogramaBody');
-  if(!state.cronograma.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum cronograma gerado.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = state.cronograma.map(c => `
-    <tr id="row-turno-${c.turno}">
-      <td><strong>Turno ${c.turno}</strong></td>
-      <td>${formatarHoraData(new Date(c.inicio))}</td>
-      <td>${formatarHoraData(new Date(c.fim))}</td>
-      <td>${c.esq.join(', ') || '—'}</td>
-      <td>${c.dir.join(', ') || '—'}</td>
-      <td>${c.popa.join(', ') || '—'}</td>
-    </tr>
-  `).join('');
-}
-
-function iniciarRotacao24h() {
-  if(!state.cronograma.length) return toast('Gere o cronograma de turnos primeiro.');
-  
-  const item = state.cronograma[0];
-  const duracaoSegundos = Math.floor((new Date(item.fim) - new Date(item.inicio)) / 1000);
-  document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoSegundos / 60)} min`;
-
-  turnoIndex = 0;
-  ativarTurnoAtual(duracaoSegundos);
-  toast('Timer automático iniciado!');
-}
-
-function pararRotacao24h() {
-  if(timerInterval) clearInterval(timerInterval);
-  toast('Timer pausado.');
-}
-
-function ativarTurnoAtual(duracaoSegundos) {
-  if(timerInterval) clearInterval(timerInterval);
-  tempoRestanteSegundos = duracaoSegundos;
-
-  const item = state.cronograma[turnoIndex];
-  if(!item) return;
-
-  document.getElementById('turnoAtual').textContent = `Turno ${item.turno} de ${state.cronograma.length}`;
-  const horaSaidaTurno = formatarHoraData(new Date(item.fim));
-
-  document.getElementById('posDeckProa').innerHTML = `<div class="fisherman-tag" style="background:#ca8a04;">Rodízio Ativo<span>Saída: ${horaSaidaTurno}</span></div>`;
-  document.getElementById('posDeckEsq').innerHTML = item.esq.map(p => `<div class="fisherman-tag">${p}<span>Sai às ${horaSaidaTurno}</span></div>`).join('') || '--';
-  document.getElementById('posDeckDir').innerHTML = item.dir.map(p => `<div class="fisherman-tag">${p}<span>Sai às ${horaSaidaTurno}</span></div>`).join('') || '--';
-  document.getElementById('posDeckPopa').innerHTML = item.popa.map(p => `<div class="fisherman-tag" style="background:#c2410c;">${p}<span>Sai às ${horaSaidaTurno}</span></div>`).join('') || '--';
-
-  document.querySelectorAll('.rotacao-table tr').forEach(tr => tr.style.background = '');
-  const activeRow = document.getElementById(`row-turno-${item.turno}`);
-  if(activeRow) activeRow.style.background = 'rgba(56, 189, 248, 0.15)';
-
-  timerInterval = setInterval(() => {
-    tempoRestanteSegundos--;
-    renderTimer(tempoRestanteSegundos);
-    if(tempoRestanteSegundos <= 0) {
-      clearInterval(timerInterval);
-      dispararAlarmeSonoro();
-      turnoIndex++;
-      
-      if(turnoIndex >= state.cronograma.length) {
-        alert('🏁 Fim da expedição de pesca!');
-        return;
-      }
-      
-      alert(`🔔 ALERTA DE TROCA! Fim do Turno ${item.turno}. Hora de trocar de posição no barco!`);
-      const nextItem = state.cronograma[turnoIndex];
-      const nextDuracao = Math.floor((new Date(nextItem.fim) - new Date(nextItem.inicio)) / 1000);
-      ativarTurnoAtual(nextDuracao);
-    }
-  }, 1000);
-}
-
-function renderTimer(segundos) {
-  const hrs = String(Math.floor(segundos / 3600)).padStart(2, '0');
-  const mins = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
-  const secs = String(segundos % 60).padStart(2, '0');
-  document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
-}
-
-function formatarHoraData(data) {
-  const d = String(data.getDate()).padStart(2, '0');
-  const m = String(data.getMonth() + 1).padStart(2, '0');
-  const h = String(data.getHours()).padStart(2, '0');
-  const min = String(data.getMinutes()).padStart(2, '0');
-  return `${d}/${m} ${h}:${min}`;
-}
-
-function formatarHoraCurta(data) {
-  const h = String(data.getHours()).padStart(2, '0');
-  const min = String(data.getMinutes()).padStart(2, '0');
-  return `${h}:${min}`;
-}
-
-function processarFotos(e) {
-  const files = Array.from(e.target.files);
-  let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v4') || '[]');
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      fotosSalvas.push(evt.target.result);
-      localStorage.setItem('pescaria_fotos_v4', JSON.stringify(fotosSalvas));
-      renderGaleria();
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function renderGaleria() {
-  const grid = document.getElementById('previewGrid');
-  grid.innerHTML = '';
-  const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v4') || '[]');
-  fotosSalvas.forEach(imgSrc => {
-    const div = document.createElement('div');
-    div.className = 'img-container';
-    div.innerHTML = `<img src="${imgSrc}">`;
-    grid.appendChild(div);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  load();
-  render();
-  renderGaleria();
-  renderTabelaCronograma();
-  renderCardsTopoBarco();
-
-  if("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js").catch(err => {});
-  }
 });
+
+
+
+/* ================================
+EVENTO
+================================ */
+
+function saveTripInfo(){
+
+state.eventName =
+eventName.value.trim()
+||
+"Pesca Justa";
+
+state.tripStart =
+tripStart.value;
+
+state.tripEnd =
+tripEnd.value;
+
+inicioPescaInput.value =
+state.tripStart;
+
+fimPescaInput.value =
+state.tripEnd;
+
+persist();
+
+toast(
+"Informações salvas."
+);
+
+}
+
+
+
+/* ================================
+PARTICIPANTES
+================================ */
+
+function addParticipant(){
+
+const name =
+newParticipant.value.trim();
+
+
+if(!name){
+
+return toast(
+"Digite o nome do participante."
+);
+
+}
+
+
+const exists =
+state.participants.some(
+p=>
+p.name
+.toLowerCase()
+===
+name
+.toLowerCase()
+);
+
+
+if(exists){
+
+return toast(
+"Este participante já está cadastrado."
+);
+
+}
+
+
+state.participants.push({
+
+id:uid(),
+
+name:name
+
+});
+
+
+newParticipant.value = "";
+
+
+state.schedule = [];
+
+
+persist();
+
+
+renderAll();
+
+
+toast(
+"Participante adicionado."
+);
+
+}
+
+
+
+function renderParticipants(){
+
+const box =
+document.getElementById(
+"participantsList"
+);
+
+
+if(!state.participants.length){
+
+box.innerHTML =
+'<p class="sub">Nenhum participante cadastrado.</p>';
+
+return;
+
+}
+
+
+box.innerHTML =
+
+'<div class="table-wrap">'+
+
+'<table>'+
+
+'<thead>'+
+
+'<tr>'+
+
+'<th>#</th>'+
+
+'<th>Nome</th>'+
+
+'<th>Ações</th>'+
+
+'</tr>'+
+
+'</thead>'+
+
+'<tbody>'+
+
+state.participants
+.map(
+(p,i)=>`
+
+<tr>
+
+<td>${i+1}</td>
+
+<td>
+${escapeHtml(p.name)}
+</td>
+
+<td>
+
+<button
+class="small primary"
+onclick="editParticipant('${p.id}')"
+>
+Editar
+</button>
+
+<button
+class="small danger"
+onclick="removeParticipant('${p.id}')"
+>
+Excluir
+</button>
+
+</td>
+
+</tr>
+
+`
+)
+.join("")
+
++
+
+'</tbody>'+
+
+'</table>'+
+
+'</div>';
+
+}
+
+
+
+function editParticipant(id){
+
+const p =
+state.participants
+.find(
+x=>x.id===id
+);
+
+
+if(!p) return;
+
+
+editingParticipantId = id;
+
+
+editParticipantName.value =
+p.name;
+
+
+editModal
+.classList
+.add("show");
+
+}
+
+
+
+function closeModal(){
+
+editingParticipantId = null;
+
+editModal
+.classList
+.remove("show");
+
+}
+
+
+
+function confirmEditParticipant(){
+
+const p =
+state.participants
+.find(
+x=>x.id===editingParticipantId
+);
+
+
+const name =
+editParticipantName
+.value
+.trim();
+
+
+if(!p || !name){
+
+return toast(
+"Digite um nome válido."
+);
+
+}
+
+
+const duplicate =
+state.participants
+.some(
+x=>
+x.id !== p.id
+&&
+x.name.toLowerCase()
+===
+name.toLowerCase()
+);
+
+
+if(duplicate){
+
+return toast(
+"Já existe participante com esse nome."
+);
+
+}
+
+
+p.name = name;
+
+
+state.schedule = [];
+
+
+persist();
+
+
+closeModal();
+
+
+renderAll();
+
+
+toast(
+"Nome atualizado. Cronograma anterior removido."
+);
+
+}
+
+
+
+function removeParticipant(id){
+
+if(
+!confirm(
+"Excluir este participante?"
+)
+) return;
+
+
+state.participants =
+state.participants.filter(
+p=>p.id!==id
+);
+
+
+state.schedule = [];
+
+
+persist();
+
+
+renderAll();
+
+}
+
+
+
+/* ================================
+BARCO
+================================ */
+
+function saveBoatConfig(){
+
+const left =
+Math.max(
+0,
+parseInt(vEsq.value)||0
+);
+
+
+const right =
+Math.max(
+0,
+parseInt(vDir.value)||0
+);
+
+
+const popa =
+Math.max(
+0,
+parseInt(vPopa.value)||0
+);
+
+
+const total =
+left + right + popa;
+
+
+if(total<=0){
+
+return toast(
+"Informe pelo menos uma vaga."
+);
+
+}
+
+
+if(
+state.participants.length
+>
+total
+){
+
+return toast(
+"Há mais pescadores do que vagas no barco."
+);
+
+}
+
+
+state.boatConfig = {
+
+left,
+
+right,
+
+popa
+
+};
+
+
+state.schedule = [];
+
+
+persist();
+
+
+renderAll();
+
+
+toast(
+"Configuração salva."
+);
+
+}
+
+
+
+function fillBoatInputs(){
+
+vEsq.value =
+state.boatConfig.left;
+
+vDir.value =
+state.boatConfig.right;
+
+vPopa.value =
+state.boatConfig.popa;
+
+}
+
+
+
+/* ================================
+CRIAR POSIÇÕES
+================================ */
+
+function createPositions(){
+
+const positions = [];
+
+
+for(
+let i=1;
+i<=state.boatConfig.left;
+i++
+){
+
+positions.push({
+
+id:"left_"+i,
+
+area:"left",
+
+label:"Esquerda "+i
+
+});
+
+}
+
+
+for(
+let i=1;
+i<=state.boatConfig.right;
+i++
+){
+
+positions.push({
+
+id:"right_"+i,
+
+area:"right",
+
+label:"Direita "+i
+
+});
+
+}
+
+
+for(
+let i=1;
+i<=state.boatConfig.popa;
+i++
+){
+
+positions.push({
+
+id:"popa_"+i,
+
+area:"popa",
+
+label:"Fundo "+i
+
+});
+
+}
+
+
+return positions;
+
+}
+
+
+
+/* ================================
+GERADOR DE TURNOS
+================================ */
+
+function generateSchedule(){
+
+
+const participants =
+state.participants
+.map(
+p=>p.name
+);
+
+
+const positions =
+createPositions();
+
+
+if(!participants.length){
+
+return toast(
+"Cadastre os pescadores."
+);
+
+}
+
+
+if(
+participants.length
+>
+positions.length
+){
+
+return toast(
+"Existem mais pescadores do que vagas."
+);
+
+}
+
+
+const hours =
+parseFloat(
+turnHours.value
+)
+||
+4;
+
+
+const startDate =
+new Date(
+inicioPescaInput.value
+);
+
+
+const endDate =
+new Date(
+fimPescaInput.value
+);
+
+
+if(
+
+Number.isNaN(
+startDate.getTime()
+)
+
+||
+
+Number.isNaN(
+endDate.getTime()
+)
+
+||
+
+endDate<=startDate
+
+){
+
+return toast(
+"Informe datas válidas."
+);
+
+}
+
+
+const duration =
+hours * 60 * 60 * 1000;
+
+
+const totalTurns =
+Math.ceil(
+(endDate-startDate)
+/
+duration
+);
+
+
+/*
+HISTÓRICO INDIVIDUAL
+
+Cada pescador guarda:
+
+areasUsed
+positionsUsed
+
+Assim João não volta para
+Fundo enquanto ainda houver
+Esquerda ou Direita não utilizadas.
+*/
+
+const history = {};
+
+
+participants.forEach(
+name=>{
+
+history[name] = {
+
+areasUsed:[],
+
+positionsUsed:[],
+
+lastArea:null,
+
+lastPosition:null,
+
+totalTurns:0
+
+};
+
+}
+);
+
+
+
+const schedule = [];
+
+
+let now =
+new Date(
+startDate
+);
+
+
+
+for(
+let turn=1;
+turn<=totalTurns
+&&
+now<endDate;
+turn++
+){
+
+
+const finish =
+new Date(
+Math.min(
+now.getTime()+duration,
+endDate.getTime()
+)
+);
+
+
+/*
+POSIÇÕES DISPONÍVEIS
+*/
+
+const availablePositions =
+shuffle(
+[...positions]
+);
+
+
+/*
+PARTICIPANTES
+EM ORDEM DE PRIORIDADE
+
+Quem utilizou menos áreas
+tem prioridade.
+*/
+
+const orderedParticipants =
+[...participants]
+.sort(
+(a,b)=>{
+
+const A =
+history[a];
+
+const B =
+history[b];
+
+
+if(
+A.areasUsed.length
+!== 
+B.areasUsed.length
+){
+
+return (
+A.areasUsed.length
+-
+B.areasUsed.length
+);
+
+}
+
+
+if(
+A.totalTurns
+!== 
+B.totalTurns
+){
+
+return (
+A.totalTurns
+-
+B.totalTurns
+);
+
+}
+
+
+return Math.random()-0.5;
+
+}
+);
+
+
+
+const assignments = [];
+
+
+const usedPositionIds =
+new Set();
+
+
+/*
+PARA CADA PESCADOR
+*/
+
+orderedParticipants
+.forEach(
+name=>{
+
+
+const h =
+history[name];
+
+
+/*
+PRIMEIRA PRIORIDADE:
+
+ÁREA NUNCA UTILIZADA
+*/
+
+
+let candidates =
+availablePositions
+.filter(
+p=>
+!usedPositionIds.has(p.id)
+&&
+!h.areasUsed.includes(p.area)
+);
+
+
+
+/*
+SEGUNDA PRIORIDADE:
+
+NÃO REPETIR A ÁREA
+DO TURNO ANTERIOR
+*/
+
+
+if(!candidates.length){
+
+candidates =
+availablePositions
+.filter(
+p=>
+!usedPositionIds.has(p.id)
+&&
+p.area!==h.lastArea
+);
+
+}
+
+
+
+/*
+TERCEIRA PRIORIDADE:
+
+MESMA ÁREA É PERMITIDA,
+MAS NÃO A MESMA POSIÇÃO
+*/
+
+
+if(!candidates.length){
+
+candidates =
+availablePositions
+.filter(
+p=>
+!usedPositionIds.has(p.id)
+&&
+p.id!==h.lastPosition
+);
+
+}
+
+
+
+/*
+ÚLTIMA ALTERNATIVA
+*/
+
+
+if(!candidates.length){
+
+candidates =
+availablePositions
+.filter(
+p=>
+!usedPositionIds.has(p.id)
+);
+
+}
+
+
+/*
+EQUILIBRAR POSIÇÕES
+*/
+
+
+candidates.sort(
+(a,b)=>{
+
+
+const aUsed =
+h.positionsUsed.includes(a.id)
+?
+1
+:
+0;
+
+
+const bUsed =
+h.positionsUsed.includes(b.id)
+?
+1
+:
+0;
+
+
+if(aUsed!==bUsed){
+
+return aUsed-bUsed;
+
+}
+
+
+/*
+Evitar repetir
+última posição
+*/
+
+const aLast =
+a.id===h.lastPosition
+?
+1
+:
+0;
+
+
+const bLast =
+b.id===h.lastPosition
+?
+1
+:
+0;
+
+
+return aLast-bLast;
+
+}
+);
+
+
+/*
+ESCOLHE POSIÇÃO
+*/
+
+const chosen =
+candidates[0];
+
+
+if(!chosen) return;
+
+
+/*
+REGISTRA
+*/
+
+assignments.push({
+
+name:name,
+
+position:chosen
+
+});
+
+
+usedPositionIds.add(
+chosen.id
+);
+
+
+if(
+!h.areasUsed.includes(
+chosen.area
+)
+){
+
+h.areasUsed.push(
+chosen.area
+);
+
+}
+
+
+/*
+QUANDO O PESCADOR
+PASSOU POR TODAS
+AS ÁREAS DISPONÍVEIS
+
+REINICIA O CICLO
+MAS MANTÉM A ÚLTIMA
+ÁREA COMO REFERÊNCIA.
+*/
+
+
+const existingAreas =
+[...new Set(
+positions.map(
+p=>p.area
+)
+)];
+
+
+if(
+h.areasUsed.length
+===
+existingAreas.length
+){
+
+h.areasUsed = [
+chosen.area
+];
+
+}
+
+
+if(
+!h.positionsUsed.includes(
+chosen.id
+)
+){
+
+h.positionsUsed.push(
+chosen.id
+);
+
+}
+
+
+h.lastArea =
+chosen.area;
+
+
+h.lastPosition =
+chosen.id;
+
+
+h.totalTurns++;
+
+}
+);
+
+
+
+/*
+ORGANIZA RESULTADO
+*/
+
+
+const left =
+[];
+
+
+const right =
+[];
+
+
+const popa =
+[];
+
+
+const empty =
+[];
+
+
+positions.forEach(
+position=>{
+
+
+const found =
+assignments.find(
+a=>
+a.position.id
+===
+position.id
+);
+
+
+const value =
+found
+?
+found.name
+:
+null;
+
+
+if(
+position.area==="left"
+){
+
+left.push(value);
+
+}
+
+
+if(
+position.area==="right"
+){
+
+right.push(value);
+
+}
+
+
+if(
+position.area==="popa"
+){
+
+popa.push(value);
+
+}
+
+
+if(!value){
+
+empty.push(
+position.label
+);
+
+}
+
+}
+);
+
+
+
+schedule.push({
+
+turn:turn,
+
+start:now.toISOString(),
+
+end:finish.toISOString(),
+
+left:left,
+
+right:right,
+
+popa:popa,
+
+empty:empty
+
+});
+
+
+now = finish;
+
+}
+
+
+
+/*
+SALVAR
+*/
+
+
+state.schedule =
+schedule;
+
+
+persist();
+
+
+renderAll();
+
+
+toast(
+"Revezamento inteligente gerado."
+);
+
+}
+
+
+
+/* ================================
+EMBARALHAR
+================================ */
+
+function shuffle(array){
+
+const a =
+[...array];
+
+
+for(
+let i=a.length-1;
+i>0;
+i--
+){
+
+const j =
+Math.floor(
+Math.random()
+*
+(i+1)
+);
+
+
+[a[i],a[j]] =
+[a[j],a[i]];
+
+}
+
+
+return a;
+
+}
+
+
+
+/* ================================
+LIMPAR TURNOS
+================================ */
+
+function clearSchedule(){
+
+if(
+!confirm(
+"Limpar o cronograma?"
+)
+) return;
+
+
+state.schedule = [];
+
+
+persist();
+
+
+renderAll();
+
+}
+
+
+
+/* ================================
+RENDER TURNOS
+================================ */
+
+function renderSchedule(){
+
+
+scheduleBody.innerHTML =
+state.schedule.length
+?
+state.schedule
+.map(
+s=>`
+
+<tr>
+
+<td>
+<b>
+Turno ${s.turn}
+</b>
+</td>
+
+
+<td>
+${fmtDate(s.start)}
+</td>
+
+
+<td>
+${fmtDate(s.end)}
+</td>
+
+
+<td>
+
+${s.left.map(
+(n,i)=>
+n
+?
+`<span class="pill">E${i+1}: ${escapeHtml(n)}</span>`
+:
+`<span class="pill empty-pill">E${i+1}: Vazio</span>`
+).join("")}
+
+</td>
+
+
+<td>
+
+${s.right.map(
+(n,i)=>
+n
+?
+`<span class="pill">D${i+1}: ${escapeHtml(n)}</span>`
+:
+`<span class="pill empty-pill">D${i+1}: Vazio</span>`
+).join("")}
+
+</td>
+
+
+<td>
+
+${s.popa.map(
+(n,i)=>
+n
+?
+`<span class="pill">F${i+1}: ${escapeHtml(n)}</span>`
+:
+`<span class="pill empty-pill">F${i+1}: Vazio</span>`
+).join("")}
+
+</td>
+
+
+<td>
+
+${s.empty.map(
+x=>
+`<span class="pill empty-pill">
+${escapeHtml(x)}
+</span>`
+).join("")}
+
+</td>
+
+</tr>
+
+`
+)
+.join("")
+
+:
+
+'<tr><td colspan="7">Nenhum cronograma gerado.</td></tr>';
+
+
+
+const stats = {};
+
+
+state.participants
+.forEach(
+p=>{
+
+stats[p.name] = {
+
+turns:0,
+
+left:0,
+
+right:0,
+
+popa:0,
+
+lastArea:"-"
+
+};
+
+}
+);
+
+
+
+state.schedule
+.forEach(
+s=>{
+
+
+s.left
+.forEach(
+n=>{
+
+if(n){
+
+stats[n].turns++;
+
+stats[n].left++;
+
+stats[n].lastArea =
+"Esquerda";
+
+}
+
+}
+);
+
+
+s.right
+.forEach(
+n=>{
+
+if(n){
+
+stats[n].right++;
+
+stats[n].lastArea =
+"Direita";
+
+}
+
+}
+);
+
+
+s.popa
+.forEach(
+n=>{
+
+if(n){
+
+stats[n].popa++;
+
+stats[n].lastArea =
+"Fundo";
+
+}
+
+}
+);
+
+}
+);
+
+
+
+fairnessBody.innerHTML =
+Object.entries(stats)
+.map(
+([name,x])=>`
+
+<tr>
+
+<td>
+${escapeHtml(name)}
+</td>
+
+<td>
+${x.turns}
+</td>
+
+<td>
+${x.left}
+</td>
+
+<td>
+${x.right}
+</td>
+
+<td>
+${x.popa}
+</td>
+
+<td>
+${x.lastArea}
+</td>
+
+</tr>
+
+`
+)
+.join("");
+
+}
+
+
+
+/* ================================
+SELECT DO BARCO
+================================ */
+
+function renderBoatSelect(){
+
+const old =
+boatTurnSelect.value;
+
+
+boatTurnSelect.innerHTML =
+
+'<option value="">Selecione</option>'
+
++
+
+state.schedule
+.map(
+s=>
+`<option value="${s.turn}">
+Turno ${s.turn}
+</option>`
+)
+.join("");
+
+
+
+if(
+
+[...boatTurnSelect.options]
+.some(
+o=>o.value===old
+)
+
+){
+
+boatTurnSelect.value =
+old;
+
+}
+
+else if(
+state.schedule.length
+){
+
+boatTurnSelect.value =
+state.schedule[0].turn;
+
+}
+
+}
+
+
+
+/* ================================
+DESENHO DO BARCO
+================================ */
+
+function renderBoat(){
+
+
+const selected =
+state.schedule
+.find(
+s=>
+String(s.turn)
+===
+boatTurnSelect.value
+);
+
+
+
+const boat =
+document.getElementById(
+"boat"
+);
+
+
+
+function makeSeats(
+arr,
+area
+){
+
+return arr
+.map(
+(n,i)=>`
+
+<div class="seat">
+
+<span>
+
+<span class="pos">
+${area} ${i+1}
+</span>
+
+${n
+?
+escapeHtml(n)
+:
+"VAGA VAZIA"
+}
+
+</span>
+
+</div>
+
+`
+)
+.join("");
+
+}
+
+
+
+const left =
+selected
+?
+selected.left
+:
+Array(
+state.boatConfig.left
+).fill(null);
+
+
+const right =
+selected
+?
+selected.right
+:
+Array(
+state.boatConfig.right
+).fill(null);
+
+
+const popa =
+selected
+?
+selected.popa
+:
+Array(
+state.boatConfig.popa
+).fill(null);
+
+
+
+boat.innerHTML =
+
+`
+
+<div class="boat-title">
+
+🎣
+${escapeHtml(state.eventName)}
+
+${selected
+?
+" — Turno "+selected.turn
+:
+""
+}
+
+</div>
+
+
+<div class="side left-side">
+
+${makeSeats(
+left,
+"Esquerda"
+)}
+
+</div>
+
+
+<div class="side right-side">
+
+${makeSeats(
+right,
+"Direita"
+)}
+
+</div>
+
+
+<div class="popa">
+
+${makeSeats(
+popa,
+"Fundo"
+)}
+
+</div>
+
+`;
+
+}
+
+
+
+/* ================================
+FINANCEIRO
+================================ */
+
+function addExpense(){
+
+const category =
+expenseCategory.value;
+
+
+const description =
+expenseDescription.value.trim();
+
+
+const value =
+parseFloat(
+expenseValue.value
+);
+
+
+if(
+!description
+||
+!(value>0)
+){
+
+return toast(
+"Informe descrição e valor."
+);
+
+}
+
+
+state.expenses.push({
+
+id:uid(),
+
+category,
+
+description,
+
+value
+
+});
+
+
+expenseDescription.value =
+"";
+
+
+expenseValue.value =
+"";
+
+
+persist();
+
+
+renderFinance();
+
+}
+
+
+
+function removeExpense(id){
+
+state.expenses =
+state.expenses.filter(
+x=>x.id!==id
+);
+
+
+persist();
+
+
+renderFinance();
+
+}
+
+
+
+function addPayment(){
+
+const participant =
+paymentParticipant.value;
+
+
+const category =
+paymentCategory.value;
+
+
+const value =
+parseFloat(
+paymentValue.value
+);
+
+
+if(
+!participant
+||
+!(value>0)
+){
+
+return toast(
+"Selecione o pescador e informe o valor."
+);
+
+}
+
+
+state.payments.push({
+
+id:uid(),
+
+participant,
+
+category,
+
+value,
+
+date:new Date().toISOString()
+
+});
+
+
+paymentValue.value =
+"";
+
+
+persist();
+
+
+renderFinance();
+
+
+toast(
+"Pagamento registrado."
+);
+
+}
+
+
+
+function removePayment(id){
+
+state.payments =
+state.payments.filter(
+x=>x.id!==id
+);
+
+
+persist();
+
+
+renderFinance();
+
+}
+
+
+
+function renderFinance(){
+
+const participants =
+state.participants
+.map(
+p=>p.name
+);
+
+
+const total =
+state.expenses
+.reduce(
+(a,x)=>a+Number(x.value),
+0
+);
+
+
+const perPerson =
+participants.length
+?
+total
+/
+participants.length
+:
+0;
+
+
+
+expenseBody.innerHTML =
+
+state.expenses
+.map(
+x=>`
+
+<tr>
+
+<td>
+${escapeHtml(x.category)}
+</td>
+
+<td>
+${escapeHtml(x.description)}
+</td>
+
+<td>
+${money(x.value)}
+</td>
+
+<td>
+
+<button
+class="small danger"
+onclick="removeExpense('${x.id}')"
+>
+Excluir
+</button>
+
+</td>
+
+</tr>
+
+`
+)
+.join("")
+
+||
+
+'<tr><td colspan="4">Nenhuma despesa.</td></tr>';
+
+
+
+paymentParticipant.innerHTML =
+
+'<option value="">Selecione</option>'
+
++
+
+participants
+.map(
+n=>
+`<option>
+${escapeHtml(n)}
+</option>`
+)
+.join("");
+
+
+
+const categories =
+[
+...new Set(
+state.expenses
+.map(
+x=>x.category
+)
+)
+];
+
+
+
+paymentCategory.innerHTML =
+
+'<option value="Geral">
+Geral
+</option>'
+
++
+
+categories
+.map(
+c=>
+`<option>
+${escapeHtml(c)}
+</option>`
+)
+.join("");
+
+
+
+financialBody.innerHTML =
+
+participants
+.map(
+name=>{
+
+
+const paid =
+state.payments
+.filter(
+x=>
+x.participant===name
+)
+.reduce(
+(a,x)=>a+Number(x.value),
+0
+);
+
+
+const balance =
+perPerson-paid;
+
+
+return `
+
+<tr>
+
+<td>
+${escapeHtml(name)}
+</td>
+
+<td>
+${money(perPerson)}
+</td>
+
+<td>
+${money(paid)}
+</td>
+
+<td>
+${money(
+Math.max(
+0,
+balance
+)
+)}
+</td>
+
+<td>
+
+${balance<=0.009
+?
+'<span class="paid">PAGO</span>'
+:
+'<span class="due">PENDENTE</span>'
+}
+
+</td>
+
+</tr>
+
+`;
+
+}
+)
+.join("");
+
+
+
+paymentBody.innerHTML =
+
+state.payments
+.map(
+x=>`
+
+<tr>
+
+<td>
+${new Date(x.date)
+.toLocaleString("pt-BR")}
+</td>
+
+<td>
+${escapeHtml(x.participant)}
+</td>
+
+<td>
+${escapeHtml(x.category)}
+</td>
+
+<td>
+${money(x.value)}
+</td>
+
+<td>
+
+<button
+class="small danger"
+onclick="removePayment('${x.id}')"
+>
+Excluir
+</button>
+
+</td>
+
+</tr>
+
+`
+)
+.join("")
+
+||
+
+'<tr><td colspan="5">Nenhum pagamento.</td></tr>';
+
+}
+
+
+
+/* ================================
+DASHBOARD
+================================ */
+
+function renderDashboard(){
+
+const totalExpenses =
+state.expenses
+.reduce(
+(a,x)=>a+Number(x.value),
+0
+);
+
+
+const totalPaid =
+state.payments
+.reduce(
+(a,x)=>a+Number(x.value),
+0
+);
+
+
+const seats =
+state.boatConfig.left
++
+state.boatConfig.right
++
+state.boatConfig.popa;
+
+
+
+dashboardStats.innerHTML =
+
+`
+
+<div class="stat">
+
+<b>
+${state.participants.length}
+</b>
+
+<span>
+Participantes
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<b>
+${seats}
+</b>
+
+<span>
+Vagas no barco
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<b>
+${state.schedule.length}
+</b>
+
+<span>
+Turnos gerados
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<b>
+${money(totalExpenses)}
+</b>
+
+<span>
+Despesas
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<b>
+${money(totalPaid)}
+</b>
+
+<span>
+Pagamentos
+</span>
+
+</div>
+
+`;
+
+}
+
+
+
+/* ================================
+RENDER GERAL
+================================ */
+
+function renderAll(){
+
+eventName.value =
+state.eventName;
+
+
+tripStart.value =
+state.tripStart;
+
+
+tripEnd.value =
+state.tripEnd;
+
+
+inicioPescaInput.value =
+state.tripStart;
+
+
+fimPescaInput.value =
+state.tripEnd;
+
+
+if(
+!turnHours.value
+){
+
+turnHours.value = 4;
+
+}
+
+
+fillBoatInputs();
+
+
+renderParticipants();
+
+
+renderSchedule();
+
+
+renderBoatSelect();
+
+
+renderBoat();
+
+
+renderFinance();
+
+
+renderDashboard();
+
+}
+
+
+
+/* INICIALIZAÇÃO */
+
+renderAll();
+
+
 </script>
+
 </body>
 </html>
