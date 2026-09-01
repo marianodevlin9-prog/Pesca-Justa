@@ -86,7 +86,7 @@ th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 .progress { height: 12px; background: #0f172a; border-radius: 999px; overflow: hidden; margin-top: 12px; border: 1px solid #334155; }
 .progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
 
-/* LAYOUT DO BARCO CONFORME A IMAGEM REFERÊNCIA */
+/* LAYOUT DO BARCO */
 .boat-layout-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; margin-top: 15px; }
 @media(max-width: 900px) { .boat-layout-container { grid-template-columns: 1fr; } }
 
@@ -95,10 +95,10 @@ th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 .boat-ctrl-box label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; }
 .boat-ctrl-box input { height: 35px; background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: bold; text-align: center; }
 
-/* CASCO DO BARCO (FRENTE ARREDONDADA ACIMA) */
+/* CASCO DO BARCO */
 .boat-hull { position: relative; width: 100%; max-width: 750px; height: 750px; margin: auto; border: 4px solid var(--accent); border-radius: 220px 220px 30px 30px; background: #1d4ed8; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); }
 .boat-top-turns { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-.turn-card-mini { background: #1e40af; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 12px; min-width: 150px; font-size: 11px; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.turn-card-mini { background: #1e40af; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 12px; min-width: 170px; font-size: 11px; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 .turn-card-mini strong { display: block; color: #fde047; margin-bottom: 2px; }
 
 .boat-deck-area { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; margin-top: 10px; }
@@ -163,7 +163,6 @@ footer strong { color: var(--accent); }
   <!-- ================= ABA 1: GESTÃO & CADASTRO ================= -->
   <div id="tab-gestao" class="tab-content active">
     
-    <!-- DETALHES DA PESCA E RESUMO FINANCEIRO -->
     <section class="card">
       <h2>⚓ Informações da Pesca & Resumo</h2>
       <form id="pescaInfoForm" onsubmit="salvarInfoPesca(event)">
@@ -185,7 +184,6 @@ footer strong { color: var(--accent); }
       </div>
     </section>
 
-    <!-- PROGRESSO -->
     <section class="card">
       <h2>📈 Progresso Financeiro</h2>
       <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
@@ -195,12 +193,11 @@ footer strong { color: var(--accent); }
       <div class="progress"><div id="progressBar"></div></div>
     </section>
 
-    <!-- CADASTRO DO BARCO (EXATAMENTE COMO NA SUA IMAGEM) -->
+    <!-- CADASTRO DO BARCO -->
     <section class="card">
       <h2>🚤 Cadastro e Configuração do Barco</h2>
       
       <div class="boat-layout-container">
-        <!-- PAINEL DE CONTROLE LATERAL ESQUERDO -->
         <div class="boat-controls-panel">
           <div class="boat-ctrl-box">
             <label>Quantidade de bancos popa</label>
@@ -211,32 +208,28 @@ footer strong { color: var(--accent); }
             <input type="number" id="cfgCapPopa" value="2" min="0" onchange="atualizarConfigBarco()">
           </div>
           <div class="boat-ctrl-box">
-            <label>Quantidade de bancos lado esquerdo do barco</label>
+            <label>Quantidade de bancos lado esquerdo</label>
             <input type="number" id="cfgBancosEsq" value="3" min="0" onchange="atualizarConfigBarco()">
           </div>
           <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco lado esquerdo</label>
+            <label>Capacidade de pessoas banco esquerdo</label>
             <input type="number" id="cfgCapEsq" value="1" min="0" onchange="atualizarConfigBarco()">
           </div>
           <div class="boat-ctrl-box">
-            <label>Quantidade de bancos lado direito do barco</label>
+            <label>Quantidade de bancos lado direito</label>
             <input type="number" id="cfgBancosDir" value="3" min="0" onchange="atualizarConfigBarco()">
           </div>
           <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco lado direito</label>
+            <label>Capacidade de pessoas banco direito</label>
             <input type="number" id="cfgCapDir" value="1" min="0" onchange="atualizarConfigBarco()">
           </div>
         </div>
 
-        <!-- CASCO DO BARCO COM OS CARDS DE TURNOS NO TOPO -->
         <div>
-          <div class="boat-top-turns" id="boatTopTurnsContainer">
-            <!-- Cards de turnos gerados dinamicamente no topo -->
-          </div>
+          <div class="boat-top-turns" id="boatTopTurnsContainer"></div>
           
           <div class="boat-hull" style="margin-top: 15px;">
             <div class="boat-deck-area">
-              <!-- Lado Esquerdo e Direito (Meio) -->
               <div class="boat-row-middle">
                 <div class="side-label">Lado esquerdo do barco</div>
                 <div style="display:flex; flex-direction:column; gap:8px;" id="mapSeatsEsq"></div>
@@ -244,7 +237,6 @@ footer strong { color: var(--accent); }
                 <div class="side-label">Lado direito do barco</div>
               </div>
 
-              <!-- Popa (Fundo) -->
               <div>
                 <div class="seats-row" id="mapSeatsPopa"></div>
                 <div class="popa-label">Popa</div>
@@ -293,10 +285,10 @@ footer strong { color: var(--accent); }
       </div>
     </section>
 
-    <!-- TABELA DE TURNOS NA PRIMEIRA ABA (LOGO APÓS AS FOTOS) -->
+    <!-- TABELA DE TURNOS & CRONOGRAMA -->
     <section class="card">
       <h2>⏱️ Tabela de Turnos & Cronograma</h2>
-      <p class="muted" style="margin-bottom: 12px;">Cadastre manualmente ou gere automaticamente os turnos para dividir igualitariamente o tempo entre os pescadores.</p>
+      <p class="muted" style="margin-bottom: 12px;">Gere automaticamente os turnos para distribuir os pescadores sem repetição simultânea de posições.</p>
       
       <div class="form-grid">
         <div class="form-group"><label>Quantidade de Turnos</label><input type="number" id="numTurnosInput" value="13" min="1" max="50"></div>
@@ -326,7 +318,7 @@ footer strong { color: var(--accent); }
       </div>
     </section>
 
-    <!-- GALERIA DE FOTOS DA EMBARCAÇÃO -->
+    <!-- GALERIA, FINANCEIRO, ETC -->
     <section class="card">
       <h2>📸 Fotos da Embarcação</h2>
       <div class="upload-box">
@@ -337,7 +329,6 @@ footer strong { color: var(--accent); }
       <div class="preview-grid" id="previewGrid"></div>
     </section>
 
-    <!-- FINANCEIRO E PAGAMENTOS -->
     <section class="card">
       <h2>💳 Registrar Pagamento</h2>
       <div class="form-row">
@@ -382,7 +373,6 @@ footer strong { color: var(--accent); }
 
   <!-- ================= ABA 2: EXPEDIÇÃO & TIMER ================= -->
   <div id="tab-expedicao" class="tab-content">
-    
     <section class="card">
       <h2>⏱️ Controle de Turnos & Timer em Tempo Real</h2>
       <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
@@ -405,7 +395,6 @@ footer strong { color: var(--accent); }
         </div>
       </div>
 
-      <!-- DESENHO DO CONVÉS COM FRENTE ARREDONDADA -->
       <div class="deck-view">
         <div class="deck-section" style="border-color: #facc15; background: rgba(250, 204, 21, 0.05);">
           <div class="deck-section-title" style="color: #facc15;">🌊 FRENTE DO BARCO (PROA)</div>
@@ -427,7 +416,6 @@ footer strong { color: var(--accent); }
         </div>
       </div>
     </section>
-
   </div>
 
 </main>
@@ -438,9 +426,8 @@ footer strong { color: var(--accent); }
 
 <div class="toast" id="toast"></div>
 
-<!-- LÓGICA E SCRIPTS INTEGRADOS -->
 <script>
-const STORAGE_KEY = 'pesca-justa-html-v3';
+const STORAGE_KEY = 'pesca-justa-html-v5';
 const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
 
 let state = {
@@ -517,26 +504,16 @@ function atualizarConfigBarco() {
 
 function renderMapaBarco() {
   const cfg = state.barcoConfig;
-  
-  // Renderizar Lado Esquerdo
   let htmlEsq = '';
-  for(let i=1; i<=cfg.bancosEsq; i++) {
-    htmlEsq += `<div class="boat-seat">Banco Esq ${i}<span>(${cfg.capEsq} pes.)</span></div>`;
-  }
+  for(let i=1; i<=cfg.bancosEsq; i++) htmlEsq += `<div class="boat-seat">Banco Esq ${i}<span>(${cfg.capEsq} pes.)</span></div>`;
   document.getElementById('mapSeatsEsq').innerHTML = htmlEsq || '<div class="muted">Nenhum</div>';
 
-  // Renderizar Lado Direito
   let htmlDir = '';
-  for(let i=1; i<=cfg.bancosDir; i++) {
-    htmlDir += `<div class="boat-seat">Banco Dir ${i}<span>(${cfg.capDir} pes.)</span></div>`;
-  }
+  for(let i=1; i<=cfg.bancosDir; i++) htmlDir += `<div class="boat-seat">Banco Dir ${i}<span>(${cfg.capDir} pes.)</span></div>`;
   document.getElementById('mapSeatsDir').innerHTML = htmlDir || '<div class="muted">Nenhum</div>';
 
-  // Renderizar Popa
   let htmlPopa = '';
-  for(let i=1; i<=cfg.bancosPopa; i++) {
-    htmlPopa += `<div class="boat-seat">Popa ${i}<span>(${cfg.capPopa} pes.)</span></div>`;
-  }
+  for(let i=1; i<=cfg.bancosPopa; i++) htmlPopa += `<div class="boat-seat">Popa ${i}<span>(${cfg.capPopa} pes.)</span></div>`;
   document.getElementById('mapSeatsPopa').innerHTML = htmlPopa || '<div class="muted">Nenhum</div>';
 }
 
@@ -691,9 +668,11 @@ function render() {
     <td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${money(x.value)}</td>
     <td><button class="small danger" onclick="deletePayment('${x.id}')">Remover</button></td>
   </tr>`).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
+
+  renderCardsTopoBarco();
 }
 
-/* ================= LÓGICA DE CRONOGRAMA & TIMER ================= */
+/* ================= CRONOGRAMA & ROTAÇÃO SEM REPETIÇÃO ================= */
 let timerInterval = null;
 let tempoRestanteSegundos = 0;
 let turnoIndex = 0;
@@ -729,26 +708,27 @@ function gerarCronogramaTurnos() {
   const duracaoTurnoMs = duracaoTotalMs / numTurnos;
   const cfg = state.barcoConfig;
 
+  const esqCount = cfg.bancosEsq * cfg.capEsq;
+  const dirCount = cfg.bancosDir * cfg.capDir;
+  const popaCount = cfg.bancosPopa * cfg.capPopa;
+  const totalVagas = esqCount + dirCount + popaCount;
+
   state.cronograma = [];
   let horaAtual = new Date(inicioMs);
 
   for(let i=0; i<numTurnos; i++) {
     let horaFim = new Date(horaAtual.getTime() + duracaoTurnoMs);
     
-    let totalVagas = (cfg.bancosEsq * cfg.capEsq) + (cfg.bancosDir * cfg.capDir) + (cfg.bancosPopa * cfg.capPopa);
-    if(totalVagas === 0) totalVagas = 1;
-
+    // Distribuição com offset sequencial (i * totalVagas ou i isolado) para garantir que ninguém repita posição no mesmo turno e ocorra o rodízio correto
     let pescadoresTurno = [];
     for(let j=0; j<totalVagas; j++) {
-      pescadoresTurno.push(nomes[(i + j) % nomes.length]);
+      let indexPessoa = (i + j) % nomes.length;
+      pescadoresTurno.push(nomes[indexPessoa]);
     }
-
-    let esqCount = cfg.bancosEsq * cfg.capEsq;
-    let dirCount = cfg.bancosDir * cfg.capDir;
 
     let pEsq = pescadoresTurno.slice(0, esqCount);
     let pDir = pescadoresTurno.slice(esqCount, esqCount + dirCount);
-    let pPopa = pescadoresTurno.slice(esqCount + dirCount);
+    let pPopa = pescadoresTurno.slice(esqCount + dirCount, totalVagas);
 
     state.cronograma.push({
       turno: i + 1,
@@ -770,15 +750,26 @@ function gerarCronogramaTurnos() {
 
 function renderCardsTopoBarco() {
   const container = document.getElementById('boatTopTurnsContainer');
+  
+  let despesasHtml = '<div style="margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.3); font-size:10px; color:#f8fafc;"><strong>Despesas:</strong> ';
+  if(state.expenses.length > 0) {
+    despesasHtml += state.expenses.map(e => `${e.desc} (${money(e.value)})`).join(', ');
+  } else {
+    despesasHtml += 'Nenhuma cadastrada';
+  }
+  despesasHtml += '</div>';
+
   if(!state.cronograma.length) {
-    container.innerHTML = '<div class="turn-card-mini"><strong>Turnos</strong>Gere o cronograma abaixo.</div>';
+    container.innerHTML = `<div class="turn-card-mini"><strong>Turnos & Despesas</strong>Gere o cronograma abaixo.${despesasHtml}</div>`;
     return;
   }
+
   container.innerHTML = state.cronograma.map(c => `
     <div class="turn-card-mini">
       <strong>Turno ${c.turno}</strong>
       Inicia às: ${formatarHoraCurta(new Date(c.inicio))}<br>
       Finaliza às: ${formatarHoraCurta(new Date(c.fim))}
+      ${despesasHtml}
     </div>
   `).join('');
 }
@@ -881,12 +872,12 @@ function formatarHoraCurta(data) {
 
 function processarFotos(e) {
   const files = Array.from(e.target.files);
-  let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
+  let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v4') || '[]');
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = function(evt) {
       fotosSalvas.push(evt.target.result);
-      localStorage.setItem('pescaria_fotos_v3', JSON.stringify(fotosSalvas));
+      localStorage.setItem('pescaria_fotos_v4', JSON.stringify(fotosSalvas));
       renderGaleria();
     };
     reader.readAsDataURL(file);
@@ -896,7 +887,7 @@ function processarFotos(e) {
 function renderGaleria() {
   const grid = document.getElementById('previewGrid');
   grid.innerHTML = '';
-  const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v3') || '[]');
+  const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v4') || '[]');
   fotosSalvas.forEach(imgSrc => {
     const div = document.createElement('div');
     div.className = 'img-container';
