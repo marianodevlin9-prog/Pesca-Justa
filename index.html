@@ -1,701 +1,592 @@
-/* =========================================================
-   REVEZAMENTO INTELIGENTE - PESCA JUSTA
-   ========================================================= */
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+<meta name="theme-color" content="#102033">
+<title>Pesca Justa</title>
+<style>
+:root{
+  --bg:#0f1722; --panel:#1b2738; --panel2:#243247; --line:#3a4b63;
+  --text:#eef5ff; --muted:#9db0c8; --accent:#38bdf8; --accent2:#22c55e;
+  --danger:#ef4444; --warning:#f59e0b; --input:#121c2b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0b1320,#101a28);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+header{position:sticky;top:0;z-index:20;background:rgba(15,23,34,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top{max-width:1250px;margin:auto;padding:14px 18px;display:flex;gap:15px;align-items:center;justify-content:space-between}
+.brand{font-size:22px;font-weight:800;color:#7dd3fc}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:400;margin-top:2px}
+nav{display:flex;gap:7px;flex-wrap:wrap}
+button,.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;background:#334155;color:white}
+button:hover{filter:brightness(1.1)} button.primary{background:#0284c7} button.success{background:#15803d}
+button.danger{background:#b91c1c} button.warning{background:#b45309} button.small{padding:6px 9px;font-size:12px}
+.nav-btn.active{background:#0284c7}
+main{max-width:1250px;margin:auto;padding:18px}
+.view{display:none}.view.active{display:block}
+.card{background:rgba(27,39,56,.97);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:15px;box-shadow:0 8px 25px rgba(0,0,0,.14)}
+.card h2,.card h3{margin:0 0 8px}.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+label{font-size:12px;font-weight:700;color:#b7c9df;display:block;margin-bottom:5px}
+input,select{width:100%;background:var(--input);border:1px solid var(--line);border-radius:7px;color:white;padding:10px;min-height:40px}
+input:focus,select:focus{outline:2px solid rgba(56,189,248,.3);border-color:var(--accent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:820px}
+th{background:#172233;color:#8fd3ff;text-align:left}th,td{padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#25364d;margin:2px;font-size:11px}
+.paid{color:#86efac;font-weight:bold}.due{color:#fca5a5;font-weight:bold}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:15px}
+.stat{padding:14px;border-radius:10px;background:#182536;border:1px solid var(--line)}.stat b{display:block;font-size:22px;color:#7dd3fc}.stat span{font-size:11px;color:var(--muted)}
+.boat-wrap{overflow:auto;padding:10px;background:#0d1724;border-radius:10px;border:1px solid var(--line)}
+.boat{position:relative;width:900px;height:430px;margin:auto;background:linear-gradient(90deg,#dbeafe,#93c5fd);clip-path:polygon(18% 2%,82% 2%,96% 22%,92% 88%,76% 98%,24% 98%,8% 88%,4% 22%);border:5px solid #0f172a;box-shadow:inset 0 0 0 8px rgba(15,23,42,.3)}
+.boat-title{position:absolute;left:0;right:0;text-align:center;top:12px;color:#0f172a;font-weight:900;font-size:18px}
+.side{position:absolute;top:95px;bottom:70px;width:150px;display:flex;flex-direction:column;gap:13px;justify-content:center}
+.left-side{left:70px}.right-side{right:70px}
+.popa{position:absolute;left:280px;right:280px;bottom:40px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.seat{min-height:52px;background:#8b5a2b;border:3px solid #5b3518;border-radius:8px;padding:6px;color:white;font-size:11px;text-align:center;display:flex;align-items:center;justify-content:center;font-weight:bold;cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,.25)}
+.seat.selected{outline:4px solid #facc15}.seat.empty{background:#64748b}.seat .pos{display:block;font-size:9px;opacity:.8}
+.note{font-size:12px;color:#cbd5e1;background:#172536;padding:10px;border-radius:8px;border-left:3px solid var(--accent)}
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:50;padding:15px}.modal-back.show{display:flex}
+.modal{width:min(560px,100%);background:#182536;border:1px solid var(--line);border-radius:12px;padding:16px;max-height:90vh;overflow:auto}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0b1220;border:1px solid var(--accent);padding:11px 16px;border-radius:9px;z-index:100;display:none;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.toast.show{display:block}
+.badge{font-size:11px;padding:4px 7px;border-radius:6px;background:#334155}
+@media(max-width:700px){
+  .top{align-items:flex-start;flex-direction:column}.top nav{width:100%}.nav-btn{flex:1;padding:9px 6px;font-size:11px}
+  main{padding:10px}.card{padding:12px}.grid{grid-template-columns:1fr 1fr}.grid .wide{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">🎣 Pesca Justa <small>Organização, financeiro, vagas e revezamento inteligente</small></div>
+    <nav>
+      <button class="nav-btn active" data-view="dashboard">Início</button>
+      <button class="nav-btn" data-view="participantes">Participantes</button>
+      <button class="nav-btn" data-view="vagas">Vagas & Barco</button>
+      <button class="nav-btn" data-view="turnos">Turnos</button>
+      <button class="nav-btn" data-view="financeiro">Financeiro</button>
+    </nav>
+  </div>
+</header>
 
-function embaralhar(lista) {
-  const copia = [...lista];
+<main>
+<section id="dashboard" class="view active">
+  <div class="stats" id="dashboardStats"></div>
+  <div class="card">
+    <h2>🛥️ Resumo da Pescaria</h2>
+    <p class="sub">Cadastre participantes, configure as vagas do barco, informe os custos e gere o revezamento.</p>
+    <div class="grid">
+      <div><label>Nome do evento</label><input id="eventName"></div>
+      <div><label>Data de início</label><input type="datetime-local" id="tripStart"></div>
+      <div><label>Data de término</label><input type="datetime-local" id="tripEnd"></div>
+    </div>
+    <div class="actions"><button class="primary" onclick="saveTripInfo()">Salvar informações</button></div>
+  </div>
+  <div class="card">
+    <h3>📋 Regras do revezamento inteligente</h3>
+    <div class="note">
+      O sistema nunca repete um pescador no mesmo turno. A prioridade é: <b>menos turnos pescados → quem descansou no turno anterior → maior tempo sem pescar</b>.
+      Depois, as posições são distribuídas para reduzir a repetição da mesma área do barco.
+    </div>
+  </div>
+</section>
 
-  for (let i = copia.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+<section id="participantes" class="view">
+  <div class="card">
+    <h2>👥 Participantes</h2>
+    <p class="sub">Adicione, edite ou remova os pescadores. Nomes duplicados não são permitidos.</p>
+    <div class="grid">
+      <div class="wide"><label>Nome do participante</label><input id="newParticipant" placeholder="Digite o nome do pescador"></div>
+    </div>
+    <div class="actions"><button class="primary" onclick="addParticipant()">Adicionar participante</button></div>
+  </div>
+  <div class="card"><div id="participantsList"></div></div>
+</section>
 
-    [copia[i], copia[j]] = [
-      copia[j],
-      copia[i]
-    ];
-  }
+<section id="vagas" class="view">
+  <div class="card">
+    <h2>🛥️ Configuração das Vagas</h2>
+    <p class="sub">Configure a quantidade de vagas. A configuração padrão é 3 esquerda, 3 direita e 4 na popa.</p>
+    <div class="grid">
+      <div><label>Vagas lado esquerdo</label><input type="number" min="0" id="vEsq"></div>
+      <div><label>Vagas lado direito</label><input type="number" min="0" id="vDir"></div>
+      <div><label>Vagas na popa</label><input type="number" min="0" id="vPopa"></div>
+    </div>
+    <div class="actions"><button class="primary" onclick="saveBoatConfig()">Salvar configuração</button></div>
+  </div>
+  <div class="card">
+    <h3>Vista superior do barco</h3>
+    <p class="sub">Os nomes dos pescadores aparecem diretamente nas vagas quando um turno é selecionado.</p>
+    <div class="grid">
+      <div><label>Visualizar turno</label><select id="boatTurnSelect" onchange="renderBoat()"></select></div>
+    </div>
+    <div class="boat-wrap"><div class="boat" id="boat"></div></div>
+  </div>
+</section>
 
-  return copia;
+<section id="turnos" class="view">
+  <div class="card">
+    <h2>🎲 Tabela de Turnos & Cronograma</h2>
+    <p class="sub">O sistema calcula automaticamente o cronograma e realiza um revezamento equilibrado.</p>
+    <div class="grid">
+      <div><label>Horas por turno</label><input type="number" min="1" step="0.5" id="turnHours"></div>
+      <div><label>Início da pesca</label><input type="datetime-local" id="inicioPescaInput"></div>
+      <div><label>Fim da pesca</label><input type="datetime-local" id="fimPescaInput"></div>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="generateSchedule()">Gerar Cronograma Inteligente</button>
+      <button class="danger" onclick="clearSchedule()">Limpar cronograma</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Turno</th><th>Início</th><th>Fim (saída)</th><th>Lado esquerdo</th><th>Lado direito</th><th>Popa</th><th>Descansando</th></tr></thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <h3>📊 Equilíbrio do revezamento</h3>
+    <div class="table-wrap">
+      <table><thead><tr><th>Pescador</th><th>Turnos</th><th>Descansos</th><th>Esquerda</th><th>Direita</th><th>Popa</th></tr></thead>
+      <tbody id="fairnessBody"></tbody></table>
+    </div>
+  </div>
+</section>
+
+<section id="financeiro" class="view">
+  <div class="card">
+    <h2>💰 Financeiro & Rateio</h2>
+    <p class="sub">Cadastre despesas por categoria. O sistema calcula automaticamente a parte de cada pescador e mostra apenas pagamentos realmente registrados.</p>
+    <div class="grid">
+      <div><label>Categoria</label><select id="expenseCategory"><option>Barco</option><option>Isca</option><option>Gelo</option><option>Alimentação</option><option>Bebidas</option><option>Churrasco</option><option>Combustível</option><option>Outros</option></select></div>
+      <div><label>Descrição</label><input id="expenseDescription" placeholder="Ex.: Aluguel do barco"></div>
+      <div><label>Valor total (R$)</label><input id="expenseValue" type="number" min="0" step="0.01"></div>
+    </div>
+    <div class="actions"><button class="primary" onclick="addExpense()">Adicionar despesa</button></div>
+  </div>
+
+  <div class="card">
+    <h3>💵 Registrar pagamento</h3>
+    <div class="grid">
+      <div><label>Pescador</label><select id="paymentParticipant"></select></div>
+      <div><label>Categoria / referência</label><select id="paymentCategory"><option value="Geral">Geral</option></select></div>
+      <div><label>Valor pago (R$)</label><input id="paymentValue" type="number" min="0.01" step="0.01"></div>
+    </div>
+    <div class="actions"><button class="success" onclick="addPayment()">Registrar pagamento</button></div>
+  </div>
+
+  <div class="card"><h3>Despesas cadastradas</h3><div class="table-wrap"><table><thead><tr><th>Categoria</th><th>Descrição</th><th>Valor</th><th></th></tr></thead><tbody id="expenseBody"></tbody></table></div></div>
+
+  <div class="card"><h3>📌 Situação por pescador</h3><div class="table-wrap"><table><thead><tr><th>Pescador</th><th>Deve pagar</th><th>Já pagou</th><th>Saldo</th><th>Situação</th></tr></thead><tbody id="financialBody"></tbody></table></div></div>
+
+  <div class="card"><h3>Histórico de pagamentos</h3><div class="table-wrap"><table><thead><tr><th>Data</th><th>Pescador</th><th>Categoria</th><th>Valor</th><th></th></tr></thead><tbody id="paymentBody"></tbody></table></div></div>
+</section>
+</main>
+
+<div id="toast" class="toast"></div>
+
+<div class="modal-back" id="editModal">
+  <div class="modal">
+    <h3>Editar participante</h3>
+    <input id="editParticipantName">
+    <div class="actions">
+      <button class="primary" onclick="confirmEditParticipant()">Salvar</button>
+      <button onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY='pescaJusta_v3';
+let editingParticipantId=null;
+
+const defaultState={
+  eventName:'Pesca Justa',
+  tripStart:'2026-10-17T10:00',
+  tripEnd:'2026-10-18T10:00',
+  participants:[],
+  boatConfig:{left:3,right:3,popa:4},
+  schedule:[],
+  expenses:[],
+  payments:[]
+};
+
+let state=load();
+
+function load(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return saved?{...structuredClone(defaultState),...saved}:structuredClone(defaultState);
+  }catch(e){return structuredClone(defaultState)}
+}
+function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function toast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove('show'),3200);
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function fmtDate(v){
+  const d=new Date(v); return d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');document.getElementById(btn.dataset.view).classList.add('active');
+}));
+
+function saveTripInfo(){
+  state.eventName=document.getElementById('eventName').value.trim()||'Pesca Justa';
+  state.tripStart=document.getElementById('tripStart').value;
+  state.tripEnd=document.getElementById('tripEnd').value;
+  document.getElementById('inicioPescaInput').value=state.tripStart;
+  document.getElementById('fimPescaInput').value=state.tripEnd;
+  persist();toast('Informações salvas.');
 }
 
+function addParticipant(){
+  const input=document.getElementById('newParticipant');
+  const name=input.value.trim();
+  if(!name)return toast('Digite o nome do participante.');
+  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase()))return toast('Este participante já está cadastrado.');
+  state.participants.push({id:uid(),name});input.value='';persist();renderAll();toast('Participante adicionado.');
+}
+function renderParticipants(){
+  const box=document.getElementById('participantsList');
+  if(!state.participants.length){box.innerHTML='<p class="sub">Nenhum participante cadastrado.</p>';return}
+  box.innerHTML='<div class="table-wrap"><table><thead><tr><th>#</th><th>Nome</th><th>Ações</th></tr></thead><tbody>'+
+  state.participants.map((p,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(p.name)}</td><td><button class="small primary" onclick="editParticipant('${p.id}')">Editar</button> <button class="small danger" onclick="removeParticipant('${p.id}')">Excluir</button></td></tr>`).join('')+
+  '</tbody></table></div>';
+}
+function editParticipant(id){
+  const p=state.participants.find(x=>x.id===id);if(!p)return;
+  editingParticipantId=id;document.getElementById('editParticipantName').value=p.name;document.getElementById('editModal').classList.add('show');
+}
+function closeModal(){editingParticipantId=null;document.getElementById('editModal').classList.remove('show')}
+function confirmEditParticipant(){
+  const p=state.participants.find(x=>x.id===editingParticipantId);const name=document.getElementById('editParticipantName').value.trim();
+  if(!p||!name)return toast('Digite um nome válido.');
+  if(state.participants.some(x=>x.id!==p.id&&x.name.toLowerCase()===name.toLowerCase()))return toast('Já existe participante com esse nome.');
+  p.name=name;state.schedule=[];persist();closeModal();renderAll();toast('Nome atualizado. O cronograma anterior foi limpo.');
+}
+function removeParticipant(id){
+  if(!confirm('Excluir este participante?'))return;
+  state.participants=state.participants.filter(p=>p.id!==id);state.schedule=[];persist();renderAll();
+}
 
-function gerarCronogramaTurnos() {
+function saveBoatConfig(){
+  const left=Math.max(0,parseInt(document.getElementById('vEsq').value)||0);
+  const right=Math.max(0,parseInt(document.getElementById('vDir').value)||0);
+  const popa=Math.max(0,parseInt(document.getElementById('vPopa').value)||0);
+  if(left+right+popa<=0)return toast('Informe pelo menos uma vaga.');
+  state.boatConfig={left,right,popa};state.schedule=[];persist();renderAll();toast('Configuração salva. Cronograma anterior foi limpo.');
+}
+function fillBoatInputs(){
+  document.getElementById('vEsq').value=state.boatConfig.left;
+  document.getElementById('vDir').value=state.boatConfig.right;
+  document.getElementById('vPopa').value=state.boatConfig.popa;
+}
 
-  /* =======================================================
-     1 - PREPARAR PARTICIPANTES
-     ======================================================= */
+function generateSchedule(){
+  const names=[...new Set(state.participants.map(p=>p.name.trim()).filter(Boolean))];
+  const cfg=state.boatConfig;
+  const total=cfg.left+cfg.right+cfg.popa;
 
-  const nomes = [
-    ...new Set(
-      state.participants
-        .map(p => (p.name || '').trim())
-        .filter(nome => nome !== '')
-    )
-  ];
-
-
-  if (nomes.length === 0) {
-    return toast('Cadastre pescadores primeiro.');
+  if(!names.length)return toast('Cadastre os participantes primeiro.');
+  if(total<=0)return toast('Configure pelo menos uma vaga no barco.');
+  if(names.length<total){
+    return toast(`Há ${names.length} pescadores para ${total} vagas. Nesse caso não é possível evitar repetição no mesmo turno.`);
   }
 
+  const hours=parseFloat(document.getElementById('turnHours').value)||4;
+  const startDate=new Date(document.getElementById('inicioPescaInput').value);
+  const endDate=new Date(document.getElementById('fimPescaInput').value);
 
-  /* =======================================================
-     2 - CONFIGURAÇÕES DE TEMPO
-     ======================================================= */
-
-  const horasPorTurno =
-    parseFloat(
-      document.getElementById(
-        'horasPorTurnoInput'
-      ).value
-    ) || 4;
-
-
-  const inicioStr =
-    document.getElementById(
-      'inicioPescaInput'
-    ).value;
-
-
-  const fimStr =
-    document.getElementById(
-      'fimPescaInput'
-    ).value;
-
-
-  const inicioMs =
-    new Date(inicioStr).getTime();
-
-  const fimMs =
-    new Date(fimStr).getTime();
-
-
-  if (fimMs <= inicioMs) {
-    return toast(
-      'A data/hora final deve ser posterior ao início.'
-    );
+  if(Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate<=startDate){
+    return toast('Informe datas e horários válidos.');
   }
 
+  const duration=hours*3600000;
+  const turns=Math.ceil((endDate-startDate)/duration);
 
-  const duracaoTurnoMs =
-    horasPorTurno * 60 * 60 * 1000;
+  /*
+    REVEZAMENTO FORÇADO
 
+    Exemplo: 13 pescadores e 10 vagas
+    - em cada turno 3 descansam;
+    - os 3 que descansaram entram obrigatoriamente no turno seguinte;
+    - para abrir essas 3 vagas, exatamente 3 pescadores do turno anterior
+      passam a descansar.
 
-  const duracaoTotalHoras =
-    (fimMs - inicioMs) /
-    (1000 * 60 * 60);
+    Assim, entre dois turnos consecutivos existem no máximo 7 nomes iguais.
+    Os 3 nomes que descansaram nunca ficam fora novamente no turno seguinte.
+  */
+  const restCount=names.length-total;
 
-
-  const numTurnos =
-    Math.ceil(
-      duracaoTotalHoras /
-      horasPorTurno
-    );
-
-
-  /* =======================================================
-     3 - CONFIGURAÇÃO DO BARCO
-     ======================================================= */
-
-  const cfg =
-    state.barcoConfig;
-
-
-  const esqCount =
-    cfg.bancosEsq *
-    cfg.capEsq;
-
-
-  const dirCount =
-    cfg.bancosDir *
-    cfg.capDir;
-
-
-  const popaCount =
-    cfg.bancosPopa *
-    cfg.capPopa;
-
-
-  const totalVagas =
-    esqCount +
-    dirCount +
-    popaCount;
-
-
-  if (totalVagas <= 0) {
-    return toast(
-      'Configure corretamente as vagas do barco.'
-    );
-  }
-
-
-  if (nomes.length < totalVagas) {
-    return toast(
-      `Existem ${nomes.length} pescadores para ${totalVagas} vagas. ` +
-      `Cadastre mais pescadores ou reduza as vagas.`
-    );
-  }
-
-
-  /* =======================================================
-     4 - ESTATÍSTICAS DE CADA PESCADOR
-     ======================================================= */
-
-  const estatisticas = {};
-
-
-  nomes.forEach(nome => {
-
-    estatisticas[nome] = {
-
-      // Quantidade total de turnos pescados
-      turnos: 0,
-
-      // Quantidade de vezes em cada área
-      esquerda: 0,
-      direita: 0,
-      popa: 0,
-
-      // Último turno em que participou
-      ultimoTurno: -999,
-
-      // Última posição
-      ultimaArea: null,
-
-      // Quantidade de descansos
-      descansos: 0
-
+  const stats={};
+  names.forEach((n,i)=>{
+    stats[n]={
+      turns:0,
+      rests:0,
+      consecutive:0,
+      left:0,
+      right:0,
+      popa:0,
+      lastArea:null,
+      tie:i
     };
-
   });
 
-
-  /*
-     Embaralha uma única vez para que,
-     quando houver empate entre pescadores,
-     não seja sempre o primeiro nome da lista
-     a receber prioridade.
-  */
-
-  const ordemInicial =
-    embaralhar(nomes);
-
-
-  /*
-     Número aleatório para desempate.
-  */
-
-  const prioridadeAleatoria = {};
-
-
-  ordemInicial.forEach(
-    (nome, index) => {
-
-      prioridadeAleatoria[nome] =
-        index;
-
-    }
-  );
-
-
-  /* =======================================================
-     5 - INICIAR CRONOGRAMA
-     ======================================================= */
-
-  state.cronograma = [];
-
-
-  let horaAtual =
-    new Date(inicioMs);
-
-
-  let participantesTurnoAnterior =
-    [];
-
-
-  /* =======================================================
-     6 - GERAR CADA TURNO
-     ======================================================= */
-
-  for (
-    let turnoAtual = 1;
-    turnoAtual <= numTurnos;
-    turnoAtual++
-  ) {
-
-
-    /* =====================================================
-       CALCULAR HORÁRIO DO TURNO
-       ===================================================== */
-
-    let proximaHoraMs =
-      horaAtual.getTime() +
-      duracaoTurnoMs;
-
-
-    if (
-      proximaHoraMs >
-      fimMs
-    ) {
-
-      proximaHoraMs =
-        fimMs;
-
-    }
-
-
-    const horaFim =
-      new Date(
-        proximaHoraMs
-      );
-
-
-    /* =====================================================
-       IDENTIFICAR QUEM DESCANSOU
-       ===================================================== */
-
-    const descansaram =
-      nomes.filter(
-        nome =>
-          !participantesTurnoAnterior
-            .includes(nome)
-      );
-
-
-    /*
-       A partir do segundo turno,
-       quem descansou recebe prioridade.
-    */
-
-
-    /* =====================================================
-       RANKING INTELIGENTE
-       ===================================================== */
-
-    const ranking =
-      [...nomes]
-        .sort(
-          (a, b) => {
-
-
-            const ea =
-              estatisticas[a];
-
-            const eb =
-              estatisticas[b];
-
-
-            /* ---------------------------------------------
-               PRIORIDADE 1
-               QUEM PESCOU MENOS TURNOS
-               --------------------------------------------- */
-
-            if (
-              ea.turnos !==
-              eb.turnos
-            ) {
-
-              return (
-                ea.turnos -
-                eb.turnos
-              );
-
-            }
-
-
-            /* ---------------------------------------------
-               PRIORIDADE 2
-               QUEM DESCANSOU NO TURNO ANTERIOR
-               --------------------------------------------- */
-
-            const aDescansou =
-              participantesTurnoAnterior.length > 0 &&
-              !participantesTurnoAnterior.includes(a);
-
-
-            const bDescansou =
-              participantesTurnoAnterior.length > 0 &&
-              !participantesTurnoAnterior.includes(b);
-
-
-            if (
-              aDescansou !==
-              bDescansou
-            ) {
-
-              return aDescansou
-                ? -1
-                : 1;
-
-            }
-
-
-            /* ---------------------------------------------
-               PRIORIDADE 3
-               QUEM ESTÁ HÁ MAIS TEMPO SEM PESCAR
-               --------------------------------------------- */
-
-            if (
-              ea.ultimoTurno !==
-              eb.ultimoTurno
-            ) {
-
-              return (
-                ea.ultimoTurno -
-                eb.ultimoTurno
-              );
-
-            }
-
-
-            /* ---------------------------------------------
-               PRIORIDADE 4
-               DESEMPATE ALEATÓRIO FIXO
-               --------------------------------------------- */
-
-            return (
-              prioridadeAleatoria[a] -
-              prioridadeAleatoria[b]
-            );
-
-          }
-        );
-
-
-    /*
-       Seleciona somente a quantidade
-       necessária para preencher o barco.
-    */
-
-    const pescadoresTurno =
-      ranking.slice(
-        0,
-        totalVagas
-      );
-
-
-    /* =====================================================
-       7 - CONTROLE DOS DESCANSOS
-       ===================================================== */
-
-    nomes.forEach(
-      nome => {
-
-        if (
-          !pescadoresTurno.includes(nome)
-        ) {
-
-          estatisticas[nome]
-            .descansos++;
-
-        }
-
-      }
-    );
-
-
-    /* =====================================================
-       8 - DISTRIBUIÇÃO INTELIGENTE NAS ÁREAS
-       ===================================================== */
-
-    const pescadoresDisponiveis =
-      [...pescadoresTurno];
-
-
-    /*
-       Função que escolhe pescadores
-       tentando evitar repetir a mesma área.
-    */
-
-
-    function escolherParaArea(
-      area,
-      quantidade
-    ) {
-
-      if (
-        quantidade <= 0
-      ) {
-
-        return [];
-
-      }
-
-
-      const ordenados =
-        pescadoresDisponiveis
-          .sort(
-            (a, b) => {
-
-
-              const ea =
-                estatisticas[a];
-
-              const eb =
-                estatisticas[b];
-
-
-              /*
-                 Quantidade de vezes
-                 que já ficou nesta área
-              */
-
-              const vezesA =
-                ea[area];
-
-              const vezesB =
-                eb[area];
-
-
-              if (
-                vezesA !==
-                vezesB
-              ) {
-
-                return (
-                  vezesA -
-                  vezesB
-                );
-
-              }
-
-
-              /*
-                 Evita repetir a mesma área
-                 do turno anterior
-              */
-
-              const aMesmaArea =
-                ea.ultimaArea === area
-                  ? 1
-                  : 0;
-
-
-              const bMesmaArea =
-                eb.ultimaArea === area
-                  ? 1
-                  : 0;
-
-
-              if (
-                aMesmaArea !==
-                bMesmaArea
-              ) {
-
-                return (
-                  aMesmaArea -
-                  bMesmaArea
-                );
-
-              }
-
-
-              /*
-                 Quem pescou menos
-                 tem prioridade
-              */
-
-              if (
-                ea.turnos !==
-                eb.turnos
-              ) {
-
-                return (
-                  ea.turnos -
-                  eb.turnos
-                );
-
-              }
-
-
-              return (
-                prioridadeAleatoria[a] -
-                prioridadeAleatoria[b]
-              );
-
-            }
-          );
-
-
-      const escolhidos =
-        ordenados.slice(
-          0,
-          quantidade
-        );
-
+  // Embaralhamento inicial apenas para o primeiro sorteio.
+  const firstOrder=shuffle([...names]);
+
+  let previousChosen=[];
+  let previousResting=[];
+  let now=new Date(startDate);
+  const schedule=[];
+
+  for(let t=1;t<=turns && now<endDate;t++){
+    const finish=new Date(Math.min(now.getTime()+duration,endDate.getTime()));
+
+    let chosen=[];
+    let resting=[];
+
+    if(t===1){
+      // Primeiro turno: sorteio inicial.
+      chosen=firstOrder.slice(0,total);
+      resting=firstOrder.slice(total);
+    }else{
+      /*
+        1) Quem descansou no turno anterior ENTRA OBRIGATORIAMENTE.
+      */
+      const mustEnter=[...previousResting];
 
       /*
-         Remove os escolhidos
-         da lista disponível.
+        2) Entre quem pescou no turno anterior, escolhemos quem vai descansar.
+           Prioridade para descansar:
+           - quem está há mais turnos consecutivos pescando;
+           - quem já pescou mais vezes;
+           - quem descansou menos vezes.
       */
+      const candidates=[...previousChosen].sort((a,b)=>{
+        const A=stats[a], B=stats[b];
 
-      escolhidos.forEach(
-        nome => {
+        if(A.consecutive!==B.consecutive) return B.consecutive-A.consecutive;
+        if(A.turns!==B.turns) return B.turns-A.turns;
+        if(A.rests!==B.rests) return A.rests-B.rests;
+        return A.tie-B.tie;
+      });
 
-          const index =
-            pescadoresDisponiveis
-              .indexOf(nome);
+      resting=candidates.slice(0,restCount);
 
-
-          if (
-            index >= 0
-          ) {
-
-            pescadoresDisponiveis
-              .splice(
-                index,
-                1
-              );
-
-          }
-
-        }
-      );
-
+      const continuing=previousChosen.filter(n=>!resting.includes(n));
 
       /*
-         Atualiza estatísticas
-         da área.
+        3) O novo turno é formado pelos que descansaram antes
+           + os que continuam. Isso garante troca real.
       */
+      chosen=[...mustEnter,...continuing];
 
-      escolhidos.forEach(
-        nome => {
+      /*
+        Segurança: caso alguma configuração futura deixe faltar vagas,
+        completa com quem estiver disponível e com menos turnos.
+      */
+      if(chosen.length<total){
+        const extras=names
+          .filter(n=>!chosen.includes(n)&&!resting.includes(n))
+          .sort((a,b)=>{
+            const A=stats[a],B=stats[b];
+            if(A.turns!==B.turns)return A.turns-B.turns;
+            return A.tie-B.tie;
+          })
+          .slice(0,total-chosen.length);
+        chosen.push(...extras);
+      }
 
-          estatisticas[nome]
-            [area]++;
+      /*
+        Segurança contra duplicidade dentro do turno.
+      */
+      chosen=[...new Set(chosen)].slice(0,total);
 
-          estatisticas[nome]
-            .ultimaArea =
-            area;
-
+      /*
+        Se ainda faltar alguém por uma configuração excepcional,
+        completa sem repetir nomes.
+      */
+      if(chosen.length<total){
+        for(const n of names){
+          if(!chosen.includes(n)){
+            chosen.push(n);
+            if(chosen.length===total)break;
+          }
         }
-      );
+      }
 
-
-      return escolhidos;
-
+      resting=names.filter(n=>!chosen.includes(n));
     }
 
-
     /*
-       Distribuição das áreas.
+      DISTRIBUIÇÃO DAS POSIÇÕES
+
+      A escolha da área tenta:
+      1. colocar o pescador na área em que esteve menos vezes;
+      2. evitar repetir a mesma área do turno anterior;
+      3. equilibrar a quantidade total de turnos.
     */
+    const available=[...chosen];
 
-    const pEsq =
-      escolherParaArea(
-        'esquerda',
-        esqCount
-      );
+    function chooseArea(area,count){
+      if(count<=0)return [];
 
+      available.sort((a,b)=>{
+        const A=stats[a],B=stats[b];
 
-    const pDir =
-      escolherParaArea(
-        'direita',
-        dirCount
-      );
+        if(A[area]!==B[area]) return A[area]-B[area];
 
+        const repeatA=A.lastArea===area?1:0;
+        const repeatB=B.lastArea===area?1:0;
+        if(repeatA!==repeatB)return repeatA-repeatB;
 
-    const pPopa =
-      escolherParaArea(
-        'popa',
-        popaCount
-      );
+        if(A.turns!==B.turns)return A.turns-B.turns;
 
+        return A.tie-B.tie;
+      });
 
-    /* =====================================================
-       9 - ATUALIZAR ESTATÍSTICAS DE PARTICIPAÇÃO
-       ===================================================== */
+      const picked=available.splice(0,count);
 
-    pescadoresTurno.forEach(
-      nome => {
+      picked.forEach(n=>{
+        stats[n][area]++;
+        stats[n].lastArea=area;
+      });
 
-        estatisticas[nome]
-          .turnos++;
+      return picked;
+    }
 
+    const left=chooseArea('left',cfg.left);
+    const right=chooseArea('right',cfg.right);
+    const popa=chooseArea('popa',cfg.popa);
 
-        estatisticas[nome]
-          .ultimoTurno =
-          turnoAtual;
-
-      }
-    );
-
-
-    /* =====================================================
-       10 - SALVAR TURNO
-       ===================================================== */
-
-    state.cronograma.push({
-
-      turno:
-        turnoAtual,
-
-      inicio:
-        new Date(
-          horaAtual
-        ),
-
-      fim:
-        new Date(
-          horaFim
-        ),
-
-      esq:
-        pEsq,
-
-      dir:
-        pDir,
-
-      popa:
-        pPopa,
-
-      descanso:
-        nomes.filter(
-          nome =>
-            !pescadoresTurno
-              .includes(nome)
-        )
-
+    chosen.forEach(n=>{
+      stats[n].turns++;
+      stats[n].consecutive++;
     });
 
+    resting.forEach(n=>{
+      stats[n].rests++;
+      stats[n].consecutive=0;
+    });
 
-    /*
-       Guarda participantes
-       para o próximo turno.
-    */
+    schedule.push({
+      turn:t,
+      start:now.toISOString(),
+      end:finish.toISOString(),
+      left,
+      right,
+      popa,
+      resting
+    });
 
-    participantesTurnoAnterior =
-      [...pescadoresTurno];
-
-
-    horaAtual =
-      horaFim;
-
-
-    if (
-      horaAtual.getTime() >=
-      fimMs
-    ) {
-
-      break;
-
-    }
-
+    previousChosen=[...chosen];
+    previousResting=[...resting];
+    now=finish;
   }
 
+  state.schedule=schedule;
+  persist();
+  renderAll();
 
-  /* =======================================================
-     11 - SALVAR E ATUALIZAR TELA
-     ======================================================= */
-
-  save();
-
-  renderTabelaCronograma();
-
-  renderCardsTopoBarco();
-
-
-  toast(
-    'Revezamento inteligente gerado com sucesso! 🎣'
-  );
-
+  if(restCount>0){
+    toast(`Revezamento inteligente gerado: ${restCount} pescador(es) trocam obrigatoriamente a cada turno.`);
+  }else{
+    toast('Cronograma gerado. Todos os pescadores ocupam as vagas disponíveis.');
+  }
 }
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function clearSchedule(){if(!confirm('Limpar o cronograma?'))return;state.schedule=[];persist();renderAll()}
+
+function renderSchedule(){
+  const body=document.getElementById('scheduleBody');
+  body.innerHTML=state.schedule.length?state.schedule.map(s=>`<tr><td><b>Turno ${s.turn}</b></td><td>${fmtDate(s.start)}</td><td>${fmtDate(s.end)}</td><td>${s.left.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</td><td>${s.right.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</td><td>${s.popa.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</td><td>${s.resting.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</td></tr>`).join(''):'<tr><td colspan="7" class="sub">Nenhum cronograma gerado.</td></tr>';
+
+  const st={};state.participants.forEach(p=>st[p.name]={turns:0,rests:0,left:0,right:0,popa:0});
+  state.schedule.forEach(s=>{s.left.forEach(n=>{st[n]&&(st[n].turns++,st[n].left++)});s.right.forEach(n=>{st[n]&&(st[n].turns++,st[n].right++)});s.popa.forEach(n=>{st[n]&&(st[n].turns++,st[n].popa++)});s.resting.forEach(n=>st[n]&&st[n].rests++)});
+  document.getElementById('fairnessBody').innerHTML=Object.entries(st).map(([n,x])=>`<tr><td>${escapeHtml(n)}</td><td>${x.turns}</td><td>${x.rests}</td><td>${x.left}</td><td>${x.right}</td><td>${x.popa}</td></tr>`).join('')||'<tr><td colspan="6" class="sub">Cadastre participantes.</td></tr>';
+}
+function renderBoatSelect(){
+  const sel=document.getElementById('boatTurnSelect');
+  const old=sel.value;sel.innerHTML='<option value="">Sem turno selecionado</option>'+state.schedule.map(s=>`<option value="${s.turn}">Turno ${s.turn} — ${fmtDate(s.start)}</option>`).join('');
+  if([...sel.options].some(o=>o.value===old))sel.value=old; else if(state.schedule.length)sel.value=state.schedule[0].turn;
+}
+function renderBoat(){
+  const selected=state.schedule.find(s=>String(s.turn)===document.getElementById('boatTurnSelect').value);
+  const boat=document.getElementById('boat');
+  const make=(arr,area)=>arr.map((n,i)=>`<div class="seat"><span><span class="pos">${area} ${i+1}</span>${escapeHtml(n)}</span></div>`).join('');
+  const empty=(count,area)=>Array.from({length:count},(_,i)=>`<div class="seat empty"><span><span class="pos">${area} ${i+1}</span>Vaga</span></div>`).join('');
+  const left=selected?selected.left:[],right=selected?selected.right:[],popa=selected?selected.popa:[];
+  boat.innerHTML=`<div class="boat-title">🎣 ${escapeHtml(state.eventName)}${selected?' — Turno '+selected.turn:''}</div>
+  <div class="side left-side">${left.length?make(left,'Esquerda'):empty(state.boatConfig.left,'Esquerda')}</div>
+  <div class="side right-side">${right.length?make(right,'Direita'):empty(state.boatConfig.right,'Direita')}</div>
+  <div class="popa">${popa.length?make(popa,'Popa'):empty(state.boatConfig.popa,'Popa')}</div>`;
+}
+
+function addExpense(){
+  const category=document.getElementById('expenseCategory').value;
+  const description=document.getElementById('expenseDescription').value.trim();
+  const value=parseFloat(document.getElementById('expenseValue').value);
+  if(!description||!(value>0))return toast('Informe descrição e valor da despesa.');
+  state.expenses.push({id:uid(),category,description,value});document.getElementById('expenseDescription').value='';document.getElementById('expenseValue').value='';persist();renderFinance();
+}
+function removeExpense(id){state.expenses=state.expenses.filter(x=>x.id!==id);persist();renderFinance()}
+function addPayment(){
+  const participant=document.getElementById('paymentParticipant').value;
+  const category=document.getElementById('paymentCategory').value;
+  const value=parseFloat(document.getElementById('paymentValue').value);
+  if(!participant||!(value>0))return toast('Selecione o pescador e informe um valor válido.');
+  state.payments.push({id:uid(),participant,category,value,date:new Date().toISOString()});
+  document.getElementById('paymentValue').value='';persist();renderFinance();toast('Pagamento registrado.');
+}
+function removePayment(id){state.payments=state.payments.filter(x=>x.id!==id);persist();renderFinance()}
+function renderFinance(){
+  const participants=state.participants.map(p=>p.name);
+  const total=state.expenses.reduce((a,x)=>a+Number(x.value),0);
+  const per=participants.length?total/participants.length:0;
+  document.getElementById('expenseBody').innerHTML=state.expenses.map(x=>`<tr><td>${escapeHtml(x.category)}</td><td>${escapeHtml(x.description)}</td><td>${money(x.value)}</td><td><button class="small danger" onclick="removeExpense('${x.id}')">Excluir</button></td></tr>`).join('')||'<tr><td colspan="4" class="sub">Nenhuma despesa cadastrada.</td></tr>';
+  const paySelect=document.getElementById('paymentParticipant');paySelect.innerHTML='<option value="">Selecione</option>'+participants.map(n=>`<option>${escapeHtml(n)}</option>`).join('');
+  const cat=[...new Set(state.expenses.map(x=>x.category))];document.getElementById('paymentCategory').innerHTML='<option value="Geral">Geral</option>'+cat.map(c=>`<option>${escapeHtml(c)}</option>`).join('');
+  document.getElementById('financialBody').innerHTML=participants.map(n=>{
+    const paid=state.payments.filter(x=>x.participant===n).reduce((a,x)=>a+Number(x.value),0);
+    const balance=per-paid;const status=balance<=0.009?'<span class="paid">PAGO</span>':'<span class="due">PENDENTE</span>';
+    return `<tr><td>${escapeHtml(n)}</td><td>${money(per)}</td><td>${money(paid)}</td><td>${money(Math.max(0,balance))}</td><td>${status}</td></tr>`;
+  }).join('')||'<tr><td colspan="5" class="sub">Cadastre participantes.</td></tr>';
+  document.getElementById('paymentBody').innerHTML=state.payments.map(x=>`<tr><td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${escapeHtml(x.participant)}</td><td>${escapeHtml(x.category)}</td><td>${money(x.value)}</td><td><button class="small danger" onclick="removePayment('${x.id}')">Excluir</button></td></tr>`).join('')||'<tr><td colspan="5" class="sub">Nenhum pagamento registrado.</td></tr>';
+}
+
+function renderDashboard(){
+  const totalExp=state.expenses.reduce((a,x)=>a+Number(x.value),0);
+  const totalPaid=state.payments.reduce((a,x)=>a+Number(x.value),0);
+  const seats=Object.values(state.boatConfig).reduce((a,x)=>a+Number(x),0);
+  document.getElementById('dashboardStats').innerHTML=`
+    <div class="stat"><b>${state.participants.length}</b><span>Participantes</span></div>
+    <div class="stat"><b>${seats}</b><span>Vagas por turno</span></div>
+    <div class="stat"><b>${state.schedule.length}</b><span>Turnos gerados</span></div>
+    <div class="stat"><b>${money(totalExp)}</b><span>Despesas</span></div>
+    <div class="stat"><b>${money(totalPaid)}</b><span>Pagamentos registrados</span></div>`;
+}
+function renderAll(){
+  document.getElementById('eventName').value=state.eventName;
+  document.getElementById('tripStart').value=state.tripStart;
+  document.getElementById('tripEnd').value=state.tripEnd;
+  document.getElementById('inicioPescaInput').value=state.tripStart;
+  document.getElementById('fimPescaInput').value=state.tripEnd;
+  if(!document.getElementById('turnHours').value)document.getElementById('turnHours').value=4;
+  fillBoatInputs();renderParticipants();renderSchedule();renderBoatSelect();renderBoat();renderFinance();renderDashboard();
+}
+renderAll();
+</script>
+</body>
+</html>
