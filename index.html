@@ -86,7 +86,6 @@ th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 .progress { height: 12px; background: #0f172a; border-radius: 999px; overflow: hidden; margin-top: 12px; border: 1px solid #334155; }
 .progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
 
-/* LAYOUT DO BARCO */
 .boat-layout-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; margin-top: 15px; }
 @media(max-width: 900px) { .boat-layout-container { grid-template-columns: 1fr; } }
 
@@ -95,7 +94,6 @@ th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 .boat-ctrl-box label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; }
 .boat-ctrl-box input { height: 35px; background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: bold; text-align: center; }
 
-/* CASCO DO BARCO */
 .boat-hull { position: relative; width: 100%; max-width: 750px; height: 750px; margin: auto; border: 4px solid var(--accent); border-radius: 220px 220px 30px 30px; background: #1d4ed8; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); }
 .boat-top-turns { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
 .turn-card-mini { background: #1e40af; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 12px; min-width: 170px; font-size: 11px; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -110,7 +108,6 @@ th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
 .boat-seat { background: #1e40af; border: 2px solid #93c5fd; border-radius: 8px; width: 110px; height: 55px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: bold; padding: 4px; text-align: center; }
 .boat-seat span { font-size: 9px; color: #fde047; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
 
-/* TIMER E CONVÉS — ABA 2 */
 .timer-panel { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; background: var(--input-bg); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; margin: 15px 0; gap: 10px; }
 .timer-box { text-align: center; }
 .timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
@@ -171,7 +168,7 @@ footer strong { color: var(--accent); }
           <div class="form-group"><label>📅 Data de Saída</label><input type="date" id="infoDataSaida" value="2026-10-17"></div>
           <div class="form-group"><label>⏰ Horário de Saída</label><input type="time" id="infoHoraSaida" value="10:00"></div>
           <div class="form-group"><label>📅 Data de Retorno</label><input type="date" id="infoDataRetorno" value="2026-10-18"></div>
-          <div class="form-group"><label>⏰ Horário de Retorno</label><input type="time" id="infoHoraRetorno" value="10:00"></div>
+          <div class="form-group"><label>⏰ Horário de Retorno</label><input type="time" id="infoHoraRetorno" value="04:00"></div>
         </div>
         <button type="submit" class="btn-action small">💾 Salvar Dados da Pesca</button>
       </form>
@@ -288,12 +285,12 @@ footer strong { color: var(--accent); }
     <!-- TABELA DE TURNOS & CRONOGRAMA -->
     <section class="card">
       <h2>⏱️ Tabela de Turnos & Cronograma</h2>
-      <p class="muted" style="margin-bottom: 12px;">Gere automaticamente os turnos para distribuir os pescadores sem repetição simultânea de posições.</p>
+      <p class="muted" style="margin-bottom: 12px;">Defina a quantidade de horas por turno e calcule automaticamente o cronograma de revezamento.</p>
       
       <div class="form-grid">
-        <div class="form-group"><label>Quantidade de Turnos</label><input type="number" id="numTurnosInput" value="13" min="1" max="50"></div>
-        <div class="form-group"><label>Início da Pesca</label><input type="datetime-local" id="inicioPescaInput" value="2026-10-17T13:00"></div>
-        <div class="form-group"><label>Fim da Pesca</label><input type="datetime-local" id="fimPescaInput" value="2026-10-18T07:00"></div>
+        <div class="form-group"><label>Horas por Turno</label><input type="number" id="horasPorTurnoInput" value="4" min="0.5" step="0.5"></div>
+        <div class="form-group"><label>Início da Pesca</label><input type="datetime-local" id="inicioPescaInput" value="2026-10-17T10:00"></div>
+        <div class="form-group"><label>Fim da Pesca</label><input type="datetime-local" id="fimPescaInput" value="2026-10-18T04:00"></div>
       </div>
       <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
         <button onclick="gerarCronogramaTurnos()" class="btn-action">Gerar Cronograma de Turnos</button>
@@ -427,7 +424,7 @@ footer strong { color: var(--accent); }
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'pesca-justa-html-v5';
+const STORAGE_KEY = 'pesca-justa-html-v6';
 const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
 
 let state = {
@@ -435,7 +432,7 @@ let state = {
   expenses: [],
   payments: [],
   barcoConfig: { bancosPopa: 2, capPopa: 2, bancosEsq: 3, capEsq: 1, bancosDir: 3, capDir: 1 },
-  infoPesca: { local: 'Laje de Santos', dataSaida: '2026-10-17', horaSaida: '10:00', dataRetorno: '2026-10-18', horaRetorno: '10:00' },
+  infoPesca: { local: 'Laje de Santos', dataSaida: '2026-10-17', horaSaida: '10:00', dataRetorno: '2026-10-18', horaRetorno: '04:00' },
   cronograma: []
 };
 
@@ -672,7 +669,7 @@ function render() {
   renderCardsTopoBarco();
 }
 
-/* ================= CRONOGRAMA & ROTAÇÃO SEM REPETIÇÃO ================= */
+/* ================= CRONOGRAMA & ROTAÇÃO BASEADA EM HORAS ================= */
 let timerInterval = null;
 let tempoRestanteSegundos = 0;
 let turnoIndex = 0;
@@ -696,7 +693,7 @@ function gerarCronogramaTurnos() {
   const nomes = state.participants.map(p => p.name);
   if(nomes.length === 0) return toast('Cadastre pescadores primeiro.');
 
-  const numTurnos = parseInt(document.getElementById('numTurnosInput').value) || nomes.length;
+  const horasPorTurno = parseFloat(document.getElementById('horasPorTurnoInput').value) || 4;
   const inicioStr = document.getElementById('inicioPescaInput').value;
   const fimStr = document.getElementById('fimPescaInput').value;
 
@@ -704,10 +701,11 @@ function gerarCronogramaTurnos() {
   const fimMs = new Date(fimStr).getTime();
   if(fimMs <= inicioMs) return toast('A data/hora final deve ser posterior ao início.');
 
-  const duracaoTotalMs = fimMs - inicioMs;
-  const duracaoTurnoMs = duracaoTotalMs / numTurnos;
-  const cfg = state.barcoConfig;
+  const duracaoTotalHoras = (fimMs - inicioMs) / (1000 * 60 * 60);
+  const duracaoTurnoMs = horasPorTurno * 3600 * 1000;
+  const numTurnos = Math.ceil(duracaoTotalHoras / horasPorTurno);
 
+  const cfg = state.barcoConfig;
   const esqCount = cfg.bancosEsq * cfg.capEsq;
   const dirCount = cfg.bancosDir * cfg.capDir;
   const popaCount = cfg.bancosPopa * cfg.capPopa;
@@ -717,9 +715,10 @@ function gerarCronogramaTurnos() {
   let horaAtual = new Date(inicioMs);
 
   for(let i=0; i<numTurnos; i++) {
-    let horaFim = new Date(horaAtual.getTime() + duracaoTurnoMs);
+    let proximaHoraMs = horaAtual.getTime() + duracaoTurnoMs;
+    if (proximaHoraMs > fimMs) proximaHoraMs = fimMs; // Ajusta o último turno parcial se necessário (ex: 2h restantes)
+    let horaFim = new Date(proximaHoraMs);
     
-    // Distribuição com offset sequencial (i * totalVagas ou i isolado) para garantir que ninguém repita posição no mesmo turno e ocorra o rodízio correto
     let pescadoresTurno = [];
     for(let j=0; j<totalVagas; j++) {
       let indexPessoa = (i + j) % nomes.length;
@@ -740,12 +739,13 @@ function gerarCronogramaTurnos() {
     });
 
     horaAtual = horaFim;
+    if (horaAtual.getTime() >= fimMs) break;
   }
 
   save();
   renderTabelaCronograma();
   renderCardsTopoBarco();
-  toast('Cronograma de turnos gerado com sucesso!');
+  toast('Cronograma gerado com sucesso!');
 }
 
 function renderCardsTopoBarco() {
