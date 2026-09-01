@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes"
->
+<meta name="viewport"
+content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
 
 <meta name="theme-color" content="#102033">
 
@@ -22,8 +20,9 @@
   --text:#eef5ff;
   --muted:#9db0c8;
   --accent:#38bdf8;
-  --success:#22c55e;
+  --accent2:#22c55e;
   --danger:#ef4444;
+  --warning:#f59e0b;
   --input:#121c2b;
 }
 
@@ -43,6 +42,7 @@ header{
   top:0;
   z-index:20;
   background:rgba(15,23,34,.97);
+  backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
 
@@ -87,7 +87,7 @@ button{
 }
 
 button:hover{
-  filter:brightness(1.1);
+  filter:brightness(1.12);
 }
 
 button.primary{
@@ -100,6 +100,10 @@ button.success{
 
 button.danger{
   background:#b91c1c;
+}
+
+button.warning{
+  background:#b45309;
 }
 
 button.small{
@@ -131,6 +135,7 @@ main{
   border-radius:12px;
   padding:14px;
   margin-bottom:15px;
+  box-shadow:0 8px 25px rgba(0,0,0,.14);
 }
 
 .card h2,
@@ -169,6 +174,12 @@ select{
   min-height:40px;
 }
 
+input:focus,
+select:focus{
+  outline:2px solid rgba(56,189,248,.3);
+  border-color:var(--accent);
+}
+
 .actions{
   display:flex;
   gap:8px;
@@ -203,6 +214,10 @@ td{
   vertical-align:top;
 }
 
+tr:last-child td{
+  border-bottom:0;
+}
+
 .pill{
   display:inline-block;
   padding:4px 8px;
@@ -212,9 +227,14 @@ td{
   font-size:11px;
 }
 
-.empty-pill{
-  background:#475569;
-  color:#cbd5e1;
+.paid{
+  color:#86efac;
+  font-weight:bold;
+}
+
+.due{
+  color:#fca5a5;
+  font-weight:bold;
 }
 
 .stats{
@@ -242,15 +262,6 @@ td{
   color:var(--muted);
 }
 
-.note{
-  font-size:12px;
-  color:#cbd5e1;
-  background:#172536;
-  padding:12px;
-  border-radius:8px;
-  border-left:3px solid var(--accent);
-}
-
 .boat-wrap{
   overflow:auto;
   padding:10px;
@@ -264,12 +275,7 @@ td{
   width:900px;
   height:430px;
   margin:auto;
-
-  background:linear-gradient(
-    90deg,
-    #dbeafe,
-    #93c5fd
-  );
+  background:linear-gradient(90deg,#dbeafe,#93c5fd);
 
   clip-path:polygon(
     18% 2%,
@@ -281,16 +287,18 @@ td{
     8% 88%,
     4% 22%
   );
+
+  border:5px solid #0f172a;
+  box-shadow:
+  inset 0 0 0 8px rgba(15,23,42,.3);
 }
 
 .boat-title{
   position:absolute;
   left:0;
   right:0;
-  top:12px;
-
   text-align:center;
-
+  top:12px;
   color:#0f172a;
   font-weight:900;
   font-size:18px;
@@ -318,9 +326,8 @@ td{
 
 .popa{
   position:absolute;
-
-  left:280px;
-  right:280px;
+  left:260px;
+  right:260px;
   bottom:40px;
 
   display:grid;
@@ -330,28 +337,20 @@ td{
 
 .seat{
   min-height:52px;
-
   background:#8b5a2b;
-
   border:3px solid #5b3518;
-
   border-radius:8px;
-
   padding:6px;
-
   color:white;
-
   font-size:11px;
-
   text-align:center;
 
   display:flex;
-
   align-items:center;
-
   justify-content:center;
 
   font-weight:bold;
+  box-shadow:0 3px 6px rgba(0,0,0,.25);
 }
 
 .seat.empty{
@@ -364,68 +363,30 @@ td{
   opacity:.8;
 }
 
-.modal-back{
-  position:fixed;
-  inset:0;
-
-  background:rgba(0,0,0,.65);
-
-  display:none;
-
-  align-items:center;
-  justify-content:center;
-
-  z-index:50;
-
-  padding:15px;
-}
-
-.modal-back.show{
-  display:flex;
-}
-
-.modal{
-  width:min(560px,100%);
-  background:#182536;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:16px;
+.note{
+  font-size:12px;
+  color:#cbd5e1;
+  background:#172536;
+  padding:10px;
+  border-radius:8px;
+  border-left:3px solid var(--accent);
 }
 
 .toast{
   position:fixed;
-
   bottom:18px;
-
   left:50%;
-
   transform:translateX(-50%);
-
   background:#0b1220;
-
   border:1px solid var(--accent);
-
   padding:11px 16px;
-
   border-radius:9px;
-
   z-index:100;
-
   display:none;
 }
 
 .toast.show{
   display:block;
-}
-
-.paid{
-  color:#86efac;
-  font-weight:bold;
-}
-
-.due{
-  color:#fca5a5;
-  font-weight:bold;
 }
 
 @media(max-width:700px){
@@ -473,34 +434,41 @@ td{
 <div class="top">
 
 <div class="brand">
-
 🎣 Pesca Justa
-
 <small>
 Organização, financeiro, vagas e revezamento inteligente
 </small>
-
 </div>
 
 <nav>
 
-<button class="nav-btn active" data-view="dashboard">
+<button
+class="nav-btn active"
+data-view="dashboard">
 Início
 </button>
 
-<button class="nav-btn" data-view="participantes">
+<button
+class="nav-btn"
+data-view="participantes">
 Participantes
 </button>
 
-<button class="nav-btn" data-view="vagas">
+<button
+class="nav-btn"
+data-view="vagas">
 Vagas & Barco
 </button>
 
-<button class="nav-btn" data-view="turnos">
+<button
+class="nav-btn"
+data-view="turnos">
 Turnos
 </button>
 
-<button class="nav-btn" data-view="financeiro">
+<button
+class="nav-btn"
+data-view="financeiro">
 Financeiro
 </button>
 
@@ -516,14 +484,24 @@ Financeiro
 
 <!-- DASHBOARD -->
 
-<section id="dashboard" class="view active">
+<section
+id="dashboard"
+class="view active">
 
-<div class="stats" id="dashboardStats"></div>
+<div
+class="stats"
+id="dashboardStats">
+</div>
 
 
 <div class="card">
 
 <h2>🛥️ Resumo da Pescaria</h2>
+
+<p class="sub">
+Cadastre participantes, configure as vagas do barco,
+informe os custos e gere o revezamento inteligente.
+</p>
 
 <div class="grid">
 
@@ -542,8 +520,7 @@ Financeiro
 
 <input
 type="datetime-local"
-id="tripStart"
->
+id="tripStart">
 
 </div>
 
@@ -554,8 +531,7 @@ id="tripStart"
 
 <input
 type="datetime-local"
-id="tripEnd"
->
+id="tripEnd">
 
 </div>
 
@@ -566,9 +542,10 @@ id="tripEnd"
 
 <button
 class="primary"
-onclick="saveTripInfo()"
->
+onclick="saveTripInfo()">
+
 Salvar informações
+
 </button>
 
 </div>
@@ -578,19 +555,40 @@ Salvar informações
 
 <div class="card">
 
-<h3>📋 Regras do revezamento inteligente</h3>
+<h3>🎯 Revezamento Inteligente</h3>
 
 <div class="note">
 
-<b>1.</b> Um pescador aparece apenas uma vez em cada turno.<br><br>
+<b>Regra principal:</b>
 
-<b>2.</b> A quantidade de pescadores pode ser menor ou igual à quantidade de vagas.<br><br>
+cada área do barco possui histórico próprio.
 
-<b>3.</b> Um pescador não deve repetir uma área antes de passar pelas demais áreas disponíveis.<br><br>
+<br><br>
 
-<b>4.</b> Dentro da mesma área, o sistema tenta evitar repetir a mesma posição.<br><br>
+<b>Popa/Fundo:</b>
+quem já pescou no fundo não volta para essa área
+enquanto existirem pescadores que ainda não tiveram
+a oportunidade.
 
-<b>5.</b> Se houver vagas vazias, elas também são distribuídas entre as posições.
+<br><br>
+
+<b>Exemplo com 12 pescadores e 4 vagas na Popa:</b>
+
+<br>
+
+Turno 1 → 4 pescadores
+
+<br>
+
+Turno 2 → outros 4
+
+<br>
+
+Turno 3 → outros 4
+
+<br><br>
+
+Somente depois disso inicia uma nova rodada.
 
 </div>
 
@@ -602,11 +600,22 @@ Salvar informações
 
 <!-- PARTICIPANTES -->
 
-<section id="participantes" class="view">
+<section
+id="participantes"
+class="view">
 
 <div class="card">
 
 <h2>👥 Participantes</h2>
+
+<p class="sub">
+
+Adicione, edite ou remova pescadores.
+
+Nomes duplicados não são permitidos.
+
+</p>
+
 
 <div class="grid">
 
@@ -616,8 +625,7 @@ Salvar informações
 
 <input
 id="newParticipant"
-placeholder="Digite o nome do pescador"
->
+placeholder="Digite o nome do pescador">
 
 </div>
 
@@ -628,9 +636,10 @@ placeholder="Digite o nome do pescador"
 
 <button
 class="primary"
-onclick="addParticipant()"
->
+onclick="addParticipant()">
+
 Adicionar participante
+
 </button>
 
 </div>
@@ -648,13 +657,27 @@ Adicionar participante
 
 
 
-<!-- VAGAS -->
+<!-- BARCO -->
 
-<section id="vagas" class="view">
+<section
+id="vagas"
+class="view">
+
 
 <div class="card">
 
 <h2>🛥️ Configuração das Vagas</h2>
+
+<p class="sub">
+
+A quantidade cadastrada aqui define
+as posições disponíveis no barco.
+
+O número de pescadores pode ser menor ou igual
+ao número de vagas.
+
+</p>
+
 
 <div class="grid">
 
@@ -665,8 +688,7 @@ Adicionar participante
 <input
 type="number"
 min="0"
-id="vEsq"
->
+id="vEsq">
 
 </div>
 
@@ -678,21 +700,19 @@ id="vEsq"
 <input
 type="number"
 min="0"
-id="vDir"
->
+id="vDir">
 
 </div>
 
 
 <div>
 
-<label>Vagas Fundo / Popa</label>
+<label>Vagas na Popa</label>
 
 <input
 type="number"
 min="0"
-id="vPopa"
->
+id="vPopa">
 
 </div>
 
@@ -703,9 +723,10 @@ id="vPopa"
 
 <button
 class="primary"
-onclick="saveBoatConfig()"
->
+onclick="saveBoatConfig()">
+
 Salvar configuração
+
 </button>
 
 </div>
@@ -713,9 +734,18 @@ Salvar configuração
 </div>
 
 
+
 <div class="card">
 
 <h3>Vista superior do barco</h3>
+
+<p class="sub">
+
+Os nomes aparecem diretamente
+nas posições do turno selecionado.
+
+</p>
+
 
 <div class="grid">
 
@@ -725,8 +755,8 @@ Salvar configuração
 
 <select
 id="boatTurnSelect"
-onchange="renderBoat()"
-></select>
+onchange="renderBoat()">
+</select>
 
 </div>
 
@@ -737,8 +767,8 @@ onchange="renderBoat()"
 
 <div
 class="boat"
-id="boat"
-></div>
+id="boat">
+</div>
 
 </div>
 
@@ -750,11 +780,22 @@ id="boat"
 
 <!-- TURNOS -->
 
-<section id="turnos" class="view">
+<section
+id="turnos"
+class="view">
+
 
 <div class="card">
 
-<h2>🎲 Revezamento Inteligente</h2>
+<h2>🎲 Turnos e Revezamento</h2>
+
+<p class="sub">
+
+O sistema gera automaticamente
+as posições respeitando o histórico
+de cada área.
+
+</p>
 
 
 <div class="grid">
@@ -767,8 +808,7 @@ id="boat"
 type="number"
 min="1"
 step="0.5"
-id="turnHours"
->
+id="turnHours">
 
 </div>
 
@@ -779,8 +819,7 @@ id="turnHours"
 
 <input
 type="datetime-local"
-id="inicioPescaInput"
->
+id="inicioPescaInput">
 
 </div>
 
@@ -791,8 +830,7 @@ id="inicioPescaInput"
 
 <input
 type="datetime-local"
-id="fimPescaInput"
->
+id="fimPescaInput">
 
 </div>
 
@@ -803,22 +841,25 @@ id="fimPescaInput"
 
 <button
 class="primary"
-onclick="generateSchedule()"
->
-Gerar Revezamento
+onclick="generateSchedule()">
+
+Gerar Revezamento Inteligente
+
 </button>
 
 
 <button
 class="danger"
-onclick="clearSchedule()"
->
+onclick="clearSchedule()">
+
 Limpar cronograma
+
 </button>
 
 </div>
 
 </div>
+
 
 
 <div class="card">
@@ -841,16 +882,17 @@ Limpar cronograma
 
 <th>Direita</th>
 
-<th>Fundo / Popa</th>
+<th>Popa</th>
 
-<th>Vagas vazias</th>
+<th>Fora / Vaga</th>
 
 </tr>
 
 </thead>
 
-
-<tbody id="scheduleBody"></tbody>
+<tbody
+id="scheduleBody">
+</tbody>
 
 </table>
 
@@ -859,9 +901,10 @@ Limpar cronograma
 </div>
 
 
+
 <div class="card">
 
-<h3>📊 Histórico do Revezamento</h3>
+<h3>📊 Histórico de oportunidades</h3>
 
 <div class="table-wrap">
 
@@ -873,22 +916,21 @@ Limpar cronograma
 
 <th>Pescador</th>
 
-<th>Turnos</th>
+<th>Total Turnos</th>
 
 <th>Esquerda</th>
 
 <th>Direita</th>
 
-<th>Fundo</th>
-
-<th>Última Área</th>
+<th>Popa</th>
 
 </tr>
 
 </thead>
 
-
-<tbody id="fairnessBody"></tbody>
+<tbody
+id="fairnessBody">
+</tbody>
 
 </table>
 
@@ -902,14 +944,17 @@ Limpar cronograma
 
 <!-- FINANCEIRO -->
 
-<section id="financeiro" class="view">
+<section
+id="financeiro"
+class="view">
+
 
 <div class="card">
 
 <h2>💰 Financeiro & Rateio</h2>
 
-
 <div class="grid">
+
 
 <div>
 
@@ -942,21 +987,22 @@ Limpar cronograma
 
 <label>Descrição</label>
 
-<input id="expenseDescription">
+<input
+id="expenseDescription"
+placeholder="Ex.: Aluguel do barco">
 
 </div>
 
 
 <div>
 
-<label>Valor total</label>
+<label>Valor total (R$)</label>
 
 <input
 id="expenseValue"
 type="number"
-step="0.01"
 min="0"
->
+step="0.01">
 
 </div>
 
@@ -967,9 +1013,10 @@ min="0"
 
 <button
 class="primary"
-onclick="addExpense()"
->
+onclick="addExpense()">
+
 Adicionar despesa
+
 </button>
 
 </div>
@@ -982,14 +1029,16 @@ Adicionar despesa
 
 <h3>💵 Registrar pagamento</h3>
 
-
 <div class="grid">
+
 
 <div>
 
 <label>Pescador</label>
 
-<select id="paymentParticipant"></select>
+<select
+id="paymentParticipant">
+</select>
 
 </div>
 
@@ -998,12 +1047,9 @@ Adicionar despesa
 
 <label>Categoria</label>
 
-<select id="paymentCategory">
-
-<option value="Geral">
-Geral
-</option>
-
+<select
+id="paymentCategory">
+<option value="Geral">Geral</option>
 </select>
 
 </div>
@@ -1016,9 +1062,8 @@ Geral
 <input
 id="paymentValue"
 type="number"
-step="0.01"
 min="0.01"
->
+step="0.01">
 
 </div>
 
@@ -1029,9 +1074,10 @@ min="0.01"
 
 <button
 class="success"
-onclick="addPayment()"
->
+onclick="addPayment()">
+
 Registrar pagamento
+
 </button>
 
 </div>
@@ -1064,7 +1110,9 @@ Registrar pagamento
 
 </thead>
 
-<tbody id="expenseBody"></tbody>
+<tbody
+id="expenseBody">
+</tbody>
 
 </table>
 
@@ -1100,7 +1148,9 @@ Registrar pagamento
 
 </thead>
 
-<tbody id="financialBody"></tbody>
+<tbody
+id="financialBody">
+</tbody>
 
 </table>
 
@@ -1136,7 +1186,9 @@ Registrar pagamento
 
 </thead>
 
-<tbody id="paymentBody"></tbody>
+<tbody
+id="paymentBody">
+</tbody>
 
 </table>
 
@@ -1146,21 +1198,20 @@ Registrar pagamento
 
 </section>
 
-
 </main>
+
 
 
 <div
 id="toast"
-class="toast"
-></div>
+class="toast">
+</div>
 
 
 
 <div
 class="modal-back"
-id="editModal"
->
+id="editModal">
 
 <div class="modal">
 
@@ -1168,21 +1219,22 @@ id="editModal"
 
 <input id="editParticipantName">
 
-
 <div class="actions">
 
 <button
 class="primary"
-onclick="confirmEditParticipant()"
->
+onclick="confirmEditParticipant()">
+
 Salvar
+
 </button>
 
 
 <button
-onclick="closeModal()"
->
+onclick="closeModal()">
+
 Cancelar
+
 </button>
 
 </div>
@@ -1196,65 +1248,75 @@ Cancelar
 <script>
 
 
-const STORAGE_KEY = "pescaJusta_v5";
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
+
+const STORAGE_KEY = "pescaJusta_v6";
+
+let editingParticipantId = null;
 
 
 const defaultState = {
 
-eventName:"Pesca Justa",
+  eventName:"Pesca Justa",
 
-tripStart:"2026-10-17T10:00",
+  tripStart:"2026-10-17T10:00",
 
-tripEnd:"2026-10-18T10:00",
+  tripEnd:"2026-10-18T10:00",
 
-participants:[],
+  participants:[],
 
-boatConfig:{
-left:3,
-right:3,
-popa:4
-},
+  boatConfig:{
+    left:3,
+    right:3,
+    popa:4
+  },
 
-schedule:[],
+  schedule:[],
 
-expenses:[],
+  expenses:[],
 
-payments:[]
-
+  payments:[]
 };
 
 
-let editingParticipantId = null;
 
-let state = load();
-
+let state = loadState();
 
 
-function load(){
 
-try{
+/* =========================================================
+   STORAGE
+========================================================= */
 
-const saved =
-JSON.parse(
-localStorage.getItem(STORAGE_KEY)
-);
+function loadState(){
 
-return saved
-?
-{
-...structuredClone(defaultState),
-...saved
-}
-:
-structuredClone(defaultState);
+  try{
 
-}
+    const saved =
+    JSON.parse(
+      localStorage.getItem(STORAGE_KEY)
+    );
 
-catch(e){
+    if(saved){
 
-return structuredClone(defaultState);
+      return {
+        ...structuredClone(defaultState),
+        ...saved,
 
-}
+        boatConfig:{
+          ...defaultState.boatConfig,
+          ...(saved.boatConfig || {})
+        }
+      };
+
+    }
+
+  }
+  catch(e){}
+
+  return structuredClone(defaultState);
 
 }
 
@@ -1262,241 +1324,306 @@ return structuredClone(defaultState);
 
 function persist(){
 
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(state)
-);
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(state)
+  );
 
 }
 
 
+
+/* =========================================================
+   UTILIDADES
+========================================================= */
 
 function uid(){
 
-return (
-Date.now().toString(36)
-+
-Math.random()
-.toString(36)
-.slice(2,8)
-);
+  return Date.now()
+  .toString(36)
+  +
+  Math.random()
+  .toString(36)
+  .slice(2,8);
 
 }
 
 
 
-function money(v){
+function money(value){
 
-return Number(v || 0)
-.toLocaleString(
-"pt-BR",
-{
-style:"currency",
-currency:"BRL"
-}
-);
-
-}
-
-
-
-function toast(msg){
-
-const el =
-document.getElementById("toast");
-
-el.textContent = msg;
-
-el.classList.add("show");
-
-clearTimeout(window.toastTimer);
-
-window.toastTimer =
-setTimeout(
-()=>el.classList.remove("show"),
-3200
-);
+  return Number(value || 0)
+  .toLocaleString(
+    "pt-BR",
+    {
+      style:"currency",
+      currency:"BRL"
+    }
+  );
 
 }
 
 
 
-function escapeHtml(s){
+function escapeHtml(value){
 
-return String(s)
-.replace(
-/[&<>"']/g,
-m=>({
+  return String(value)
+  .replace(
+    /[&<>"']/g,
+    char => ({
 
-"&":"&amp;",
+      "&":"&amp;",
 
-"<":"&lt;",
+      "<":"&lt;",
 
-">":"&gt;",
+      ">":"&gt;",
 
-'"':"&quot;",
+      '"':"&quot;",
 
-"'":"&#039;"
+      "'":"&#039;"
 
-}[m])
-);
-
-}
-
-
-
-function fmtDate(v){
-
-return new Date(v)
-.toLocaleString(
-"pt-BR",
-{
-day:"2-digit",
-month:"2-digit",
-hour:"2-digit",
-minute:"2-digit"
-}
-);
+    }[char])
+  );
 
 }
 
 
 
-/* ================================
-NAVEGAÇÃO
-================================ */
+function fmtDate(value){
+
+  const d = new Date(value);
+
+  return d.toLocaleString(
+    "pt-BR",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+
+function toast(message){
+
+  const element =
+  document.getElementById("toast");
+
+  element.textContent = message;
+
+  element.classList.add("show");
+
+  clearTimeout(
+    window.__toastTimer
+  );
+
+  window.__toastTimer =
+  setTimeout(
+    () => {
+
+      element.classList
+      .remove("show");
+
+    },
+    3500
+  );
+
+}
+
+
+
+function shuffle(array){
+
+  const a = [...array];
+
+  for(
+    let i = a.length - 1;
+    i > 0;
+    i--
+  ){
+
+    const j =
+    Math.floor(
+      Math.random() * (i + 1)
+    );
+
+    [a[i],a[j]] =
+    [a[j],a[i]];
+
+  }
+
+  return a;
+
+}
+
+
+
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
 
 document
 .querySelectorAll(".nav-btn")
-.forEach(btn=>{
+.forEach(button => {
 
-btn.addEventListener(
-"click",
-()=>{
+  button.addEventListener(
+    "click",
+    () => {
 
-document
-.querySelectorAll(".nav-btn")
-.forEach(
-b=>b.classList.remove("active")
-);
+      document
+      .querySelectorAll(".nav-btn")
+      .forEach(
+        b => b.classList.remove("active")
+      );
 
-document
-.querySelectorAll(".view")
-.forEach(
-v=>v.classList.remove("active")
-);
+      document
+      .querySelectorAll(".view")
+      .forEach(
+        v => v.classList.remove("active")
+      );
 
-btn.classList.add("active");
+      button.classList
+      .add("active");
 
-document
-.getElementById(
-btn.dataset.view
-)
-.classList.add("active");
+      document
+      .getElementById(
+        button.dataset.view
+      )
+      .classList
+      .add("active");
 
-}
-);
+    }
+  );
 
 });
 
 
 
-/* ================================
-EVENTO
-================================ */
+/* =========================================================
+   EVENTO
+========================================================= */
 
 function saveTripInfo(){
 
-state.eventName =
-eventName.value.trim()
-||
-"Pesca Justa";
+  state.eventName =
+  document
+  .getElementById("eventName")
+  .value
+  .trim()
+  ||
+  "Pesca Justa";
 
-state.tripStart =
-tripStart.value;
 
-state.tripEnd =
-tripEnd.value;
+  state.tripStart =
+  document
+  .getElementById("tripStart")
+  .value;
 
-inicioPescaInput.value =
-state.tripStart;
 
-fimPescaInput.value =
-state.tripEnd;
+  state.tripEnd =
+  document
+  .getElementById("tripEnd")
+  .value;
 
-persist();
 
-toast(
-"Informações salvas."
-);
+  document
+  .getElementById("inicioPescaInput")
+  .value =
+  state.tripStart;
+
+
+  document
+  .getElementById("fimPescaInput")
+  .value =
+  state.tripEnd;
+
+
+  persist();
+
+  toast(
+    "Informações salvas."
+  );
 
 }
 
 
 
-/* ================================
-PARTICIPANTES
-================================ */
+/* =========================================================
+   PARTICIPANTES
+========================================================= */
 
 function addParticipant(){
 
-const name =
-newParticipant.value.trim();
+  const input =
+  document
+  .getElementById(
+    "newParticipant"
+  );
 
 
-if(!name){
-
-return toast(
-"Digite o nome do participante."
-);
-
-}
+  const name =
+  input.value.trim();
 
 
-const exists =
-state.participants.some(
-p=>
-p.name
-.toLowerCase()
-===
-name
-.toLowerCase()
-);
+  if(!name){
+
+    toast(
+      "Digite o nome do participante."
+    );
+
+    return;
+
+  }
 
 
-if(exists){
-
-return toast(
-"Este participante já está cadastrado."
-);
-
-}
-
-
-state.participants.push({
-
-id:uid(),
-
-name:name
-
-});
+  const exists =
+  state.participants.some(
+    participant =>
+    participant.name
+    .toLowerCase()
+    ===
+    name.toLowerCase()
+  );
 
 
-newParticipant.value = "";
+  if(exists){
+
+    toast(
+      "Este participante já está cadastrado."
+    );
+
+    return;
+
+  }
 
 
-state.schedule = [];
+  state.participants.push({
+
+    id:uid(),
+
+    name:name
+
+  });
 
 
-persist();
+  input.value = "";
 
 
-renderAll();
+  state.schedule = [];
 
 
-toast(
-"Participante adicionado."
-);
+  persist();
+
+
+  renderAll();
+
+
+  toast(
+    "Participante adicionado."
+  );
 
 }
 
@@ -1504,87 +1631,98 @@ toast(
 
 function renderParticipants(){
 
-const box =
-document.getElementById(
-"participantsList"
-);
+  const box =
+  document.getElementById(
+    "participantsList"
+  );
 
 
-if(!state.participants.length){
+  if(
+    !state.participants.length
+  ){
 
-box.innerHTML =
-'<p class="sub">Nenhum participante cadastrado.</p>';
+    box.innerHTML =
+    `
+    <p class="sub">
+    Nenhum participante cadastrado.
+    </p>
+    `;
 
-return;
+    return;
 
-}
+  }
 
 
-box.innerHTML =
+  box.innerHTML =
+  `
+  <div class="table-wrap">
 
-'<div class="table-wrap">'+
+  <table>
 
-'<table>'+
+  <thead>
 
-'<thead>'+
+  <tr>
 
-'<tr>'+
+  <th>#</th>
 
-'<th>#</th>'+
+  <th>Nome</th>
 
-'<th>Nome</th>'+
+  <th>Ações</th>
 
-'<th>Ações</th>'+
+  </tr>
 
-'</tr>'+
+  </thead>
 
-'</thead>'+
+  <tbody>
 
-'<tbody>'+
+  ${
+    state.participants
+    .map(
+      (participant,index) =>
+      `
+      <tr>
 
-state.participants
-.map(
-(p,i)=>`
+      <td>
+      ${index + 1}
+      </td>
 
-<tr>
+      <td>
+      ${escapeHtml(participant.name)}
+      </td>
 
-<td>${i+1}</td>
+      <td>
 
-<td>
-${escapeHtml(p.name)}
-</td>
+      <button
+      class="small primary"
+      onclick="editParticipant('${participant.id}')">
 
-<td>
+      Editar
 
-<button
-class="small primary"
-onclick="editParticipant('${p.id}')"
->
-Editar
-</button>
+      </button>
 
-<button
-class="small danger"
-onclick="removeParticipant('${p.id}')"
->
-Excluir
-</button>
 
-</td>
+      <button
+      class="small danger"
+      onclick="removeParticipant('${participant.id}')">
 
-</tr>
+      Excluir
 
-`
-)
-.join("")
+      </button>
 
-+
+      </td>
 
-'</tbody>'+
+      </tr>
+      `
+    )
+    .join("")
+  }
 
-'</table>'+
+  </tbody>
 
-'</div>';
+  </table>
+
+  </div>
+  `;
 
 }
 
@@ -1592,26 +1730,35 @@ Excluir
 
 function editParticipant(id){
 
-const p =
-state.participants
-.find(
-x=>x.id===id
-);
+  const participant =
+  state.participants
+  .find(
+    p => p.id === id
+  );
 
 
-if(!p) return;
+  if(!participant){
+    return;
+  }
 
 
-editingParticipantId = id;
+  editingParticipantId = id;
 
 
-editParticipantName.value =
-p.name;
+  document
+  .getElementById(
+    "editParticipantName"
+  )
+  .value =
+  participant.name;
 
 
-editModal
-.classList
-.add("show");
+  document
+  .getElementById(
+    "editModal"
+  )
+  .classList
+  .add("show");
 
 }
 
@@ -1619,11 +1766,14 @@ editModal
 
 function closeModal(){
 
-editingParticipantId = null;
+  editingParticipantId = null;
 
-editModal
-.classList
-.remove("show");
+  document
+  .getElementById(
+    "editModal"
+  )
+  .classList
+  .remove("show");
 
 }
 
@@ -1631,67 +1781,75 @@ editModal
 
 function confirmEditParticipant(){
 
-const p =
-state.participants
-.find(
-x=>x.id===editingParticipantId
-);
+  const participant =
+  state.participants
+  .find(
+    p =>
+    p.id === editingParticipantId
+  );
 
 
-const name =
-editParticipantName
-.value
-.trim();
+  const name =
+  document
+  .getElementById(
+    "editParticipantName"
+  )
+  .value
+  .trim();
 
 
-if(!p || !name){
+  if(!participant || !name){
 
-return toast(
-"Digite um nome válido."
-);
+    toast(
+      "Digite um nome válido."
+    );
 
-}
+    return;
 
-
-const duplicate =
-state.participants
-.some(
-x=>
-x.id !== p.id
-&&
-x.name.toLowerCase()
-===
-name.toLowerCase()
-);
+  }
 
 
-if(duplicate){
-
-return toast(
-"Já existe participante com esse nome."
-);
-
-}
-
-
-p.name = name;
-
-
-state.schedule = [];
+  const duplicate =
+  state.participants.some(
+    p =>
+    p.id !== participant.id
+    &&
+    p.name
+    .toLowerCase()
+    ===
+    name.toLowerCase()
+  );
 
 
-persist();
+  if(duplicate){
+
+    toast(
+      "Já existe participante com esse nome."
+    );
+
+    return;
+
+  }
 
 
-closeModal();
+  participant.name = name;
 
 
-renderAll();
+  state.schedule = [];
 
 
-toast(
-"Nome atualizado. Cronograma anterior removido."
-);
+  persist();
+
+
+  closeModal();
+
+
+  renderAll();
+
+
+  toast(
+    "Nome atualizado. Cronograma apagado."
+  );
 
 }
 
@@ -1699,107 +1857,114 @@ toast(
 
 function removeParticipant(id){
 
-if(
-!confirm(
-"Excluir este participante?"
-)
-) return;
+  if(
+    !confirm(
+      "Excluir este participante?"
+    )
+  ){
+    return;
+  }
 
 
-state.participants =
-state.participants.filter(
-p=>p.id!==id
-);
+  state.participants =
+  state.participants.filter(
+    p => p.id !== id
+  );
 
 
-state.schedule = [];
+  state.schedule = [];
 
 
-persist();
+  persist();
 
 
-renderAll();
+  renderAll();
 
 }
 
 
 
-/* ================================
-BARCO
-================================ */
+/* =========================================================
+   CONFIGURAÇÃO DO BARCO
+========================================================= */
 
 function saveBoatConfig(){
 
-const left =
-Math.max(
-0,
-parseInt(vEsq.value)||0
-);
+  const left =
+  Math.max(
+    0,
+    parseInt(
+      document
+      .getElementById("vEsq")
+      .value
+    )
+    ||
+    0
+  );
 
 
-const right =
-Math.max(
-0,
-parseInt(vDir.value)||0
-);
+  const right =
+  Math.max(
+    0,
+    parseInt(
+      document
+      .getElementById("vDir")
+      .value
+    )
+    ||
+    0
+  );
 
 
-const popa =
-Math.max(
-0,
-parseInt(vPopa.value)||0
-);
+  const popa =
+  Math.max(
+    0,
+    parseInt(
+      document
+      .getElementById("vPopa")
+      .value
+    )
+    ||
+    0
+  );
 
 
-const total =
-left + right + popa;
+  if(
+    left + right + popa <= 0
+  ){
+
+    toast(
+      "Informe pelo menos uma vaga."
+    );
+
+    return;
+
+  }
 
 
-if(total<=0){
+  state.boatConfig = {
 
-return toast(
-"Informe pelo menos uma vaga."
-);
+    left,
 
-}
+    right,
 
+    popa
 
-if(
-state.participants.length
->
-total
-){
-
-return toast(
-"Há mais pescadores do que vagas no barco."
-);
-
-}
+  };
 
 
-state.boatConfig = {
-
-left,
-
-right,
-
-popa
-
-};
+  state.schedule = [];
 
 
-state.schedule = [];
+  persist();
 
 
-persist();
+  renderAll();
 
 
-renderAll();
-
-
-toast(
-"Configuração salva."
-);
+  toast(
+    "Configuração salva."
+  );
 
 }
 
@@ -1807,1259 +1972,1330 @@ toast(
 
 function fillBoatInputs(){
 
-vEsq.value =
-state.boatConfig.left;
+  document
+  .getElementById("vEsq")
+  .value =
+  state.boatConfig.left;
 
-vDir.value =
-state.boatConfig.right;
 
-vPopa.value =
-state.boatConfig.popa;
+  document
+  .getElementById("vDir")
+  .value =
+  state.boatConfig.right;
+
+
+  document
+  .getElementById("vPopa")
+  .value =
+  state.boatConfig.popa;
 
 }
 
 
 
-/* ================================
-CRIAR POSIÇÕES
-================================ */
+/* =========================================================
+   ESCOLHA INTELIGENTE POR ÁREA
+========================================================= */
 
-function createPositions(){
+/*
 
-const positions = [];
+Esta função é a parte mais importante
+do revezamento.
 
+Ela procura primeiro quem possui
+MENOR quantidade de participações
+na área específica.
 
-for(
-let i=1;
-i<=state.boatConfig.left;
-i++
+Depois evita repetição consecutiva.
+
+*/
+
+function chooseForArea(
+  candidates,
+  count,
+  area,
+  history,
+  previousArea
 ){
 
-positions.push({
+  if(count <= 0){
+    return [];
+  }
 
-id:"left_"+i,
 
-area:"left",
+  const sorted =
+  [...candidates]
+  .sort(
+    (a,b) => {
 
-label:"Esquerda "+i
+      const A =
+      history[a];
 
-});
+      const B =
+      history[b];
+
+
+      /* PRIORIDADE 1:
+         quem menos usou a área */
+
+      if(
+        A[area] !== B[area]
+      ){
+
+        return (
+          A[area]
+          -
+          B[area]
+        );
+
+      }
+
+
+      /* PRIORIDADE 2:
+         evitar mesma área
+         no turno anterior */
+
+      const repeatA =
+      previousArea[a] === area
+      ? 1
+      : 0;
+
+
+      const repeatB =
+      previousArea[b] === area
+      ? 1
+      : 0;
+
+
+      if(
+        repeatA !== repeatB
+      ){
+
+        return (
+          repeatA
+          -
+          repeatB
+        );
+
+      }
+
+
+      /* PRIORIDADE 3:
+         quem teve menos turnos */
+
+      if(
+        A.total !== B.total
+      ){
+
+        return (
+          A.total
+          -
+          B.total
+        );
+
+      }
+
+
+      /* DESEMPATE */
+
+      return (
+        A.tie
+        -
+        B.tie
+      );
+
+    }
+  );
+
+
+  return sorted.slice(
+    0,
+    Math.min(
+      count,
+      sorted.length
+    )
+  );
 
 }
 
 
-for(
-let i=1;
-i<=state.boatConfig.right;
-i++
-){
 
-positions.push({
-
-id:"right_"+i,
-
-area:"right",
-
-label:"Direita "+i
-
-});
-
-}
-
-
-for(
-let i=1;
-i<=state.boatConfig.popa;
-i++
-){
-
-positions.push({
-
-id:"popa_"+i,
-
-area:"popa",
-
-label:"Fundo "+i
-
-});
-
-}
-
-
-return positions;
-
-}
-
-
-
-/* ================================
-GERADOR DE TURNOS
-================================ */
+/* =========================================================
+   GERAÇÃO DO CRONOGRAMA
+========================================================= */
 
 function generateSchedule(){
 
+  const names =
+  state.participants
+  .map(
+    p => p.name.trim()
+  )
+  .filter(Boolean);
 
-const participants =
-state.participants
-.map(
-p=>p.name
-);
 
+  const cfg =
+  state.boatConfig;
 
-const positions =
-createPositions();
 
+  const totalSeats =
+  cfg.left
+  +
+  cfg.right
+  +
+  cfg.popa;
 
-if(!participants.length){
 
-return toast(
-"Cadastre os pescadores."
-);
+  if(!names.length){
 
-}
+    toast(
+      "Cadastre os participantes."
+    );
 
+    return;
 
-if(
-participants.length
->
-positions.length
-){
+  }
 
-return toast(
-"Existem mais pescadores do que vagas."
-);
 
-}
+  if(totalSeats <= 0){
 
+    toast(
+      "Configure as vagas do barco."
+    );
 
-const hours =
-parseFloat(
-turnHours.value
-)
-||
-4;
+    return;
 
+  }
 
-const startDate =
-new Date(
-inicioPescaInput.value
-);
 
+  /*
+    Agora pescadores podem ser
+    MENOR OU IGUAL às vagas.
+  */
 
-const endDate =
-new Date(
-fimPescaInput.value
-);
+  if(
+    names.length > totalSeats
+  ){
 
+    toast(
+      `Há ${names.length} pescadores e apenas ${totalSeats} vagas. ` +
+      `Aumente as vagas ou reduza os participantes.`
+    );
 
-if(
+    return;
 
-Number.isNaN(
-startDate.getTime()
-)
+  }
 
-||
 
-Number.isNaN(
-endDate.getTime()
-)
+  const hours =
+  parseFloat(
+    document
+    .getElementById(
+      "turnHours"
+    )
+    .value
+  )
+  ||
+  4;
 
-||
 
-endDate<=startDate
+  const startDate =
+  new Date(
+    document
+    .getElementById(
+      "inicioPescaInput"
+    )
+    .value
+  );
 
-){
 
-return toast(
-"Informe datas válidas."
-);
+  const endDate =
+  new Date(
+    document
+    .getElementById(
+      "fimPescaInput"
+    )
+    .value
+  );
 
-}
 
+  if(
+    Number.isNaN(
+      startDate.getTime()
+    )
+    ||
+    Number.isNaN(
+      endDate.getTime()
+    )
+    ||
+    endDate <= startDate
+  ){
 
-const duration =
-hours * 60 * 60 * 1000;
+    toast(
+      "Informe datas válidas."
+    );
 
+    return;
 
-const totalTurns =
-Math.ceil(
-(endDate-startDate)
-/
-duration
-);
+  }
 
 
-/*
-HISTÓRICO INDIVIDUAL
+  const duration =
+  hours * 60 * 60 * 1000;
 
-Cada pescador guarda:
 
-areasUsed
-positionsUsed
+  const turns =
+  Math.ceil(
+    (
+      endDate
+      -
+      startDate
+    )
+    /
+    duration
+  );
 
-Assim João não volta para
-Fundo enquanto ainda houver
-Esquerda ou Direita não utilizadas.
-*/
 
-const history = {};
+  /* =====================================================
+     HISTÓRICO
+  ===================================================== */
 
+  const history = {};
 
-participants.forEach(
-name=>{
 
-history[name] = {
+  names.forEach(
+    (name,index) => {
 
-areasUsed:[],
+      history[name] = {
 
-positionsUsed:[],
+        total:0,
 
-lastArea:null,
+        left:0,
 
-lastPosition:null,
+        right:0,
 
-totalTurns:0
+        popa:0,
 
-};
+        tie:index
 
-}
-);
+      };
 
+    }
+  );
 
 
-const schedule = [];
+  /*
+    Última área de cada pescador.
+  */
 
+  const previousArea = {};
 
-let now =
-new Date(
-startDate
-);
 
+  names.forEach(
+    name => {
 
+      previousArea[name] =
+      null;
 
-for(
-let turn=1;
-turn<=totalTurns
-&&
-now<endDate;
-turn++
-){
+    }
+  );
 
 
-const finish =
-new Date(
-Math.min(
-now.getTime()+duration,
-endDate.getTime()
-)
-);
+  /*
+    CONTROLE ESPECIAL DA POPA
 
+    popaRound contém quem ainda
+    NÃO pescou na Popa na rodada atual.
 
-/*
-POSIÇÕES DISPONÍVEIS
-*/
+    Quando todos tiverem passado,
+    uma nova rodada começa.
+  */
 
-const availablePositions =
-shuffle(
-[...positions]
-);
+  let popaRound =
+  shuffle([...names]);
 
 
-/*
-PARTICIPANTES
-EM ORDEM DE PRIORIDADE
+  let now =
+  new Date(startDate);
 
-Quem utilizou menos áreas
-tem prioridade.
-*/
 
-const orderedParticipants =
-[...participants]
-.sort(
-(a,b)=>{
+  const schedule = [];
 
-const A =
-history[a];
 
-const B =
-history[b];
+  for(
+    let turn = 1;
 
+    turn <= turns
+    &&
+    now < endDate;
 
-if(
-A.areasUsed.length
-!== 
-B.areasUsed.length
-){
+    turn++
+  ){
 
-return (
-A.areasUsed.length
--
-B.areasUsed.length
-);
 
-}
+    const finish =
+    new Date(
+      Math.min(
+        now.getTime()
+        +
+        duration,
 
+        endDate.getTime()
+      )
+    );
 
-if(
-A.totalTurns
-!== 
-B.totalTurns
-){
 
-return (
-A.totalTurns
--
-B.totalTurns
-);
+    /*
+      Participantes disponíveis.
+    */
 
-}
+    let available =
+    shuffle([...names]);
 
 
-return Math.random()-0.5;
+    /* ===================================================
+       POPA
+    =================================================== */
 
-}
-);
+    let popa = [];
 
 
+    if(
+      cfg.popa > 0
+    ){
 
-const assignments = [];
 
+      /*
+        Primeiro pegamos quem ainda
+        NÃO passou pela Popa.
+      */
 
-const usedPositionIds =
-new Set();
+      const eligible =
+      popaRound
+      .filter(
+        name =>
+        available.includes(name)
+      );
 
 
-/*
-PARA CADA PESCADOR
-*/
+      /*
+        Seleciona até o limite
+        de vagas.
+      */
 
-orderedParticipants
-.forEach(
-name=>{
+      popa =
+      eligible.slice(
+        0,
+        Math.min(
+          cfg.popa,
+          eligible.length
+        )
+      );
 
 
-const h =
-history[name];
+      /*
+        Remove os escolhidos
+        da fila da rodada.
+      */
 
+      popaRound =
+      popaRound.filter(
+        name =>
+        !popa.includes(name)
+      );
 
-/*
-PRIMEIRA PRIORIDADE:
 
-ÁREA NUNCA UTILIZADA
-*/
+      /*
+        Se ainda faltar vaga,
+        significa que todos
+        da rodada atual já tiveram
+        oportunidade.
 
+        Então inicia nova rodada.
+      */
 
-let candidates =
-availablePositions
-.filter(
-p=>
-!usedPositionIds.has(p.id)
-&&
-!h.areasUsed.includes(p.area)
-);
+      if(
+        popa.length < cfg.popa
+      ){
 
 
+        /*
+          Nova rodada.
 
-/*
-SEGUNDA PRIORIDADE:
+          IMPORTANTE:
 
-NÃO REPETIR A ÁREA
-DO TURNO ANTERIOR
-*/
+          Quem acabou de pescar
+          na Popa fica no final
+          da prioridade.
+        */
 
+        const alreadyUsed =
+        [...popa];
 
-if(!candidates.length){
 
-candidates =
-availablePositions
-.filter(
-p=>
-!usedPositionIds.has(p.id)
-&&
-p.area!==h.lastArea
-);
+        const newRound =
+        shuffle(
+          names.filter(
+            name =>
+            !alreadyUsed.includes(name)
+          )
+        );
 
-}
 
+        popaRound =
+        [
+          ...newRound,
+          ...shuffle(alreadyUsed)
+        ];
 
 
-/*
-TERCEIRA PRIORIDADE:
+        const missing =
+        cfg.popa
+        -
+        popa.length;
 
-MESMA ÁREA É PERMITIDA,
-MAS NÃO A MESMA POSIÇÃO
-*/
 
+        const extra =
+        popaRound
+        .filter(
+          name =>
+          !popa.includes(name)
+          &&
+          available.includes(name)
+        )
+        .slice(
+          0,
+          missing
+        );
 
-if(!candidates.length){
 
-candidates =
-availablePositions
-.filter(
-p=>
-!usedPositionIds.has(p.id)
-&&
-p.id!==h.lastPosition
-);
+        popa.push(
+          ...extra
+        );
 
-}
 
+        popaRound =
+        popaRound
+        .filter(
+          name =>
+          !extra.includes(name)
+        );
 
+      }
 
-/*
-ÚLTIMA ALTERNATIVA
-*/
+    }
 
 
-if(!candidates.length){
+    /*
+      Remove pescadores da Popa
+      das demais áreas.
+    */
 
-candidates =
-availablePositions
-.filter(
-p=>
-!usedPositionIds.has(p.id)
-);
+    available =
+    available.filter(
+      name =>
+      !popa.includes(name)
+    );
 
-}
 
 
-/*
-EQUILIBRAR POSIÇÕES
-*/
+    /* ===================================================
+       ESQUERDA
+    =================================================== */
 
+    const left =
+    chooseForArea(
 
-candidates.sort(
-(a,b)=>{
+      available,
 
+      cfg.left,
 
-const aUsed =
-h.positionsUsed.includes(a.id)
-?
-1
-:
-0;
+      "left",
 
+      history,
 
-const bUsed =
-h.positionsUsed.includes(b.id)
-?
-1
-:
-0;
+      previousArea
 
+    );
 
-if(aUsed!==bUsed){
 
-return aUsed-bUsed;
+    available =
+    available.filter(
+      name =>
+      !left.includes(name)
+    );
 
-}
 
 
-/*
-Evitar repetir
-última posição
-*/
+    /* ===================================================
+       DIREITA
+    =================================================== */
 
-const aLast =
-a.id===h.lastPosition
-?
-1
-:
-0;
+    const right =
+    chooseForArea(
 
+      available,
 
-const bLast =
-b.id===h.lastPosition
-?
-1
-:
-0;
+      cfg.right,
 
+      "right",
 
-return aLast-bLast;
+      history,
 
-}
-);
+      previousArea
 
+    );
 
-/*
-ESCOLHE POSIÇÃO
-*/
 
-const chosen =
-candidates[0];
+    available =
+    available.filter(
+      name =>
+      !right.includes(name)
+    );
 
 
-if(!chosen) return;
 
+    /* ===================================================
+       ATUALIZAR HISTÓRICO
+    =================================================== */
 
-/*
-REGISTRA
-*/
+    const chosen =
+    [
+      ...left,
+      ...right,
+      ...popa
+    ];
 
-assignments.push({
 
-name:name,
+    chosen.forEach(
+      name => {
 
-position:chosen
+        history[name].total++;
 
-});
+      }
+    );
 
 
-usedPositionIds.add(
-chosen.id
-);
+    left.forEach(
+      name => {
 
+        history[name].left++;
 
-if(
-!h.areasUsed.includes(
-chosen.area
-)
-){
+        previousArea[name] =
+        "left";
 
-h.areasUsed.push(
-chosen.area
-);
+      }
+    );
 
-}
 
+    right.forEach(
+      name => {
 
-/*
-QUANDO O PESCADOR
-PASSOU POR TODAS
-AS ÁREAS DISPONÍVEIS
+        history[name].right++;
 
-REINICIA O CICLO
-MAS MANTÉM A ÚLTIMA
-ÁREA COMO REFERÊNCIA.
-*/
+        previousArea[name] =
+        "right";
 
+      }
+    );
 
-const existingAreas =
-[...new Set(
-positions.map(
-p=>p.area
-)
-)];
 
+    popa.forEach(
+      name => {
 
-if(
-h.areasUsed.length
-===
-existingAreas.length
-){
+        history[name].popa++;
 
-h.areasUsed = [
-chosen.area
-];
+        previousArea[name] =
+        "popa";
 
-}
+      }
+    );
 
 
-if(
-!h.positionsUsed.includes(
-chosen.id
-)
-){
+    /*
+      Quem não foi escolhido
+      fica sem área anterior.
+    */
 
-h.positionsUsed.push(
-chosen.id
-);
+    names.forEach(
+      name => {
 
-}
+        if(
+          !chosen.includes(name)
+        ){
 
+          previousArea[name] =
+          null;
 
-h.lastArea =
-chosen.area;
+        }
 
+      }
+    );
 
-h.lastPosition =
-chosen.id;
 
 
-h.totalTurns++;
+    schedule.push({
 
-}
-);
+      turn:turn,
 
+      start:
+      now.toISOString(),
 
+      end:
+      finish.toISOString(),
 
-/*
-ORGANIZA RESULTADO
-*/
+      left:left,
 
+      right:right,
 
-const left =
-[];
+      popa:popa,
 
+      resting:
+      names.filter(
+        name =>
+        !chosen.includes(name)
+      )
 
-const right =
-[];
+    });
 
 
-const popa =
-[];
+    now = finish;
 
+  }
 
-const empty =
-[];
 
 
-positions.forEach(
-position=>{
+  state.schedule =
+  schedule;
 
 
-const found =
-assignments.find(
-a=>
-a.position.id
-===
-position.id
-);
+  persist();
 
 
-const value =
-found
-?
-found.name
-:
-null;
+  renderAll();
 
 
-if(
-position.area==="left"
-){
-
-left.push(value);
-
-}
-
-
-if(
-position.area==="right"
-){
-
-right.push(value);
-
-}
-
-
-if(
-position.area==="popa"
-){
-
-popa.push(value);
-
-}
-
-
-if(!value){
-
-empty.push(
-position.label
-);
-
-}
-
-}
-);
-
-
-
-schedule.push({
-
-turn:turn,
-
-start:now.toISOString(),
-
-end:finish.toISOString(),
-
-left:left,
-
-right:right,
-
-popa:popa,
-
-empty:empty
-
-});
-
-
-now = finish;
+  toast(
+    "Revezamento inteligente gerado."
+  );
 
 }
 
 
 
-/*
-SALVAR
-*/
-
-
-state.schedule =
-schedule;
-
-
-persist();
-
-
-renderAll();
-
-
-toast(
-"Revezamento inteligente gerado."
-);
-
-}
-
-
-
-/* ================================
-EMBARALHAR
-================================ */
-
-function shuffle(array){
-
-const a =
-[...array];
-
-
-for(
-let i=a.length-1;
-i>0;
-i--
-){
-
-const j =
-Math.floor(
-Math.random()
-*
-(i+1)
-);
-
-
-[a[i],a[j]] =
-[a[j],a[i]];
-
-}
-
-
-return a;
-
-}
-
-
-
-/* ================================
-LIMPAR TURNOS
-================================ */
+/* =========================================================
+   LIMPAR
+========================================================= */
 
 function clearSchedule(){
 
-if(
-!confirm(
-"Limpar o cronograma?"
-)
-) return;
+  if(
+    !confirm(
+      "Limpar todo o cronograma?"
+    )
+  ){
+    return;
+  }
 
 
-state.schedule = [];
+  state.schedule = [];
 
 
-persist();
+  persist();
 
 
-renderAll();
+  renderAll();
 
 }
 
 
 
-/* ================================
-RENDER TURNOS
-================================ */
+/* =========================================================
+   TABELA DE TURNOS
+========================================================= */
 
 function renderSchedule(){
 
-
-scheduleBody.innerHTML =
-state.schedule.length
-?
-state.schedule
-.map(
-s=>`
-
-<tr>
-
-<td>
-<b>
-Turno ${s.turn}
-</b>
-</td>
+  const body =
+  document
+  .getElementById(
+    "scheduleBody"
+  );
 
 
-<td>
-${fmtDate(s.start)}
-</td>
+  if(
+    !state.schedule.length
+  ){
+
+    body.innerHTML =
+    `
+    <tr>
+
+    <td
+    colspan="7"
+    class="sub">
+
+    Nenhum cronograma gerado.
+
+    </td>
+
+    </tr>
+    `;
+
+  }
+  else{
 
 
-<td>
-${fmtDate(s.end)}
-</td>
+    body.innerHTML =
+    state.schedule
+    .map(
+      schedule =>
+      `
+      <tr>
+
+      <td>
+
+      <b>
+      Turno ${schedule.turn}
+      </b>
+
+      </td>
 
 
-<td>
-
-${s.left.map(
-(n,i)=>
-n
-?
-`<span class="pill">E${i+1}: ${escapeHtml(n)}</span>`
-:
-`<span class="pill empty-pill">E${i+1}: Vazio</span>`
-).join("")}
-
-</td>
+      <td>
+      ${fmtDate(schedule.start)}
+      </td>
 
 
-<td>
-
-${s.right.map(
-(n,i)=>
-n
-?
-`<span class="pill">D${i+1}: ${escapeHtml(n)}</span>`
-:
-`<span class="pill empty-pill">D${i+1}: Vazio</span>`
-).join("")}
-
-</td>
+      <td>
+      ${fmtDate(schedule.end)}
+      </td>
 
 
-<td>
+      <td>
 
-${s.popa.map(
-(n,i)=>
-n
-?
-`<span class="pill">F${i+1}: ${escapeHtml(n)}</span>`
-:
-`<span class="pill empty-pill">F${i+1}: Vazio</span>`
-).join("")}
+      ${
+        schedule.left
+        .map(
+          name =>
+          `
+          <span class="pill">
+          ${escapeHtml(name)}
+          </span>
+          `
+        )
+        .join("")
+        ||
+        "-"
+      }
 
-</td>
-
-
-<td>
-
-${s.empty.map(
-x=>
-`<span class="pill empty-pill">
-${escapeHtml(x)}
-</span>`
-).join("")}
-
-</td>
-
-</tr>
-
-`
-)
-.join("")
-
-:
-
-'<tr><td colspan="7">Nenhum cronograma gerado.</td></tr>';
+      </td>
 
 
+      <td>
 
-const stats = {};
+      ${
+        schedule.right
+        .map(
+          name =>
+          `
+          <span class="pill">
+          ${escapeHtml(name)}
+          </span>
+          `
+        )
+        .join("")
+        ||
+        "-"
+      }
+
+      </td>
 
 
-state.participants
-.forEach(
-p=>{
+      <td>
 
-stats[p.name] = {
+      ${
+        schedule.popa
+        .map(
+          name =>
+          `
+          <span class="pill">
+          ${escapeHtml(name)}
+          </span>
+          `
+        )
+        .join("")
+        ||
+        "-"
+      }
 
-turns:0,
+      </td>
 
-left:0,
 
-right:0,
+      <td>
 
-popa:0,
+      ${
+        schedule.resting
+        .map(
+          name =>
+          `
+          <span class="pill">
+          ${escapeHtml(name)}
+          </span>
+          `
+        )
+        .join("")
+        ||
+        "Todos pescando"
+      }
 
-lastArea:"-"
+      </td>
 
-};
+      </tr>
+      `
+    )
+    .join("");
+
+  }
+
+
+
+  const stats = {};
+
+
+  state.participants
+  .forEach(
+    participant => {
+
+      stats[
+        participant.name
+      ] = {
+
+        total:0,
+
+        left:0,
+
+        right:0,
+
+        popa:0
+
+      };
+
+    }
+  );
+
+
+
+  state.schedule
+  .forEach(
+    schedule => {
+
+
+      schedule.left
+      .forEach(
+        name => {
+
+          if(stats[name]){
+
+            stats[name].total++;
+
+            stats[name].left++;
+
+          }
+
+        }
+      );
+
+
+      schedule.right
+      .forEach(
+        name => {
+
+          if(stats[name]){
+
+            stats[name].total++;
+
+            stats[name].right++;
+
+          }
+
+        }
+      );
+
+
+      schedule.popa
+      .forEach(
+        name => {
+
+          if(stats[name]){
+
+            stats[name].total++;
+
+            stats[name].popa++;
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+
+  document
+  .getElementById(
+    "fairnessBody"
+  )
+  .innerHTML =
+  Object.entries(stats)
+  .map(
+    ([name,data]) =>
+    `
+    <tr>
+
+    <td>
+    ${escapeHtml(name)}
+    </td>
+
+    <td>
+    ${data.total}
+    </td>
+
+    <td>
+    ${data.left}
+    </td>
+
+    <td>
+    ${data.right}
+    </td>
+
+    <td>
+    ${data.popa}
+    </td>
+
+    </tr>
+    `
+  )
+  .join("");
 
 }
-);
 
 
 
-state.schedule
-.forEach(
-s=>{
-
-
-s.left
-.forEach(
-n=>{
-
-if(n){
-
-stats[n].turns++;
-
-stats[n].left++;
-
-stats[n].lastArea =
-"Esquerda";
-
-}
-
-}
-);
-
-
-s.right
-.forEach(
-n=>{
-
-if(n){
-
-stats[n].right++;
-
-stats[n].lastArea =
-"Direita";
-
-}
-
-}
-);
-
-
-s.popa
-.forEach(
-n=>{
-
-if(n){
-
-stats[n].popa++;
-
-stats[n].lastArea =
-"Fundo";
-
-}
-
-}
-);
-
-}
-);
-
-
-
-fairnessBody.innerHTML =
-Object.entries(stats)
-.map(
-([name,x])=>`
-
-<tr>
-
-<td>
-${escapeHtml(name)}
-</td>
-
-<td>
-${x.turns}
-</td>
-
-<td>
-${x.left}
-</td>
-
-<td>
-${x.right}
-</td>
-
-<td>
-${x.popa}
-</td>
-
-<td>
-${x.lastArea}
-</td>
-
-</tr>
-
-`
-)
-.join("");
-
-}
-
-
-
-/* ================================
-SELECT DO BARCO
-================================ */
+/* =========================================================
+   SELECT DO BARCO
+========================================================= */
 
 function renderBoatSelect(){
 
-const old =
-boatTurnSelect.value;
+  const select =
+  document
+  .getElementById(
+    "boatTurnSelect"
+  );
 
 
-boatTurnSelect.innerHTML =
-
-'<option value="">Selecione</option>'
-
-+
-
-state.schedule
-.map(
-s=>
-`<option value="${s.turn}">
-Turno ${s.turn}
-</option>`
-)
-.join("");
+  const old =
+  select.value;
 
 
+  select.innerHTML =
+  `
+  <option value="">
+  Sem turno selecionado
+  </option>
+  `
+  +
+  state.schedule
+  .map(
+    schedule =>
+    `
+    <option value="${schedule.turn}">
 
-if(
+    Turno ${schedule.turn}
+    —
+    ${fmtDate(schedule.start)}
 
-[...boatTurnSelect.options]
-.some(
-o=>o.value===old
-)
+    </option>
+    `
+  )
+  .join("");
 
-){
 
-boatTurnSelect.value =
-old;
+  const exists =
+  [...select.options]
+  .some(
+    option =>
+    option.value === old
+  );
+
+
+  if(exists){
+
+    select.value = old;
+
+  }
+  else if(
+    state.schedule.length
+  ){
+
+    select.value =
+    state.schedule[0].turn;
+
+  }
 
 }
 
-else if(
-state.schedule.length
-){
-
-boatTurnSelect.value =
-state.schedule[0].turn;
-
-}
-
-}
 
 
-
-/* ================================
-DESENHO DO BARCO
-================================ */
+/* =========================================================
+   DESENHO DO BARCO
+========================================================= */
 
 function renderBoat(){
 
-
-const selected =
-state.schedule
-.find(
-s=>
-String(s.turn)
-===
-boatTurnSelect.value
-);
-
-
-
-const boat =
-document.getElementById(
-"boat"
-);
+  const selected =
+  state.schedule
+  .find(
+    schedule =>
+    String(schedule.turn)
+    ===
+    document
+    .getElementById(
+      "boatTurnSelect"
+    )
+    .value
+  );
 
 
+  const boat =
+  document
+  .getElementById(
+    "boat"
+  );
 
-function makeSeats(
-arr,
-area
-){
 
-return arr
-.map(
-(n,i)=>`
+  function seats(
+    people,
+    count,
+    area
+  ){
 
-<div class="seat">
+    const result = [];
 
-<span>
 
-<span class="pos">
-${area} ${i+1}
-</span>
+    for(
+      let i = 0;
+      i < count;
+      i++
+    ){
 
-${n
-?
-escapeHtml(n)
-:
-"VAGA VAZIA"
+      const person =
+      people[i];
+
+
+      result.push(
+        `
+        <div
+        class="seat ${person ? "" : "empty"}">
+
+        <span>
+
+        <span class="pos">
+
+        ${area} ${i + 1}
+
+        </span>
+
+        ${person
+          ?
+          escapeHtml(person)
+          :
+          "Vaga"
+        }
+
+        </span>
+
+        </div>
+        `
+      );
+
+    }
+
+
+    return result.join("");
+
+  }
+
+
+
+  const left =
+  selected
+  ?
+  selected.left
+  :
+  [];
+
+
+  const right =
+  selected
+  ?
+  selected.right
+  :
+  [];
+
+
+  const popa =
+  selected
+  ?
+  selected.popa
+  :
+  [];
+
+
+  boat.innerHTML =
+  `
+
+  <div class="boat-title">
+
+  🎣
+  ${escapeHtml(state.eventName)}
+
+  ${
+    selected
+    ?
+    " — Turno " + selected.turn
+    :
+    ""
+  }
+
+  </div>
+
+
+  <div class="side left-side">
+
+  ${
+    seats(
+      left,
+      state.boatConfig.left,
+      "Esquerda"
+    )
+  }
+
+  </div>
+
+
+  <div class="side right-side">
+
+  ${
+    seats(
+      right,
+      state.boatConfig.right,
+      "Direita"
+    )
+  }
+
+  </div>
+
+
+  <div class="popa">
+
+  ${
+    seats(
+      popa,
+      state.boatConfig.popa,
+      "Popa"
+    )
+  }
+
+  </div>
+
+  `;
+
 }
 
-</span>
-
-</div>
-
-`
-)
-.join("");
-
-}
 
 
-
-const left =
-selected
-?
-selected.left
-:
-Array(
-state.boatConfig.left
-).fill(null);
-
-
-const right =
-selected
-?
-selected.right
-:
-Array(
-state.boatConfig.right
-).fill(null);
-
-
-const popa =
-selected
-?
-selected.popa
-:
-Array(
-state.boatConfig.popa
-).fill(null);
-
-
-
-boat.innerHTML =
-
-`
-
-<div class="boat-title">
-
-🎣
-${escapeHtml(state.eventName)}
-
-${selected
-?
-" — Turno "+selected.turn
-:
-""
-}
-
-</div>
-
-
-<div class="side left-side">
-
-${makeSeats(
-left,
-"Esquerda"
-)}
-
-</div>
-
-
-<div class="side right-side">
-
-${makeSeats(
-right,
-"Direita"
-)}
-
-</div>
-
-
-<div class="popa">
-
-${makeSeats(
-popa,
-"Fundo"
-)}
-
-</div>
-
-`;
-
-}
-
-
-
-/* ================================
-FINANCEIRO
-================================ */
+/* =========================================================
+   FINANCEIRO
+========================================================= */
 
 function addExpense(){
 
-const category =
-expenseCategory.value;
+  const category =
+  document
+  .getElementById(
+    "expenseCategory"
+  )
+  .value;
 
 
-const description =
-expenseDescription.value.trim();
+  const description =
+  document
+  .getElementById(
+    "expenseDescription"
+  )
+  .value
+  .trim();
 
 
-const value =
-parseFloat(
-expenseValue.value
-);
+  const value =
+  parseFloat(
+    document
+    .getElementById(
+      "expenseValue"
+    )
+    .value
+  );
 
 
-if(
-!description
-||
-!(value>0)
-){
+  if(
+    !description
+    ||
+    !(value > 0)
+  ){
 
-return toast(
-"Informe descrição e valor."
-);
+    toast(
+      "Informe descrição e valor."
+    );
 
-}
+    return;
 
-
-state.expenses.push({
-
-id:uid(),
-
-category,
-
-description,
-
-value
-
-});
+  }
 
 
-expenseDescription.value =
-"";
+  state.expenses.push({
+
+    id:uid(),
+
+    category,
+
+    description,
+
+    value
+
+  });
 
 
-expenseValue.value =
-"";
+  document
+  .getElementById(
+    "expenseDescription"
+  )
+  .value = "";
 
 
-persist();
+  document
+  .getElementById(
+    "expenseValue"
+  )
+  .value = "";
 
 
-renderFinance();
+  persist();
+
+
+  renderFinance();
 
 }
 
@@ -3067,16 +3303,17 @@ renderFinance();
 
 function removeExpense(id){
 
-state.expenses =
-state.expenses.filter(
-x=>x.id!==id
-);
+  state.expenses =
+  state.expenses.filter(
+    expense =>
+    expense.id !== id
+  );
 
 
-persist();
+  persist();
 
 
-renderFinance();
+  renderFinance();
 
 }
 
@@ -3084,61 +3321,80 @@ renderFinance();
 
 function addPayment(){
 
-const participant =
-paymentParticipant.value;
+  const participant =
+  document
+  .getElementById(
+    "paymentParticipant"
+  )
+  .value;
 
 
-const category =
-paymentCategory.value;
+  const category =
+  document
+  .getElementById(
+    "paymentCategory"
+  )
+  .value;
 
 
-const value =
-parseFloat(
-paymentValue.value
-);
+  const value =
+  parseFloat(
+    document
+    .getElementById(
+      "paymentValue"
+    )
+    .value
+  );
 
 
-if(
-!participant
-||
-!(value>0)
-){
+  if(
+    !participant
+    ||
+    !(value > 0)
+  ){
 
-return toast(
-"Selecione o pescador e informe o valor."
-);
+    toast(
+      "Informe pescador e valor."
+    );
 
-}
+    return;
 
-
-state.payments.push({
-
-id:uid(),
-
-participant,
-
-category,
-
-value,
-
-date:new Date().toISOString()
-
-});
+  }
 
 
-paymentValue.value =
-"";
+  state.payments.push({
+
+    id:uid(),
+
+    participant,
+
+    category,
+
+    value,
+
+    date:
+    new Date()
+    .toISOString()
+
+  });
 
 
-persist();
+  document
+  .getElementById(
+    "paymentValue"
+  )
+  .value = "";
 
 
-renderFinance();
+  persist();
 
 
-toast(
-"Pagamento registrado."
-);
+  renderFinance();
+
+
+  toast(
+    "Pagamento registrado."
+  );
 
 }
 
@@ -3146,16 +3402,17 @@ toast(
 
 function removePayment(id){
 
-state.payments =
-state.payments.filter(
-x=>x.id!==id
-);
+  state.payments =
+  state.payments.filter(
+    payment =>
+    payment.id !== id
+  );
 
 
-persist();
+  persist();
 
 
-renderFinance();
+  renderFinance();
 
 }
 
@@ -3163,407 +3420,556 @@ renderFinance();
 
 function renderFinance(){
 
-const participants =
-state.participants
-.map(
-p=>p.name
-);
+  const participants =
+  state.participants
+  .map(
+    participant =>
+    participant.name
+  );
 
 
-const total =
-state.expenses
-.reduce(
-(a,x)=>a+Number(x.value),
-0
-);
+  const total =
+  state.expenses
+  .reduce(
+    (sum,expense) =>
+    sum
+    +
+    Number(expense.value),
+    0
+  );
 
 
-const perPerson =
-participants.length
-?
-total
-/
-participants.length
-:
-0;
-
-
-
-expenseBody.innerHTML =
-
-state.expenses
-.map(
-x=>`
-
-<tr>
-
-<td>
-${escapeHtml(x.category)}
-</td>
-
-<td>
-${escapeHtml(x.description)}
-</td>
-
-<td>
-${money(x.value)}
-</td>
-
-<td>
-
-<button
-class="small danger"
-onclick="removeExpense('${x.id}')"
->
-Excluir
-</button>
-
-</td>
-
-</tr>
-
-`
-)
-.join("")
-
-||
-
-'<tr><td colspan="4">Nenhuma despesa.</td></tr>';
+  const perPerson =
+  participants.length
+  ?
+  total / participants.length
+  :
+  0;
 
 
 
-paymentParticipant.innerHTML =
+  document
+  .getElementById(
+    "expenseBody"
+  )
+  .innerHTML =
+  state.expenses
+  .map(
+    expense =>
+    `
+    <tr>
 
-'<option value="">Selecione</option>'
+    <td>
+    ${escapeHtml(expense.category)}
+    </td>
 
-+
+    <td>
+    ${escapeHtml(expense.description)}
+    </td>
 
-participants
-.map(
-n=>
-`<option>
-${escapeHtml(n)}
-</option>`
-)
-.join("");
+    <td>
+    ${money(expense.value)}
+    </td>
 
+    <td>
 
+    <button
+    class="small danger"
+    onclick="removeExpense('${expense.id}')">
 
-const categories =
-[
-...new Set(
-state.expenses
-.map(
-x=>x.category
-)
-)
-];
+    Excluir
 
+    </button>
 
+    </td>
 
-paymentCategory.innerHTML =
+    </tr>
+    `
+  )
+  .join("")
+  ||
+  `
+  <tr>
 
-'<option value="Geral">
-Geral
-</option>'
+  <td
+  colspan="4"
+  class="sub">
 
-+
+  Nenhuma despesa cadastrada.
 
-categories
-.map(
-c=>
-`<option>
-${escapeHtml(c)}
-</option>`
-)
-.join("");
+  </td>
 
-
-
-financialBody.innerHTML =
-
-participants
-.map(
-name=>{
-
-
-const paid =
-state.payments
-.filter(
-x=>
-x.participant===name
-)
-.reduce(
-(a,x)=>a+Number(x.value),
-0
-);
+  </tr>
+  `;
 
 
-const balance =
-perPerson-paid;
+
+  const paymentSelect =
+  document
+  .getElementById(
+    "paymentParticipant"
+  );
 
 
-return `
+  paymentSelect.innerHTML =
+  `
+  <option value="">
+  Selecione
+  </option>
+  `
+  +
+  participants
+  .map(
+    name =>
+    `
+    <option>
+    ${escapeHtml(name)}
+    </option>
+    `
+  )
+  .join("");
 
-<tr>
 
-<td>
-${escapeHtml(name)}
-</td>
 
-<td>
-${money(perPerson)}
-</td>
+  const categories =
+  [
+    ...new Set(
+      state.expenses
+      .map(
+        expense =>
+        expense.category
+      )
+    )
+  ];
 
-<td>
-${money(paid)}
-</td>
 
-<td>
-${money(
-Math.max(
-0,
-balance
-)
-)}
-</td>
 
-<td>
+  document
+  .getElementById(
+    "paymentCategory"
+  )
+  .innerHTML =
+  `
+  <option value="Geral">
+  Geral
+  </option>
+  `
+  +
+  categories
+  .map(
+    category =>
+    `
+    <option>
+    ${escapeHtml(category)}
+    </option>
+    `
+  )
+  .join("");
 
-${balance<=0.009
-?
-'<span class="paid">PAGO</span>'
-:
-'<span class="due">PENDENTE</span>'
+
+
+  document
+  .getElementById(
+    "financialBody"
+  )
+  .innerHTML =
+  participants
+  .map(
+    name => {
+
+
+      const paid =
+      state.payments
+      .filter(
+        payment =>
+        payment.participant === name
+      )
+      .reduce(
+        (sum,payment) =>
+        sum
+        +
+        Number(payment.value),
+        0
+      );
+
+
+      const balance =
+      perPerson
+      -
+      paid;
+
+
+      const status =
+      balance <= 0.009
+      ?
+      `
+      <span class="paid">
+      PAGO
+      </span>
+      `
+      :
+      `
+      <span class="due">
+      PENDENTE
+      </span>
+      `;
+
+
+      return `
+      <tr>
+
+      <td>
+      ${escapeHtml(name)}
+      </td>
+
+      <td>
+      ${money(perPerson)}
+      </td>
+
+      <td>
+      ${money(paid)}
+      </td>
+
+      <td>
+      ${money(
+        Math.max(
+          0,
+          balance
+        )
+      )}
+      </td>
+
+      <td>
+      ${status}
+      </td>
+
+      </tr>
+      `;
+
+    }
+  )
+  .join("")
+  ||
+  `
+  <tr>
+
+  <td
+  colspan="5"
+  class="sub">
+
+  Cadastre participantes.
+
+  </td>
+
+  </tr>
+  `;
+
+
+
+  document
+  .getElementById(
+    "paymentBody"
+  )
+  .innerHTML =
+  state.payments
+  .map(
+    payment =>
+    `
+    <tr>
+
+    <td>
+
+    ${
+      new Date(
+        payment.date
+      )
+      .toLocaleString(
+        "pt-BR"
+      )
+    }
+
+    </td>
+
+
+    <td>
+
+    ${
+      escapeHtml(
+        payment.participant
+      )
+    }
+
+    </td>
+
+
+    <td>
+
+    ${
+      escapeHtml(
+        payment.category
+      )
+    }
+
+    </td>
+
+
+    <td>
+
+    ${
+      money(
+        payment.value
+      )
+    }
+
+    </td>
+
+
+    <td>
+
+    <button
+    class="small danger"
+    onclick="removePayment('${payment.id}')">
+
+    Excluir
+
+    </button>
+
+    </td>
+
+    </tr>
+    `
+  )
+  .join("")
+  ||
+  `
+  <tr>
+
+  <td
+  colspan="5"
+  class="sub">
+
+  Nenhum pagamento registrado.
+
+  </td>
+
+  </tr>
+  `;
+
 }
 
-</td>
-
-</tr>
-
-`;
-
-}
-)
-.join("");
 
 
-
-paymentBody.innerHTML =
-
-state.payments
-.map(
-x=>`
-
-<tr>
-
-<td>
-${new Date(x.date)
-.toLocaleString("pt-BR")}
-</td>
-
-<td>
-${escapeHtml(x.participant)}
-</td>
-
-<td>
-${escapeHtml(x.category)}
-</td>
-
-<td>
-${money(x.value)}
-</td>
-
-<td>
-
-<button
-class="small danger"
-onclick="removePayment('${x.id}')"
->
-Excluir
-</button>
-
-</td>
-
-</tr>
-
-`
-)
-.join("")
-
-||
-
-'<tr><td colspan="5">Nenhum pagamento.</td></tr>';
-
-}
-
-
-
-/* ================================
-DASHBOARD
-================================ */
+/* =========================================================
+   DASHBOARD
+========================================================= */
 
 function renderDashboard(){
 
-const totalExpenses =
-state.expenses
-.reduce(
-(a,x)=>a+Number(x.value),
-0
-);
+  const totalExpenses =
+  state.expenses
+  .reduce(
+    (sum,expense) =>
+    sum
+    +
+    Number(expense.value),
+    0
+  );
 
 
-const totalPaid =
-state.payments
-.reduce(
-(a,x)=>a+Number(x.value),
-0
-);
+  const totalPaid =
+  state.payments
+  .reduce(
+    (sum,payment) =>
+    sum
+    +
+    Number(payment.value),
+    0
+  );
 
 
-const seats =
-state.boatConfig.left
-+
-state.boatConfig.right
-+
-state.boatConfig.popa;
+  const seats =
+  Number(
+    state.boatConfig.left
+  )
+  +
+  Number(
+    state.boatConfig.right
+  )
+  +
+  Number(
+    state.boatConfig.popa
+  );
 
 
+  document
+  .getElementById(
+    "dashboardStats"
+  )
+  .innerHTML =
+  `
 
-dashboardStats.innerHTML =
+  <div class="stat">
 
-`
+  <b>
+  ${state.participants.length}
+  </b>
 
-<div class="stat">
+  <span>
+  Participantes
+  </span>
 
-<b>
-${state.participants.length}
-</b>
-
-<span>
-Participantes
-</span>
-
-</div>
-
-
-<div class="stat">
-
-<b>
-${seats}
-</b>
-
-<span>
-Vagas no barco
-</span>
-
-</div>
+  </div>
 
 
-<div class="stat">
+  <div class="stat">
 
-<b>
-${state.schedule.length}
-</b>
+  <b>
+  ${seats}
+  </b>
 
-<span>
-Turnos gerados
-</span>
+  <span>
+  Vagas por turno
+  </span>
 
-</div>
-
-
-<div class="stat">
-
-<b>
-${money(totalExpenses)}
-</b>
-
-<span>
-Despesas
-</span>
-
-</div>
+  </div>
 
 
-<div class="stat">
+  <div class="stat">
 
-<b>
-${money(totalPaid)}
-</b>
+  <b>
+  ${state.schedule.length}
+  </b>
 
-<span>
-Pagamentos
-</span>
+  <span>
+  Turnos gerados
+  </span>
 
-</div>
+  </div>
 
-`;
+
+  <div class="stat">
+
+  <b>
+  ${money(totalExpenses)}
+  </b>
+
+  <span>
+  Despesas
+  </span>
+
+  </div>
+
+
+  <div class="stat">
+
+  <b>
+  ${money(totalPaid)}
+  </b>
+
+  <span>
+  Pagamentos registrados
+  </span>
+
+  </div>
+
+  `;
 
 }
 
 
 
-/* ================================
-RENDER GERAL
-================================ */
+/* =========================================================
+   RENDERIZAÇÃO GERAL
+========================================================= */
 
 function renderAll(){
 
-eventName.value =
-state.eventName;
+
+  document
+  .getElementById(
+    "eventName"
+  )
+  .value =
+  state.eventName;
 
 
-tripStart.value =
-state.tripStart;
+  document
+  .getElementById(
+    "tripStart"
+  )
+  .value =
+  state.tripStart;
 
 
-tripEnd.value =
-state.tripEnd;
+  document
+  .getElementById(
+    "tripEnd"
+  )
+  .value =
+  state.tripEnd;
 
 
-inicioPescaInput.value =
-state.tripStart;
+  document
+  .getElementById(
+    "inicioPescaInput"
+  )
+  .value =
+  state.tripStart;
 
 
-fimPescaInput.value =
-state.tripEnd;
+  document
+  .getElementById(
+    "fimPescaInput"
+  )
+  .value =
+  state.tripEnd;
 
 
-if(
-!turnHours.value
-){
+  if(
+    !document
+    .getElementById(
+      "turnHours"
+    )
+    .value
+  ){
 
-turnHours.value = 4;
+    document
+    .getElementById(
+      "turnHours"
+    )
+    .value =
+    4;
+
+  }
+
+
+  fillBoatInputs();
+
+
+  renderParticipants();
+
+
+  renderSchedule();
+
+
+  renderBoatSelect();
+
+
+  renderBoat();
+
+
+  renderFinance();
+
+
+  renderDashboard();
 
 }
 
 
-fillBoatInputs();
 
-
-renderParticipants();
-
-
-renderSchedule();
-
-
-renderBoatSelect();
-
-
-renderBoat();
-
-
-renderFinance();
-
-
-renderDashboard();
-
-}
-
-
-
-/* INICIALIZAÇÃO */
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
 
 renderAll();
 
@@ -3571,4 +3977,5 @@ renderAll();
 </script>
 
 </body>
+
 </html>
