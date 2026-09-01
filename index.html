@@ -1,912 +1,701 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pesca Justa 🎣 — Gestão & Expedição</title>
+/* =========================================================
+   REVEZAMENTO INTELIGENTE - PESCA JUSTA
+   ========================================================= */
 
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b5d7a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Pesca Justa">
-<link rel="apple-touch-icon" href="icon-192.png">
+function embaralhar(lista) {
+  const copia = [...lista];
 
-<style>
-:root {
-  --primary: #0b5d7a;
-  --primary2: #073e52;
-  --bg: #0a192f;
-  --card: #1e293b;
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --border: rgba(56, 189, 248, 0.25);
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --success: #10b981;
-  --accent: #38bdf8;
-  --input-bg: #0f172a;
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [copia[i], copia[j]] = [
+      copia[j],
+      copia[i]
+    ];
+  }
+
+  return copia;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: radial-gradient(circle at top, #0f2b48 0%, #0a192f 60%, #020c1b 100%); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-
-header { background: rgba(15, 23, 42, 0.8); border-bottom: 2px solid var(--accent); color: #fff; padding: 24px 18px 16px; text-align: center; }
-header h1 { margin: 0; font-size: 2rem; font-weight: 800; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7); }
-header p { margin: 6px 0 0; color: var(--accent); font-size: 0.95rem; }
-
-.nav-tabs { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-.tab-btn { background: var(--input-bg); color: var(--muted); border: 1px solid var(--border); padding: 8px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.tab-btn.active { background: var(--accent); color: #020c1b; border-color: var(--accent); }
-
-.container { max-width: 1200px; margin: 20px auto; padding: 0 15px; width: 100%; flex: 1; display: flex; flex-direction: column; gap: 20px; }
-.tab-content { display: none; flex-direction: column; gap: 20px; }
-.tab-content.active { display: flex; }
-
-.grid-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-.summary .label { font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: bold; }
-.summary .value { font-size: 20px; font-weight: bold; margin-top: 5px; color: var(--accent); }
-
-h2 { margin: 0 0 14px; font-size: 1.25rem; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-h3 { margin: 18px 0 10px; font-size: 1rem; color: var(--text); }
-
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.form-row, .form-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
-.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-
-.field, .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
-label { font-size: 12px; font-weight: bold; color: var(--muted); }
-
-input, select, textarea { height: 40px; border: 1px solid #334155; border-radius: 8px; padding: 0 11px; background: var(--input-bg); font-size: 14px; color: var(--text); outline: none; font-family: inherit; }
-textarea { height: auto; padding: 8px; resize: vertical; }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-
-button, .btn-action { height: 40px; border: 0; border-radius: 8px; padding: 0 16px; cursor: pointer; background: #0284c7; color: #fff; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-button:hover, .btn-action:hover { background: #0369a1; }
-button.secondary { background: #334155; color: var(--text); }
-button.danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #fca5a5; }
-button.small { height: 32px; padding: 0 10px; font-size: 12px; }
-
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th, td { padding: 10px; border-bottom: 1px solid #334155; text-align: left; vertical-align: middle; }
-th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
-
-.actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
-.avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: #334155; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 1px solid var(--border); color: var(--accent); }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-.badge { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #334155; font-size: 11px; font-weight: bold; color: #f8fafc; }
-.status-paid { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid var(--success); }
-.status-partial { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid var(--warning); }
-.status-pending { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid var(--danger); }
-
-.progress { height: 12px; background: #0f172a; border-radius: 999px; overflow: hidden; margin-top: 12px; border: 1px solid #334155; }
-.progress > div { height: 100%; background: var(--accent); width: 0%; transition: .3s; }
-
-.boat-layout-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; margin-top: 15px; }
-@media(max-width: 900px) { .boat-layout-container { grid-template-columns: 1fr; } }
-
-.boat-controls-panel { background: #2563eb; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-.boat-ctrl-box { background: #fce7f3; border-radius: 8px; padding: 8px 12px; color: #1e293b; display: flex; flex-direction: column; gap: 4px; }
-.boat-ctrl-box label { font-size: 11px; font-weight: bold; color: #475569; text-transform: uppercase; }
-.boat-ctrl-box input { height: 35px; background: #fff; color: #0f172a; border: 1px solid #cbd5e1; font-weight: bold; text-align: center; }
-
-.boat-hull { position: relative; width: 100%; max-width: 750px; height: 750px; margin: auto; border: 4px solid var(--accent); border-radius: 220px 220px 30px 30px; background: #1d4ed8; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); }
-.boat-top-turns { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-.turn-card-mini { background: #1e40af; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 12px; min-width: 170px; font-size: 11px; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-.turn-card-mini strong { display: block; color: #fde047; margin-bottom: 2px; }
-
-.boat-deck-area { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; margin-top: 10px; }
-.boat-row-middle { display: flex; justify-content: space-between; align-items: center; flex: 1; padding: 0 10px; }
-.side-label { background: #fce7f3; color: #1e293b; font-size: 11px; font-weight: bold; padding: 15px 6px; border-radius: 6px; writing-mode: vertical-lr; text-orientation: mixed; text-align: center; }
-.popa-label { background: #fce7f3; color: #1e293b; font-size: 11px; font-weight: bold; padding: 6px 20px; border-radius: 6px; text-align: center; margin: 5px auto; width: fit-content; }
-
-.seats-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.boat-seat { background: #1e40af; border: 2px solid #93c5fd; border-radius: 8px; width: 110px; height: 55px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: bold; padding: 4px; text-align: center; }
-.boat-seat span { font-size: 9px; color: #fde047; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
-
-.timer-panel { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; background: var(--input-bg); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; margin: 15px 0; gap: 10px; }
-.timer-box { text-align: center; }
-.timer-val { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-family: monospace; }
-.timer-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
-
-.deck-view { width: 100%; max-width: 600px; min-height: 620px; margin: 15px auto; background: #1d4ed8; border: 3px solid var(--accent); border-radius: 180px 180px 30px 30px; display: flex; flex-direction: column; justify-content: space-between; padding: 35px 20px 20px 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-.deck-section { text-align: center; padding: 10px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.05); }
-.deck-section-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: #facc15; text-transform: uppercase; }
-.fisherman-tags-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.fisherman-tag { background: #0284c7; color: white; padding: 6px 12px; border-radius: 12px; font-size: 0.82rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.fisherman-tag span { font-size: 0.68rem; color: #fde047; font-weight: normal; }
-
-.rotacao-table-wrap { margin-top: 15px; overflow-x: auto; }
-.rotacao-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-.rotacao-table th, .rotacao-table td { border: 1px solid #334155; padding: 8px 10px; }
-.rotacao-table th { background: #07111e; color: var(--accent); }
-.rotacao-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
-
-.upload-box { border: 2px dashed var(--accent); border-radius: 8px; padding: 20px; text-align: center; background: var(--input-bg); cursor: pointer; position: relative; }
-.upload-box input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-.preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
-.img-container { position: relative; height: 80px; border-radius: 6px; overflow: hidden; border: 1px solid #334155; }
-.img-container img { width: 100%; height: 100%; object-fit: cover; }
-
-.toast { position: fixed; right: 18px; bottom: 18px; background: #0284c7; color: #fff; padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: none; z-index: 1000; font-weight: bold; }
-.toast.show { display: block; }
-.muted { color: var(--muted); font-size: 13px; }
-.empty { padding: 16px; color: var(--muted); text-align: center; }
-
-footer { background: #07111e; padding: 20px; text-align: center; border-top: 1px solid #1e293b; margin-top: auto; color: var(--muted); font-size: 0.85rem; }
-footer strong { color: var(--accent); }
-
-@media(max-width: 850px){ .two-col { grid-template-columns: 1fr; } }
-</style>
-</head>
-<body>
-
-<header>
-  <h1>Pesca Justa 🎣</h1>
-  <p>Gestão de Pescaria, Cadastro do Barco & Rotação de Convés</p>
-  
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('tab-gestao')">📊 Gestão & Cadastro</button>
-    <button class="tab-btn" onclick="switchTab('tab-expedicao')">⏱️ Expedição & Timer 24h</button>
-  </div>
-</header>
-
-<main class="container">
-
-  <!-- ================= ABA 1: GESTÃO & CADASTRO ================= -->
-  <div id="tab-gestao" class="tab-content active">
-    
-    <section class="card">
-      <h2>⚓ Informações da Pesca & Resumo</h2>
-      <form id="pescaInfoForm" onsubmit="salvarInfoPesca(event)">
-        <div class="form-grid" style="margin-bottom: 15px;">
-          <div class="form-group"><label>📍 Local da Pesca</label><input type="text" id="infoLocal" placeholder="Ex: Laje de Santos"></div>
-          <div class="form-group"><label>📅 Data de Saída</label><input type="date" id="infoDataSaida" value="2026-10-17"></div>
-          <div class="form-group"><label>⏰ Horário de Saída</label><input type="time" id="infoHoraSaida" value="10:00"></div>
-          <div class="form-group"><label>📅 Data de Retorno</label><input type="date" id="infoDataRetorno" value="2026-10-18"></div>
-          <div class="form-group"><label>⏰ Horário de Retorno</label><input type="time" id="infoHoraRetorno" value="04:00"></div>
-        </div>
-        <button type="submit" class="btn-action small">💾 Salvar Dados da Pesca</button>
-      </form>
-
-      <div class="grid-summary" style="margin-top: 20px;">
-        <div class="card summary" style="background: #0f172a;"><div class="label">Participantes</div><div class="value" id="sumParticipants">0</div></div>
-        <div class="card summary" style="background: #0f172a;"><div class="label">Despesas</div><div class="value" id="sumExpenses">R$ 0,00</div></div>
-        <div class="card summary" style="background: #0f172a;"><div class="label">Arrecadado</div><div class="value" id="sumCollected">R$ 0,00</div></div>
-        <div class="card summary" style="background: #0f172a;"><div class="label">Rateio p/ Pessoa</div><div class="value" id="sumShare">R$ 0,00</div></div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>📈 Progresso Financeiro</h2>
-      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
-        <div><strong id="progressPercent">0%</strong> arrecadado</div>
-        <div>Falta: <strong id="sumPending" style="color: var(--danger);">R$ 0,00</strong></div>
-      </div>
-      <div class="progress"><div id="progressBar"></div></div>
-    </section>
-
-    <!-- CADASTRO DO BARCO -->
-    <section class="card">
-      <h2>🚤 Cadastro e Configuração do Barco</h2>
-      
-      <div class="boat-layout-container">
-        <div class="boat-controls-panel">
-          <div class="boat-ctrl-box">
-            <label>Quantidade de bancos popa</label>
-            <input type="number" id="cfgBancosPopa" value="2" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco popa</label>
-            <input type="number" id="cfgCapPopa" value="2" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Quantidade de bancos lado esquerdo</label>
-            <input type="number" id="cfgBancosEsq" value="3" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco esquerdo</label>
-            <input type="number" id="cfgCapEsq" value="1" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Quantidade de bancos lado direito</label>
-            <input type="number" id="cfgBancosDir" value="3" min="0" onchange="atualizarConfigBarco()">
-          </div>
-          <div class="boat-ctrl-box">
-            <label>Capacidade de pessoas banco direito</label>
-            <input type="number" id="cfgCapDir" value="1" min="0" onchange="atualizarConfigBarco()">
-          </div>
-        </div>
-
-        <div>
-          <div class="boat-top-turns" id="boatTopTurnsContainer"></div>
-          
-          <div class="boat-hull" style="margin-top: 15px;">
-            <div class="boat-deck-area">
-              <div class="boat-row-middle">
-                <div class="side-label">Lado esquerdo do barco</div>
-                <div style="display:flex; flex-direction:column; gap:8px;" id="mapSeatsEsq"></div>
-                <div style="display:flex; flex-direction:column; gap:8px;" id="mapSeatsDir"></div>
-                <div class="side-label">Lado direito do barco</div>
-              </div>
-
-              <div>
-                <div class="seats-row" id="mapSeatsPopa"></div>
-                <div class="popa-label">Popa</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PARTICIPANTES E DESPESAS -->
-    <section class="two-col">
-      <div class="card">
-        <h2>👥 Participantes & Mensagens</h2>
-        <div class="form-row">
-          <div class="field"><label>Nome do Pescador</label><input id="participantName" placeholder="Digite o nome"></div>
-          <button onclick="addParticipant()">Adicionar</button>
-          <button class="secondary" onclick="loadDefaultNames()">Lista Padrão (13)</button>
-        </div>
-        <div class="table-wrap" style="margin-top:15px">
-          <table>
-            <thead><tr><th>Foto</th><th>Nome / Msg Admin</th><th>Posições</th><th></th></tr></thead>
-            <tbody id="participantsTable"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>🧾 Despesas</h2>
-        <div class="form-row">
-          <div class="field"><label>Descrição</label><input id="expenseDesc" placeholder="Ex.: Barco"></div>
-          <div class="field"><label>Valor (R$)</label><input id="expenseValue" placeholder="0,00" inputmode="decimal"></div>
-          <div class="field"><label>Categoria</label>
-            <select id="expenseCategory">
-              <option>Barco</option><option>Iscas</option><option>Alimentação</option><option>Bebidas</option><option>Gelo</option><option>Combustível</option><option>Outros</option>
-            </select>
-          </div>
-          <button onclick="addExpense()">Adicionar</button>
-        </div>
-        <div class="table-wrap" style="margin-top:15px">
-          <table>
-            <thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th></th></tr></thead>
-            <tbody id="expensesTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- TABELA DE TURNOS & CRONOGRAMA -->
-    <section class="card">
-      <h2>⏱️ Tabela de Turnos & Cronograma</h2>
-      <p class="muted" style="margin-bottom: 12px;">Defina a quantidade de horas por turno e calcule automaticamente o cronograma de revezamento.</p>
-      
-      <div class="form-grid">
-        <div class="form-group"><label>Horas por Turno</label><input type="number" id="horasPorTurnoInput" value="4" min="0.5" step="0.5"></div>
-        <div class="form-group"><label>Início da Pesca</label><input type="datetime-local" id="inicioPescaInput" value="2026-10-17T10:00"></div>
-        <div class="form-group"><label>Fim da Pesca</label><input type="datetime-local" id="fimPescaInput" value="2026-10-18T04:00"></div>
-      </div>
-      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-        <button onclick="gerarCronogramaTurnos()" class="btn-action">Gerar Cronograma de Turnos</button>
-      </div>
-
-      <div class="rotacao-table-wrap" style="margin-top:15px;">
-        <table class="rotacao-table">
-          <thead>
-            <tr>
-              <th>Turno</th>
-              <th>Início</th>
-              <th>Fim (Saída)</th>
-              <th>Lado Esquerdo</th>
-              <th>Lado Direito</th>
-              <th>Popa</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaCronogramaBody">
-            <tr><td colspan="6" class="empty">Clique em "Gerar Cronograma de Turnos" para montar a tabela.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- GALERIA, FINANCEIRO, ETC -->
-    <section class="card">
-      <h2>📸 Fotos da Embarcação</h2>
-      <div class="upload-box">
-        <input type="file" id="fotoInput" accept="image/*" multiple onchange="processarFotos(event)">
-        <span style="font-size: 1.5rem; display: block;">📷</span>
-        <span style="font-size: 0.85rem; color: var(--muted);">Clique para selecionar ou enviar fotos</span>
-      </div>
-      <div class="preview-grid" id="previewGrid"></div>
-    </section>
-
-    <section class="card">
-      <h2>💳 Registrar Pagamento</h2>
-      <div class="form-row">
-        <div class="field"><label>Pescador</label><select id="paymentParticipant"></select></div>
-        <div class="field"><label>Despesa</label><select id="paymentExpense"></select></div>
-        <div class="field"><label>Valor Pago (R$)</label><input id="paymentValue" placeholder="0,00" inputmode="decimal"></div>
-        <button onclick="addPayment()">Registrar</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>📊 Situação Financeira por Pescador</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Pescador</th><th>Deve Pagar</th><th>Já Pagou</th><th>Falta</th><th>Status</th></tr></thead>
-          <tbody id="financialTable"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>📋 Controle por Despesa</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Despesa</th><th>Categoria</th><th>Valor</th><th>Rateio/Pessoa</th><th>Pago</th><th>Saldo</th><th>Status</th></tr></thead>
-          <tbody id="expenseControlTable"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>🧾 Histórico de Pagamentos</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Pescador</th><th>Despesa</th><th>Data</th><th>Valor</th><th></th></tr></thead>
-          <tbody id="paymentsTable"></tbody>
-        </table>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- ================= ABA 2: EXPEDIÇÃO & TIMER ================= -->
-  <div id="tab-expedicao" class="tab-content">
-    <section class="card">
-      <h2>⏱️ Controle de Turnos & Timer em Tempo Real</h2>
-      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-        <button onclick="iniciarRotacao24h()" class="btn-action" style="background: #16a34a;">▶️ Iniciar Timer Automático</button>
-        <button onclick="pararRotacao24h()" class="btn-action secondary" style="background: #ef4444;">⏹️ Pausar Timer</button>
-      </div>
-
-      <div class="timer-panel">
-        <div class="timer-box">
-          <div class="timer-lbl">Turno Atual</div>
-          <div id="turnoAtual" class="timer-val" style="font-size: 1.2rem; color: #fff;">Turno 1</div>
-        </div>
-        <div class="timer-box">
-          <div class="timer-lbl">Tempo Restante do Turno</div>
-          <div id="timerDisplay" class="timer-val">00:00:00</div>
-        </div>
-        <div class="timer-box">
-          <div class="timer-lbl">Duração por Turno</div>
-          <div id="duracaoTurno" class="timer-val" style="font-size: 1.1rem; color: #7dd3fc;">-- min</div>
-        </div>
-      </div>
-
-      <div class="deck-view">
-        <div class="deck-section" style="border-color: #facc15; background: rgba(250, 204, 21, 0.05);">
-          <div class="deck-section-title" style="color: #facc15;">🌊 FRENTE DO BARCO (PROA)</div>
-          <div id="posDeckProa" class="fisherman-tags-container">--</div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="deck-section">
-            <div class="deck-section-title">⬅️ Lado Esquerdo</div>
-            <div id="posDeckEsq" class="fisherman-tags-container">--</div>
-          </div>
-          <div class="deck-section">
-            <div class="deck-section-title">➡️ Lado Direito</div>
-            <div id="posDeckDir" class="fisherman-tags-container">--</div>
-          </div>
-        </div>
-        <div class="deck-section">
-          <div class="deck-section-title">💺 Popa / Fundo</div>
-          <div id="posDeckPopa" class="fisherman-tags-container">--</div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-</main>
-
-<footer>
-  © 2026 Pesca Justa 🎣 — Desenvolvido por <strong>Devlin Mariano</strong>
-</footer>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const STORAGE_KEY = 'pesca-justa-html-v6';
-const DEFAULT_NAMES = ['Adhamo','Gabriel','Claudio','Emiliano','Wesnex Tattoo','Devlin','Valtair','Roderley','Padrasto Rafa','Rafa','Willian','Marcelo Rastoldo','João Darço'];
-
-let state = {
-  participants: [],
-  expenses: [],
-  payments: [],
-  barcoConfig: { bancosPopa: 2, capPopa: 2, bancosEsq: 3, capEsq: 1, bancosDir: 3, capDir: 1 },
-  infoPesca: { local: 'Laje de Santos', dataSaida: '2026-10-17', horaSaida: '10:00', dataRetorno: '2026-10-18', horaRetorno: '04:00' },
-  cronograma: []
-};
-
-function id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-function money(v) { return Number(v||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
-function initials(name) { return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join(''); }
-function numberBR(v) { return Number(String(v).replace(/\./g,'').replace(',','.')) || 0; }
-function esc(s) { return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove('show'),2800); }
-
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function load() {
-  try {
-    const x = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(x) state = {...state, ...x};
-  } catch(e){}
-}
-
-function participant(pid) { return state.participants.find(x=>x.id===pid); }
-function expense(eid) { return state.expenses.find(x=>x.id===eid); }
-
-function avatar(p) {
-  if(!p) return '';
-  return `<div class="avatar">${p.photo ? `<img src="${p.photo}" alt="">` : esc(initials(p.name))}</div>`;
-}
-
-function totals() {
-  const expenses = state.expenses.reduce((s,x)=>s+x.value,0);
-  const collected = state.payments.reduce((s,x)=>s+x.value,0);
-  const share = state.participants.length ? expenses / state.participants.length : 0;
-  return { expenses, collected, share, pending: Math.max(0, expenses - collected) };
-}
-
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  event.target.classList.add('active');
-}
-
-function salvarInfoPesca(e) {
-  e.preventDefault();
-  state.infoPesca = {
-    local: document.getElementById('infoLocal').value,
-    dataSaida: document.getElementById('infoDataSaida').value,
-    horaSaida: document.getElementById('infoHoraSaida').value,
-    dataRetorno: document.getElementById('infoDataRetorno').value,
-    horaRetorno: document.getElementById('infoHoraRetorno').value
-  };
-  save();
-  toast('Informações da pesca salvas!');
-}
-
-function atualizarConfigBarco() {
-  state.barcoConfig = {
-    bancosPopa: parseInt(document.getElementById('cfgBancosPopa').value) || 0,
-    capPopa: parseInt(document.getElementById('cfgCapPopa').value) || 0,
-    bancosEsq: parseInt(document.getElementById('cfgBancosEsq').value) || 0,
-    capEsq: parseInt(document.getElementById('cfgCapEsq').value) || 0,
-    bancosDir: parseInt(document.getElementById('cfgBancosDir').value) || 0,
-    capDir: parseInt(document.getElementById('cfgCapDir').value) || 0
-  };
-  save();
-  renderMapaBarco();
-}
-
-function renderMapaBarco() {
-  const cfg = state.barcoConfig;
-  let htmlEsq = '';
-  for(let i=1; i<=cfg.bancosEsq; i++) htmlEsq += `<div class="boat-seat">Banco Esq ${i}<span>(${cfg.capEsq} pes.)</span></div>`;
-  document.getElementById('mapSeatsEsq').innerHTML = htmlEsq || '<div class="muted">Nenhum</div>';
-
-  let htmlDir = '';
-  for(let i=1; i<=cfg.bancosDir; i++) htmlDir += `<div class="boat-seat">Banco Dir ${i}<span>(${cfg.capDir} pes.)</span></div>`;
-  document.getElementById('mapSeatsDir').innerHTML = htmlDir || '<div class="muted">Nenhum</div>';
-
-  let htmlPopa = '';
-  for(let i=1; i<=cfg.bancosPopa; i++) htmlPopa += `<div class="boat-seat">Popa ${i}<span>(${cfg.capPopa} pes.)</span></div>`;
-  document.getElementById('mapSeatsPopa').innerHTML = htmlPopa || '<div class="muted">Nenhum</div>';
-}
-
-function addParticipant() {
-  const input = document.getElementById('participantName'), name = input.value.trim();
-  if(!name) return toast('Informe o nome do pescador.');
-  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase())) return toast('Pescador já cadastrado.');
-  state.participants.push({id:id(), name, msg: ''});
-  input.value = ''; save(); render(); toast('Pescador adicionado.');
-}
-
-function loadDefaultNames() {
-  let n = 0; const existing = new Set(state.participants.map(p=>p.name.toLowerCase()));
-  DEFAULT_NAMES.forEach(name => { if(!existing.has(name.toLowerCase())){ state.participants.push({id:id(), name, msg:''}); n++; } });
-  save(); render(); toast(n ? `${n} pescadores adicionados.` : 'Todos já estão cadastrados.');
-}
-
-function updateParticipantMsg(pid, val) {
-  const p = participant(pid);
-  if(p) { p.msg = val; save(); }
-}
-
-function editParticipant(pid) {
-  const p = participant(pid); const name = prompt('Novo nome:', p.name); if(name===null) return;
-  const n = name.trim(); if(!n) return toast('Nome inválido.');
-  p.name = n; save(); render(); toast('Nome atualizado.');
-}
-
-function deleteParticipant(pid) {
-  const p = participant(pid); if(!confirm(`Excluir ${p.name}?`)) return;
-  state.participants = state.participants.filter(x=>x.id!==pid);
-  state.payments = state.payments.filter(x=>x.participantId!==pid);
-  save(); render(); toast('Participante excluído.');
-}
-
-function changePhoto(pid, input) {
-  const file = input.files[0]; if(!file) return;
-  const r = new FileReader(); r.onload = e => {
-    const img = new Image(); img.onload = () => {
-      const c = document.createElement('canvas'); let max=180, scale=Math.min(1, max/Math.max(img.width, img.height));
-      c.width = img.width*scale; c.height = img.height*scale;
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      participant(pid).photo = c.toDataURL('image/jpeg', .78);
-      save(); render(); toast('Foto atualizada.');
-    };
-    img.src = e.target.result;
-  };
-  r.readAsDataURL(file);
-}
-
-function addExpense() {
-  const desc = document.getElementById('expenseDesc').value.trim();
-  const value = numberBR(document.getElementById('expenseValue').value);
-  const category = document.getElementById('expenseCategory').value;
-  if(!desc) return toast('Informe a descrição.');
-  if(value <= 0) return toast('Informe um valor válido.');
-  state.expenses.push({id:id(), desc, value, category});
-  document.getElementById('expenseDesc').value = ''; document.getElementById('expenseValue').value = '';
-  save(); render(); toast('Despesa adicionada.');
-}
-
-function editExpense(eid) {
-  const e = expense(eid); const desc = prompt('Descrição:', e.desc); if(desc===null) return;
-  const value = prompt('Valor:', String(e.value)); if(value===null) return;
-  const v = numberBR(value); if(!desc.trim() || v<=0) return toast('Dados inválidos.');
-  e.desc = desc.trim(); e.value = v; save(); render(); toast('Despesa atualizada.');
-}
-
-function deleteExpense(eid) {
-  if(!confirm('Excluir esta despesa e seus pagamentos?')) return;
-  state.expenses = state.expenses.filter(x=>x.id!==eid);
-  state.payments = state.payments.filter(x=>x.expenseId!==eid);
-  save(); render(); toast('Despesa excluída.');
-}
-
-function addPayment() {
-  const participantId = document.getElementById('paymentParticipant').value;
-  const expenseId = document.getElementById('paymentExpense').value;
-  const value = numberBR(document.getElementById('paymentValue').value);
-  if(!participantId) return toast('Selecione um pescador.');
-  if(!expenseId) return toast('Selecione uma despesa.');
-  if(value <= 0) return toast('Informe um valor válido.');
-  
-  state.payments.push({id:id(), participantId, expenseId, value, date:new Date().toISOString()});
-  document.getElementById('paymentValue').value = ''; save(); render(); toast('Pagamento registrado.');
-}
-
-function deletePayment(pid) { state.payments = state.payments.filter(x=>x.id!==pid); save(); render(); toast('Pagamento removido.'); }
-
-function render() {
-  const t = totals();
-  document.getElementById('sumParticipants').textContent = state.participants.length;
-  document.getElementById('sumExpenses').textContent = money(t.expenses);
-  document.getElementById('sumCollected').textContent = money(t.collected);
-  document.getElementById('sumShare').textContent = money(t.share);
-  document.getElementById('sumPending').textContent = money(t.pending);
-  
-  const pct = t.expenses ? Math.min(100, t.collected/t.expenses*100) : 0;
-  document.getElementById('progressPercent').textContent = pct.toFixed(1) + '%';
-  document.getElementById('progressBar').style.width = pct + '%';
-  
-  document.getElementById('infoLocal').value = state.infoPesca.local || '';
-  document.getElementById('infoDataSaida').value = state.infoPesca.dataSaida || '';
-  document.getElementById('infoHoraSaida').value = state.infoPesca.horaSaida || '';
-  document.getElementById('infoDataRetorno').value = state.infoPesca.dataRetorno || '';
-  document.getElementById('infoHoraRetorno').value = state.infoPesca.horaRetorno || '';
-
-  document.getElementById('cfgBancosPopa').value = state.barcoConfig.bancosPopa;
-  document.getElementById('cfgCapPopa').value = state.barcoConfig.capPopa;
-  document.getElementById('cfgBancosEsq').value = state.barcoConfig.bancosEsq;
-  document.getElementById('cfgCapEsq').value = state.barcoConfig.capEsq;
-  document.getElementById('cfgBancosDir').value = state.barcoConfig.bancosDir;
-  document.getElementById('cfgCapDir').value = state.barcoConfig.capDir;
-  renderMapaBarco();
-
-  document.getElementById('participantsTable').innerHTML = state.participants.length ? state.participants.map(p => {
-    return `<tr>
-      <td><label style="cursor:pointer">${avatar(p)}<input type="file" accept="image/*" style="display:none" onchange="changePhoto('${p.id}',this)"></label></td>
-      <td>
-        <strong>${esc(p.name)}</strong><br>
-        <input type="text" value="${esc(p.msg||'')}" placeholder="Msg do adm ao pescador..." onchange="updateParticipantMsg('${p.id}', this.value)" style="margin-top:4px; font-size:12px; height:30px; width:100%;">
-      </td>
-      <td><span class="badge">Ativo</span></td>
-      <td><div class="actions"><button class="small secondary" onclick="editParticipant('${p.id}')">Editar</button><button class="small danger" onclick="deleteParticipant('${p.id}')">Excluir</button></div></td>
-    </tr>`;
-  }).join('') : '<tr><td colspan="4" class="empty">Nenhum pescador cadastrado.</td></tr>';
-
-  document.getElementById('expensesTable').innerHTML = state.expenses.length ? state.expenses.map(e => `<tr>
-    <td>${esc(e.desc)}</td><td><span class="badge">${esc(e.category)}</span></td><td>${money(e.value)}</td>
-    <td><div class="actions"><button class="small secondary" onclick="editExpense('${e.id}')">Editar</button><button class="small danger" onclick="deleteExpense('${e.id}')">Excluir</button></div></td>
-  </tr>`).join('') : '<tr><td colspan="4" class="empty">Nenhuma despesa cadastrada.</td></tr>';
-
-  document.getElementById('paymentParticipant').innerHTML = state.participants.length ? state.participants.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option value="">Nenhum pescador</option>';
-  document.getElementById('paymentExpense').innerHTML = state.expenses.length ? state.expenses.map(e => `<option value="${e.id}">${esc(e.desc)}</option>`).join('') : '<option value="">Nenhuma despesa</option>';
-
-  document.getElementById('financialTable').innerHTML = state.participants.length ? state.participants.map(p => {
-    const paid = state.payments.filter(x=>x.participantId===p.id).reduce((s,x)=>s+x.value,0), missing = Math.max(0, t.share - paid);
-    const status = missing < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente';
-    const cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-    return `<tr><td>${esc(p.name)}</td><td>${money(t.share)}</td><td>${money(paid)}</td><td>${money(missing)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
-  }).join('') : '<tr><td colspan="5" class="empty">Cadastre participantes.</td></tr>';
-
-  document.getElementById('expenseControlTable').innerHTML = state.expenses.length ? state.expenses.map(e => {
-    const paid = state.payments.filter(x=>x.expenseId===e.id).reduce((s,x)=>s+x.value,0), saldo = Math.max(0, e.value - paid), share = state.participants.length ? e.value/state.participants.length : 0;
-    const status = saldo < 0.005 ? 'Pago' : paid > 0 ? 'Parcial' : 'Pendente';
-    const cls = status==='Pago'?'status-paid':status==='Parcial'?'status-partial':'status-pending';
-    return `<tr><td>${esc(e.desc)}</td><td>${esc(e.category)}</td><td>${money(e.value)}</td><td>${money(share)}</td><td>${money(paid)}</td><td>${money(saldo)}</td><td><span class="badge ${cls}">${status}</span></td></tr>`;
-  }).join('') : '<tr><td colspan="7" class="empty">Cadastre despesas.</td></tr>';
-
-  document.getElementById('paymentsTable').innerHTML = state.payments.length ? [...state.payments].reverse().map(x => `<tr>
-    <td>${esc(participant(x.participantId)?.name||'—')}</td><td>${esc(expense(x.expenseId)?.desc||'—')}</td>
-    <td>${new Date(x.date).toLocaleString('pt-BR')}</td><td>${money(x.value)}</td>
-    <td><button class="small danger" onclick="deletePayment('${x.id}')">Remover</button></td>
-  </tr>`).join('') : '<tr><td colspan="5" class="empty">Nenhum pagamento registrado.</td></tr>';
-
-  renderCardsTopoBarco();
-}
-
-/* ================= CRONOGRAMA & ROTAÇÃO BASEADA EM HORAS ================= */
-let timerInterval = null;
-let tempoRestanteSegundos = 0;
-let turnoIndex = 0;
-
-function dispararAlarmeSonoro() {
-  try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.8);
-  } catch(e) {}
-}
 
 function gerarCronogramaTurnos() {
-  const nomes = state.participants.map(p => p.name);
-  if(nomes.length === 0) return toast('Cadastre pescadores primeiro.');
 
-  const horasPorTurno = parseFloat(document.getElementById('horasPorTurnoInput').value) || 4;
-  const inicioStr = document.getElementById('inicioPescaInput').value;
-  const fimStr = document.getElementById('fimPescaInput').value;
+  /* =======================================================
+     1 - PREPARAR PARTICIPANTES
+     ======================================================= */
 
-  const inicioMs = new Date(inicioStr).getTime();
-  const fimMs = new Date(fimStr).getTime();
-  if(fimMs <= inicioMs) return toast('A data/hora final deve ser posterior ao início.');
+  const nomes = [
+    ...new Set(
+      state.participants
+        .map(p => (p.name || '').trim())
+        .filter(nome => nome !== '')
+    )
+  ];
 
-  const duracaoTotalHoras = (fimMs - inicioMs) / (1000 * 60 * 60);
-  const duracaoTurnoMs = horasPorTurno * 3600 * 1000;
-  const numTurnos = Math.ceil(duracaoTotalHoras / horasPorTurno);
 
-  const cfg = state.barcoConfig;
-  const esqCount = cfg.bancosEsq * cfg.capEsq;
-  const dirCount = cfg.bancosDir * cfg.capDir;
-  const popaCount = cfg.bancosPopa * cfg.capPopa;
-  const totalVagas = esqCount + dirCount + popaCount;
+  if (nomes.length === 0) {
+    return toast('Cadastre pescadores primeiro.');
+  }
+
+
+  /* =======================================================
+     2 - CONFIGURAÇÕES DE TEMPO
+     ======================================================= */
+
+  const horasPorTurno =
+    parseFloat(
+      document.getElementById(
+        'horasPorTurnoInput'
+      ).value
+    ) || 4;
+
+
+  const inicioStr =
+    document.getElementById(
+      'inicioPescaInput'
+    ).value;
+
+
+  const fimStr =
+    document.getElementById(
+      'fimPescaInput'
+    ).value;
+
+
+  const inicioMs =
+    new Date(inicioStr).getTime();
+
+  const fimMs =
+    new Date(fimStr).getTime();
+
+
+  if (fimMs <= inicioMs) {
+    return toast(
+      'A data/hora final deve ser posterior ao início.'
+    );
+  }
+
+
+  const duracaoTurnoMs =
+    horasPorTurno * 60 * 60 * 1000;
+
+
+  const duracaoTotalHoras =
+    (fimMs - inicioMs) /
+    (1000 * 60 * 60);
+
+
+  const numTurnos =
+    Math.ceil(
+      duracaoTotalHoras /
+      horasPorTurno
+    );
+
+
+  /* =======================================================
+     3 - CONFIGURAÇÃO DO BARCO
+     ======================================================= */
+
+  const cfg =
+    state.barcoConfig;
+
+
+  const esqCount =
+    cfg.bancosEsq *
+    cfg.capEsq;
+
+
+  const dirCount =
+    cfg.bancosDir *
+    cfg.capDir;
+
+
+  const popaCount =
+    cfg.bancosPopa *
+    cfg.capPopa;
+
+
+  const totalVagas =
+    esqCount +
+    dirCount +
+    popaCount;
+
+
+  if (totalVagas <= 0) {
+    return toast(
+      'Configure corretamente as vagas do barco.'
+    );
+  }
+
+
+  if (nomes.length < totalVagas) {
+    return toast(
+      `Existem ${nomes.length} pescadores para ${totalVagas} vagas. ` +
+      `Cadastre mais pescadores ou reduza as vagas.`
+    );
+  }
+
+
+  /* =======================================================
+     4 - ESTATÍSTICAS DE CADA PESCADOR
+     ======================================================= */
+
+  const estatisticas = {};
+
+
+  nomes.forEach(nome => {
+
+    estatisticas[nome] = {
+
+      // Quantidade total de turnos pescados
+      turnos: 0,
+
+      // Quantidade de vezes em cada área
+      esquerda: 0,
+      direita: 0,
+      popa: 0,
+
+      // Último turno em que participou
+      ultimoTurno: -999,
+
+      // Última posição
+      ultimaArea: null,
+
+      // Quantidade de descansos
+      descansos: 0
+
+    };
+
+  });
+
+
+  /*
+     Embaralha uma única vez para que,
+     quando houver empate entre pescadores,
+     não seja sempre o primeiro nome da lista
+     a receber prioridade.
+  */
+
+  const ordemInicial =
+    embaralhar(nomes);
+
+
+  /*
+     Número aleatório para desempate.
+  */
+
+  const prioridadeAleatoria = {};
+
+
+  ordemInicial.forEach(
+    (nome, index) => {
+
+      prioridadeAleatoria[nome] =
+        index;
+
+    }
+  );
+
+
+  /* =======================================================
+     5 - INICIAR CRONOGRAMA
+     ======================================================= */
 
   state.cronograma = [];
-  let horaAtual = new Date(inicioMs);
 
-  for(let i=0; i<numTurnos; i++) {
-    let proximaHoraMs = horaAtual.getTime() + duracaoTurnoMs;
-    if (proximaHoraMs > fimMs) proximaHoraMs = fimMs; // Ajusta o último turno parcial se necessário (ex: 2h restantes)
-    let horaFim = new Date(proximaHoraMs);
-    
-    let pescadoresTurno = [];
-    for(let j=0; j<totalVagas; j++) {
-      let indexPessoa = (i + j) % nomes.length;
-      pescadoresTurno.push(nomes[indexPessoa]);
+
+  let horaAtual =
+    new Date(inicioMs);
+
+
+  let participantesTurnoAnterior =
+    [];
+
+
+  /* =======================================================
+     6 - GERAR CADA TURNO
+     ======================================================= */
+
+  for (
+    let turnoAtual = 1;
+    turnoAtual <= numTurnos;
+    turnoAtual++
+  ) {
+
+
+    /* =====================================================
+       CALCULAR HORÁRIO DO TURNO
+       ===================================================== */
+
+    let proximaHoraMs =
+      horaAtual.getTime() +
+      duracaoTurnoMs;
+
+
+    if (
+      proximaHoraMs >
+      fimMs
+    ) {
+
+      proximaHoraMs =
+        fimMs;
+
     }
 
-    let pEsq = pescadoresTurno.slice(0, esqCount);
-    let pDir = pescadoresTurno.slice(esqCount, esqCount + dirCount);
-    let pPopa = pescadoresTurno.slice(esqCount + dirCount, totalVagas);
+
+    const horaFim =
+      new Date(
+        proximaHoraMs
+      );
+
+
+    /* =====================================================
+       IDENTIFICAR QUEM DESCANSOU
+       ===================================================== */
+
+    const descansaram =
+      nomes.filter(
+        nome =>
+          !participantesTurnoAnterior
+            .includes(nome)
+      );
+
+
+    /*
+       A partir do segundo turno,
+       quem descansou recebe prioridade.
+    */
+
+
+    /* =====================================================
+       RANKING INTELIGENTE
+       ===================================================== */
+
+    const ranking =
+      [...nomes]
+        .sort(
+          (a, b) => {
+
+
+            const ea =
+              estatisticas[a];
+
+            const eb =
+              estatisticas[b];
+
+
+            /* ---------------------------------------------
+               PRIORIDADE 1
+               QUEM PESCOU MENOS TURNOS
+               --------------------------------------------- */
+
+            if (
+              ea.turnos !==
+              eb.turnos
+            ) {
+
+              return (
+                ea.turnos -
+                eb.turnos
+              );
+
+            }
+
+
+            /* ---------------------------------------------
+               PRIORIDADE 2
+               QUEM DESCANSOU NO TURNO ANTERIOR
+               --------------------------------------------- */
+
+            const aDescansou =
+              participantesTurnoAnterior.length > 0 &&
+              !participantesTurnoAnterior.includes(a);
+
+
+            const bDescansou =
+              participantesTurnoAnterior.length > 0 &&
+              !participantesTurnoAnterior.includes(b);
+
+
+            if (
+              aDescansou !==
+              bDescansou
+            ) {
+
+              return aDescansou
+                ? -1
+                : 1;
+
+            }
+
+
+            /* ---------------------------------------------
+               PRIORIDADE 3
+               QUEM ESTÁ HÁ MAIS TEMPO SEM PESCAR
+               --------------------------------------------- */
+
+            if (
+              ea.ultimoTurno !==
+              eb.ultimoTurno
+            ) {
+
+              return (
+                ea.ultimoTurno -
+                eb.ultimoTurno
+              );
+
+            }
+
+
+            /* ---------------------------------------------
+               PRIORIDADE 4
+               DESEMPATE ALEATÓRIO FIXO
+               --------------------------------------------- */
+
+            return (
+              prioridadeAleatoria[a] -
+              prioridadeAleatoria[b]
+            );
+
+          }
+        );
+
+
+    /*
+       Seleciona somente a quantidade
+       necessária para preencher o barco.
+    */
+
+    const pescadoresTurno =
+      ranking.slice(
+        0,
+        totalVagas
+      );
+
+
+    /* =====================================================
+       7 - CONTROLE DOS DESCANSOS
+       ===================================================== */
+
+    nomes.forEach(
+      nome => {
+
+        if (
+          !pescadoresTurno.includes(nome)
+        ) {
+
+          estatisticas[nome]
+            .descansos++;
+
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       8 - DISTRIBUIÇÃO INTELIGENTE NAS ÁREAS
+       ===================================================== */
+
+    const pescadoresDisponiveis =
+      [...pescadoresTurno];
+
+
+    /*
+       Função que escolhe pescadores
+       tentando evitar repetir a mesma área.
+    */
+
+
+    function escolherParaArea(
+      area,
+      quantidade
+    ) {
+
+      if (
+        quantidade <= 0
+      ) {
+
+        return [];
+
+      }
+
+
+      const ordenados =
+        pescadoresDisponiveis
+          .sort(
+            (a, b) => {
+
+
+              const ea =
+                estatisticas[a];
+
+              const eb =
+                estatisticas[b];
+
+
+              /*
+                 Quantidade de vezes
+                 que já ficou nesta área
+              */
+
+              const vezesA =
+                ea[area];
+
+              const vezesB =
+                eb[area];
+
+
+              if (
+                vezesA !==
+                vezesB
+              ) {
+
+                return (
+                  vezesA -
+                  vezesB
+                );
+
+              }
+
+
+              /*
+                 Evita repetir a mesma área
+                 do turno anterior
+              */
+
+              const aMesmaArea =
+                ea.ultimaArea === area
+                  ? 1
+                  : 0;
+
+
+              const bMesmaArea =
+                eb.ultimaArea === area
+                  ? 1
+                  : 0;
+
+
+              if (
+                aMesmaArea !==
+                bMesmaArea
+              ) {
+
+                return (
+                  aMesmaArea -
+                  bMesmaArea
+                );
+
+              }
+
+
+              /*
+                 Quem pescou menos
+                 tem prioridade
+              */
+
+              if (
+                ea.turnos !==
+                eb.turnos
+              ) {
+
+                return (
+                  ea.turnos -
+                  eb.turnos
+                );
+
+              }
+
+
+              return (
+                prioridadeAleatoria[a] -
+                prioridadeAleatoria[b]
+              );
+
+            }
+          );
+
+
+      const escolhidos =
+        ordenados.slice(
+          0,
+          quantidade
+        );
+
+
+      /*
+         Remove os escolhidos
+         da lista disponível.
+      */
+
+      escolhidos.forEach(
+        nome => {
+
+          const index =
+            pescadoresDisponiveis
+              .indexOf(nome);
+
+
+          if (
+            index >= 0
+          ) {
+
+            pescadoresDisponiveis
+              .splice(
+                index,
+                1
+              );
+
+          }
+
+        }
+      );
+
+
+      /*
+         Atualiza estatísticas
+         da área.
+      */
+
+      escolhidos.forEach(
+        nome => {
+
+          estatisticas[nome]
+            [area]++;
+
+          estatisticas[nome]
+            .ultimaArea =
+            area;
+
+        }
+      );
+
+
+      return escolhidos;
+
+    }
+
+
+    /*
+       Distribuição das áreas.
+    */
+
+    const pEsq =
+      escolherParaArea(
+        'esquerda',
+        esqCount
+      );
+
+
+    const pDir =
+      escolherParaArea(
+        'direita',
+        dirCount
+      );
+
+
+    const pPopa =
+      escolherParaArea(
+        'popa',
+        popaCount
+      );
+
+
+    /* =====================================================
+       9 - ATUALIZAR ESTATÍSTICAS DE PARTICIPAÇÃO
+       ===================================================== */
+
+    pescadoresTurno.forEach(
+      nome => {
+
+        estatisticas[nome]
+          .turnos++;
+
+
+        estatisticas[nome]
+          .ultimoTurno =
+          turnoAtual;
+
+      }
+    );
+
+
+    /* =====================================================
+       10 - SALVAR TURNO
+       ===================================================== */
 
     state.cronograma.push({
-      turno: i + 1,
-      inicio: new Date(horaAtual),
-      fim: new Date(horaFim),
-      esq: pEsq,
-      dir: pDir,
-      popa: pPopa
+
+      turno:
+        turnoAtual,
+
+      inicio:
+        new Date(
+          horaAtual
+        ),
+
+      fim:
+        new Date(
+          horaFim
+        ),
+
+      esq:
+        pEsq,
+
+      dir:
+        pDir,
+
+      popa:
+        pPopa,
+
+      descanso:
+        nomes.filter(
+          nome =>
+            !pescadoresTurno
+              .includes(nome)
+        )
+
     });
 
-    horaAtual = horaFim;
-    if (horaAtual.getTime() >= fimMs) break;
+
+    /*
+       Guarda participantes
+       para o próximo turno.
+    */
+
+    participantesTurnoAnterior =
+      [...pescadoresTurno];
+
+
+    horaAtual =
+      horaFim;
+
+
+    if (
+      horaAtual.getTime() >=
+      fimMs
+    ) {
+
+      break;
+
+    }
+
   }
+
+
+  /* =======================================================
+     11 - SALVAR E ATUALIZAR TELA
+     ======================================================= */
 
   save();
+
   renderTabelaCronograma();
-  renderCardsTopoBarco();
-  toast('Cronograma gerado com sucesso!');
-}
 
-function renderCardsTopoBarco() {
-  const container = document.getElementById('boatTopTurnsContainer');
-  
-  let despesasHtml = '<div style="margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.3); font-size:10px; color:#f8fafc;"><strong>Despesas:</strong> ';
-  if(state.expenses.length > 0) {
-    despesasHtml += state.expenses.map(e => `${e.desc} (${money(e.value)})`).join(', ');
-  } else {
-    despesasHtml += 'Nenhuma cadastrada';
-  }
-  despesasHtml += '</div>';
-
-  if(!state.cronograma.length) {
-    container.innerHTML = `<div class="turn-card-mini"><strong>Turnos & Despesas</strong>Gere o cronograma abaixo.${despesasHtml}</div>`;
-    return;
-  }
-
-  container.innerHTML = state.cronograma.map(c => `
-    <div class="turn-card-mini">
-      <strong>Turno ${c.turno}</strong>
-      Inicia às: ${formatarHoraCurta(new Date(c.inicio))}<br>
-      Finaliza às: ${formatarHoraCurta(new Date(c.fim))}
-      ${despesasHtml}
-    </div>
-  `).join('');
-}
-
-function renderTabelaCronograma() {
-  const tbody = document.getElementById('tabelaCronogramaBody');
-  if(!state.cronograma.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum cronograma gerado.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = state.cronograma.map(c => `
-    <tr id="row-turno-${c.turno}">
-      <td><strong>Turno ${c.turno}</strong></td>
-      <td>${formatarHoraData(new Date(c.inicio))}</td>
-      <td>${formatarHoraData(new Date(c.fim))}</td>
-      <td>${c.esq.join(', ') || '—'}</td>
-      <td>${c.dir.join(', ') || '—'}</td>
-      <td>${c.popa.join(', ') || '—'}</td>
-    </tr>
-  `).join('');
-}
-
-function iniciarRotacao24h() {
-  if(!state.cronograma.length) return toast('Gere o cronograma de turnos primeiro.');
-  
-  const item = state.cronograma[0];
-  const duracaoSegundos = Math.floor((new Date(item.fim) - new Date(item.inicio)) / 1000);
-  document.getElementById('duracaoTurno').textContent = `${Math.floor(duracaoSegundos / 60)} min`;
-
-  turnoIndex = 0;
-  ativarTurnoAtual(duracaoSegundos);
-  toast('Timer automático iniciado!');
-}
-
-function pararRotacao24h() {
-  if(timerInterval) clearInterval(timerInterval);
-  toast('Timer pausado.');
-}
-
-function ativarTurnoAtual(duracaoSegundos) {
-  if(timerInterval) clearInterval(timerInterval);
-  tempoRestanteSegundos = duracaoSegundos;
-
-  const item = state.cronograma[turnoIndex];
-  if(!item) return;
-
-  document.getElementById('turnoAtual').textContent = `Turno ${item.turno} de ${state.cronograma.length}`;
-  const horaSaidaTurno = formatarHoraData(new Date(item.fim));
-
-  document.getElementById('posDeckProa').innerHTML = `<div class="fisherman-tag" style="background:#ca8a04;">Rodízio Ativo<span>Saída: ${horaSaidaTurno}</span></div>`;
-  document.getElementById('posDeckEsq').innerHTML = item.esq.map(p => `<div class="fisherman-tag">${p}<span>Sai às ${horaSaidaTurno}</span></div>`).join('') || '--';
-  document.getElementById('posDeckDir').innerHTML = item.dir.map(p => `<div class="fisherman-tag">${p}<span>Sai às ${horaSaidaTurno}</span></div>`).join('') || '--';
-  document.getElementById('posDeckPopa').innerHTML = item.popa.map(p => `<div class="fisherman-tag" style="background:#c2410c;">${p}<span>Sai às ${horaSaidaTurno}</span></div>`).join('') || '--';
-
-  document.querySelectorAll('.rotacao-table tr').forEach(tr => tr.style.background = '');
-  const activeRow = document.getElementById(`row-turno-${item.turno}`);
-  if(activeRow) activeRow.style.background = 'rgba(56, 189, 248, 0.15)';
-
-  timerInterval = setInterval(() => {
-    tempoRestanteSegundos--;
-    renderTimer(tempoRestanteSegundos);
-    if(tempoRestanteSegundos <= 0) {
-      clearInterval(timerInterval);
-      dispararAlarmeSonoro();
-      turnoIndex++;
-      
-      if(turnoIndex >= state.cronograma.length) {
-        alert('🏁 Fim da expedição de pesca!');
-        return;
-      }
-      
-      alert(`🔔 ALERTA DE TROCA! Fim do Turno ${item.turno}. Hora de trocar de posição no barco!`);
-      const nextItem = state.cronograma[turnoIndex];
-      const nextDuracao = Math.floor((new Date(nextItem.fim) - new Date(nextItem.inicio)) / 1000);
-      ativarTurnoAtual(nextDuracao);
-    }
-  }, 1000);
-}
-
-function renderTimer(segundos) {
-  const hrs = String(Math.floor(segundos / 3600)).padStart(2, '0');
-  const mins = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
-  const secs = String(segundos % 60).padStart(2, '0');
-  document.getElementById('timerDisplay').textContent = `${hrs}:${mins}:${secs}`;
-}
-
-function formatarHoraData(data) {
-  const d = String(data.getDate()).padStart(2, '0');
-  const m = String(data.getMonth() + 1).padStart(2, '0');
-  const h = String(data.getHours()).padStart(2, '0');
-  const min = String(data.getMinutes()).padStart(2, '0');
-  return `${d}/${m} ${h}:${min}`;
-}
-
-function formatarHoraCurta(data) {
-  const h = String(data.getHours()).padStart(2, '0');
-  const min = String(data.getMinutes()).padStart(2, '0');
-  return `${h}:${min}`;
-}
-
-function processarFotos(e) {
-  const files = Array.from(e.target.files);
-  let fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v4') || '[]');
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      fotosSalvas.push(evt.target.result);
-      localStorage.setItem('pescaria_fotos_v4', JSON.stringify(fotosSalvas));
-      renderGaleria();
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function renderGaleria() {
-  const grid = document.getElementById('previewGrid');
-  grid.innerHTML = '';
-  const fotosSalvas = JSON.parse(localStorage.getItem('pescaria_fotos_v4') || '[]');
-  fotosSalvas.forEach(imgSrc => {
-    const div = document.createElement('div');
-    div.className = 'img-container';
-    div.innerHTML = `<img src="${imgSrc}">`;
-    grid.appendChild(div);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  load();
-  render();
-  renderGaleria();
-  renderTabelaCronograma();
   renderCardsTopoBarco();
 
-  if("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js").catch(err => {});
-  }
-});
-</script>
-</body>
-</html>
+
+  toast(
+    'Revezamento inteligente gerado com sucesso! 🎣'
+  );
+
+}
