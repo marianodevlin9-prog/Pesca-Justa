@@ -226,10 +226,12 @@
             outline: none;
         }
 
-        /* Container do Barco com suporte a Imagem Real de Fundo */
+        /* Container do Barco Dinâmico com Imagem de Fundo */
         .boat-schema-container {
             position: relative;
-            background: #0A192F;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             border-radius: 20px;
             padding: 16px;
             display: flex;
@@ -237,23 +239,37 @@
             align-items: center;
             border: 2px solid var(--accent-blue);
             min-height: 420px;
-            /* SE QUISER USAR FOTO REAL DO BARCO: Descomente a linha abaixo e coloque o link da imagem */
-            /* background: url('https://exemplo.com/sua-foto-do-barco.jpg') center/cover no-repeat #0A192F; */
+            background-color: #0A192F; /* Fallback se a imagem falhar */
+        }
+
+        /* Camada escura translúcida opcional para destacar os assentos em cima da foto */
+        .boat-schema-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 25, 47, 0.55);
+            border-radius: 18px;
+            z-index: 1;
         }
 
         .boat-hull {
+            position: relative;
+            z-index: 2;
             width: 100%;
             max-width: 320px;
-            background: rgba(30, 58, 138, 0.9);
-            border-radius: 40px 40px 15px 15px;
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
             padding: 14px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            border: 3px solid #DEB887;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
         }
 
         .boat-section-label {
+            position: relative;
+            z-index: 2;
             font-size: 10px;
             font-weight: 700;
             color: #93C5FD;
@@ -261,6 +277,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 2px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
         .boat-row-seats {
@@ -270,14 +287,14 @@
         }
 
         .seat-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 8px;
             padding: 6px;
             flex: 1;
             text-align: center;
             font-size: 10px;
             border: 1px solid #CBD5E1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .seat-box .seat-num {
@@ -387,11 +404,13 @@
         <div class="content-body">
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title"><i class="fa-solid fa-ship"></i> PRÓXIMA SAÍDA</span>
+                    <span class="card-title"><i class="fa-solid fa-ship"></i> <span id="lbl-barco-nome">Barco Imperador</span></span>
                 </div>
-                <div class="info-row"><i class="fa-solid fa-location-dot"></i> Destino: Búzios - RJ</div>
-                <div class="info-row"><i class="fa-regular fa-calendar"></i> Data: 17 e 18 de Outubro de 2026</div>
-                <div class="info-row"><i class="fa-solid fa-coins"></i> Custo Total Estimado: <strong id="lbl-custo-total">R$ 0,00</strong></div>
+                <div class="info-row"><i class="fa-solid fa-location-dot"></i> Destino: <span id="lbl-destino">Búzios - RJ</span></div>
+                <div class="info-row"><i class="fa-regular fa-calendar"></i> Saída: <span id="lbl-data-saida">17/10/2026 às 06:00</span></div>
+                <div class="info-row"><i class="fa-solid fa-clock"></i> Duração: <span id="lbl-duracao">12 horas</span></div>
+                <div class="info-row"><i class="fa-solid fa-flag-checkered"></i> Retorno Previsto: <span id="lbl-retorno">17/10/2026 às 18:00</span></div>
+                <div class="info-row"><i class="fa-solid fa-coins"></i> Custo Total: <strong id="lbl-custo-total">R$ 0,00</strong></div>
             </div>
 
             <div class="action-grid">
@@ -457,7 +476,6 @@
             <h2 style="font-size: 15px;">CONTROLE FINANCEIRO & RATEIO</h2>
         </div>
         <div class="content-body">
-            <!-- Tabela de Tipos de Despesas -->
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-receipt"></i> Detalhamento de Despesas</span>
                 <table class="finance-table">
@@ -481,7 +499,6 @@
                 </div>
             </div>
 
-            <!-- Tabela de Pagamentos e Diferenças -->
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-money-bill-wave"></i> Status de Pagamento por Pescador</span>
                 <table class="finance-table">
@@ -494,9 +511,6 @@
                     </thead>
                     <tbody id="tabela-pagamentos-body"></tbody>
                 </table>
-                <p style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">
-                    * Quem estiver com 0 pagos receberá a indicação 🤢 automaticamente.
-                </p>
             </div>
         </div>
     </div>
@@ -512,22 +526,33 @@
                 <i class="fa-solid fa-dice"></i> SORTEAR POSIÇÕES DO BARCO
             </button>
 
-            <div class="boat-schema-container">
-                <div style="color: #93C5FD; font-size: 10px; font-weight: 700; margin-bottom: 6px;">PROA (Frente)</div>
+            <div class="boat-schema-container" id="boat-bg-container">
+                <div class="boat-section-label">PROA (Frente)</div>
                 <div class="boat-hull" id="boat-hull-container"></div>
-                <div style="color: #93C5FD; font-size: 10px; font-weight: 700; margin-top: 6px;">POPA (Fundo)</div>
+                <div class="boat-section-label" style="margin-top: 10px;">POPA (Fundo)</div>
             </div>
         </div>
     </div>
 
-    <!-- TELA 5: CONFIGURAÇÕES DE SETORES -->
+    <!-- TELA 5: CONFIGURAÇÕES DA PESCARIA E SETORES -->
     <div id="config-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONFIGURAR SETORES DO BARCO</h2>
+            <h2 style="font-size: 15px;">CONFIGURAR PESCARIA & BARCO</h2>
         </div>
         <div class="content-body">
             <div class="card">
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Dados da Viagem e Imagem do Barco</span>
+                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>URL da Imagem de Fundo do Barco</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()" placeholder="Cole o link da foto do barco aqui"></div>
+                <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Data e Hora de Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="atualizarDadosPescaria()"></div>
+            </div>
+
+            <div class="card">
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-chair"></i> Bancos e Assentos</span>
                 <div class="form-group"><label>Bancos na Popa (Fundo)</label><input type="number" id="cfg-popa-bancos" value="1" onchange="atualizarEsquemaBarco()"></div>
                 <div class="form-group"><label>Pessoas por Banco na Popa</label><input type="number" id="cfg-popa-pessoas" value="2" onchange="atualizarEsquemaBarco()"></div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
@@ -570,6 +595,32 @@
         esqBancos: 3, esqPessoas: 1,
         dirBancos: 3, dirPessoas: 1
     };
+
+    function atualizarDadosPescaria() {
+        document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
+        document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
+        
+        const saidaVal = document.getElementById('cfg-data-saida').value;
+        if(saidaVal) {
+            let dataFmt = new Date(saidaVal).toLocaleString('pt-BR');
+            document.getElementById('lbl-data-saida').innerText = dataFmt;
+        }
+        
+        document.getElementById('lbl-duracao').innerText = document.getElementById('cfg-duracao').value + " horas";
+        
+        const retornoVal = document.getElementById('cfg-data-retorno').value;
+        if(retornoVal) {
+            let dataRetFmt = new Date(retornoVal).toLocaleString('pt-BR');
+            document.getElementById('lbl-retorno').innerText = dataRetFmt;
+        }
+
+        // Atualizar a imagem de fundo do barco dinamicamente
+        const urlImg = document.getElementById('cfg-barco-img').value;
+        const containerBarco = document.getElementById('boat-bg-container');
+        if(urlImg) {
+            containerBarco.style.backgroundImage = `url('${urlImg}')`;
+        }
+    }
 
     function calcularFinancas() {
         const aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
@@ -667,16 +718,12 @@
     function renderizarEsquemaVisual() {
         const container = document.getElementById('boat-hull-container');
         container.innerHTML = `
-            <div class="boat-section-label">Popa (Fundo)</div>
             <div id="container-popa" style="display: flex; flex-direction: column; gap: 6px;"></div>
-            
-            <div class="boat-section-label" style="margin-top: 10px;">Lado Esquerdo / Direito</div>
-            <div style="display: flex; flex-direction: column; gap: 6px;" id="container-laterais"></div>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;" id="container-laterais"></div>
         `;
 
         let vagaContador = 1;
 
-        // Popa
         const popaDiv = document.getElementById('container-popa');
         for(let b=0; b<configBarco.popaBancos; b++) {
             let row = '<div class="boat-row-seats">';
@@ -689,7 +736,6 @@
             popaDiv.innerHTML += row;
         }
 
-        // Laterais (Esquerda e Direita estrito por fileira)
         const lateraisDiv = document.getElementById('container-laterais');
         let maxBancosLateral = Math.max(configBarco.esqBancos, configBarco.dirBancos);
         
@@ -763,6 +809,7 @@
 
     renderizarParticipantes();
     atualizarEsquemaBarco();
+    atualizarDadosPescaria();
 </script>
 
 </body>
