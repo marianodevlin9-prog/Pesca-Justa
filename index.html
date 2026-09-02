@@ -68,7 +68,7 @@
             flex-direction: column;
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 75px; /* Espaço para a barra inferior */
+            padding-bottom: 80px;
         }
 
         .screen.active {
@@ -197,7 +197,8 @@
             align-items: center;
             gap: 6px;
             box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-            margin-bottom: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
 
         .btn-primary:hover {
@@ -225,30 +226,30 @@
             outline: none;
         }
 
-        /* Container do Barco preparado para imagem de fundo opcional */
+        /* Container do Barco com suporte a Imagem Real de Fundo */
         .boat-schema-container {
             position: relative;
             background: #0A192F;
             border-radius: 20px;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
             border: 2px solid var(--accent-blue);
-            min-height: 400px;
-            /* Dica: Para usar imagem real do barco, descomente a linha abaixo substituindo pela URL da imagem: */
-            /* background: url('SUA_IMAGEM_DO_BARCO.jpg') center/contain no-repeat #0A192F; */
+            min-height: 420px;
+            /* SE QUISER USAR FOTO REAL DO BARCO: Descomente a linha abaixo e coloque o link da imagem */
+            /* background: url('https://exemplo.com/sua-foto-do-barco.jpg') center/cover no-repeat #0A192F; */
         }
 
         .boat-hull {
             width: 100%;
-            max-width: 300px;
-            background: rgba(30, 58, 138, 0.85);
+            max-width: 320px;
+            background: rgba(30, 58, 138, 0.9);
             border-radius: 40px 40px 15px 15px;
-            padding: 15px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             border: 3px solid #DEB887;
         }
 
@@ -259,13 +260,13 @@
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .boat-row-seats {
             display: flex;
             justify-content: space-between;
-            gap: 8px;
+            gap: 6px;
         }
 
         .seat-box {
@@ -482,7 +483,7 @@
 
             <!-- Tabela de Pagamentos e Diferenças -->
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-money-bill-wave"></i> Status de Pagamento dos Pescadores</span>
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-money-bill-wave"></i> Status de Pagamento por Pescador</span>
                 <table class="finance-table">
                     <thead>
                         <tr>
@@ -536,6 +537,9 @@
                 <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
                 <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
             </div>
+            <button class="btn-primary" onclick="switchScreen('draw-screen')">
+                <i class="fa-solid fa-check"></i> SALVAR E VER BARCO
+            </button>
         </div>
     </div>
 
@@ -672,7 +676,7 @@
 
         let vagaContador = 1;
 
-        // Renderizar Popa por fileiras de bancos
+        // Popa
         const popaDiv = document.getElementById('container-popa');
         for(let b=0; b<configBarco.popaBancos; b++) {
             let row = '<div class="boat-row-seats">';
@@ -685,7 +689,7 @@
             popaDiv.innerHTML += row;
         }
 
-        // Renderizar Laterais (Esquerda e Direita alinhadas por fileira de banco)
+        // Laterais (Esquerda e Direita estrito por fileira)
         const lateraisDiv = document.getElementById('container-laterais');
         let maxBancosLateral = Math.max(configBarco.esqBancos, configBarco.dirBancos);
         
