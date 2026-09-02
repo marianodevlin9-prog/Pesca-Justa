@@ -226,7 +226,6 @@
             outline: none;
         }
 
-        /* Barra de Progresso de Pagamento */
         .progress-bar-container {
             width: 100%;
             background-color: #E2E8F0;
@@ -474,7 +473,7 @@
                     <i class="fa-solid fa-rotate"></i>
                     <span>RODÍZIO</span>
                 </button>
-                <button class="action-btn" onclick="showToast('Relatório gerado com sucesso')">
+                <button class="action-btn" onclick="gerarRelatorioGeral()">
                     <i class="fa-solid fa-file-lines"></i>
                     <span>RELATÓRIO</span>
                 </button>
@@ -603,7 +602,7 @@
                 <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="atualizarDadosPescaria()"></div>
                 <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="atualizarDadosPescaria()"></div>
                 <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Data e Hora de Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Data e Hora de Retorno (Automático)</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="calcularRetornoManual()"></div>
             </div>
 
             <div class="card">
@@ -682,6 +681,95 @@
     }
     iniciarRelogio();
 
+    // Cálculo automático da data de retorno com base na saída + duração em horas
+    function calcularRetornoAutomatico() {
+        const saidaVal = document.getElementById('cfg-data-saida').value;
+        const duracaoHoras = parseFloat(document.getElementById('cfg-duracao').value) || 0;
+
+        if (saidaVal) {
+            let dataSaida = new Date(saidaVal);
+            dataSaida.setTime(dataSaida.getTime() + (duracaoHoras * 60 * 60 * 1000));
+            
+            // Formata para o input datetime-local (YYYY-MM-DDTHH:mm)
+            document.getElementById('cfg-data-retorno').value = dataSaida.toISOString().slice(0, 16);
+        }
+        atualizarDadosPescaria();
+    }
+
+    function calcularRetornoManual() {
+        atualizarDadosPescaria();
+    }
+
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if(screenId === 'home-screen') document.querySelectorAll('.nav-item')[0].classList.add('active');
+        if(screenId === 'participants-screen') document.querySelectorAll('.nav-item')[1].classList.add('active');
+        if(screenId === 'finance-screen') document.querySelectorAll('.nav-item')[2].classList.add('active');
+        if(screenId === 'draw-screen') document.querySelectorAll('.nav-item')[3].classList.add('active');
+    }
+
+    function showToast(mensagem) {
+        const t = document.getElementById('toast');
+        t.innerText = mensagem;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Geração do Relatório funcional
+    function gerarRelatorioGeral() {
+        showToast('Relatório gerado com sucesso!');
+        
+        let nomeBarco = document.getElementById('cfg-barco-nome').value;
+        let destino = document.getElementById('cfg-local').value;
+        let saida = document.getElementById('lbl-data-saida').innerText;
+        let retorno = document.getElementById('lbl-retorno').innerText;
+        let custoTotal = document.getElementById('lbl-custo-total').innerText;
+        
+        let janelaRelatorio = window.open('', '_blank');
+        janelaRelatorio.document.write(`
+            <html>
+            <head>
+                <title>Relatório da Pescaria - Pesca Justa</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+                    h2 { color: #0A192F; border-bottom: 2px solid #3B82F6; padding-bottom: 5px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 12px; }
+                    th { background-color: #f4f4f4; }
+                </style>
+            </head>
+            <body>
+                <h2>Relatório Oficial de Pescaria - Pesca Justa</h2>
+                <p><strong>Embarcação:</strong> ${nomeBarco}</p>
+                <p><strong>Destino:</strong> ${destino}</p>
+                <p><strong>Saída:</strong> ${saida} | <strong>Retorno:</strong> ${retorno}</p>
+                <p><strong>Custo Global da Viagem:</strong> ${custoTotal}</p>
+                
+                <h3>Equipe e Posições</h3>
+                <table>
+                    <thead>
+                        <tr><th>Pescador</th><th>Vaga/Assento</th><th>Total Pago (R$)</th></tr>
+                    </thead>
+                    <tbody>
+                        ${participantes.map(p => `
+                            <tr>
+                                <td>${p.name}</td>
+                                <td>Vaga ${p.vaga || 'N/A'}</td>
+                                <td>R$ ${((p.frete||0)+(p.alim||0)+(p.iscas||0)+(p.outros||0)).toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <br><button onclick="window.print()" style="padding: 10px 20px; background: #10B981; color: white; border: none; cursor: pointer; border-radius: 5px;">Imprimir / Salvar PDF</button>
+            </body>
+            </html>
+        `);
+        janelaRelatorio.document.close();
+    }
+
     function atualizarDadosPescaria() {
         document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
         document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
@@ -752,7 +840,7 @@
     }
 
     function abrirModalPagamento(id) {
-        idPI = id;
+        idPescadorEditando = id;
         const p = participantes.find(item => item.id === id);
         if(p) {
             document.getElementById('modal-titulo-pescador').innerText = `Pagamento: ${p.name}`;
@@ -766,88 +854,66 @@
 
     function fecharModal() {
         document.getElementById('modal-pagamento').style.display = 'none';
-        idPI = null;
     }
 
     function salvarPagamentoIndividual() {
-        if(idPI !== null) {
-            const p = participantes.find(item => item.id === idPI);
-            if(p) {
-                p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
-                p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
-                p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
-                p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
-            }
-            fecharModal();
-            calcularFinancas();
-            showToast("Pagamento individual atualizado!");
+        const p = participantes.find(item => item.id === idPescadorEditando);
+        if(p) {
+            p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
+            p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
+            p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
+            p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
         }
-    }
-
-    let idPI = null;
-
-    function renderizarParticipantes(rateioIndividual = null) {
-        if(rateioIndividual === null) {
-            const aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
-            const alimentacao = parseFloat(document.getElementById('desp-alimentacao').value) || 0;
-            const iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
-            const bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
-            const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
-            const totalDespesas = aluguel + alimentacao + iscas + bebidas + outros;
-            const qtd = participantes.length > 0 ? participantes.length : 1;
-            rateioIndividual = totalDespesas / qtd;
-        }
-
-        const div = document.getElementById('lista-participantes-div');
-        div.innerHTML = '';
-        document.getElementById('contador-pescadores').innerText = `${participantes.length} Total`;
-
-        participantes.forEach((p, idx) => {
-            let totalPagoPescador = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
-            let percentual = rateioIndividual > 0 ? Math.min(100, (totalPagoPescador / rateioIndividual) * 100) : 0;
-
-            div.innerHTML += `
-                <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px; background: white; border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span><b>${idx+1}.</b> ${p.name} (Pago: R$ ${totalPagoPescador.toFixed(2)})</span>
-                        <button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="removerParticipante(${p.id})">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentual}%"></div></div>
-                </div>
-            `;
-        });
+        fecharModal();
         calcularFinancas();
+        showToast('Valores atualizados com sucesso!');
     }
 
     function adicionarParticipante() {
-        const input = document.getElementById('input-nome');
-        const nome = input.value.trim();
-        if(!nome) return;
+        const nome = document.getElementById('input-nome').value.trim();
+        if(!nome) {
+            alert('Digite o nome do pescador.');
+            return;
+        }
+        const novoP = {
+            id: participantes.length > 0 ? Math.max(...participantes.map(x => x.id)) + 1 : 1,
+            name: nome,
+            frete: parseFloat(document.getElementById('input-frete').value) || 0,
+            alim: parseFloat(document.getElementById('input-alim').value) || 0,
+            iscas: parseFloat(document.getElementById('input-iscas').value) || 0,
+            outros: parseFloat(document.getElementById('input-outros').value) || 0,
+            vaga: participantes.length + 1
+        };
+        participantes.push(novoP);
+        document.getElementById('input-nome').value = '';
+        document.getElementById('input-frete').value = '0';
+        document.getElementById('input-alim').value = '0';
+        document.getElementById('input-iscas').value = '0';
+        document.getElementById('input-outros').value = '0';
+        calcularFinancas();
+        showToast('Pescador adicionado com sucesso!');
+    }
 
-        const f = parseFloat(document.getElementById('input-frete').value) || 0;
-        const a = parseFloat(document.getElementById('input-alim').value) || 0;
-        const i = parseFloat(document.getElementById('input-iscas').value) || 0;
-        const o = parseFloat(document.getElementById('input-outros').value) || 0;
+    function renderizarParticipantes(rateioIndividual) {
+        const container = document.getElementById('lista-participantes-div');
+        container.innerHTML = '';
+        document.getElementById('contador-pescadores').innerText = participantes.length;
 
-        const novoId = participantes.length > 0 ? Math.max(...participantes.map(p => p.id)) + 1 : 1;
-        participantes.push({ id: novoId, name: nome, frete: f, alim: a, iscas: i, outros: o, vaga: null });
-        
-        input.value = '';
-        document.getElementById('input-frete').value = 0;
-        document.getElementById('input-alim').value = 0;
-        document.getElementById('input-iscas').value = 0;
-        document.getElementById('input-outros').value = 0;
-
-        renderizarParticipantes();
-        showToast("Pescador adicionado com histórico!");
+        participantes.forEach((p, idx) => {
+            let totalPago = (p.frete||0) + (p.alim||0) + (p.iscas||0) + (p.outros||0);
+            container.innerHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #F1F5F9; padding: 8px 10px; border-radius: 8px; font-size: 12px;">
+                    <div><b>${idx+1}. ${p.name}</b><br><span style="color: var(--text-muted); font-size: 10px;">Pago: R$ ${totalPago.toFixed(2)}</span></div>
+                    <button onclick="removerParticipante(${p.id})" style="background: var(--danger-bg); color: var(--danger); border: none; padding: 6px; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+        });
     }
 
     function removerParticipante(id) {
         participantes = participantes.filter(p => p.id !== id);
-        renderizarParticipantes();
-        showToast("Removido com sucesso!");
+        calcularFinancas();
+        showToast('Pescador removido.');
     }
 
     function atualizarEsquemaBarco() {
@@ -857,106 +923,105 @@
         configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
         configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
         configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
-
-        renderizarEsquemaVisual();
-    }
-
-    function renderizarEsquemaVisual() {
-        const container = document.getElementById('boat-hull-container');
-        container.innerHTML = `
-            <div id="container-popa" style="display: flex; flex-direction: column; gap: 6px;"></div>
-            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;" id="container-laterais"></div>
-        `;
-
-        let vagaContador = 1;
-
-        const popaDiv = document.getElementById('container-popa');
-        for(let b=0; b<configBarco.popaBancos; b++) {
-            let row = '<div class="boat-row-seats">';
-            for(let p=0; p<configBarco.popaPessoas; p++) {
-                let ocupante = participantes.find(item => item.vaga === vagaContador);
-                row += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
-                vagaContador++;
-            }
-            row += '</div>';
-            popaDiv.innerHTML += row;
-        }
-
-        const lateraisDiv = document.getElementById('container-laterais');
-        let maxBancosLateral = Math.max(configBarco.esqBancos, configBarco.dirBancos);
-        
-        for(let b=0; b<maxBancosLateral; b++) {
-            let rowEsq = b < configBarco.esqBancos ? participantes.find(item => item.vaga === vagaContador) : null;
-            let numEsq = b < configBarco.esqBancos ? vagaContador++ : null;
-
-            let rowDir = b < configBarco.dirBancos ? participantes.find(item => item.vaga === vagaContador) : null;
-            let numDir = b < configBarco.dirBancos ? vagaContador++ : null;
-
-            lateraisDiv.innerHTML += `
-                <div class="boat-row-seats">
-                    <div class="seat-box" style="${numEsq === null ? 'visibility:hidden;' : ''}">
-                        <div class="seat-num">${numEsq || ''}</div>
-                        <div class="seat-name">${rowEsq ? rowEsq.name : (numEsq ? 'Vago' : '')}</div>
-                    </div>
-                    <div class="seat-box" style="${numDir === null ? 'visibility:hidden;' : ''}">
-                        <div class="seat-num">${numDir || ''}</div>
-                        <div class="seat-name">${rowDir ? rowDir.name : (numDir ? 'Vago' : '')}</div>
-                    </div>
-                </div>
-            `;
-        }
     }
 
     function realizarSorteioBarco() {
-        let totalVagas = (configBarco.popaBancos * configBarco.popaPessoas) + (configBarco.esqBancos * configBarco.esqPessoas) + (configBarco.dirBancos * configBarco.dirPessoas);
-        
-        participantes.forEach(p => p.vaga = null);
-        let vagas = Array.from({length: totalVagas}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
-
-        participantes.forEach((p, idx) => {
-            if(idx < vagas.length) p.vaga = vagas[idx];
+        // Embaralha aleatoriamente as vagas para os participantes
+        let copiaPart = [...participantes];
+        copiaPart.sort(() => Math.random() - 0.5);
+        copiaPart.forEach((p, index) => {
+            p.vaga = index + 1;
         });
 
-        renderizarEsquemaVisual();
-        showToast("🎲 Sorteio realizado com sucesso!");
+        const hullContainer = document.getElementById('boat-hull-container');
+        hullContainer.innerHTML = '';
+
+        let vagaContador = 1;
+
+        // Renderiza Popa
+        let htmlPopa = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center;">Assentos na Popa</div>`;
+        for(let b=0; b < configBarco.popaBancos; b++) {
+            htmlPopa += `<div class="boat-row-seats">`;
+            for(let p=0; p < configBarco.popaPessoas; p++) {
+                let pescadorNaVaga = participantes.find(x => x.vaga === vagaContador);
+                let nomePescadores = pescadorNaVaga ? pescadorNaVaga.name : 'Vago';
+                htmlPopa += `
+                    <div class="seat-box">
+                        <div class="seat-num">#${vagaContador}</div>
+                        <div class="seat-name" title="${nomePescadores}">${nomePescadores}</div>
+                    </div>
+                `;
+                vagaContador++;
+            }
+            htmlPopa += `</div>`;
+        }
+        hullContainer.innerHTML += htmlPopa;
+
+        // Renderiza Laterais Esquerda e Direita combinadas por fileiras
+        let maxFileiras = Math.max(configBarco.esqBancos, configBarco.dirBancos);
+        let htmlLaterais = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center; margin-top:8px;">Laterais (Babord / Tivervés)</div>`;
+        
+        for(let f=0; f < maxFileiras; f++) {
+            htmlLaterais += `<div class="boat-row-seats">`;
+            // Lado Esquerdo
+            if(f < configBarco.esqBancos) {
+                let pescadorEsq = participantes.find(x => x.vaga === vagaContador);
+                let nomeEsq = pescadorEsq ? pescadorEsq.name : 'Vago';
+                htmlLaterais += `
+                    <div class="seat-box" style="border-left: 3px solid var(--accent-blue);">
+                        <div class="seat-num">#${vagaContador} (Esq)</div>
+                        <div class="seat-name" title="${nomeEsq}">${nomeEsq}</div>
+                    </div>
+                `;
+                vagaContador++;
+            } else {
+                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
+            }
+
+            // Lado Direito
+            if(f < configBarco.dirBancos) {
+                let pescadorDir = participantes.find(x => x.vaga === vagaContador);
+                let nomeDir = pescadorDir ? pescadorDir.name : 'Vago';
+                htmlLaterais += `
+                    <div class="seat-box" style="border-right: 3px solid var(--success);">
+                        <div class="seat-num">#${vagaContador} (Dir)</div>
+                        <div class="seat-name" title="${nomeDir}">${nomeDir}</div>
+                    </div>
+                `;
+                vagaContador++;
+            } else {
+                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
+            }
+            htmlLaterais += `</div>`;
+        }
+        hullContainer.innerHTML += htmlLaterais;
+
+        showToast('Sorteio de posições realizado com sucesso!');
     }
 
     function executarRodizio() {
-        let vagasAtivas = participantes.filter(p => p.vaga !== null).map(p => p.vaga);
-        if(vagasAtivas.length > 1) {
-            let ultima = vagasAtivas.pop();
-            vagasAtivas.unshift(ultima);
-            let i = 0;
-            participantes.forEach(p => {
-                if(p.vaga !== null) {
-                    p.vaga = vagasAtivas[i++];
-                }
-            });
-            renderizarEsquemaVisual();
-            showToast("🔄 Rodízio de posições aplicado!");
-        } else {
-            showToast("Realize o sorteio inicial primeiro.");
+        if(participantes.length === 0) {
+            showToast('Cadastre participantes primeiro.');
+            return;
         }
+        // Desloca as vagas em 1 posição para frente
+        let primeiraVaga = participantes[0].vaga;
+        for(let i = 0; i < participantes.length - 1; i++) {
+            participantes[i].vaga = participantes[i+1].vaga;
+        }
+        participantes[participantes.length - 1].vaga = primeiraVaga;
+        realizarSorteioBarco();
+        showToast('Rodízio de posições executado!');
     }
 
-    function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
-        window.scrollTo(0, 0);
-    }
+    // Gatilhos para o cálculo automático ao alterar os inputs de saída ou duração
+    document.getElementById('cfg-data-saida').addEventListener('change', calcularRetornoAutomatico);
+    document.getElementById('cfg-duracao').addEventListener('input', calcularRetornoAutomatico);
 
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    renderizarParticipantes();
-    atualizarEsquemaBarco();
+    // Inicialização geral
     atualizarDadosPescaria();
+    calcularFinancas();
+    realizarSorteioBarco();
 </script>
-
 </body>
 </html>
