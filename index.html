@@ -49,7 +49,7 @@
             flex-direction: column;
             position: relative;
             border: 8px solid #1e293b;
-            height: 880px;
+            height: 900px;
         }
 
         .status-bar {
@@ -59,7 +59,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             flex-shrink: 0;
         }
 
@@ -226,7 +226,7 @@
             outline: none;
         }
 
-        /* Container do Barco Dinâmico com Imagem de Fundo */
+        /* Container do Barco com Fundo Personalizável */
         .boat-schema-container {
             position: relative;
             background-size: cover;
@@ -239,15 +239,14 @@
             align-items: center;
             border: 2px solid var(--accent-blue);
             min-height: 420px;
-            background-color: #0A192F; /* Fallback se a imagem falhar */
+            background-color: #0A192F;
         }
 
-        /* Camada escura translúcida opcional para destacar os assentos em cima da foto */
         .boat-schema-container::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(10, 25, 47, 0.55);
+            background: rgba(10, 25, 47, 0.6);
             border-radius: 18px;
             z-index: 1;
         }
@@ -382,6 +381,31 @@
         .toast.show {
             transform: translateX(-50%) translateY(0);
         }
+
+        /* Modal customizado para edição individual detalhada */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-card {
+            background: white;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -389,14 +413,14 @@
 <div class="app-container">
     <div class="status-bar">
         <span><i class="fa-solid fa-anchor"></i> Pesca Justa</span>
-        <span id="clock">20:30</span>
+        <span id="clock">00:00:00</span>
         <span><i class="fa-solid fa-bell"></i></span>
     </div>
 
     <!-- TELA 1: HOME -->
     <div id="home-screen" class="screen active">
-        <div class="hero-banner">
-            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" alt="Logo" class="logo">
+        <div class="hero-banner" id="hero-banner-bg">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" alt="Logo" class="logo" id="hero-logo-img">
             <h1>PESCA JUSTA</h1>
             <p>GESTÃO COMPLETA DE PESCARIA</p>
         </div>
@@ -434,7 +458,7 @@
                     <i class="fa-solid fa-rotate"></i>
                     <span>RODÍZIO</span>
                 </button>
-                <button class="action-btn" onclick="showToast('Relatório gerado')">
+                <button class="action-btn" onclick="showToast('Relatório gerado com sucesso')">
                     <i class="fa-solid fa-file-lines"></i>
                     <span>RELATÓRIO</span>
                 </button>
@@ -477,7 +501,7 @@
         </div>
         <div class="content-body">
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-receipt"></i> Detalhamento de Despesas</span>
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-receipt"></i> Custo Total da Viagem (Despesas)</span>
                 <table class="finance-table">
                     <thead>
                         <tr>
@@ -486,31 +510,39 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>Aluguel Barco</td><td><input type="number" id="desp-aluguel" value="1200" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
+                        <tr><td>Aluguel Barco (Frete)</td><td><input type="number" id="desp-aluguel" value="1200" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
                         <tr><td>Alimentação</td><td><input type="number" id="desp-alimentacao" value="300" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
                         <tr><td>Iscas</td><td><input type="number" id="desp-iscas" value="150" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
-                        <tr><td>Gelo</td><td><input type="number" id="desp-gelo" value="80" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
-                        <tr><td>Bebidas</td><td><input type="number" id="desp-bebidas" value="200" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
+                        <tr><td>Gelo / Bebidas</td><td><input type="number" id="desp-bebidas" value="200" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
                         <tr><td>Outros</td><td><input type="number" id="desp-outros" value="70" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
                     </tbody>
                 </table>
                 <div style="font-size: 12px; margin-top: 8px; text-align: right; font-weight: 700;">
-                    Rateio Individual: <span id="lbl-rateio-ind" style="color: var(--primary-blue);">R$ 0,00</span>
+                    Rateio Individual Sugerido: <span id="lbl-rateio-ind" style="color: var(--primary-blue);">R$ 0,00</span>
                 </div>
             </div>
 
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-money-bill-wave"></i> Status de Pagamento por Pescador</span>
-                <table class="finance-table">
-                    <thead>
-                        <tr>
-                            <th>Pescador</th>
-                            <th>Pago (R$)</th>
-                            <th>Diferença</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-pagamentos-body"></tbody>
-                </table>
+                <div class="card-header-flex">
+                    <span class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Pagamentos por Pescador</span>
+                </div>
+                <p style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">Toque no botão de editar ao lado do pescador para detalhar o que ele pagou em cada item.</p>
+                <div style="overflow-x: auto;">
+                    <table class="finance-table" style="min-width: 500px;">
+                        <thead>
+                            <tr>
+                                <th>Pescador</th>
+                                <th>Frete</th>
+                                <th>Alim.</th>
+                                <th>Iscas</th>
+                                <th>Beb./Out.</th>
+                                <th>Total Pago</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-pagamentos-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -542,9 +574,10 @@
         </div>
         <div class="content-body">
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Dados da Viagem e Imagem do Barco</span>
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Cadastro e Imagens do Barco</span>
                 <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>URL da Imagem de Fundo do Barco</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()" placeholder="Cole o link da foto do barco aqui"></div>
+                <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()" placeholder="Link da foto do barco"></div>
+                <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="atualizarDadosPescaria()" placeholder="Link da foto do cabeçalho"></div>
                 <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="atualizarDadosPescaria()"></div>
                 <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="atualizarDadosPescaria()"></div>
                 <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="atualizarDadosPescaria()"></div>
@@ -576,18 +609,48 @@
     </div>
 </div>
 
+<!-- MODAL PARA EDIÇÃO INDIVIDUAL DETALHADA -->
+<div class="modal-overlay" id="modal-pagamento">
+    <div class="modal-card">
+        <h3 style="font-size: 15px; color: var(--primary-dark);" id="modal-titulo-pescador">Editar Pagamento</h3>
+        <p style="font-size: 11px; color: var(--text-muted);">Insira os valores pagos por este pescador em cada categoria:</p>
+        
+        <div class="form-group">
+            <label>Frete Barco (R$)</label>
+            <input type="number" id="mod-frete" value="0" step="0.01">
+        </div>
+        <div class="form-group">
+            <label>Alimentação (R$)</label>
+            <input type="number" id="mod-alim" value="0" step="0.01">
+        </div>
+        <div class="form-group">
+            <label>Iscas (R$)</label>
+            <input type="number" id="mod-iscas" value="0" step="0.01">
+        </div>
+        <div class="form-group">
+            <label>Bebidas / Outros (R$)</label>
+            <input type="number" id="mod-outros" value="0" step="0.01">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn-primary" style="background-color: var(--primary-blue);" onclick="salvarPagamentoIndividual()">Salvar</button>
+            <button class="btn-primary" style="background-color: var(--text-muted);" onclick="fecharModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
 <div id="toast" class="toast">Ação realizada!</div>
 
 <script>
     let participantes = [
-        { id: 1, name: "João Silva", pago: 200, vaga: 1 },
-        { id: 2, name: "Carlos Eduardo", pago: 0, vaga: 2 },
-        { id: 3, name: "Marcelo Santos", pago: 300, vaga: 3 },
-        { id: 4, name: "Roberto Lima", pago: 0, vaga: 4 },
-        { id: 5, name: "André Luiz", pago: 250, vaga: 5 },
-        { id: 6, name: "Fernando C.", pago: 250, vaga: 6 },
-        { id: 7, name: "Bruno Almeida", pago: 100, vaga: 7 },
-        { id: 8, name: "Rafael Souza", pago: 0, vaga: 8 }
+        { id: 1, name: "João Silva", frete: 150, alim: 50, iscas: 0, outros: 0, vaga: 1 },
+        { id: 2, name: "Carlos Eduardo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
+        { id: 3, name: "Marcelo Santos", frete: 150, alim: 100, iscas: 50, outros: 0, vaga: 3 },
+        { id: 4, name: "Roberto Lima", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 },
+        { id: 5, name: "André Luiz", frete: 200, alim: 50, iscas: 0, outros: 0, vaga: 5 },
+        { id: 6, name: "Fernando C.", frete: 150, alim: 50, iscas: 50, outros: 0, vaga: 6 },
+        { id: 7, name: "Bruno Almeida", frete: 100, alim: 0, iscas: 0, outros: 0, vaga: 7 },
+        { id: 8, name: "Rafael Souza", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 8 }
     ];
 
     let configBarco = {
@@ -596,29 +659,46 @@
         dirBancos: 3, dirPessoas: 1
     };
 
+    let idPescadorEditando = null;
+
+    // Sincronizar relógio em tempo real
+    function iniciarRelogio() {
+        function atualizar() {
+            const agora = new Date();
+            document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
+        }
+        atualizar();
+        setInterval(atualizar, 1000);
+    }
+    iniciarRelogio();
+
     function atualizarDadosPescaria() {
         document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
         document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
         
         const saidaVal = document.getElementById('cfg-data-saida').value;
         if(saidaVal) {
-            let dataFmt = new Date(saidaVal).toLocaleString('pt-BR');
-            document.getElementById('lbl-data-saida').innerText = dataFmt;
+            document.getElementById('lbl-data-saida').innerText = new Date(saidaVal).toLocaleString('pt-BR');
         }
         
         document.getElementById('lbl-duracao').innerText = document.getElementById('cfg-duracao').value + " horas";
         
         const retornoVal = document.getElementById('cfg-data-retorno').value;
         if(retornoVal) {
-            let dataRetFmt = new Date(retornoVal).toLocaleString('pt-BR');
-            document.getElementById('lbl-retorno').innerText = dataRetFmt;
+            document.getElementById('lbl-retorno').innerText = new Date(retornoVal).toLocaleString('pt-BR');
         }
 
-        // Atualizar a imagem de fundo do barco dinamicamente
-        const urlImg = document.getElementById('cfg-barco-img').value;
-        const containerBarco = document.getElementById('boat-bg-container');
-        if(urlImg) {
-            containerBarco.style.backgroundImage = `url('${urlImg}')`;
+        // Imagem de Fundo do Barco
+        const urlImgBarco = document.getElementById('cfg-barco-img').value;
+        if(urlImgBarco) {
+            document.getElementById('boat-bg-container').style.backgroundImage = `url('${urlImgBarco}')`;
+        }
+
+        // Imagem do Cabeçalho / Logo (Início)
+        const urlLogo = document.getElementById('cfg-logo-img').value;
+        if(urlLogo) {
+            document.getElementById('hero-banner-bg').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.8)), url('${urlLogo}')`;
+            document.getElementById('hero-logo-img').src = urlLogo;
         }
     }
 
@@ -626,47 +706,79 @@
         const aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
         const alimentacao = parseFloat(document.getElementById('desp-alimentacao').value) || 0;
         const iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
-        const gelo = parseFloat(document.getElementById('desp-gelo').value) || 0;
         const bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
         const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
 
-        const totalDespesas = aluguel + alimentacao + iscas + gelo + bebidas + outros;
+        const totalDespesas = aluguel + alimentacao + iscas + bebidas + outros;
         document.getElementById('lbl-custo-total').innerText = `R$ ${totalDespesas.toFixed(2)}`;
 
         const qtdPessoas = participantes.length > 0 ? participantes.length : 1;
         const rateio = totalDespesas / qtdPessoas;
         document.getElementById('lbl-rateio-ind').innerText = `R$ ${rateio.toFixed(2)}`;
 
-        renderizarTabelaPagamentos(rateio);
+        renderizarTabelaPagamentos();
     }
 
-    function renderizarTabelaPagamentos(rateio) {
+    function renderizarTabelaPagamentos() {
         const tbody = document.getElementById('tabela-pagamentos-body');
         tbody.innerHTML = '';
 
         participantes.forEach(p => {
-            const diferenca = p.pago - rateio;
-            let emojiNojo = p.pago === 0 ? ' 🤢' : '';
+            let totalPagoPescador = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
+            let emojiNojo = totalPagoPescador === 0 ? ' 🤢' : '';
             
             tbody.innerHTML += `
                 <tr>
                     <td><b>${p.name}</b>${emojiNojo}</td>
-                    <td><input type="number" style="width: 70px; padding: 2px 4px;" value="${p.pago}" onchange="atualizarValorPago(${p.id}, this.value)"></td>
-                    <td style="color: ${diferenca >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight: 700;">
-                        R$ ${diferenca.toFixed(2)}
+                    <td>R$ ${(p.frete || 0).toFixed(2)}</td>
+                    <td>R$ ${(p.alim || 0).toFixed(2)}</td>
+                    <td>R$ ${(p.iscas || 0).toFixed(2)}</td>
+                    <td>R$ ${(p.outros || 0).toFixed(2)}</td>
+                    <td><b>R$ ${totalPagoPescador.toFixed(2)}</b></td>
+                    <td>
+                        <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="abrirModalPagamento(${p.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
                     </td>
                 </tr>
             `;
         });
     }
 
-    function atualizarValorPago(id, valor) {
+    function abrirModalPagamento(id) {
+        idPI = id;
         const p = participantes.find(item => item.id === id);
         if(p) {
-            p.pago = parseFloat(valor) || 0;
-            calcularFinancas();
+            document.getElementById('modal-titulo-pescador').innerText = `Pagamento: ${p.name}`;
+            document.getElementById('mod-frete').value = p.frete || 0;
+            document.getElementById('mod-alim').value = p.alim || 0;
+            document.getElementById('mod-iscas').value = p.iscas || 0;
+            document.getElementById('mod-outros').value = p.outros || 0;
+            document.getElementById('modal-pagamento').style.display = 'flex';
         }
     }
+
+    function fecharModal() {
+        document.getElementById('modal-pagamento').style.display = 'none';
+        idPI = null;
+    }
+
+    function salvarPagamentoIndividual() {
+        if(idPI !== null) {
+            const p = participantes.find(item => item.id === idPI);
+            if(p) {
+                p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
+                p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
+                p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
+                p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
+            }
+            fecharModal();
+            calcularFinancas();
+            showToast("Pagamento individual atualizado!");
+        }
+    }
+
+    let idPI = null;
 
     function renderizarParticipantes() {
         const div = document.getElementById('lista-participantes-div');
@@ -674,9 +786,10 @@
         document.getElementById('contador-pescadores').innerText = `${participantes.length} Total`;
 
         participantes.forEach((p, idx) => {
+            let totalPagoPescador = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
             div.innerHTML += `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: white; border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px;">
-                    <span><b>${idx+1}.</b> ${p.name} ${p.pago === 0 ? '🤢' : ''}</span>
+                    <span><b>${idx+1}.</b> ${p.name} ${totalPagoPescador === 0 ? '🤢' : ''}</span>
                     <button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="removerParticipante(${p.id})">
                         <i class="fa-solid fa-trash"></i>
                     </button>
@@ -692,7 +805,7 @@
         if(!nome) return;
 
         const novoId = participantes.length > 0 ? Math.max(...participantes.map(p => p.id)) + 1 : 1;
-        participantes.push({ id: novoId, name: nome, pago: 0, vaga: null });
+        participantes.push({ id: novoId, name: nome, frete: 0, alim: 0, iscas: 0, outros: 0, vaga: null });
         input.value = '';
         renderizarParticipantes();
         showToast("Pescador adicionado!");
