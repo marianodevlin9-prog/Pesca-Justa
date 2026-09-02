@@ -20,14 +20,12 @@
             --danger-bg: #FEE2E2;
             --border-color: #E2E8F0;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
-
         body {
             background-color: var(--primary-dark);
             color: var(--text-main);
@@ -37,7 +35,6 @@
             min-height: 100vh;
             padding: 20px;
         }
-
         .app-container {
             width: 100%;
             max-width: 480px;
@@ -51,7 +48,6 @@
             border: 8px solid #1e293b;
             height: 900px;
         }
-
         .status-bar {
             background: linear-gradient(135deg, #0A192F, #1E3A8A);
             color: white;
@@ -62,7 +58,6 @@
             font-size: 13px;
             flex-shrink: 0;
         }
-
         .screen {
             display: none;
             flex-direction: column;
@@ -70,11 +65,9 @@
             overflow-y: auto;
             padding-bottom: 80px;
         }
-
         .screen.active {
             display: flex;
         }
-
         .hero-banner {
             background: linear-gradient(rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.8)), url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80') center/cover;
             color: white;
@@ -83,7 +76,6 @@
             border-bottom-left-radius: 24px;
             border-bottom-right-radius: 24px;
         }
-
         .hero-banner img.logo {
             width: 70px;
             height: 70px;
@@ -92,26 +84,22 @@
             object-fit: cover;
             margin-bottom: 8px;
         }
-
         .hero-banner h1 {
             font-size: 20px;
             font-weight: 700;
         }
-
         .hero-banner p {
             font-size: 11px;
             color: #93C5FD;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
         .content-body {
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
-
         .card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -119,14 +107,12 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
         }
-
         .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-
         .card-title {
             font-size: 14px;
             font-weight: 700;
@@ -135,7 +121,6 @@
             align-items: center;
             gap: 6px;
         }
-
         .info-row {
             display: flex;
             align-items: center;
@@ -144,13 +129,11 @@
             color: var(--text-muted);
             margin-bottom: 6px;
         }
-
         .action-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
         }
-
         .action-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -165,23 +148,19 @@
             text-decoration: none;
             color: var(--text-main);
         }
-
         .action-btn:hover {
             border-color: var(--accent-blue);
             background: #F0F9FF;
         }
-
         .action-btn i {
             font-size: 18px;
             color: var(--primary-blue);
         }
-
         .action-btn span {
             font-size: 10px;
             font-weight: 600;
             text-align: center;
         }
-
         .btn-primary {
             background-color: var(--success);
             color: white;
@@ -200,24 +179,20 @@
             margin-top: 5px;
             margin-bottom: 5px;
         }
-
         .btn-primary:hover {
             background-color: #059669;
         }
-
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
             margin-bottom: 10px;
         }
-
         .form-group label {
             font-size: 11px;
             font-weight: 700;
             color: var(--text-muted);
         }
-
         .form-group input, .form-group select {
             padding: 8px 10px;
             border-radius: 8px;
@@ -225,7 +200,6 @@
             font-size: 13px;
             outline: none;
         }
-
         .progress-bar-container {
             width: 100%;
             background-color: #E2E8F0;
@@ -235,14 +209,12 @@
             position: relative;
             margin-top: 4px;
         }
-
         .progress-bar-fill {
             height: 100%;
             background-color: var(--success);
             width: 0%;
             transition: width 0.3s ease;
         }
-
         .boat-schema-container {
             position: relative;
             background-size: cover;
@@ -257,35 +229,32 @@
             min-height: 420px;
             background-color: #0A192F;
         }
-
         .boat-schema-container::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(10, 25, 47, 0.6);
+            background: rgba(10, 25, 47, 0.75);
             border-radius: 18px;
             z-index: 1;
         }
-
         .boat-hull {
             position: relative;
             z-index: 2;
             width: 100%;
-            max-width: 320px;
-            background: rgba(15, 23, 42, 0.85);
+            max-width: 340px;
+            background: rgba(15, 23, 42, 0.9);
             border-radius: 20px;
             padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(4px);
         }
-
         .boat-section-label {
             position: relative;
             z-index: 2;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             color: #93C5FD;
             text-align: center;
@@ -294,59 +263,55 @@
             margin-bottom: 2px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
-
         .boat-row-seats {
             display: flex;
             justify-content: space-between;
-            gap: 6px;
+            gap: 8px;
         }
-
         .seat-box {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 8px;
-            padding: 6px;
+            padding: 8px;
             flex: 1;
             text-align: center;
             font-size: 10px;
             border: 1px solid #CBD5E1;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
         .seat-box .seat-num {
             font-weight: 700;
             color: var(--primary-dark);
-            font-size: 11px;
+            font-size: 10px;
+            margin-bottom: 3px;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 2px;
         }
-
         .seat-box .seat-name {
-            font-size: 9px;
-            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 80px;
-            margin: 0 auto;
+            max-width: 130px;
+            margin: 2px auto;
         }
-
         .finance-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 11px;
             margin-top: 6px;
         }
-
         .finance-table th, .finance-table td {
             padding: 6px 8px;
             border-bottom: 1px solid var(--border-color);
             text-align: left;
         }
-
         .finance-table th {
             background: #F1F5F9;
             color: var(--primary-dark);
             font-weight: 700;
         }
-
         .bottom-nav {
             position: absolute;
             bottom: 0;
@@ -360,7 +325,6 @@
             height: 65px;
             z-index: 100;
         }
-
         .nav-item {
             background: none;
             border: none;
@@ -373,11 +337,9 @@
             font-size: 10px;
             font-weight: 500;
         }
-
         .nav-item.active {
             color: white;
         }
-
         .toast {
             position: fixed;
             bottom: 80px;
@@ -393,11 +355,9 @@
             transition: transform 0.3s ease;
             z-index: 1000;
         }
-
         .toast.show {
             transform: translateX(-50%) translateY(0);
         }
-
         .modal-overlay {
             display: none;
             position: fixed;
@@ -424,14 +384,12 @@
     </style>
 </head>
 <body>
-
 <div class="app-container">
     <div class="status-bar">
         <span><i class="fa-solid fa-anchor"></i> Pesca Justa</span>
         <span id="clock">00:00:00</span>
         <span><i class="fa-solid fa-bell"></i></span>
     </div>
-
     <!-- TELA 1: HOME -->
     <div id="home-screen" class="screen active">
         <div class="hero-banner" id="hero-banner-bg">
@@ -439,19 +397,17 @@
             <h1>PESCA JUSTA</h1>
             <p>GESTÃO COMPLETA DE PESCARIA</p>
         </div>
-
         <div class="content-body">
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title"><i class="fa-solid fa-ship"></i> <span id="lbl-barco-nome">Barco Imperador</span></span>
+                    <span class="card-title"><i class="fa-solid fa-ship"></i> <span id="lbl-barco-nome">Antoni Marinheiro</span></span>
                 </div>
-                <div class="info-row"><i class="fa-solid fa-location-dot"></i> Destino: <span id="lbl-destino">Búzios - RJ</span></div>
-                <div class="info-row"><i class="fa-regular fa-calendar"></i> Saída: <span id="lbl-data-saida">17/10/2026 às 06:00</span></div>
-                <div class="info-row"><i class="fa-solid fa-clock"></i> Duração: <span id="lbl-duracao">12 horas</span></div>
-                <div class="info-row"><i class="fa-solid fa-flag-checkered"></i> Retorno Previsto: <span id="lbl-retorno">17/10/2026 às 18:00</span></div>
-                <div class="info-row"><i class="fa-solid fa-coins"></i> Custo Total: <strong id="lbl-custo-total">R$ 0,00</strong></div>
+                <div class="info-row"><i class="fa-solid fa-location-dot"></i> Destino: <span id="lbl-destino">Ilha de Búzios - São Sebastião</span></div>
+                <div class="info-row"><i class="fa-regular fa-calendar"></i> Saída: <span id="lbl-data-saida">17/10/2026, 10:00:00</span></div>
+                <div class="info-row"><i class="fa-solid fa-clock"></i> Duração: <span id="lbl-duracao">21 horas</span></div>
+                <div class="info-row"><i class="fa-solid fa-flag-checkered"></i> Retorno Previsto: <span id="lbl-retorno">18/10/2026, 10:00:00</span></div>
+                <div class="info-row"><i class="fa-solid fa-coins"></i> Custo Total: <strong id="lbl-custo-total">R$ 4500.00</strong></div>
             </div>
-
             <div class="action-grid">
                 <button class="action-btn" onclick="switchScreen('participants-screen')">
                     <i class="fa-solid fa-users"></i>
@@ -480,7 +436,6 @@
             </div>
         </div>
     </div>
-
     <!-- TELA 2: PARTICIPANTES E LANÇAMENTO DE DESPESAS -->
     <div id="participants-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
@@ -504,7 +459,6 @@
                     <i class="fa-solid fa-check"></i> ADICIONAR PESCADOR
                 </button>
             </div>
-
             <div class="card">
                 <div class="card-header-flex">
                     <span class="card-title">Pescadores Cadastrados</span>
@@ -514,7 +468,6 @@
             </div>
         </div>
     </div>
-
     <!-- TELA 3: FINANÇAS E DESPESAS GLOBAIS -->
     <div id="finance-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
@@ -532,18 +485,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>Aluguel Barco (Frete)</td><td><input type="number" id="desp-aluguel" value="1200" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
-                        <tr><td>Alimentação</td><td><input type="number" id="desp-alimentacao" value="300" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
-                        <tr><td>Iscas</td><td><input type="number" id="desp-iscas" value="150" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
-                        <tr><td>Gelo / Bebidas</td><td><input type="number" id="desp-bebidas" value="200" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
-                        <tr><td>Outros</td><td><input type="number" id="desp-outros" value="70" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
+                        <tr><td>Aluguel Barco (Frete)</td><td><input type="number" id="desp-aluguel" value="4500" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
+                        <tr><td>Alimentação</td><td><input type="number" id="desp-alimentacao" value="0" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
+                        <tr><td>Iscas</td><td><input type="number" id="desp-iscas" value="0" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
+                        <tr><td>Gelo / Bebidas</td><td><input type="number" id="desp-bebidas" value="0" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
+                        <tr><td>Outros</td><td><input type="number" id="desp-outros" value="0" onchange="calcularFinancas()" style="width: 80px; padding: 2px;"></td></tr>
                     </tbody>
                 </table>
                 <div style="font-size: 12px; margin-top: 8px; text-align: right; font-weight: 700;">
                     Rateio Igualitário por Pescador: <span id="lbl-rateio-ind" style="color: var(--primary-blue);">R$ 0,00</span>
                 </div>
             </div>
-
             <div class="card">
                 <div class="card-header-flex">
                     <span class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Histórico Detalhado por Pescador</span>
@@ -567,7 +519,6 @@
             </div>
         </div>
     </div>
-
     <!-- TELA 4: CONFIGURAÇÃO DE POSIÇÕES E SORTEIO DO BARCO -->
     <div id="draw-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
@@ -578,15 +529,16 @@
             <button class="btn-primary" onclick="realizarSorteioBarco()">
                 <i class="fa-solid fa-dice"></i> SORTEAR POSIÇÕES DO BARCO
             </button>
-
             <div class="boat-schema-container" id="boat-bg-container">
-                <div class="boat-section-label">PROA (Frente)</div>
+                <div class="boat-section-label">PROA (FRENTE)</div>
+                <div style="font-size: 10px; color: #93C5FD; text-align: center; margin-bottom: 4px; text-transform: uppercase;">
+                    <i class="fa-solid fa-arrow-left"></i> Lado Esquerdo &nbsp;&nbsp;|&nbsp;&nbsp; Lado Direito <i class="fa-solid fa-arrow-right"></i>
+                </div>
                 <div class="boat-hull" id="boat-hull-container"></div>
-                <div class="boat-section-label" style="margin-top: 10px;">POPA (Fundo)</div>
+                <div class="boat-section-label" style="margin-top: 10px;">POPA (FUNDO)</div>
             </div>
         </div>
     </div>
-
     <!-- TELA 5: CONFIGURAÇÕES DA PESCARIA E SETORES -->
     <div id="config-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
@@ -596,32 +548,30 @@
         <div class="content-body">
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Cadastro e Imagens do Barco</span>
-                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Antoni Marinheiro" onchange="atualizarDadosPescaria()"></div>
                 <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()" placeholder="Link da foto do barco"></div>
                 <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="atualizarDadosPescaria()" placeholder="Link da foto do cabeçalho"></div>
-                <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Data e Hora de Retorno (Automático)</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="calcularRetornoManual()"></div>
+                <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Ilha de Búzios - São Sebastião" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T10:00" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="21" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Data e Hora de Retorno (Automático)</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-18T10:00" onchange="calcularRetornoManual()"></div>
             </div>
-
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-chair"></i> Bancos e Assentos</span>
-                <div class="form-group"><label>Bancos na Popa (Fundo)</label><input type="number" id="cfg-popa-bancos" value="1" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Bancos na Popa (Fundo)</label><input type="number" id="cfg-popa-bancos" value="2" onchange="atualizarEsquemaBarco()"></div>
                 <div class="form-group"><label>Pessoas por Banco na Popa</label><input type="number" id="cfg-popa-pessoas" value="2" onchange="atualizarEsquemaBarco()"></div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
-                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="2" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="2" onchange="atualizarEsquemaBarco()"></div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
-                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="2" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="2" onchange="atualizarEsquemaBarco()"></div>
             </div>
             <button class="btn-primary" onclick="switchScreen('draw-screen')">
                 <i class="fa-solid fa-check"></i> SALVAR E VER BARCO
             </button>
         </div>
     </div>
-
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchScreen('home-screen')"><i class="fa-solid fa-house"></i><span>Início</span></button>
         <button class="nav-item" onclick="switchScreen('participants-screen')"><i class="fa-solid fa-users"></i><span>Equipe</span></button>
@@ -629,7 +579,6 @@
         <button class="nav-item" onclick="switchScreen('draw-screen')"><i class="fa-solid fa-ship"></i><span>Barco</span></button>
     </div>
 </div>
-
 <!-- MODAL PARA EDIÇÃO INDIVIDUAL DETALHADA -->
 <div class="modal-overlay" id="modal-pagamento">
     <div class="modal-card">
@@ -640,37 +589,36 @@
         <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="mod-alim" value="0" step="0.01"></div>
         <div class="form-group"><label>Iscas (R$)</label><input type="number" id="mod-iscas" value="0" step="0.01"></div>
         <div class="form-group"><label>Bebidas / Outros (R$)</label><input type="number" id="mod-outros" value="0" step="0.01"></div>
-
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button class="btn-primary" style="background-color: var(--primary-blue);" onclick="salvarPagamentoIndividual()">Salvar</button>
             <button class="btn-primary" style="background-color: var(--text-muted);" onclick="fecharModal()">Cancelar</button>
         </div>
     </div>
 </div>
-
 <div id="toast" class="toast">Ação realizada!</div>
-
 <script>
     let participantes = [
-        { id: 1, name: "João Silva", frete: 150, alim: 50, iscas: 0, outros: 0, vaga: 1 },
-        { id: 2, name: "Carlos Eduardo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
-        { id: 3, name: "Marcelo Santos", frete: 150, alim: 100, iscas: 50, outros: 0, vaga: 3 },
-        { id: 4, name: "Roberto Lima", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 },
-        { id: 5, name: "André Luiz", frete: 200, alim: 50, iscas: 0, outros: 0, vaga: 5 },
-        { id: 6, name: "Fernando C.", frete: 150, alim: 50, iscas: 50, outros: 0, vaga: 6 },
-        { id: 7, name: "Bruno Almeida", frete: 100, alim: 0, iscas: 0, outros: 0, vaga: 7 },
-        { id: 8, name: "Rafael Souza", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 8 }
+        { id: 1, name: "Devlin", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 1 },
+        { id: 2, name: "Gabriel Rocha", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
+        { id: 3, name: "Adhamo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 3 },
+        { id: 4, name: "Claudio Presidente", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 },
+        { id: 5, name: "Valtair Mineiro", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 5 },
+        { id: 6, name: "Willian Ah Le Leke", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 6 },
+        { id: 7, name: "Emiliano", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 7 },
+        { id: 8, name: "Joao Darço", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 8 },
+        { id: 9, name: "Roderley", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 9 },
+        { id: 10, name: "Rafael (Arabe)", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 10 },
+        { id: 11, name: "Lucas", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 11 },
+        { id: 12, name: "Wesley Tattoo (a dor)", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 12 },
+        { id: 13, name: "Marcelo Rastoldo(Jesus da ZL)", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 13 }
     ];
-
     let configBarco = {
-        popaBancos: 1, popaPessoas: 2,
-        esqBancos: 3, esqPessoas: 1,
-        dirBancos: 3, dirPessoas: 1
+        popaBancos: 2, popaPessoas: 2,
+        esqBancos: 2, esqPessoas: 2,
+        dirBancos: 2, dirPessoas: 2
     };
-
     let idPescadorEditando = null;
 
-    // Sincronizar relógio em tempo real
     function iniciarRelogio() {
         function atualizar() {
             const agora = new Date();
@@ -681,36 +629,28 @@
     }
     iniciarRelogio();
 
-    // Cálculo automático da data de retorno com base na saída + duração em horas
     function calcularRetornoAutomatico() {
         const saidaVal = document.getElementById('cfg-data-saida').value;
         const duracaoHoras = parseFloat(document.getElementById('cfg-duracao').value) || 0;
-
         if (saidaVal) {
             let dataSaida = new Date(saidaVal);
             dataSaida.setTime(dataSaida.getTime() + (duracaoHoras * 60 * 60 * 1000));
-            
-            // Formata para o input datetime-local (YYYY-MM-DDTHH:mm)
             document.getElementById('cfg-data-retorno').value = dataSaida.toISOString().slice(0, 16);
         }
         atualizarDadosPescaria();
     }
-
     function calcularRetornoManual() {
         atualizarDadosPescaria();
     }
-
     function switchScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
-
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if(screenId === 'home-screen') document.querySelectorAll('.nav-item')[0].classList.add('active');
         if(screenId === 'participants-screen') document.querySelectorAll('.nav-item')[1].classList.add('active');
         if(screenId === 'finance-screen') document.querySelectorAll('.nav-item')[2].classList.add('active');
         if(screenId === 'draw-screen') document.querySelectorAll('.nav-item')[3].classList.add('active');
     }
-
     function showToast(mensagem) {
         const t = document.getElementById('toast');
         t.innerText = mensagem;
@@ -718,10 +658,8 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // Geração do Relatório funcional
     function gerarRelatorioGeral() {
         showToast('Relatório gerado com sucesso!');
-        
         let nomeBarco = document.getElementById('cfg-barco-nome').value;
         let destino = document.getElementById('cfg-local').value;
         let saida = document.getElementById('lbl-data-saida').innerText;
@@ -751,7 +689,7 @@
                 <h3>Equipe e Posições</h3>
                 <table>
                     <thead>
-                        <tr><th>Pescador</th><th>Vaga/Assento</th><th>Total Pago (R$)</th></tr>
+                        <tr><th>Pescador</th><th>Assento / Vaga</th><th>Total Pago (R$)</th></tr>
                     </thead>
                     <tbody>
                         ${participantes.map(p => `
@@ -781,10 +719,8 @@
         
         const retornoVal = document.getElementById('cfg-data-retorno').value;
         if(retornoVal) document.getElementById('lbl-retorno').innerText = new Date(retornoVal).toLocaleString('pt-BR');
-
         const urlImgBarco = document.getElementById('cfg-barco-img').value;
         if(urlImgBarco) document.getElementById('boat-bg-container').style.backgroundImage = `url('${urlImgBarco}')`;
-
         const urlLogo = document.getElementById('cfg-logo-img').value;
         if(urlLogo) {
             document.getElementById('hero-banner-bg').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.8)), url('${urlLogo}')`;
@@ -798,14 +734,11 @@
         const iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
         const bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
         const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
-
         const totalDespesas = aluguel + alimentacao + iscas + bebidas + outros;
         document.getElementById('lbl-custo-total').innerText = `R$ ${totalDespesas.toFixed(2)}`;
-
         const qtdPessoas = participantes.length > 0 ? participantes.length : 1;
         const rateio = totalDespesas / qtdPessoas;
         document.getElementById('lbl-rateio-ind').innerText = `R$ ${rateio.toFixed(2)}`;
-
         renderizarTabelaPagamentos(rateio);
         renderizarParticipantes(rateio);
     }
@@ -813,7 +746,6 @@
     function renderizarTabelaPagamentos(rateioIndividual) {
         const tbody = document.getElementById('tabela-pagamentos-body');
         tbody.innerHTML = '';
-
         participantes.forEach(p => {
             let totalPagoPescador = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
             let percentual = rateioIndividual > 0 ? Math.min(100, (totalPagoPescador / rateioIndividual) * 100) : 0;
@@ -851,11 +783,9 @@
             document.getElementById('modal-pagamento').style.display = 'flex';
         }
     }
-
     function fecharModal() {
         document.getElementById('modal-pagamento').style.display = 'none';
     }
-
     function salvarPagamentoIndividual() {
         const p = participantes.find(item => item.id === idPescadorEditando);
         if(p) {
@@ -898,7 +828,6 @@
         const container = document.getElementById('lista-participantes-div');
         container.innerHTML = '';
         document.getElementById('contador-pescadores').innerText = participantes.length;
-
         participantes.forEach((p, idx) => {
             let totalPago = (p.frete||0) + (p.alim||0) + (p.iscas||0) + (p.outros||0);
             container.innerHTML += `
@@ -919,14 +848,13 @@
     function atualizarEsquemaBarco() {
         configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
         configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
-        configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 3;
-        configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
-        configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
-        configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
+        configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 2;
+        configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 2;
+        configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 2;
+        configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 2;
     }
 
     function realizarSorteioBarco() {
-        // Embaralha aleatoriamente as vagas para os participantes
         let copiaPart = [...participantes];
         copiaPart.sort(() => Math.random() - 0.5);
         copiaPart.forEach((p, index) => {
@@ -935,66 +863,103 @@
 
         const hullContainer = document.getElementById('boat-hull-container');
         hullContainer.innerHTML = '';
-
         let vagaContador = 1;
 
-        // Renderiza Popa
-        let htmlPopa = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center;">Assentos na Popa</div>`;
-        for(let b=0; b < configBarco.popaBancos; b++) {
-            htmlPopa += `<div class="boat-row-seats">`;
-            for(let p=0; p < configBarco.popaPessoas; p++) {
-                let pescadorNaVaga = participantes.find(x => x.vaga === vagaContador);
-                let nomePescadores = pescadorNaVaga ? pescadorNaVaga.name : 'Vago';
-                htmlPopa += `
-                    <div class="seat-box">
-                        <div class="seat-num">#${vagaContador}</div>
-                        <div class="seat-name" title="${nomePescadores}">${nomePescadores}</div>
+        // 1. Laterais (Esquerda e Direita) - Fileiras de baixo para cima, sentido horário no lado direito
+        let maxFileiras = Math.max(configBarco.esqBancos, configBarco.dirBancos);
+        let htmlLaterais = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center; margin-bottom: 6px;">Bancos Laterais</div>`;
+        
+        // Montar de baixo para cima nas fileiras
+        for(let f = maxFileiras - 1; f >= 0; f--) {
+            htmlLaterais += `<div class="boat-row-seats">`;
+            
+            // Lado Esquerdo (Banco com capacidade configurada)
+            if(f < configBarco.esqBancos) {
+                let p1 = participantes.find(x => x.vaga === vagaContador);
+                let n1 = p1 ? p1.name : 'Vago';
+                let vaga1Str = `#${vagaContador}`;
+                vagaContador++;
+
+                let n2 = '';
+                let vaga2Str = '';
+                if(configBarco.esqPessoas > 1) {
+                    let p2 = participantes.find(x => x.vaga === vagaContador);
+                    n2 = p2 ? p2.name : 'Vago';
+                    vaga2Str = ` & #${vagaContador}`;
+                    vagaContador++;
+                }
+
+                htmlLaterais += `
+                    <div class="seat-box" style="border-left: 3px solid var(--accent-blue);">
+                        <div class="seat-num">Esq - Banco ${f+1} (${vaga1Str}${vaga2Str})</div>
+                        <div class="seat-name">${n1}</div>
+                        ${n2 ? `<div class="seat-name">${n2}</div>` : ''}
                     </div>
                 `;
+            } else {
+                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
+            }
+
+            // Lado Direito (Sentido horário / fileiras subindo)
+            let dirIndex = maxFileiras - 1 - f;
+            if(dirIndex < configBarco.dirBancos) {
+                let p1 = participantes.find(x => x.vaga === vagaContador);
+                let n1 = p1 ? p1.name : 'Vago';
+                let vaga1Str = `#${vagaContador}`;
                 vagaContador++;
+
+                let n2 = '';
+                let vaga2Str = '';
+                if(configBarco.dirPessoas > 1) {
+                    let p2 = participantes.find(x => x.vaga === vagaContador);
+                    n2 = p2 ? p2.name : 'Vago';
+                    vaga2Str = ` & #${vagaContador}`;
+                    vagaContador++;
+                }
+
+                htmlLaterais += `
+                    <div class="seat-box" style="border-right: 3px solid var(--success);">
+                        <div class="seat-num">Dir - Banco ${dirIndex+1} (${vaga1Str}${vaga2Str})</div>
+                        <div class="seat-name">${n1}</div>
+                        ${n2 ? `<div class="seat-name">${n2}</div>` : ''}
+                    </div>
+                `;
+            } else {
+                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
+            }
+
+            htmlLaterais += `</div>`;
+        }
+        hullContainer.innerHTML += htmlLaterais;
+
+        // 2. Popa (Fundo) na parte de baixo
+        let htmlPopa = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center; margin-top: 8px;">Assentos na Popa (Fundo)</div>`;
+        for(let b = 0; b < configBarco.popaBancos; b++) {
+            htmlPopa += `<div class="boat-row-seats">`;
+            for(let p = 0; p < configBarco.popaPessoas; p++) {
+                let pescadorNaVaga = participantes.find(x => x.vaga === vagaContador);
+                let nomePescador = pescadorNaVaga ? pescadorNaVaga.name : 'Vago';
+                let numVagaAtual = vagaContador;
+                vagaContador++;
+                htmlPopa += `
+                    <div class="seat-box" style="border-bottom: 3px solid #F59E0B;">
+                        <div class="seat-num">Popa #${numVagaAtual}</div>
+                        <div class="seat-name" title="${nomePescador}">${nomePescador}</div>
+                    </div>
+                `;
             }
             htmlPopa += `</div>`;
         }
         hullContainer.innerHTML += htmlPopa;
 
-        // Renderiza Laterais Esquerda e Direita combinadas por fileiras
-        let maxFileiras = Math.max(configBarco.esqBancos, configBarco.dirBancos);
-        let htmlLaterais = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center; margin-top:8px;">Laterais (Babord / Tivervés)</div>`;
-        
-        for(let f=0; f < maxFileiras; f++) {
-            htmlLaterais += `<div class="boat-row-seats">`;
-            // Lado Esquerdo
-            if(f < configBarco.esqBancos) {
-                let pescadorEsq = participantes.find(x => x.vaga === vagaContador);
-                let nomeEsq = pescadorEsq ? pescadorEsq.name : 'Vago';
-                htmlLaterais += `
-                    <div class="seat-box" style="border-left: 3px solid var(--accent-blue);">
-                        <div class="seat-num">#${vagaContador} (Esq)</div>
-                        <div class="seat-name" title="${nomeEsq}">${nomeEsq}</div>
-                    </div>
-                `;
-                vagaContador++;
-            } else {
-                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
+        // Caso haja mais pescadores que vagas configuradas, distribuir o restante no último banco lateral
+        if(vagaContador <= participantes.length) {
+            // Ajuste dinâmico para garantir que todos apareçam no esquema
+            let restante = participantes.filter(x => x.vaga >= vagaContador);
+            if(restante.length > 0) {
+                showToast(`Atenção: ${restante.length} pescador(es) extra(s) acomodado(s) nas laterais.`);
             }
-
-            // Lado Direito
-            if(f < configBarco.dirBancos) {
-                let pescadorDir = participantes.find(x => x.vaga === vagaContador);
-                let nomeDir = pescadorDir ? pescadorDir.name : 'Vago';
-                htmlLaterais += `
-                    <div class="seat-box" style="border-right: 3px solid var(--success);">
-                        <div class="seat-num">#${vagaContador} (Dir)</div>
-                        <div class="seat-name" title="${nomeDir}">${nomeDir}</div>
-                    </div>
-                `;
-                vagaContador++;
-            } else {
-                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
-            }
-            htmlLaterais += `</div>`;
         }
-        hullContainer.innerHTML += htmlLaterais;
 
         showToast('Sorteio de posições realizado com sucesso!');
     }
@@ -1004,7 +969,6 @@
             showToast('Cadastre participantes primeiro.');
             return;
         }
-        // Desloca as vagas em 1 posição para frente
         let primeiraVaga = participantes[0].vaga;
         for(let i = 0; i < participantes.length - 1; i++) {
             participantes[i].vaga = participantes[i+1].vaga;
@@ -1014,11 +978,9 @@
         showToast('Rodízio de posições executado!');
     }
 
-    // Gatilhos para o cálculo automático ao alterar os inputs de saída ou duração
     document.getElementById('cfg-data-saida').addEventListener('change', calcularRetornoAutomatico);
     document.getElementById('cfg-duracao').addEventListener('input', calcularRetornoAutomatico);
 
-    // Inicialização geral
     atualizarDadosPescaria();
     calcularFinancas();
     realizarSorteioBarco();
