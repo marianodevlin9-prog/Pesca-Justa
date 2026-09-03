@@ -254,7 +254,7 @@
             flex-direction: column;
             align-items: center;
             border: 2px solid var(--accent-blue);
-            min-height: 420px;
+            min-height: 460px;
             background-color: #0A192F;
         }
 
@@ -262,7 +262,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(10, 25, 47, 0.6);
+            background: rgba(10, 25, 47, 0.65);
             border-radius: 18px;
             z-index: 1;
         }
@@ -271,15 +271,16 @@
             position: relative;
             z-index: 2;
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             background: rgba(15, 23, 42, 0.85);
             border-radius: 20px;
             padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            justify-content: space-between;
             border: 2px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(4px);
+            min-height: 380px;
         }
 
         .boat-section-label {
@@ -295,21 +296,43 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
-        .boat-row-seats {
+        .deck-layout {
             display: flex;
             justify-content: space-between;
+            align-items: stretch;
+            gap: 10px;
+            flex: 1;
+            margin: 8px 0;
+        }
+
+        .side-column {
+            display: flex;
+            flex-direction: column;
             gap: 6px;
+            flex: 1;
+        }
+
+        .side-title {
+            font-size: 9px;
+            color: #93C5FD;
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .seat-box {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 8px;
-            padding: 6px;
-            flex: 1;
+            padding: 8px 4px;
             text-align: center;
             font-size: 10px;
             border: 1px solid #CBD5E1;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
         }
 
         .seat-box .seat-num {
@@ -320,12 +343,18 @@
 
         .seat-box .seat-name {
             font-size: 9px;
-            color: var(--text-muted);
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 80px;
-            margin: 0 auto;
+            max-width: 90px;
+            font-weight: 600;
+        }
+
+        .boat-row-seats {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
         }
 
         .finance-table {
@@ -481,11 +510,11 @@
         </div>
     </div>
 
-    <!-- TELA 2: PARTICIPANTES E LANÇAMENTO DE DESPESAS -->
+    <!-- TELA 2: PARTICIPANTES E LANÇAMENTO DE DESPESAS (ADMIN) -->
     <div id="participants-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CADASTRAR PESCADOR & VALORES</h2>
+            <h2 style="font-size: 15px;">CADASTRAR PESCADOR & VALORES (ADMIN)</h2>
         </div>
         <div class="content-body">
             <div class="card">
@@ -515,11 +544,11 @@
         </div>
     </div>
 
-    <!-- TELA 3: FINANÇAS E DESPESAS GLOBAIS -->
+    <!-- TELA 3: FINANÇAS E DESPESAS GLOBAIS (ADMIN) -->
     <div id="finance-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONTROLE FINANCEIRO & RATEIO</h2>
+            <h2 style="font-size: 15px;">CONTROLE FINANCEIRO & RATEIO (ADMIN)</h2>
         </div>
         <div class="content-body">
             <div class="card">
@@ -582,16 +611,16 @@
             <div class="boat-schema-container" id="boat-bg-container">
                 <div class="boat-section-label">PROA (Frente)</div>
                 <div class="boat-hull" id="boat-hull-container"></div>
-                <div class="boat-section-label" style="margin-top: 10px;">POPA (Fundo)</div>
+                <div class="boat-section-label" style="margin-top: 6px;">POPA (Fundo)</div>
             </div>
         </div>
     </div>
 
-    <!-- TELA 5: CONFIGURAÇÕES DA PESCARIA E SETORES -->
+    <!-- TELA 5: CONFIGURAÇÕES DA PESCARIA E SETORES (ADMIN) -->
     <div id="config-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONFIGURAR PESCARIA & BARCO</h2>
+            <h2 style="font-size: 15px;">CONFIGURAR PESCARIA & BARCO (ADMIN)</h2>
         </div>
         <div class="content-body">
             <div class="card">
@@ -914,65 +943,88 @@
         const dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
 
         const container = document.getElementById('boat-hull-container');
-        container.innerHTML = `
-            <div id="container-popa" style="display: flex; flex-direction: column; gap: 6px;"></div>
-            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;" id="container-laterais"></div>
-        `;
-
+        
         let vagaContador = 1;
 
-        const popaDiv = document.getElementById('container-popa');
+        // Gerar colunas laterais em formato vertical (vista para o mar)
+        let maxBancosLateral = Math.max(esqBancos, dirBancos);
+        let colunaEsqHTML = '<div class="side-column"><div class="side-title">Esq</div>';
+        let colunaDirHTML = '<div class="side-column"><div class="side-title">Dir</div>';
+
+        let vagasLateraisTemp = [];
+        // Mapeia posições laterais
+        for(let b=0; b<maxBancosLateral; b++) {
+            let numEsq = b < esqBancos ? vagaContador++ : null;
+            let numDir = b < dirBancos ? vagaContador++ : null;
+            vagasLateraisTemp.push({ esq: numEsq, dir: numDir });
+        }
+
+        vagasLateraisTemp.forEach(item => {
+            // Lado Esquerdo
+            if(item.esq !== null) {
+                let ocupanteEsq = participantes.find(p => p.vaga === item.esq);
+                colunaEsqHTML += `
+                    <div class="seat-box">
+                        <div class="seat-num">${item.esq}</div>
+                        <div class="seat-name">${ocupanteEsq ? ocupanteEsq.name : 'Vago'}</div>
+                    </div>
+                `;
+            } else {
+                colunaEsqHTML += `<div class="seat-box" style="visibility:hidden;"></div>`;
+            }
+
+            // Lado Direito
+            if(item.dir !== null) {
+                let ocupanteDir = participantes.find(p => p.vaga === item.dir);
+                colunaDirHTML += `
+                    <div class="seat-box">
+                        <div class="seat-num">${item.dir}</div>
+                        <div class="seat-name">${ocupanteDir ? ocupanteDir.name : 'Vago'}</div>
+                    </div>
+                `;
+            } else {
+                colunaDirHTML += `<div class="seat-box" style="visibility:hidden;"></div>`;
+            }
+        });
+
+        colunaEsqHTML += '</div>';
+        colunaDirHTML += '</div>';
+
+        // Popa no rodapé
+        let popaHTML = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;"><div style="font-size: 9px; color: #93C5FD; text-align: center; font-weight: 700; text-transform: uppercase;">Popa / Fundo</div>';
+        let totalVagasPopa = popaBancos * popaPessoas;
+        
         for(let b=0; b<popaBancos; b++) {
-            let row = '<div class="boat-row-seats">';
+            popaHTML += '<div class="boat-row-seats">';
             for(let p=0; p<popaPessoas; p++) {
-                let ocupante = participantes.find(item => item.vaga === vagaContador);
-                row += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
+                let ocupantePopa = participantes.find(item => item.vaga === vagaContador);
+                popaHTML += `
+                    <div class="seat-box" style="flex:1;">
+                        <div class="seat-num">${vagaContador}</div>
+                        <div class="seat-name">${ocupantePopa ? ocupantePopa.name : 'Vago'}</div>
+                    </div>
+                `;
                 vagaContador++;
             }
-            row += '</div>';
-            popaDiv.innerHTML += row;
+            popaHTML += '</div>';
         }
+        popaHTML += '</div>';
 
-        const lateraisDiv = document.getElementById('container-laterais');
-        let maxBancosLateral = Math.max(esqBancos, dirBancos);
-        
-        for(let b=0; b<maxBancosLateral; b++) {
-            let rowEsq = b < esqBancos ? participantes.find(item => item.vaga === vagaContador) : null;
-            let numEsq = b < esqBancos ? vagaContador++ : null;
-
-            let rowDir = b < dirBancos ? participantes.find(item => item.vaga === vagaContador) : null;
-            let numDir = b < dirBancos ? vagaContador++ : null;
-
-            lateraisDiv.innerHTML += `
-                <div class="boat-row-seats">
-                    <div class="seat-box" style="${numEsq === null ? 'visibility:hidden;' : ''}">
-                        <div class="seat-num">${numEsq || ''}</div>
-                        <div class="seat-name">${rowEsq ? rowEsq.name : (numEsq ? 'Vago' : '')}</div>
-                    </div>
-                    <div class="seat-box" style="${numDir === null ? 'visibility:hidden;' : ''}">
-                        <div class="seat-num">${numDir || ''}</div>
-                        <div class="seat-name">${rowDir ? rowDir.name : (numDir ? 'Vago' : '')}</div>
-                    </div>
-                </div>
-            `;
-        }
+        container.innerHTML = `
+            <div class="deck-layout">
+                ${colunaEsqHTML}
+                ${colunaDirHTML}
+            </div>
+            ${popaHTML}
+        `;
     }
 
     function realizarSorteioBarco() {
         const popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
         const popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
-        const esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 3;
-        const esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
-        const dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
-        const dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
-
-        // Total de vagas na Popa
         let totalVagasPopa = popaBancos * popaPessoas;
         
-        // Sorteia aleatoriamente a ordem de todos os pescadores cadastrados
         let pescadoresEmbarcados = [...participantes].sort(() => Math.random() - 0.5);
-
-        // Limpa as vagas anteriores
         participantes.forEach(p => p.vaga = null);
 
         let vagaAtual = 1;
