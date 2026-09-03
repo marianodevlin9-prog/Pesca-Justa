@@ -461,7 +461,6 @@
         <span><i class="fa-solid fa-bell"></i></span>
     </div>
 
-    <!-- TELA 1: HOME -->
     <div id="home-screen" class="screen active">
         <div class="hero-banner" id="hero-banner-bg">
             <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" alt="Logo" class="logo" id="hero-logo-img">
@@ -510,7 +509,6 @@
         </div>
     </div>
 
-    <!-- TELA 2: PARTICIPANTES E LANÇAMENTO DE DESPESAS (ADMIN) -->
     <div id="participants-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
@@ -544,7 +542,6 @@
         </div>
     </div>
 
-    <!-- TELA 3: FINANÇAS E DESPESAS GLOBAIS (ADMIN) -->
     <div id="finance-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
@@ -597,7 +594,6 @@
         </div>
     </div>
 
-    <!-- TELA 4: CONFIGURAÇÃO DE POSIÇÕES E SORTEIO DO BARCO -->
     <div id="draw-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
@@ -616,7 +612,6 @@
         </div>
     </div>
 
-    <!-- TELA 5: CONFIGURAÇÕES DA PESCARIA E SETORES (ADMIN) -->
     <div id="config-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
@@ -659,7 +654,6 @@
     </div>
 </div>
 
-<!-- MODAL PARA EDIÇÃO INDIVIDUAL DETALHADA -->
 <div class="modal-overlay" id="modal-pagamento">
     <div class="modal-card">
         <h3 style="font-size: 15px; color: var(--primary-dark);" id="modal-titulo-pescador">Editar Pagamento</h3>
@@ -946,13 +940,11 @@
         
         let vagaContador = 1;
 
-        // Gerar colunas laterais em formato vertical (vista para o mar)
         let maxBancosLateral = Math.max(esqBancos, dirBancos);
         let colunaEsqHTML = '<div class="side-column"><div class="side-title">Esq</div>';
         let colunaDirHTML = '<div class="side-column"><div class="side-title">Dir</div>';
 
         let vagasLateraisTemp = [];
-        // Mapeia posições laterais
         for(let b=0; b<maxBancosLateral; b++) {
             let numEsq = b < esqBancos ? vagaContador++ : null;
             let numDir = b < dirBancos ? vagaContador++ : null;
@@ -960,7 +952,6 @@
         }
 
         vagasLateraisTemp.forEach(item => {
-            // Lado Esquerdo
             if(item.esq !== null) {
                 let ocupanteEsq = participantes.find(p => p.vaga === item.esq);
                 colunaEsqHTML += `
@@ -973,7 +964,6 @@
                 colunaEsqHTML += `<div class="seat-box" style="visibility:hidden;"></div>`;
             }
 
-            // Lado Direito
             if(item.dir !== null) {
                 let ocupanteDir = participantes.find(p => p.vaga === item.dir);
                 colunaDirHTML += `
@@ -990,7 +980,6 @@
         colunaEsqHTML += '</div>';
         colunaDirHTML += '</div>';
 
-        // Popa no rodapé
         let popaHTML = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;"><div style="font-size: 9px; color: #93C5FD; text-align: center; font-weight: 700; text-transform: uppercase;">Popa / Fundo</div>';
         let totalVagasPopa = popaBancos * popaPessoas;
         
@@ -1029,14 +1018,12 @@
 
         let vagaAtual = 1;
 
-        // 1. Preenche primeiro rigorosamente todas as vagas disponíveis na Popa
         for (let i = 0; i < totalVagasPopa && pescadoresEmbarcados.length > 0; i++) {
             let pescador = pescadoresEmbarcados.shift();
             pescador.vaga = vagaAtual;
             vagaAtual++;
         }
 
-        // 2. Continua preenchendo o restante nas laterais do barco sequencialmente
         while (pescadoresEmbarcados.length > 0) {
             let pescador = pescadoresEmbarcados.shift();
             pescador.vaga = vagaAtual;
@@ -1081,7 +1068,6 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // Inicialização ao carregar a página
     carregarDados();
     renderizarParticipantes();
     atualizarEsquemaBarco();
