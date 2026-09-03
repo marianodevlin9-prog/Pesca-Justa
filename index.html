@@ -205,28 +205,6 @@
             background-color: #059669;
         }
 
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
-            margin-top: 5px;
-        }
-
-        .btn-danger:hover {
-            background-color: #DC2626;
-        }
-
         .form-group {
             display: flex;
             flex-direction: column;
@@ -480,14 +458,14 @@
     <div class="status-bar">
         <span><i class="fa-solid fa-anchor"></i> Pesca Justa</span>
         <span id="clock">00:00:00</span>
-        <span id="admin-badge" style="background: #3B82F6; padding: 2px 6px; border-radius: 4px; font-size: 10px; display:none;">ADM</span>
+        <span><i class="fa-solid fa-bell"></i></span>
     </div>
 
     <!-- TELA 1: HOME -->
     <div id="home-screen" class="screen active">
         <div class="hero-banner" id="hero-banner-bg">
             <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" alt="Logo" class="logo" id="hero-logo-img">
-            <h1 id="home-barco-titulo">PESCA JUSTA</h1>
+            <h1>PESCA JUSTA</h1>
             <p>GESTÃO COMPLETA DE PESCARIA</p>
         </div>
 
@@ -626,22 +604,6 @@
             <h2 style="font-size: 15px;">SORTEIO E POSIÇÕES DO BARCO</h2>
         </div>
         <div class="content-body">
-            <!-- PAINEL EXCLUSIVO DO ADMIN PARA ESCOLHER 2 NOMES PARA A POPA -->
-            <div class="card" id="admin-popa-choice-card" style="display:none; border: 2px dashed var(--accent-blue); background: #F0F9FF;">
-                <span class="card-title" style="color: var(--primary-blue);"><i class="fa-solid fa-user-shield"></i> Área Admin: Fixar 2 Pescadores na Popa</span>
-                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Selecione 2 pescadores para ficarem garantidos nos assentos da Popa (Fundo) no próximo sorteio:</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                    <div class="form-group">
-                        <label>1º Pescador Popa</label>
-                        <select id="select-popa-1"><option value="">-- Selecione --</option></select>
-                    </div>
-                    <div class="form-group">
-                        <label>2º Pescador Popa</label>
-                        <select id="select-popa-2"><option value="">-- Selecione --</option></select>
-                    </div>
-                </div>
-            </div>
-
             <button class="btn-primary" onclick="realizarSorteioBarco()">
                 <i class="fa-solid fa-dice"></i> SORTEAR POSIÇÕES DO BARCO
             </button>
@@ -662,37 +624,30 @@
         </div>
         <div class="content-body">
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-user-shield"></i> Credenciamento de Administrador</span>
-                <div class="form-group"><label>Número de Telefone do Admin (Ex: 11999999999)</label><input type="text" id="cfg-admin-tel" placeholder="Seu WhatsApp/Telefone" onchange="salvarDadosGerais()"></div>
-            </div>
-
-            <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Cadastro e Imagens do Barco</span>
-                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador"></div>
-                <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80"></div>
-                <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80"></div>
-                <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ"></div>
-                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00"></div>
-                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12"></div>
-                <div class="form-group"><label>Data e Hora de Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00"></div>
+                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="salvarDadosGerais(); atualizarDadosPescaria();" placeholder="Link da foto do barco"></div>
+                <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="salvarDadosGerais(); atualizarDadosPescaria();" placeholder="Link da foto do cabeçalho"></div>
+                <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>Data e Hora de Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
             </div>
 
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-chair"></i> Bancos e Assentos</span>
-                <div class="form-group"><label>Bancos na Popa (Fundo)</label><input type="number" id="cfg-popa-bancos" value="1"></div>
-                <div class="form-group"><label>Pessoas por Banco na Popa</label><input type="number" id="cfg-popa-pessoas" value="2"></div>
+                <div class="form-group"><label>Bancos na Popa (Fundo)</label><input type="number" id="cfg-popa-bancos" value="1" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
+                <div class="form-group"><label>Pessoas por Banco na Popa</label><input type="number" id="cfg-popa-pessoas" value="2" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="3"></div>
-                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="1"></div>
+                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="3" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
+                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="1" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3"></div>
-                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1"></div>
+                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
+                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
             </div>
-
-            <div style="display: flex; gap: 8px;">
-                <button class="btn-primary" style="flex: 2;" onclick="salvarConfiguracoesGerais()"><i class="fa-solid fa-floppy-disk"></i> SALVAR CONFIGURAÇÕES</button>
-                <button class="btn-danger" style="flex: 1; margin-top: 5px;" onclick="excluirConfiguracoes()"><i class="fa-solid fa-trash-can"></i> EXCLUIR / RESETAR</button>
-            </div>
+            <button class="btn-primary" onclick="switchScreen('draw-screen')">
+                <i class="fa-solid fa-check"></i> SALVAR E VER BARCO
+            </button>
         </div>
     </div>
 
@@ -726,8 +681,6 @@
 
 <script>
     let participantes = [];
-    let adminTelefone = "11999999999"; // Exemplo padrão de telefone do ADM (Pode alterar na tela de Configurar)
-    let telefoneAtualUsuario = "11999999999"; // Simulando o usuário atual logado como ADM
 
     function carregarDados() {
         const dadosPescadores = localStorage.getItem('pesca_justa_participantes');
@@ -749,9 +702,6 @@
         const configSalva = localStorage.getItem('pesca_justa_config');
         if (configSalva) {
             const cfg = JSON.parse(configSalva);
-            document.getElementById('cfg-admin-tel').value = cfg.adminTel || "11999999999";
-            adminTelefone = cfg.adminTel || "11999999999";
-
             document.getElementById('cfg-barco-nome').value = cfg.barcoNome || "Barco Imperador";
             document.getElementById('cfg-barco-img').value = cfg.barcoImg || "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80";
             document.getElementById('cfg-logo-img').value = cfg.logoImg || "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80";
@@ -773,43 +723,14 @@
             document.getElementById('desp-bebidas').value = cfg.despBebidas ?? 0;
             document.getElementById('desp-outros').value = cfg.despOutros ?? 0;
         }
-
-        verificarPermissaoAdmin();
-    }
-
-    function verificarPermissaoAdmin() {
-        // Validação se o número de telefone atual confere com o cadastrado para administrador
-        let isAdmin = (telefoneAtualUsuario.trim() === adminTelefone.trim());
-        if (isAdmin) {
-            document.getElementById('admin-badge').style.display = 'inline-block';
-            document.getElementById('admin-popa-choice-card').style.display = 'block';
-            popularSelectsAdminPopa();
-        } else {
-            document.getElementById('admin-badge').style.display = 'none';
-            document.getElementById('admin-popa-choice-card').style.display = 'none';
-        }
-    }
-
-    function popularSelectsAdminPopa() {
-        const s1 = document.getElementById('select-popa-1');
-        const s2 = document.getElementById('select-popa-2');
-        s1.innerHTML = '<option value="">-- Selecione 1º --</option>';
-        s2.innerHTML = '<option value="">-- Selecione 2º --</option>';
-
-        participantes.forEach(p => {
-            s1.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-            s2.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-        });
     }
 
     function salvarTudo() {
         localStorage.setItem('pesca_justa_participantes', JSON.stringify(participantes));
     }
 
-    function salvarConfiguracoesGerais() {
-        adminTelefone = document.getElementById('cfg-admin-tel').value || "11999999999";
+    function salvarDadosGerais() {
         const cfg = {
-            adminTel: adminTelefone,
             barcoNome: document.getElementById('cfg-barco-nome').value,
             barcoImg: document.getElementById('cfg-barco-img').value,
             logoImg: document.getElementById('cfg-logo-img').value,
@@ -830,24 +751,6 @@
             despOutros: parseFloat(document.getElementById('desp-outros').value) || 0
         };
         localStorage.setItem('pesca_justa_config', JSON.stringify(cfg));
-        verificarPermissaoAdmin();
-        atualizarDadosPescaria();
-        atualizarEsquemaBarco();
-        showToast("💾 Configurações salvas com sucesso!");
-    }
-
-    function excluirConfiguracoes() {
-        if(confirm("Deseja realmente limpar e resetar as configurações do barco para o padrão?")) {
-            localStorage.removeItem('pesca_justa_config');
-            carregarDados();
-            atualizarDadosPescaria();
-            atualizarEsquemaBarco();
-            showToast("🗑️ Configurações resetadas!");
-        }
-    }
-
-    function salvarDadosGerais() {
-        // Chamado automaticamente em alterações menores se necessário
     }
 
     function iniciarRelogio() {
@@ -861,8 +764,7 @@
     iniciarRelogio();
 
     function atualizarDadosPescaria() {
-        const nomeBarco = document.getElementById('cfg-barco-nome').value;
-        document.getElementById('lbl-barco-nome').innerText = nomeBarco;
+        document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
         document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
         
         const saidaVal = document.getElementById('cfg-data-saida').value;
@@ -1022,7 +924,6 @@
 
         salvarTudo();
         renderizarParticipantes();
-        verificarPermissaoAdmin();
         showToast("Pescador adicionado com histórico!");
     }
 
@@ -1030,7 +931,6 @@
         participantes = participantes.filter(p => p.id !== id);
         salvarTudo();
         renderizarParticipantes();
-        verificarPermissaoAdmin();
         showToast("Removido com sucesso!");
     }
 
@@ -1046,11 +946,13 @@
         
         let vagaContador = 1;
 
+        // Gerar colunas laterais em formato vertical (vista para o mar)
         let maxBancosLateral = Math.max(esqBancos, dirBancos);
         let colunaEsqHTML = '<div class="side-column"><div class="side-title">Esq</div>';
         let colunaDirHTML = '<div class="side-column"><div class="side-title">Dir</div>';
 
         let vagasLateraisTemp = [];
+        // Mapeia posições laterais
         for(let b=0; b<maxBancosLateral; b++) {
             let numEsq = b < esqBancos ? vagaContador++ : null;
             let numDir = b < dirBancos ? vagaContador++ : null;
@@ -1058,6 +960,7 @@
         }
 
         vagasLateraisTemp.forEach(item => {
+            // Lado Esquerdo
             if(item.esq !== null) {
                 let ocupanteEsq = participantes.find(p => p.vaga === item.esq);
                 colunaEsqHTML += `
@@ -1070,6 +973,7 @@
                 colunaEsqHTML += `<div class="seat-box" style="visibility:hidden;"></div>`;
             }
 
+            // Lado Direito
             if(item.dir !== null) {
                 let ocupanteDir = participantes.find(p => p.vaga === item.dir);
                 colunaDirHTML += `
@@ -1086,7 +990,9 @@
         colunaEsqHTML += '</div>';
         colunaDirHTML += '</div>';
 
+        // Popa no rodapé
         let popaHTML = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;"><div style="font-size: 9px; color: #93C5FD; text-align: center; font-weight: 700; text-transform: uppercase;">Popa / Fundo</div>';
+        let totalVagasPopa = popaBancos * popaPessoas;
         
         for(let b=0; b<popaBancos; b++) {
             popaHTML += '<div class="boat-row-seats">';
@@ -1118,48 +1024,28 @@
         const popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
         let totalVagasPopa = popaBancos * popaPessoas;
         
+        let pescadoresEmbarcados = [...participantes].sort(() => Math.random() - 0.5);
         participantes.forEach(p => p.vaga = null);
-        let pescadoresRestantes = [...participantes];
-
-        let isAdmin = (telefoneAtualUsuario.trim() === adminTelefone.trim());
-
-        // Se for admin, verifica se escolheu os 2 nomes para a popa
-        if (isAdmin) {
-            let id1 = document.getElementById('select-popa-1').value;
-            let id2 = document.getElementById('select-popa-2').value;
-
-            let escolhidosIds = [id1, id2].filter(id => id !== "").map(id => parseInt(id));
-            
-            let vagaContadorPopa = 1;
-            escolhidosIds.forEach(id => {
-                let p = pescadoresRestantes.find(item => item.id === id);
-                if(p && vagaContadorPopa <= totalVagasPopa) {
-                    p.vaga = vagaContadorPopa++;
-                    pescadoresRestantes = pescadoresRestantes.filter(item => item.id !== id);
-                }
-            });
-        }
-
-        // Embaralha o restante dos pescadores
-        pescadoresRestantes.sort(() => Math.random() - 0.5);
 
         let vagaAtual = 1;
-        // Encontra o próximo número de vaga disponível
-        while(participantes.some(p => p.vaga === vagaAtual)) {
+
+        // 1. Preenche primeiro rigorosamente todas as vagas disponíveis na Popa
+        for (let i = 0; i < totalVagasPopa && pescadoresEmbarcados.length > 0; i++) {
+            let pescador = pescadoresEmbarcados.shift();
+            pescador.vaga = vagaAtual;
             vagaAtual++;
         }
 
-        pescadoresRestantes.forEach(p => {
-            while(participantes.some(item => item.vaga === vagaAtual)) {
-                vagaAtual++;
-            }
-            p.vaga = vagaAtual;
+        // 2. Continua preenchendo o restante nas laterais do barco sequencialmente
+        while (pescadoresEmbarcados.length > 0) {
+            let pescador = pescadoresEmbarcados.shift();
+            pescador.vaga = vagaAtual;
             vagaAtual++;
-        });
+        }
 
         salvarTudo();
         atualizarEsquemaBarco();
-        showToast("🎲 Sorteio realizado com sucesso!");
+        showToast("🎲 Sorteio otimizado (Prioridade Popa) realizado!");
     }
 
     function executarRodizio() {
