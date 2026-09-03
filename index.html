@@ -652,7 +652,6 @@
 
 <script>
     let participantes = [];
-    let configBarco = {};
 
     function carregarDados() {
         const dadosPescadores = localStorage.getItem('pesca_justa_participantes');
@@ -660,9 +659,14 @@
             participantes = JSON.parse(dadosPescadores);
         } else {
             participantes = [
-                { id: 1, name: "João Silva", frete: 150, alim: 50, iscas: 0, outros: 0, vaga: 1 },
-                { id: 2, name: "Carlos Eduardo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
-                { id: 3, name: "Marcelo Santos", frete: 150, alim: 100, iscas: 50, outros: 0, vaga: 3 }
+                { id: 1, name: "Devlin", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 1 },
+                { id: 2, name: "Gabriel Rocha", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
+                { id: 3, name: "Adhamo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 3 },
+                { id: 4, name: "Claudio Presidente", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 },
+                { id: 5, name: "Valtair Mineiro", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 5 },
+                { id: 6, name: "Willian Ah Le Leke", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 6 },
+                { id: 7, name: "Emiliano", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 7 },
+                { id: 8, name: "Joao Darço", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 8 }
             ];
         }
 
@@ -684,11 +688,11 @@
             document.getElementById('cfg-dir-bancos').value = cfg.dirBancos ?? 3;
             document.getElementById('cfg-dir-pessoas').value = cfg.dirPessoas ?? 1;
 
-            document.getElementById('desp-aluguel').value = cfg.despAluguel ?? 1200;
-            document.getElementById('desp-alimentacao').value = cfg.despAlimentacao ?? 300;
-            document.getElementById('desp-iscas').value = cfg.despIscas ?? 150;
-            document.getElementById('desp-bebidas').value = cfg.despBebidas ?? 200;
-            document.getElementById('desp-outros').value = cfg.despOutros ?? 70;
+            document.getElementById('desp-aluguel').value = cfg.despAluguel ?? 4500;
+            document.getElementById('desp-alimentacao').value = cfg.despAlimentacao ?? 0;
+            document.getElementById('desp-iscas').value = cfg.despIscas ?? 0;
+            document.getElementById('desp-bebidas').value = cfg.despBebidas ?? 0;
+            document.getElementById('desp-outros').value = cfg.despOutros ?? 0;
         }
     }
 
@@ -720,7 +724,6 @@
         localStorage.setItem('pesca_justa_config', JSON.stringify(cfg));
     }
 
-    // Sincronizar relógio em tempo real
     function iniciarRelogio() {
         function atualizar() {
             const agora = new Date();
@@ -963,18 +966,34 @@
         const dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
         const dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
 
-        let totalVagas = (popaBancos * popaPessoas) + (esqBancos * esqPessoas) + (dirBancos * dirPessoas);
+        // Total de vagas na Popa
+        let totalVagasPopa = popaBancos * popaPessoas;
         
-        participantes.forEach(p => p.vaga = null);
-        let vagas = Array.from({length: totalVagas}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+        // Sorteia aleatoriamente a ordem de todos os pescadores cadastrados
+        let pescadoresEmbarcados = [...participantes].sort(() => Math.random() - 0.5);
 
-        participantes.forEach((p, idx) => {
-            if(idx < vagas.length) p.vaga = vagas[idx];
-        });
+        // Limpa as vagas anteriores
+        participantes.forEach(p => p.vaga = null);
+
+        let vagaAtual = 1;
+
+        // 1. Preenche primeiro rigorosamente todas as vagas disponíveis na Popa
+        for (let i = 0; i < totalVagasPopa && pescadoresEmbarcados.length > 0; i++) {
+            let pescador = pescadoresEmbarcados.shift();
+            pescador.vaga = vagaAtual;
+            vagaAtual++;
+        }
+
+        // 2. Continua preenchendo o restante nas laterais do barco sequencialmente
+        while (pescadoresEmbarcados.length > 0) {
+            let pescador = pescadoresEmbarcados.shift();
+            pescador.vaga = vagaAtual;
+            vagaAtual++;
+        }
 
         salvarTudo();
         atualizarEsquemaBarco();
-        showToast("🎲 Sorteio realizado com sucesso!");
+        showToast("🎲 Sorteio otimizado (Prioridade Popa) realizado!");
     }
 
     function executarRodizio() {
