@@ -17,7 +17,7 @@
             --text-muted: #64748B;
             --success: #10B981;
             --danger: #EF4444;
-            --danger-bg: #FEE2E2;
+            --warning: #F59E0B;
             --border-color: #E2E8F0;
         }
         * {
@@ -200,21 +200,6 @@
             font-size: 13px;
             outline: none;
         }
-        .progress-bar-container {
-            width: 100%;
-            background-color: #E2E8F0;
-            border-radius: 6px;
-            height: 10px;
-            overflow: hidden;
-            position: relative;
-            margin-top: 4px;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background-color: var(--success);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
         .boat-schema-container {
             position: relative;
             background-size: cover;
@@ -390,6 +375,7 @@
         <span id="clock">00:00:00</span>
         <span><i class="fa-solid fa-bell"></i></span>
     </div>
+    
     <!-- TELA 1: HOME -->
     <div id="home-screen" class="screen active">
         <div class="hero-banner" id="hero-banner-bg">
@@ -421,13 +407,13 @@
                     <i class="fa-solid fa-dice"></i>
                     <span>BARCO & SORTEIO</span>
                 </button>
+                <button class="action-btn" onclick="switchScreen('checklist-screen')">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>CHECKLIST</span>
+                </button>
                 <button class="action-btn" onclick="switchScreen('config-screen')">
                     <i class="fa-solid fa-gear"></i>
                     <span>CONFIGURAR</span>
-                </button>
-                <button class="action-btn" onclick="executarRodizio()">
-                    <i class="fa-solid fa-rotate"></i>
-                    <span>RODÍZIO</span>
                 </button>
                 <button class="action-btn" onclick="gerarRelatorioGeral()">
                     <i class="fa-solid fa-file-lines"></i>
@@ -436,18 +422,23 @@
             </div>
         </div>
     </div>
-    <!-- TELA 2: PARTICIPANTES E LANÇAMENTO DE DESPESAS -->
+
+    <!-- TELA 2: PARTICIPANTES, CELULAR E LANÇAMENTO DE DESPESAS -->
     <div id="participants-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CADASTRAR PESCADOR & VALORES</h2>
+            <h2 style="font-size: 15px;">CADASTRAR PESCADOR & CONTATOS</h2>
         </div>
         <div class="content-body">
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-user-plus"></i> Novo Pescador & Pagamentos Iniciais</span>
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-user-plus"></i> Novo Pescador & WhatsApp</span>
                 <div class="form-group">
                     <label>Nome do Pescador</label>
                     <input type="text" id="input-nome" placeholder="Ex: Carlos Silva">
+                </div>
+                <div class="form-group">
+                    <label>Celular / WhatsApp (Ex: 11999999999)</label>
+                    <input type="text" id="input-celular" placeholder="11987654321">
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <div class="form-group"><label>Frete Barco (R$)</label><input type="number" id="input-frete" value="0" step="0.01"></div>
@@ -468,7 +459,8 @@
             </div>
         </div>
     </div>
-    <!-- TELA 3: FINANÇAS E DESPESAS GLOBAIS -->
+
+    <!-- TELA 3: FINANÇAS, RATEIO E SALDOS -->
     <div id="finance-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
@@ -498,18 +490,15 @@
             </div>
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Histórico Detalhado por Pescador</span>
+                    <span class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Histórico & Saldos (Falta Pagar / Devolver)</span>
                 </div>
                 <div style="overflow-x: auto;">
-                    <table class="finance-table" style="min-width: 520px;">
+                    <table class="finance-table" style="min-width: 580px;">
                         <thead>
                             <tr>
                                 <th>Pescador</th>
-                                <th>Frete</th>
-                                <th>Alim.</th>
-                                <th>Iscas</th>
-                                <th>Beb./Out.</th>
-                                <th>Total Pago</th>
+                                <th>Pago</th>
+                                <th>Saldo (Falta / Devolver)</th>
                                 <th>Ação</th>
                             </tr>
                         </thead>
@@ -519,6 +508,7 @@
             </div>
         </div>
     </div>
+
     <!-- TELA 4: CONFIGURAÇÃO DE POSIÇÕES E SORTEIO DO BARCO -->
     <div id="draw-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
@@ -526,8 +516,25 @@
             <h2 style="font-size: 15px;">SORTEIO E POSIÇÕES DO BARCO</h2>
         </div>
         <div class="content-body">
+            <div class="card">
+                <span class="card-title" style="margin-bottom: 6px;"><i class="fa-solid fa-star"></i> Preferência para 2 Nomes (Opcional)</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div class="form-group">
+                        <label>1º Nome Preferencial</label>
+                        <select id="pref-nome-1">
+                            <option value="">Nenhum</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>2º Nome Preferencial</label>
+                        <select id="pref-nome-2">
+                            <option value="">Nenhum</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <button class="btn-primary" onclick="realizarSorteioBarco()">
-                <i class="fa-solid fa-dice"></i> SORTEAR POSIÇÕES DO BARCO
+                <i class="fa-solid fa-dice"></i> REALIZAR SORTEIO DE POSIÇÕES
             </button>
             <div class="boat-schema-container" id="boat-bg-container">
                 <div class="boat-section-label">PROA (FRENTE)</div>
@@ -539,7 +546,48 @@
             </div>
         </div>
     </div>
-    <!-- TELA 5: CONFIGURAÇÕES DA PESCARIA E SETORES -->
+
+    <!-- TELA 5: CHECKLIST DE MATERIAIS (CHECK-IN / CHECK-OUT) -->
+    <div id="checklist-screen" class="screen">
+        <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
+            <h2 style="font-size: 15px;">CHECKLIST DE MATERIAIS</h2>
+        </div>
+        <div class="content-body">
+            <div class="card">
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-square-plus"></i> Adicionar Item ao Material</span>
+                <div class="form-group">
+                    <label>Nome do Item / Equipamento</label>
+                    <input type="text" id="input-item-checklist" placeholder="Ex: Vara de Carretilha / Caixa de Iscas">
+                </div>
+                <button class="btn-primary" onclick="adicionarItemChecklist()">ADICIONAR ITEM</button>
+            </div>
+            <div class="card">
+                <div class="card-header-flex">
+                    <span class="card-title">Controle por Pescador (Check-in / Check-out)</span>
+                </div>
+                <div class="form-group">
+                    <label>Selecione o Pescador</label>
+                    <select id="select-pescador-checklist" onchange="renderizarTabelaChecklist()"></select>
+                </div>
+                <div style="overflow-x: auto; margin-top: 6px;">
+                    <table class="finance-table" style="min-width: 320px;">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th style="text-align: center;">Check-in</th>
+                                <th style="text-align: center;">Check-out</th>
+                                <th style="text-align: center;">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-checklist-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 6: CONFIGURAÇÕES DA PESCARIA E SETORES -->
     <div id="config-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
@@ -549,11 +597,11 @@
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Cadastro e Imagens do Barco</span>
                 <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Antoni Marinheiro" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()" placeholder="Link da foto do barco"></div>
-                <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="atualizarDadosPescaria()" placeholder="Link da foto do cabeçalho"></div>
+                <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()" placeholder="Link público da foto do barco"></div>
+                <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="atualizarDadosPescaria()" placeholder="Link público da foto"></div>
                 <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Ilha de Búzios - São Sebastião" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T10:00" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="21" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T10:00" onchange="calcularRetornoAutomatico()"></div>
+                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="21" onchange="calcularRetornoAutomatico()"></div>
                 <div class="form-group"><label>Data e Hora de Retorno (Automático)</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-18T10:00" onchange="calcularRetornoManual()"></div>
             </div>
             <div class="card">
@@ -572,6 +620,7 @@
             </button>
         </div>
     </div>
+    
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchScreen('home-screen')"><i class="fa-solid fa-house"></i><span>Início</span></button>
         <button class="nav-item" onclick="switchScreen('participants-screen')"><i class="fa-solid fa-users"></i><span>Equipe</span></button>
@@ -579,12 +628,14 @@
         <button class="nav-item" onclick="switchScreen('draw-screen')"><i class="fa-solid fa-ship"></i><span>Barco</span></button>
     </div>
 </div>
+
 <!-- MODAL PARA EDIÇÃO INDIVIDUAL DETALHADA -->
 <div class="modal-overlay" id="modal-pagamento">
     <div class="modal-card">
         <h3 style="font-size: 15px; color: var(--primary-dark);" id="modal-titulo-pescador">Editar Pagamento</h3>
-        <p style="font-size: 11px; color: var(--text-muted);">Insira os valores pagos por este pescador em cada categoria:</p>
+        <p style="font-size: 11px; color: var(--text-muted);">Insira os valores pagos por este pescador e atualize o contato:</p>
         
+        <div class="form-group"><label>Celular / WhatsApp</label><input type="text" id="mod-celular"></div>
         <div class="form-group"><label>Frete Barco (R$)</label><input type="number" id="mod-frete" value="0" step="0.01"></div>
         <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="mod-alim" value="0" step="0.01"></div>
         <div class="form-group"><label>Iscas (R$)</label><input type="number" id="mod-iscas" value="0" step="0.01"></div>
@@ -595,28 +646,41 @@
         </div>
     </div>
 </div>
+
 <div id="toast" class="toast">Ação realizada!</div>
+
 <script>
     let participantes = [
-        { id: 1, name: "Devlin", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 1 },
-        { id: 2, name: "Gabriel Rocha", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
-        { id: 3, name: "Adhamo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 3 },
-        { id: 4, name: "Claudio Presidente", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 },
-        { id: 5, name: "Valtair Mineiro", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 5 },
-        { id: 6, name: "Willian Ah Le Leke", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 6 },
-        { id: 7, name: "Emiliano", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 7 },
-        { id: 8, name: "Joao Darço", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 8 },
-        { id: 9, name: "Roderley", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 9 },
-        { id: 10, name: "Rafael (Arabe)", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 10 },
-        { id: 11, name: "Lucas", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 11 },
-        { id: 12, name: "Wesley Tattoo (a dor)", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 12 },
-        { id: 13, name: "Marcelo Rastoldo(Jesus da ZL)", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 13 }
+        { id: 1, name: "Devlin", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 1 },
+        { id: 2, name: "Gabriel Rocha", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
+        { id: 3, name: "Adhamo", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 3 },
+        { id: 4, name: "Claudio Presidente", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 },
+        { id: 5, name: "Valtair Mineiro", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 5 },
+        { id: 6, name: "Willian Ah Le Leke", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 6 },
+        { id: 7, name: "Emiliano", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 7 },
+        { id: 8, name: "Joao Darço", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 8 },
+        { id: 9, name: "Roderley", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 9 },
+        { id: 10, name: "Rafael (Arabe)", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 10 },
+        { id: 11, name: "Lucas", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 11 },
+        { id: 12, name: "Wesley Tattoo (a dor)", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 12 },
+        { id: 13, name: "Marcelo Rastoldo(Jesus da ZL)", celular: "", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 13 }
     ];
+
+    let checklistItensPadrao = [
+        "Vara de Pesca", "Molinete / Carretilha", "Linha Reserva", 
+        "Anzóis / Chumbadas", "Caixa de Iscas", "Documento Pessoal (RG/CNH)", 
+        "Protetor Solar", "Capa de Chuva", "Água / Hidratação"
+    ];
+
+    // Estrutura do checklist por pescador: { pescadorId: [ {id, nome, checkin, checkout} ] }
+    let checklistPorPescador = {};
+
     let configBarco = {
         popaBancos: 2, popaPessoas: 2,
         esqBancos: 2, esqPessoas: 2,
         dirBancos: 2, dirPessoas: 2
     };
+
     let idPescadorEditando = null;
 
     function iniciarRelogio() {
@@ -629,6 +693,19 @@
     }
     iniciarRelogio();
 
+    function inicializarChecklistGeral() {
+        participantes.forEach(p => {
+            if(!checklistPorPescador[p.id]) {
+                checklistPorPescador[p.id] = checklistItensPadrao.map((itemNome, idx) => ({
+                    id: idx + 1,
+                    nome: itemNome,
+                    checkin: false,
+                    checkout: false
+                }));
+            }
+        });
+    }
+
     function calcularRetornoAutomatico() {
         const saidaVal = document.getElementById('cfg-data-saida').value;
         const duracaoHoras = parseFloat(document.getElementById('cfg-duracao').value) || 0;
@@ -639,9 +716,32 @@
         }
         atualizarDadosPescaria();
     }
+
     function calcularRetornoManual() {
         atualizarDadosPescaria();
     }
+
+    function atualizarDadosPescaria() {
+        document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
+        document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
+        document.getElementById('hero-banner-bg').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.8)), url('${document.getElementById('cfg-barco-img').value}')`;
+        document.getElementById('hero-logo-img').src = document.getElementById('cfg-logo-img').value;
+        document.getElementById('boat-bg-container').style.backgroundImage = `url('${document.getElementById('cfg-barco-img').value}')`;
+        
+        let saidaStr = document.getElementById('cfg-data-saida').value;
+        if(saidaStr) {
+            let d = new Date(saidaStr);
+            document.getElementById('lbl-data-saida').innerText = d.toLocaleString('pt-BR');
+        }
+        let retornoStr = document.getElementById('cfg-data-retorno').value;
+        if(retornoStr) {
+            let d = new Date(retornoStr);
+            document.getElementById('lbl-retorno').innerText = d.toLocaleString('pt-BR');
+        }
+        document.getElementById('lbl-duracao').innerText = document.getElementById('cfg-duracao').value + ' horas';
+        calcularFinancas();
+    }
+
     function switchScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
@@ -649,13 +749,379 @@
         if(screenId === 'home-screen') document.querySelectorAll('.nav-item')[0].classList.add('active');
         if(screenId === 'participants-screen') document.querySelectorAll('.nav-item')[1].classList.add('active');
         if(screenId === 'finance-screen') document.querySelectorAll('.nav-item')[2].classList.add('active');
-        if(screenId === 'draw-screen') document.querySelectorAll('.nav-item')[3].classList.add('active');
+        if(screenId === 'draw-screen') {
+            document.querySelectorAll('.nav-item')[3].classList.add('active');
+            atualizarSelectsPreferencia();
+            atualizarEsquemaBarco();
+        }
+        if(screenId === 'checklist-screen') {
+            atualizarSelectChecklistPescador();
+        }
     }
+
     function showToast(mensagem) {
         const t = document.getElementById('toast');
         t.innerText = mensagem;
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function adicionarParticipante() {
+        let nome = document.getElementById('input-nome').value.trim();
+        if(!nome) {
+            showToast('Digite o nome do pescador!');
+            return;
+        }
+        let celular = document.getElementById('input-celular').value.trim();
+        let frete = parseFloat(document.getElementById('input-frete').value) || 0;
+        let alim = parseFloat(document.getElementById('input-alim').value) || 0;
+        let iscas = parseFloat(document.getElementById('input-iscas').value) || 0;
+        let outros = parseFloat(document.getElementById('input-outros').value) || 0;
+
+        let novoId = participantes.length > 0 ? participantes[participantes.length - 1].id + 1 : 1;
+        participantes.push({
+            id: novoId,
+            name: nome,
+            celular: celular,
+            frete: frete,
+            alim: alim,
+            iscas: iscas,
+            outros: outros,
+            vaga: participantes.length + 1
+        });
+
+        document.getElementById('input-nome').value = '';
+        document.getElementById('input-celular').value = '';
+        document.getElementById('input-frete').value = '0';
+        document.getElementById('input-alim').value = '0';
+        document.getElementById('input-iscas').value = '0';
+        document.getElementById('input-outros').value = '0';
+
+        inicializarChecklistGeral();
+        renderizarParticipantes();
+        calcularFinancas();
+        showToast('Pescador adicionado com sucesso!');
+    }
+
+    function removerParticipante(id) {
+        participantes = participantes.filter(p => p.id !== id);
+        delete checklistPorPescador[id];
+        renderizarParticipantes();
+        calcularFinancas();
+        showToast('Pescador removido!');
+    }
+
+    function renderizarParticipantes() {
+        let container = document.getElementById('lista-participantes-div');
+        container.innerHTML = '';
+        document.getElementById('contador-pescadores').innerText = participantes.length;
+
+        participantes.forEach(p => {
+            let totalPago = p.frete + p.alim + p.iscas + p.outros;
+            let div = document.createElement('div');
+            div.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: #F8FAFC; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 12px;";
+            div.innerHTML = `
+                <div>
+                    <strong>${p.name}</strong> ${p.celular ? '<i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> ' + p.celular : ''}<br>
+                    <span style="color: var(--text-muted); font-size: 10px;">Pago: R$ ${totalPago.toFixed(2)}</span>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <button onclick="abrirModal(${p.id})" style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="removerParticipante(${p.id})" style="background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function abrirModal(id) {
+        idPescadorEditando = id;
+        let p = participantes.find(item => item.id === id);
+        if(!p) return;
+        document.getElementById('modal-titulo-pescador').innerText = "Editar: " + p.name;
+        document.getElementById('mod-celular').value = p.celular || '';
+        document.getElementById('mod-frete').value = p.frete;
+        document.getElementById('mod-alim').value = p.alim;
+        document.getElementById('mod-iscas').value = p.iscas;
+        document.getElementById('mod-outros').value = p.outros;
+        document.getElementById('modal-pagamento').style.display = 'flex';
+    }
+
+    function fecharModal() {
+        document.getElementById('modal-pagamento').style.display = 'none';
+        idPescadorEditando = null;
+    }
+
+    function salvarPagamentoIndividual() {
+        if(idPescadorEditando === null) return;
+        let p = participantes.find(item => item.id === idPescadorEditando);
+        if(p) {
+            p.celular = document.getElementById('mod-celular').value.trim();
+            p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
+            p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
+            p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
+            p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
+        }
+        fecharModal();
+        renderizarParticipantes();
+        calcularFinancas();
+        showToast('Valores atualizados!');
+    }
+
+    function calcularFinancas() {
+        let aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
+        let alim = parseFloat(document.getElementById('desp-alimentacao').value) || 0;
+        let iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
+        let bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
+        let outros = parseFloat(document.getElementById('desp-outros').value) || 0;
+
+        let custoGlobal = aluguel + alim + iscas + bebidas + outros;
+        document.getElementById('lbl-custo-total').innerText = 'R$ ' + custoGlobal.toFixed(2);
+
+        let qtd = participantes.length > 0 ? participantes.length : 1;
+        let rateioIndividual = custoGlobal / qtd;
+        document.getElementById('lbl-rateio-ind').innerText = 'R$ ' + rateioIndividual.toFixed(2);
+
+        let tbody = document.getElementById('tabela-pagamentos-body');
+        tbody.innerHTML = '';
+        participantes.forEach(p => {
+            let totalPago = p.frete + p.alim + p.iscas + p.outros;
+            let diferenca = totalPago - rateioIndividual;
+            let textoSaldo = "";
+            if(diferenca >= 0) {
+                textoSaldo = `<span style="color: var(--success); font-weight: 700;">Devolver: R$ ${diferenca.toFixed(2)}</span>`;
+            } else {
+                textoSaldo = `<span style="color: var(--danger); font-weight: 700;">Falta: R$ ${Math.abs(diferenca).toFixed(2)}</span>`;
+            }
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${p.name}</strong><br><span style="font-size: 9px; color: var(--text-muted);">Pago: R$ ${totalPago.toFixed(2)}</span></td>
+                <td>R$ ${totalPago.toFixed(2)}</td>
+                <td>${textoSaldo}</td>
+                <td><button onclick="abrirModal(${p.id})" style="background:var(--accent-blue); color:white; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-pen"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function atualizarSelectsPreferencia() {
+        let s1 = document.getElementById('pref-nome-1');
+        let s2 = document.getElementById('pref-nome-2');
+        let val1 = s1.value;
+        let val2 = s2.value;
+
+        s1.innerHTML = '<option value="">Nenhum</option>';
+        s2.innerHTML = '<option value="">Nenhum</option>';
+
+        participantes.forEach(p => {
+            s1.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+            s2.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+        });
+        s1.value = val1;
+        s2.value = val2;
+    }
+
+    function atualizarEsquemaBarco() {
+        configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
+        configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 1;
+        configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 1;
+        configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
+        configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 1;
+        configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
+
+        let container = document.getElementById('boat-hull-container');
+        container.innerHTML = '';
+
+        let contadorVaga = 0;
+
+        function criarSecao(titulo, numBancos, pesPorBanco) {
+            let divSecao = document.createElement('div');
+            divSecao.innerHTML = `<div style="font-size: 10px; font-weight: 700; color: #93C5FD; margin-bottom: 4px; text-align: center;">${titulo}</div>`;
+            
+            for(let b = 1; b <= numBancos; b++) {
+                let rowSeats = document.createElement('div');
+                rowSeats.className = 'boat-row-seats';
+                for(let p = 1; p <= pesPorBanco; p++) {
+                    contadorVaga++;
+                    let pescadorNaVaga = participantes.find(item => item.vaga === contadorVaga);
+                    let nomePescador = pescadorNaVaga ? pescadorNaVaga.name : 'Vago / Disponível';
+
+                    let seatBox = document.createElement('div');
+                    seatBox.className = 'seat-box';
+                    seatBox.innerHTML = `
+                        <div class="seat-num">Assento #${contadorVaga}</div>
+                        <div class="seat-name" title="${nomePescador}">${nomePescador}</div>
+                    `;
+                    rowSeats.appendChild(seatBox);
+                }
+                divSecao.appendChild(rowSeats);
+                if(b < numBancos) {
+                    let spacer = document.createElement('div');
+                    spacer.style.height = '6px';
+                    divSecao.appendChild(spacer);
+                }
+            }
+            container.appendChild(divSecao);
+        }
+
+        if(configBarco.popaBancos > 0) criarSecao("ÁREA DA POPA (FUNDO)", configBarco.popaBancos, configBarco.popaPessoas);
+        if(configBarco.esqBancos > 0) criarSecao("LADO ESQUERDO (BAMBORDO)", configBarco.esqBancos, configBarco.esqPessoas);
+        if(configBarco.dirBancos > 0) criarSecao("LADO DIREITO (BORESTE)", configBarco.dirBancos, configBarco.dirPessoas);
+    }
+
+    function realizarSorteioBarco() {
+        if(participantes.length === 0) {
+            showToast('Cadastre participantes primeiro!');
+            return;
+        }
+
+        let popaCap = (parseInt(document.getElementById('cfg-popa-bancos').value) || 0) * (parseInt(document.getElementById('cfg-popa-pessoas').value) || 0);
+        let esqCap = (parseInt(document.getElementById('cfg-esq-bancos').value) || 0) * (parseInt(document.getElementById('cfg-esq-pessoas').value) || 0);
+        let dirCap = (parseInt(document.getElementById('cfg-dir-bancos').value) || 0) * (parseInt(document.getElementById('cfg-dir-pessoas').value) || 0);
+        let totalCapacidade = popaCap + esqCap + dirCap;
+
+        // Tratar Preferências para a segunda rodada / início do sorteio
+        let pref1Id = parseInt(document.getElementById('pref-nome-1').value);
+        let pref2Id = parseInt(document.getElementById('pref-nome-2').value);
+
+        let pool = [...participantes];
+        
+        // Retirar preferenciais para colocá-los no início do pool de sorteio
+        let preferenciais = [];
+        if(!isNaN(pref1Id)) {
+            let idx = pool.findIndex(p => p.id === pref1Id);
+            if(idx !== -1) preferenciais.push(pool.splice(idx, 1)[0]);
+        }
+        if(!isNaN(pref2Id) && pref2Id !== pref1Id) {
+            let idx = pool.findIndex(p => p.id === pref2Id);
+            if(idx !== -1) preferenciais.push(pool.splice(idx, 1)[0]);
+        }
+
+        // Embaralhar o restante
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+
+        // Juntar preferenciais na frente da fila
+        pool = [...preferenciais, ...pool];
+
+        // 1. Preencher obrigatoriamente a POPA sem repetição de nomes na popa
+        let popaPescadores = [];
+        let usadosNaPopa = new Set();
+        
+        for (let i = 0; i < pool.length && popaPescadores.length < popaCap; i++) {
+            if (!usadosNaPopa.has(pool[i].name)) {
+                usadosNaPopa.add(pool[i].name);
+                popaPescadores.push(pool[i]);
+            }
+        }
+
+        let idxPool = 0;
+        while(popaPescadores.length < popaCap && pool.length > 0) {
+            let p = pool[idxPool % pool.length];
+            popaPescadores.push(p);
+            idxPool++;
+        }
+
+        let restantes = [...pool];
+        popaPescadores.forEach(pPopa => {
+            let index = restantes.findIndex(r => r.id === pPopa.id);
+            if(index !== -1) {
+                restantes.splice(index, 1);
+            }
+        });
+
+        let vagaAtual = 1;
+        popaPescadores.forEach(p => {
+            p.vaga = vagaAtual++;
+        });
+
+        restantes.forEach(p => {
+            if(vagaAtual <= totalCapacidade) {
+                p.vaga = vagaAtual++;
+            }
+        });
+
+        atualizarEsquemaBarco();
+        showToast('Sorteio realizado com preferenciais na frente!');
+    }
+
+    function atualizarSelectChecklistPescador() {
+        let sel = document.getElementById('select-pescador-checklist');
+        let atual = sel.value;
+        sel.innerHTML = '';
+        participantes.forEach(p => {
+            sel.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+        });
+        if(atual) sel.value = atual;
+        renderizarTabelaChecklist();
+    }
+
+    function adicionarItemChecklist() {
+        let input = document.getElementById('input-item-checklist');
+        let nomeItem = input.value.trim();
+        if(!nomeItem) {
+            showToast('Digite o nome do item!');
+            return;
+        }
+        let pescadorId = parseInt(document.getElementById('select-pescador-checklist').value);
+        if(!pescadorId) {
+            showToast('Selecione um pescador!');
+            return;
+        }
+
+        if(!checklistPorPescador[pescadorId]) checklistPorPescador[pescadorId] = [];
+        let novoId = checklistPorPescador[pescadorId].length > 0 ? checklistPorPescador[pescadorId][checklistPorPescador[pescadorId].length - 1].id + 1 : 1;
+        
+        checklistPorPescador[pescadorId].push({
+            id: novoId,
+            nome: nomeItem,
+            checkin: false,
+            checkout: false
+        });
+
+        input.value = '';
+        renderizarTabelaChecklist();
+        showToast('Item adicionado ao checklist!');
+    }
+
+    function alternarChecklist(pescadorId, itemId, tipo) {
+        let lista = checklistPorPescador[pescadorId];
+        if(!lista) return;
+        let item = lista.find(i => i.id === itemId);
+        if(item) {
+            if(tipo === 'in') item.checkin = !item.checkin;
+            if(tipo === 'out') item.checkout = !item.checkout;
+        }
+        renderizarTabelaChecklist();
+    }
+
+    function removerItemChecklist(pescadorId, itemId) {
+        if(checklistPorPescador[pescadorId]) {
+            checklistPorPescador[pescadorId] = checklistPorPescador[pescadorId].filter(i => i.id !== itemId);
+            renderizarTabelaChecklist();
+            showToast('Item removido!');
+        }
+    }
+
+    function renderizarTabelaChecklist() {
+        let tbody = document.getElementById('tabela-checklist-body');
+        tbody.innerHTML = '';
+        let pescadorId = parseInt(document.getElementById('select-pescador-checklist').value);
+        if(!pescadorId || !checklistPorPescador[pescadorId]) return;
+
+        checklistPorPescador[pescadorId].forEach(item => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${item.nome}</strong></td>
+                <td style="text-align: center;"><input type="checkbox" ${item.checkin ? 'checked' : ''} onchange="alternarChecklist(${pescadorId}, ${item.id}, 'in')" style="width: 16px; height: 16px; cursor: pointer;"></td>
+                <td style="text-align: center;"><input type="checkbox" ${item.checkout ? 'checked' : ''} onchange="alternarChecklist(${pescadorId}, ${item.id}, 'out')" style="width: 16px; height: 16px; cursor: pointer;"></td>
+                <td style="text-align: center;"><button onclick="removerItemChecklist(${pescadorId}, ${item.id})" style="background: var(--danger); color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        });
     }
 
     function gerarRelatorioGeral() {
@@ -667,7 +1133,7 @@
         let custoTotal = document.getElementById('lbl-custo-total').innerText;
         
         let janelaRelatorio = window.open('', '_blank');
-        janelaRelatorio.document.write(`
+        let htmlConteudo = `
             <html>
             <head>
                 <title>Relatório da Pescaria - Pesca Justa</title>
@@ -686,304 +1152,33 @@
                 <p><strong>Saída:</strong> ${saida} | <strong>Retorno:</strong> ${retorno}</p>
                 <p><strong>Custo Global da Viagem:</strong> ${custoTotal}</p>
                 
-                <h3>Equipe e Posições</h3>
+                <h3>Equipe, Contatos e Posições</h3>
                 <table>
                     <thead>
-                        <tr><th>Pescador</th><th>Assento / Vaga</th><th>Total Pago (R$)</th></tr>
+                        <tr><th>Pescador</th><th>Celular / WhatsApp</th><th>Assento / Vaga</th><th>Total Pago (R$)</th></tr>
                     </thead>
                     <tbody>
-                        ${participantes.map(p => `
-                            <tr>
-                                <td>${p.name}</td>
-                                <td>Vaga ${p.vaga || 'N/A'}</td>
-                                <td>R$ ${((p.frete||0)+(p.alim||0)+(p.iscas||0)+(p.outros||0)).toFixed(2)}</td>
-                            </tr>
-                        `).join('')}
+        `;
+        
+        participantes.forEach(p => {
+            let totalP = p.frete + p.alim + p.iscas + p.outros;
+            htmlConteudo += `<tr><td>${p.name}</td><td>${p.celular || 'Não cadastrado'}</td><td>Assento #${p.vaga}</td><td>R$ ${totalP.toFixed(2)}</td></tr>`;
+        });
+
+        htmlConteudo += `
                     </tbody>
                 </table>
-                <br><button onclick="window.print()" style="padding: 10px 20px; background: #10B981; color: white; border: none; cursor: pointer; border-radius: 5px;">Imprimir / Salvar PDF</button>
             </body>
             </html>
-        `);
+        `;
+        janelaRelatorio.document.write(htmlConteudo);
         janelaRelatorio.document.close();
     }
 
-    function atualizarDadosPescaria() {
-        document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
-        document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
-        
-        const saidaVal = document.getElementById('cfg-data-saida').value;
-        if(saidaVal) document.getElementById('lbl-data-saida').innerText = new Date(saidaVal).toLocaleString('pt-BR');
-        
-        document.getElementById('lbl-duracao').innerText = document.getElementById('cfg-duracao').value + " horas";
-        
-        const retornoVal = document.getElementById('cfg-data-retorno').value;
-        if(retornoVal) document.getElementById('lbl-retorno').innerText = new Date(retornoVal).toLocaleString('pt-BR');
-        const urlImgBarco = document.getElementById('cfg-barco-img').value;
-        if(urlImgBarco) document.getElementById('boat-bg-container').style.backgroundImage = `url('${urlImgBarco}')`;
-        const urlLogo = document.getElementById('cfg-logo-img').value;
-        if(urlLogo) {
-            document.getElementById('hero-banner-bg').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.8)), url('${urlLogo}')`;
-            document.getElementById('hero-logo-img').src = urlLogo;
-        }
-    }
-
-    function calcularFinancas() {
-        const aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
-        const alimentacao = parseFloat(document.getElementById('desp-alimentacao').value) || 0;
-        const iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
-        const bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
-        const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
-        const totalDespesas = aluguel + alimentacao + iscas + bebidas + outros;
-        document.getElementById('lbl-custo-total').innerText = `R$ ${totalDespesas.toFixed(2)}`;
-        const qtdPessoas = participantes.length > 0 ? participantes.length : 1;
-        const rateio = totalDespesas / qtdPessoas;
-        document.getElementById('lbl-rateio-ind').innerText = `R$ ${rateio.toFixed(2)}`;
-        renderizarTabelaPagamentos(rateio);
-        renderizarParticipantes(rateio);
-    }
-
-    function renderizarTabelaPagamentos(rateioIndividual) {
-        const tbody = document.getElementById('tabela-pagamentos-body');
-        tbody.innerHTML = '';
-        participantes.forEach(p => {
-            let totalPagoPescador = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
-            let percentual = rateioIndividual > 0 ? Math.min(100, (totalPagoPescador / rateioIndividual) * 100) : 0;
-            
-            tbody.innerHTML += `
-                <tr>
-                    <td><b>${p.name}</b></td>
-                    <td>R$ ${(p.frete || 0).toFixed(2)}</td>
-                    <td>R$ ${(p.alim || 0).toFixed(2)}</td>
-                    <td>R$ ${(p.iscas || 0).toFixed(2)}</td>
-                    <td>R$ ${(p.outros || 0).toFixed(2)}</td>
-                    <td>
-                        <b>R$ ${totalPagoPescador.toFixed(2)}</b>
-                        <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentual}%"></div></div>
-                    </td>
-                    <td>
-                        <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="abrirModalPagamento(${p.id})">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-
-    function abrirModalPagamento(id) {
-        idPescadorEditando = id;
-        const p = participantes.find(item => item.id === id);
-        if(p) {
-            document.getElementById('modal-titulo-pescador').innerText = `Pagamento: ${p.name}`;
-            document.getElementById('mod-frete').value = p.frete || 0;
-            document.getElementById('mod-alim').value = p.alim || 0;
-            document.getElementById('mod-iscas').value = p.iscas || 0;
-            document.getElementById('mod-outros').value = p.outros || 0;
-            document.getElementById('modal-pagamento').style.display = 'flex';
-        }
-    }
-    function fecharModal() {
-        document.getElementById('modal-pagamento').style.display = 'none';
-    }
-    function salvarPagamentoIndividual() {
-        const p = participantes.find(item => item.id === idPescadorEditando);
-        if(p) {
-            p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
-            p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
-            p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
-            p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
-        }
-        fecharModal();
-        calcularFinancas();
-        showToast('Valores atualizados com sucesso!');
-    }
-
-    function adicionarParticipante() {
-        const nome = document.getElementById('input-nome').value.trim();
-        if(!nome) {
-            alert('Digite o nome do pescador.');
-            return;
-        }
-        const novoP = {
-            id: participantes.length > 0 ? Math.max(...participantes.map(x => x.id)) + 1 : 1,
-            name: nome,
-            frete: parseFloat(document.getElementById('input-frete').value) || 0,
-            alim: parseFloat(document.getElementById('input-alim').value) || 0,
-            iscas: parseFloat(document.getElementById('input-iscas').value) || 0,
-            outros: parseFloat(document.getElementById('input-outros').value) || 0,
-            vaga: participantes.length + 1
-        };
-        participantes.push(novoP);
-        document.getElementById('input-nome').value = '';
-        document.getElementById('input-frete').value = '0';
-        document.getElementById('input-alim').value = '0';
-        document.getElementById('input-iscas').value = '0';
-        document.getElementById('input-outros').value = '0';
-        calcularFinancas();
-        showToast('Pescador adicionado com sucesso!');
-    }
-
-    function renderizarParticipantes(rateioIndividual) {
-        const container = document.getElementById('lista-participantes-div');
-        container.innerHTML = '';
-        document.getElementById('contador-pescadores').innerText = participantes.length;
-        participantes.forEach((p, idx) => {
-            let totalPago = (p.frete||0) + (p.alim||0) + (p.iscas||0) + (p.outros||0);
-            container.innerHTML += `
-                <div style="display: flex; justify-content: space-between; align-items: center; background: #F1F5F9; padding: 8px 10px; border-radius: 8px; font-size: 12px;">
-                    <div><b>${idx+1}. ${p.name}</b><br><span style="color: var(--text-muted); font-size: 10px;">Pago: R$ ${totalPago.toFixed(2)}</span></div>
-                    <button onclick="removerParticipante(${p.id})" style="background: var(--danger-bg); color: var(--danger); border: none; padding: 6px; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `;
-        });
-    }
-
-    function removerParticipante(id) {
-        participantes = participantes.filter(p => p.id !== id);
-        calcularFinancas();
-        showToast('Pescador removido.');
-    }
-
-    function atualizarEsquemaBarco() {
-        configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
-        configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
-        configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 2;
-        configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 2;
-        configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 2;
-        configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 2;
-    }
-
-    function realizarSorteioBarco() {
-        let copiaPart = [...participantes];
-        copiaPart.sort(() => Math.random() - 0.5);
-        copiaPart.forEach((p, index) => {
-            p.vaga = index + 1;
-        });
-
-        const hullContainer = document.getElementById('boat-hull-container');
-        hullContainer.innerHTML = '';
-        let vagaContador = 1;
-
-        // 1. Laterais (Esquerda e Direita) - Fileiras de baixo para cima, sentido horário no lado direito
-        let maxFileiras = Math.max(configBarco.esqBancos, configBarco.dirBancos);
-        let htmlLaterais = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center; margin-bottom: 6px;">Bancos Laterais</div>`;
-        
-        // Montar de baixo para cima nas fileiras
-        for(let f = maxFileiras - 1; f >= 0; f--) {
-            htmlLaterais += `<div class="boat-row-seats">`;
-            
-            // Lado Esquerdo (Banco com capacidade configurada)
-            if(f < configBarco.esqBancos) {
-                let p1 = participantes.find(x => x.vaga === vagaContador);
-                let n1 = p1 ? p1.name : 'Vago';
-                let vaga1Str = `#${vagaContador}`;
-                vagaContador++;
-
-                let n2 = '';
-                let vaga2Str = '';
-                if(configBarco.esqPessoas > 1) {
-                    let p2 = participantes.find(x => x.vaga === vagaContador);
-                    n2 = p2 ? p2.name : 'Vago';
-                    vaga2Str = ` & #${vagaContador}`;
-                    vagaContador++;
-                }
-
-                htmlLaterais += `
-                    <div class="seat-box" style="border-left: 3px solid var(--accent-blue);">
-                        <div class="seat-num">Esq - Banco ${f+1} (${vaga1Str}${vaga2Str})</div>
-                        <div class="seat-name">${n1}</div>
-                        ${n2 ? `<div class="seat-name">${n2}</div>` : ''}
-                    </div>
-                `;
-            } else {
-                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
-            }
-
-            // Lado Direito (Sentido horário / fileiras subindo)
-            let dirIndex = maxFileiras - 1 - f;
-            if(dirIndex < configBarco.dirBancos) {
-                let p1 = participantes.find(x => x.vaga === vagaContador);
-                let n1 = p1 ? p1.name : 'Vago';
-                let vaga1Str = `#${vagaContador}`;
-                vagaContador++;
-
-                let n2 = '';
-                let vaga2Str = '';
-                if(configBarco.dirPessoas > 1) {
-                    let p2 = participantes.find(x => x.vaga === vagaContador);
-                    n2 = p2 ? p2.name : 'Vago';
-                    vaga2Str = ` & #${vagaContador}`;
-                    vagaContador++;
-                }
-
-                htmlLaterais += `
-                    <div class="seat-box" style="border-right: 3px solid var(--success);">
-                        <div class="seat-num">Dir - Banco ${dirIndex+1} (${vaga1Str}${vaga2Str})</div>
-                        <div class="seat-name">${n1}</div>
-                        ${n2 ? `<div class="seat-name">${n2}</div>` : ''}
-                    </div>
-                `;
-            } else {
-                htmlLaterais += `<div class="seat-box" style="visibility:hidden;"></div>`;
-            }
-
-            htmlLaterais += `</div>`;
-        }
-        hullContainer.innerHTML += htmlLaterais;
-
-        // 2. Popa (Fundo) na parte de baixo
-        let htmlPopa = `<div style="font-size:10px; color:#93C5FD; font-weight:bold; text-align:center; margin-top: 8px;">Assentos na Popa (Fundo)</div>`;
-        for(let b = 0; b < configBarco.popaBancos; b++) {
-            htmlPopa += `<div class="boat-row-seats">`;
-            for(let p = 0; p < configBarco.popaPessoas; p++) {
-                let pescadorNaVaga = participantes.find(x => x.vaga === vagaContador);
-                let nomePescador = pescadorNaVaga ? pescadorNaVaga.name : 'Vago';
-                let numVagaAtual = vagaContador;
-                vagaContador++;
-                htmlPopa += `
-                    <div class="seat-box" style="border-bottom: 3px solid #F59E0B;">
-                        <div class="seat-num">Popa #${numVagaAtual}</div>
-                        <div class="seat-name" title="${nomePescador}">${nomePescador}</div>
-                    </div>
-                `;
-            }
-            htmlPopa += `</div>`;
-        }
-        hullContainer.innerHTML += htmlPopa;
-
-        // Caso haja mais pescadores que vagas configuradas, distribuir o restante no último banco lateral
-        if(vagaContador <= participantes.length) {
-            // Ajuste dinâmico para garantir que todos apareçam no esquema
-            let restante = participantes.filter(x => x.vaga >= vagaContador);
-            if(restante.length > 0) {
-                showToast(`Atenção: ${restante.length} pescador(es) extra(s) acomodado(s) nas laterais.`);
-            }
-        }
-
-        showToast('Sorteio de posições realizado com sucesso!');
-    }
-
-    function executarRodizio() {
-        if(participantes.length === 0) {
-            showToast('Cadastre participantes primeiro.');
-            return;
-        }
-        let primeiraVaga = participantes[0].vaga;
-        for(let i = 0; i < participantes.length - 1; i++) {
-            participantes[i].vaga = participantes[i+1].vaga;
-        }
-        participantes[participantes.length - 1].vaga = primeiraVaga;
-        realizarSorteioBarco();
-        showToast('Rodízio de posições executado!');
-    }
-
-    document.getElementById('cfg-data-saida').addEventListener('change', calcularRetornoAutomatico);
-    document.getElementById('cfg-duracao').addEventListener('input', calcularRetornoAutomatico);
-
-    atualizarDadosPescaria();
+    inicializarChecklistGeral();
+    renderizarParticipantes();
     calcularFinancas();
-    realizarSorteioBarco();
+    atualizarEsquemaBarco();
 </script>
 </body>
 </html>
