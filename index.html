@@ -205,28 +205,6 @@
             background-color: #059669;
         }
 
-        .btn-secondary {
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-            margin-top: 5px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #2563EB;
-        }
-
         .form-group {
             display: flex;
             flex-direction: column;
@@ -480,38 +458,14 @@
     <div class="status-bar">
         <span><i class="fa-solid fa-anchor"></i> Pesca Justa</span>
         <span id="clock">00:00:00</span>
-        <span id="user-role-badge" style="background: #3B82F6; padding: 2px 6px; border-radius: 4px; font-size: 10px; display:none;">ADM</span>
+        <span><i class="fa-solid fa-bell"></i></span>
     </div>
 
-    <div id="login-screen" class="screen active" style="justify-content: center; padding: 20px;">
-        <div class="card" style="text-align: center; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-            <div style="font-size: 40px; color: var(--primary-blue); margin-bottom: 10px;"><i class="fa-solid fa-anchor"></i></div>
-            <h2 style="font-size: 18px; color: var(--primary-dark); margin-bottom: 4px;">Pesca Justa</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;">Entre com seu Telefone e Senha</p>
-
-            <div class="form-group" style="text-align: left;">
-                <label>Número de Telefone</label>
-                <input type="text" id="login-tel" placeholder="Ex: 11 97112-6395">
-            </div>
-            <div class="form-group" style="text-align: left;">
-                <label>Senha</label>
-                <input type="password" id="login-senha" placeholder="Sua senha de acesso">
-            </div>
-
-            <button class="btn-primary" onclick="realizarLogin()" style="margin-top: 10px;">
-                <i class="fa-solid fa-right-to-bracket"></i> ENTRAR NO APLICATIVO
-            </button>
-            <button class="btn-secondary" onclick="sairApp()" style="background: var(--text-muted); margin-top: 5px;" id="btn-sair-sessao" style="display:none;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> SAIR DA CONTA
-            </button>
-        </div>
-    </div>
-
-    <div id="home-screen" class="screen">
+    <div id="home-screen" class="screen active">
         <div class="hero-banner" id="hero-banner-bg">
             <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" alt="Logo" class="logo" id="hero-logo-img">
             <h1>PESCA JUSTA</h1>
-            <p id="welcome-user-txt">GESTÃO COMPLETA DE PESCARIA</p>
+            <p>GESTÃO COMPLETA DE PESCARIA</p>
         </div>
 
         <div class="content-body">
@@ -539,7 +493,7 @@
                     <i class="fa-solid fa-dice"></i>
                     <span>BARCO & SORTEIO</span>
                 </button>
-                <button class="action-btn" id="btn-menu-config" onclick="switchScreen('config-screen')">
+                <button class="action-btn" onclick="switchScreen('config-screen')">
                     <i class="fa-solid fa-gear"></i>
                     <span>CONFIGURAR</span>
                 </button>
@@ -547,9 +501,9 @@
                     <i class="fa-solid fa-rotate"></i>
                     <span>RODÍZIO</span>
                 </button>
-                <button class="action-btn" onclick="logoutUsuario()">
-                    <i class="fa-solid fa-power-off"></i>
-                    <span>SAIR</span>
+                <button class="action-btn" onclick="showToast('Relatório gerado com sucesso')">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>RELATÓRIO</span>
                 </button>
             </div>
         </div>
@@ -558,23 +512,23 @@
     <div id="participants-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CADASTRAR PESCADOR & ACESSO (ADMIN)</h2>
+            <h2 style="font-size: 15px;">CADASTRAR PESCADOR & VALORES (ADMIN)</h2>
         </div>
         <div class="content-body">
-            <div class="card" id="card-cadastro-pescador">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-user-plus"></i> Novo Pescador, Telefone & Senha</span>
-                <div class="form-group"><label>Nome do Pescador</label><input type="text" id="input-nome" placeholder="Ex: Carlos Silva"></div>
-                <div class="form-group"><label>Telefone</label><input type="text" id="input-tel" placeholder="Ex: 11 98888-7777"></div>
-                <div class="form-group"><label>Senha de Acesso</label><input type="password" id="input-senha" placeholder="Senha do Pescador"></div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+            <div class="card">
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-user-plus"></i> Novo Pescador & Pagamentos Iniciais</span>
+                <div class="form-group">
+                    <label>Nome do Pescador</label>
+                    <input type="text" id="input-nome" placeholder="Ex: Carlos Silva">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <div class="form-group"><label>Frete Barco (R$)</label><input type="number" id="input-frete" value="0" step="0.01"></div>
                     <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="input-alim" value="0" step="0.01"></div>
                     <div class="form-group"><label>Iscas (R$)</label><input type="number" id="input-iscas" value="0" step="0.01"></div>
-                    <div class="form-group"><label>Outros (R$)</label><input type="number" id="input-outros" value="0" step="0.01"></div>
+                    <div class="form-group"><label>Bebidas/Outros (R$)</label><input type="number" id="input-outros" value="0" step="0.01"></div>
                 </div>
                 <button class="btn-primary" onclick="adicionarParticipante()">
-                    <i class="fa-solid fa-check"></i> CADASTRAR PESCADOR
+                    <i class="fa-solid fa-check"></i> ADICIONAR PESCADOR
                 </button>
             </div>
 
@@ -591,10 +545,10 @@
     <div id="finance-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONTROLE FINANCEIRO & RATEIO</h2>
+            <h2 style="font-size: 15px;">CONTROLE FINANCEIRO & RATEIO (ADMIN)</h2>
         </div>
         <div class="content-body">
-            <div class="card" id="card-despesas-globais">
+            <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-receipt"></i> Custo Total da Viagem (Despesas)</span>
                 <table class="finance-table">
                     <thead>
@@ -646,15 +600,6 @@
             <h2 style="font-size: 15px;">SORTEIO E POSIÇÕES DO BARCO</h2>
         </div>
         <div class="content-body">
-            <div class="card" id="admin-popa-choice-card" style="display:none; border: 2px dashed var(--accent-blue); background: #F0F9FF;">
-                <span class="card-title" style="color: var(--primary-blue);"><i class="fa-solid fa-user-shield"></i> Área Admin: Fixar 2 Pescadores na Popa</span>
-                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Selecione 2 pescadores para ficarem garantidos nos assentos da Popa (Fundo) no próximo sorteio:</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                    <div class="form-group"><label>1º Pescador Popa</label><select id="select-popa-1"><option value="">-- Selecione --</option></select></div>
-                    <div class="form-group"><label>2º Pescador Popa</label><select id="select-popa-2"><option value="">-- Selecione --</option></select></div>
-                </div>
-            </div>
-
             <button class="btn-primary" onclick="realizarSorteioBarco()">
                 <i class="fa-solid fa-dice"></i> SORTEAR POSIÇÕES DO BARCO
             </button>
@@ -675,35 +620,33 @@
         <div class="content-body">
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Cadastro e Imagens do Barco</span>
-                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador"></div>
-                <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80"></div>
-                <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80"></div>
-                <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ"></div>
-                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00"></div>
-                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12"></div>
-                <div class="form-group"><label>Data e Hora de Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00"></div>
+                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>URL da Imagem de Fundo (Barco / Sorteio)</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="salvarDadosGerais(); atualizarDadosPescaria();" placeholder="Link da foto do barco"></div>
+                <div class="form-group"><label>URL da Imagem do Cabeçalho (Início)</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="salvarDadosGerais(); atualizarDadosPescaria();" placeholder="Link da foto do cabeçalho"></div>
+                <div class="form-group"><label>Local de Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>Data e Hora da Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
+                <div class="form-group"><label>Data e Hora de Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="salvarDadosGerais(); atualizarDadosPescaria();"></div>
             </div>
 
             <div class="card">
                 <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-chair"></i> Bancos e Assentos</span>
-                <div class="form-group"><label>Bancos na Popa (Fundo)</label><input type="number" id="cfg-popa-bancos" value="1"></div>
-                <div class="form-group"><label>Pessoas por Banco na Popa</label><input type="number" id="cfg-popa-pessoas" value="2"></div>
+                <div class="form-group"><label>Bancos na Popa (Fundo)</label><input type="number" id="cfg-popa-bancos" value="1" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
+                <div class="form-group"><label>Pessoas por Banco na Popa</label><input type="number" id="cfg-popa-pessoas" value="2" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="3"></div>
-                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="1"></div>
+                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="3" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
+                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="1" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
                 <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3"></div>
-                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1"></div>
+                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
+                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1" onchange="salvarDadosGerais(); atualizarEsquemaBarco();"></div>
             </div>
-
-            <div style="display: flex; gap: 8px;">
-                <button class="btn-primary" style="flex: 2;" onclick="salvarConfiguracoesGerais()"><i class="fa-solid fa-floppy-disk"></i> SALVAR CONFIGURAÇÕES</button>
-                <button class="btn-primary" style="flex: 1; background-color: var(--danger);" onclick="excluirConfiguracoes()"><i class="fa-solid fa-trash-can"></i> EXCLUIR / RESETAR</button>
-            </div>
+            <button class="btn-primary" onclick="switchScreen('draw-screen')">
+                <i class="fa-solid fa-check"></i> SALVAR E VER BARCO
+            </button>
         </div>
     </div>
 
-    <div class="bottom-nav" id="main-bottom-nav" style="display:none;">
+    <div class="bottom-nav">
         <button class="nav-item active" onclick="switchScreen('home-screen')"><i class="fa-solid fa-house"></i><span>Início</span></button>
         <button class="nav-item" onclick="switchScreen('participants-screen')"><i class="fa-solid fa-users"></i><span>Equipe</span></button>
         <button class="nav-item" onclick="switchScreen('finance-screen')"><i class="fa-solid fa-wallet"></i><span>Finanças</span></button>
@@ -719,7 +662,7 @@
         <div class="form-group"><label>Frete Barco (R$)</label><input type="number" id="mod-frete" value="0" step="0.01"></div>
         <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="mod-alim" value="0" step="0.01"></div>
         <div class="form-group"><label>Iscas (R$)</label><input type="number" id="mod-iscas" value="0" step="0.01"></div>
-        <div class="form-group"><label>Outros (R$)</label><input type="number" id="mod-outros" value="0" step="0.01"></div>
+        <div class="form-group"><label>Bebidas / Outros (R$)</label><input type="number" id="mod-outros" value="0" step="0.01"></div>
 
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button class="btn-primary" style="background-color: var(--primary-blue);" onclick="salvarPagamentoIndividual()">Salvar</button>
@@ -732,10 +675,6 @@
 
 <script>
     let participantes = [];
-    let usuarioLogado = null; // Guardará o objeto do usuário logado atualmente
-
-    const ADMIN_TELEFONE = "11 97112-6395";
-    const ADMIN_NOME = "Devlin Mariano";
 
     function carregarDados() {
         const dadosPescadores = localStorage.getItem('pesca_justa_participantes');
@@ -743,17 +682,15 @@
             participantes = JSON.parse(dadosPescadores);
         } else {
             participantes = [
-                { id: 1, name: "Devlin Mariano", tel: "11 97112-6395", senha: "123", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 1 },
-                { id: 2, name: "Gabriel Rocha", tel: "11 98888-1111", senha: "123", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
-                { id: 3, name: "Adhamo", tel: "11 98888-2222", senha: "123", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 3 },
-                { id: 4, name: "Claudio Presidente", tel: "11 98888-3333", senha: "123", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 }
+                { id: 1, name: "Devlin", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 1 },
+                { id: 2, name: "Gabriel Rocha", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
+                { id: 3, name: "Adhamo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 3 },
+                { id: 4, name: "Claudio Presidente", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 4 },
+                { id: 5, name: "Valtair Mineiro", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 5 },
+                { id: 6, name: "Willian Ah Le Leke", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 6 },
+                { id: 7, name: "Emiliano", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 7 },
+                { id: 8, name: "Joao Darço", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 8 }
             ];
-        }
-
-        // Garante que o Devlin Mariano esteja cadastrado como Admin principal se não existir
-        let adminExiste = participantes.find(p => p.tel.replace(/\D/g, '') === ADMIN_TELEFONE.replace(/\D/g, ''));
-        if(!adminExiste) {
-            participantes.unshift({ id: 999, name: ADMIN_NOME, tel: ADMIN_TELEFONE, senha: "admin", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: null });
         }
 
         const configSalva = localStorage.getItem('pesca_justa_config');
@@ -774,11 +711,11 @@
             document.getElementById('cfg-dir-bancos').value = cfg.dirBancos ?? 3;
             document.getElementById('cfg-dir-pessoas').value = cfg.dirPessoas ?? 1;
 
-            document.getElementById('desp-aluguel').value = cfg.despAluguel ?? 1200;
-            document.getElementById('desp-alimentacao').value = cfg.despAlimentacao ?? 300;
-            document.getElementById('desp-iscas').value = cfg.despIscas ?? 150;
-            document.getElementById('desp-bebidas').value = cfg.despBebidas ?? 200;
-            document.getElementById('desp-outros').value = cfg.despOutros ?? 70;
+            document.getElementById('desp-aluguel').value = cfg.despAluguel ?? 4500;
+            document.getElementById('desp-alimentacao').value = cfg.despAlimentacao ?? 0;
+            document.getElementById('desp-iscas').value = cfg.despIscas ?? 0;
+            document.getElementById('desp-bebidas').value = cfg.despBebidas ?? 0;
+            document.getElementById('desp-outros').value = cfg.despOutros ?? 0;
         }
     }
 
@@ -786,7 +723,7 @@
         localStorage.setItem('pesca_justa_participantes', JSON.stringify(participantes));
     }
 
-    function salvarConfiguracoesGerais() {
+    function salvarDadosGerais() {
         const cfg = {
             barcoNome: document.getElementById('cfg-barco-nome').value,
             barcoImg: document.getElementById('cfg-barco-img').value,
@@ -808,102 +745,6 @@
             despOutros: parseFloat(document.getElementById('desp-outros').value) || 0
         };
         localStorage.setItem('pesca_justa_config', JSON.stringify(cfg));
-        atualizarDadosPescaria();
-        atualizarEsquemaBarco();
-        showToast("💾 Configurações salvas com sucesso!");
-    }
-
-    function excluirConfiguracoes() {
-        if(confirm("Deseja realmente resetar as configurações do barco para o padrão?")) {
-            localStorage.removeItem('pesca_justa_config');
-            carregarDados();
-            atualizarDadosPescaria();
-            atualizarEsquemaBarco();
-            showToast("🗑️ Configurações resetadas!");
-        }
-    }
-
-    function realizarLogin() {
-        const telInput = document.getElementById('login-tel').value.trim();
-        const senhaInput = document.getElementById('login-senha').value.trim();
-
-        if(!telInput || !senhaInput) {
-            alert("Preencha o telefone e a senha!");
-            return;
-        }
-
-        const telLimpo = telInput.replace(/\D/g, '');
-        const usuarioEncontrado = participantes.find(p => p.tel && p.tel.replace(/\D/g, '') === telLimpo && p.senha === senhaInput);
-
-        if(usuarioEncontrado) {
-            usuarioLogado = usuarioEncontrado;
-            aplicarPermissoesSessao();
-            switchScreen('home-screen');
-            showToast(`Bem-vindo, ${usuarioLogado.name}!`);
-        } else {
-            alert("Telefone ou senha incorretos, ou usuário não cadastrado.");
-        }
-    }
-
-    function logoutUsuario() {
-        usuarioLogado = null;
-        document.getElementById('login-tel').value = '';
-        document.getElementById('login-senha').value = '';
-        document.getElementById('user-role-badge').style.display = 'none';
-        document.getElementById('main-bottom-nav').style.display = 'none';
-        switchScreen('login-screen');
-        showToast("Sessão encerrada.");
-    }
-
-    function verificarAdmin() {
-        if(!usuarioLogado) return false;
-        let telClean = usuarioLogado.tel.replace(/\D/g, '');
-        let admClean = ADMIN_TELEFONE.replace(/\D/g, '');
-        return (telClean === admClean || usuarioLogado.name === ADMIN_NOME);
-    }
-
-    function aplicarPermissoesSessao() {
-        const isAdmin = verificarAdmin();
-        const badge = document.getElementById('user-role-badge');
-        const btnConfig = document.getElementById('btn-menu-config');
-        const cardCadPescador = document.getElementById('card-cadastro-pescador');
-        const cardDespesas = document.getElementById('card-despesas-globais');
-        const cardAdminPopa = document.getElementById('admin-popa-choice-card');
-        const bottomNav = document.getElementById('main-bottom-nav');
-
-        bottomNav.style.display = 'flex';
-
-        if(isAdmin) {
-            badge.style.display = 'inline-block';
-            badge.innerText = 'ADM (PODER TOTAL)';
-            if(btnConfig) btnConfig.style.display = 'flex';
-            if(cardCadPescador) cardCadPescador.style.display = 'block';
-            if(cardDespesas) cardDespesas.style.display = 'block';
-            if(cardAdminPopa) {
-                cardAdminPopa.style.display = 'block';
-                popularSelectsAdminPopa();
-            }
-            document.getElementById('welcome-user-txt').innerText = "GESTÃO COMPLETA (ADMINISTRADOR)";
-        } else {
-            badge.style.display = 'none';
-            // Pescadores comuns só visualizam o que precisam sem alterar configurações globais ou cadastros
-            if(cardCadPescador) cardCadPescador.style.display = 'none';
-            if(cardAdminPopa) cardAdminPopa.style.display = 'none';
-            document.getElementById('welcome-user-txt').innerText = `OLÁ, ${usuarioLogado.name.toUpperCase()}`;
-        }
-    }
-
-    function popularSelectsAdminPopa() {
-        const s1 = document.getElementById('select-popa-1');
-        const s2 = document.getElementById('select-popa-2');
-        if(!s1 || !s2) return;
-        s1.innerHTML = '<option value="">-- Selecione 1º --</option>';
-        s2.innerHTML = '<option value="">-- Selecione 2º --</option>';
-
-        participantes.forEach(p => {
-            s1.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-            s2.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-        });
     }
 
     function iniciarRelogio() {
@@ -959,14 +800,11 @@
     function renderizarTabelaPagamentos(rateioIndividual) {
         const tbody = document.getElementById('tabela-pagamentos-body');
         tbody.innerHTML = '';
-        const isAdmin = verificarAdmin();
 
         participantes.forEach(p => {
             let totalPagoPescador = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
             let percentual = rateioIndividual > 0 ? Math.min(100, (totalPagoPescador / rateioIndividual) * 100) : 0;
             
-            let acaoBtn = isAdmin ? `<button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="abrirModalPagamento(${p.id})"><i class="fa-solid fa-pen"></i></button>` : `<span style="font-size:10px; color:var(--text-muted)">Visualizar</span>`;
-
             tbody.innerHTML += `
                 <tr>
                     <td><b>${p.name}</b></td>
@@ -978,14 +816,17 @@
                         <b>R$ ${totalPagoPescador.toFixed(2)}</b>
                         <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentual}%"></div></div>
                     </td>
-                    <td>${acaoBtn}</td>
+                    <td>
+                        <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="abrirModalPagamento(${p.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </td>
                 </tr>
             `;
         });
     }
 
     function abrirModalPagamento(id) {
-        if(!verificarAdmin()) return;
         idPI = id;
         const p = participantes.find(item => item.id === id);
         if(p) {
@@ -1004,7 +845,7 @@
     }
 
     function salvarPagamentoIndividual() {
-        if(idPI !== null && verificarAdmin()) {
+        if(idPI !== null) {
             const p = participantes.find(item => item.id === idPI);
             if(p) {
                 p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
@@ -1036,20 +877,18 @@
         const div = document.getElementById('lista-participantes-div');
         div.innerHTML = '';
         document.getElementById('contador-pescadores').innerText = `${participantes.length} Total`;
-        const isAdmin = verificarAdmin();
 
         participantes.forEach((p, idx) => {
             let totalPagoPescador = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
             let percentual = rateioIndividual > 0 ? Math.min(100, (totalPagoPescador / rateioIndividual) * 100) : 0;
 
-            let deleteBtn = (isAdmin && p.tel.replace(/\D/g, '') !== ADMIN_TELEFONE.replace(/\D/g, '')) ? 
-                `<button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="removerParticipante(${p.id})"><i class="fa-solid fa-trash"></i></button>` : '';
-
             div.innerHTML += `
                 <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px; background: white; border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span><b>${idx+1}.</b> ${p.name} <small style="color:var(--text-muted)">(${p.tel || 'Sem tel'})</small></span>
-                        ${deleteBtn}
+                        <span><b>${idx+1}.</b> ${p.name} (Pago: R$ ${totalPagoPescador.toFixed(2)})</span>
+                        <button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="removerParticipante(${p.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                     <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentual}%"></div></div>
                 </div>
@@ -1059,19 +898,9 @@
     }
 
     function adicionarParticipante() {
-        if(!verificarAdmin()) return;
-        const inputNome = document.getElementById('input-nome');
-        const inputTel = document.getElementById('input-tel');
-        const inputSenha = document.getElementById('input-senha');
-
-        const nome = inputNome.value.trim();
-        const tel = inputTel.value.trim();
-        const senha = inputSenha.value.trim();
-
-        if(!nome || !tel || !senha) {
-            alert("Preencha o nome, telefone e senha do pescador!");
-            return;
-        }
+        const input = document.getElementById('input-nome');
+        const nome = input.value.trim();
+        if(!nome) return;
 
         const f = parseFloat(document.getElementById('input-frete').value) || 0;
         const a = parseFloat(document.getElementById('input-alim').value) || 0;
@@ -1079,11 +908,9 @@
         const o = parseFloat(document.getElementById('input-outros').value) || 0;
 
         const novoId = participantes.length > 0 ? Math.max(...participantes.map(p => p.id)) + 1 : 1;
-        participantes.push({ id: novoId, name: nome, tel: tel, senha: senha, frete: f, alim: a, iscas: i, outros: o, vaga: null });
+        participantes.push({ id: novoId, name: nome, frete: f, alim: a, iscas: i, outros: o, vaga: null });
         
-        inputNome.value = '';
-        inputTel.value = '';
-        inputSenha.value = '';
+        input.value = '';
         document.getElementById('input-frete').value = 0;
         document.getElementById('input-alim').value = 0;
         document.getElementById('input-iscas').value = 0;
@@ -1091,16 +918,13 @@
 
         salvarTudo();
         renderizarParticipantes();
-        if(isAdmin = verificarAdmin()) popularSelectsAdminPopa();
-        showToast("Pescador e senha cadastrados com sucesso!");
+        showToast("Pescador adicionado com histórico!");
     }
 
     function removerParticipante(id) {
-        if(!verificarAdmin()) return;
         participantes = participantes.filter(p => p.id !== id);
         salvarTudo();
         renderizarParticipantes();
-        popularSelectsAdminPopa();
         showToast("Removido com sucesso!");
     }
 
@@ -1113,7 +937,6 @@
         const dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
 
         const container = document.getElementById('boat-hull-container');
-        if(!container) return;
         
         let vagaContador = 1;
 
@@ -1158,6 +981,7 @@
         colunaDirHTML += '</div>';
 
         let popaHTML = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;"><div style="font-size: 9px; color: #93C5FD; text-align: center; font-weight: 700; text-transform: uppercase;">Popa / Fundo</div>';
+        let totalVagasPopa = popaBancos * popaPessoas;
         
         for(let b=0; b<popaBancos; b++) {
             popaHTML += '<div class="boat-row-seats">';
@@ -1189,47 +1013,26 @@
         const popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
         let totalVagasPopa = popaBancos * popaPessoas;
         
+        let pescadoresEmbarcados = [...participantes].sort(() => Math.random() - 0.5);
         participantes.forEach(p => p.vaga = null);
-        let pescadoresRestantes = [...participantes];
-
-        let isAdmin = verificarAdmin();
-
-        // Se for admin, verifica se escolheu os 2 nomes para a popa
-        if (isAdmin) {
-            let id1 = document.getElementById('select-popa-1').value;
-            let id2 = document.getElementById('select-popa-2').value;
-
-            let escolhidosIds = [id1, id2].filter(id => id !== "").map(id => parseInt(id));
-            
-            let vagaContadorPopa = 1;
-            escolhidosIds.forEach(id => {
-                let p = pescadoresRestantes.find(item => item.id === id);
-                if(p && vagaContadorPopa <= totalVagasPopa) {
-                    p.vaga = vagaContadorPopa++;
-                    pescadoresRestantes = pescadoresRestantes.filter(item => item.id !== id);
-                }
-            });
-        }
-
-        // Embaralha o restante dos pescadores
-        pescadoresRestantes.sort(() => Math.random() - 0.5);
 
         let vagaAtual = 1;
-        while(participantes.some(p => p.vaga === vagaAtual)) {
+
+        for (let i = 0; i < totalVagasPopa && pescadoresEmbarcados.length > 0; i++) {
+            let pescador = pescadoresEmbarcados.shift();
+            pescador.vaga = vagaAtual;
             vagaAtual++;
         }
 
-        pescadoresRestantes.forEach(p => {
-            while(participantes.some(item => item.vaga === vagaAtual)) {
-                vagaAtual++;
-            }
-            p.vaga = vagaAtual;
+        while (pescadoresEmbarcados.length > 0) {
+            let pescador = pescadoresEmbarcados.shift();
+            pescador.vaga = vagaAtual;
             vagaAtual++;
-        });
+        }
 
         salvarTudo();
         atualizarEsquemaBarco();
-        showToast("🎲 Sorteio realizado com sucesso!");
+        showToast("🎲 Sorteio otimizado (Prioridade Popa) realizado!");
     }
 
     function executarRodizio() {
@@ -1265,7 +1068,6 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // Inicialização ao carregar a página
     carregarDados();
     renderizarParticipantes();
     atualizarEsquemaBarco();
