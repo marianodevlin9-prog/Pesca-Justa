@@ -3,991 +3,702 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesca Justa - Gestão de Pescarias</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Pesca Justa - Gestão e Sorteio de Vagas</title>
+    <!-- FontAwesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-dark: #0A192F;
-            --primary-blue: #1E3A8A;
-            --accent-blue: #3B82F6;
-            --bg-light: #F8FAFC;
-            --card-bg: #FFFFFF;
-            --text-main: #1E293B;
-            --text-muted: #64748B;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
-            --danger-bg: #FEE2E2;
-            --border-color: #E2E8F0;
+            --bg-primary: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-blue: #0284c7;
+            --accent-navy: #0a192f;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-primary); color: var(--text-main); padding-bottom: 80px; }
 
-        body {
-            background-color: var(--primary-dark);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--bg-light);
-            border-radius: 36px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            border: 8px solid #1e293b;
-            height: 900px;
-        }
-
-        .status-bar {
-            background: linear-gradient(135deg, #0A192F, #1E3A8A);
-            color: white;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            flex-shrink: 0;
-        }
-
-        .screen {
-            display: none;
-            flex-direction: column;
-            height: calc(100% - 110px);
-            overflow-y: auto;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
+        /* Header Hero Banner */
         .hero-banner {
-            background: linear-gradient(rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.85)), url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 24px 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            background: linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.95)), url('');
+            background-size: cover; background-position: center;
+            color: white; padding: 20px 16px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+        .hero-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .hero-logo { height: 40px; border-radius: 6px; }
+        .clock-badge { background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .hero-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #38bdf8; }
+        .hero-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: left; }
 
-        .hero-banner .logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid white;
-            object-fit: cover;
-        }
+        /* Navigation Bar */
+        .main-nav { display: flex; justify-content: space-around; background: white; padding: 10px; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
+        .nav-btn { border: none; background: none; padding: 8px 12px; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-radius: 6px; display: flex; align-items: center; gap: 6px; }
+        .nav-btn.active { color: var(--accent-blue); background: #e0f2fe; }
 
-        .hero-banner h1 {
-            font-size: 20px;
-            letter-spacing: 1px;
-        }
+        /* Screen Containers */
+        .container { max-width: 800px; margin: 16px auto; padding: 0 12px; }
+        .screen { display: none; }
+        .screen.active { display: block; }
 
-        .hero-banner p {
-            font-size: 11px;
-            color: #94A3B8;
-        }
+        /* Cards & Section Titles */
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--accent-navy); display: flex; justify-content: space-between; align-items: center; }
 
-        .content-body {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
+        /* Forms & Inputs */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .form-group input { padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13px; }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-        }
+        /* Buttons */
+        .btn-primary { background: var(--accent-blue); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 8px; }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
 
-        .card-header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+        /* Financial Progress Bar */
+        .pay-progress-box { display: flex; flex-direction: column; gap: 2px; }
+        .pay-progress-text { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: var(--text-muted); }
+        .pay-progress-bar { background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden; }
+        .pay-progress-fill { height: 100%; transition: width 0.3s ease; }
 
-        .card-title {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--primary-dark);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        /* Tables */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        th { background: #f1f5f9; font-weight: 700; color: var(--text-muted); }
 
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
+        /* Boat Visual Layout */
+        .boat-hull { background: #f0f9ff; border: 2px solid var(--accent-blue); border-radius: 40px 40px 12px 12px; padding: 20px 12px; max-width: 360px; margin: 0 auto; min-height: 380px; position: relative; }
+        .boat-row-seats { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
+        .seat-box { background: white; border: 1px solid #cbd5e1; border-radius: 8px; width: 85px; padding: 6px 4px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .seat-num { font-size: 10px; font-weight: 800; color: var(--accent-blue); }
+        .seat-name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; }
 
-        .action-btn {
-            background: white;
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--primary-dark);
-            font-weight: 600;
-            font-size: 11px;
-        }
+        /* Toast */
+        #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 1001; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 13px; }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
 
-        .action-btn i {
-            font-size: 20px;
-            color: var(--accent-blue);
-        }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
 
-        .action-btn:active {
-            transform: scale(0.97);
-            background: #F1F5F9;
-        }
-
-        .btn-whatsapp {
-            background-color: #25D366;
-            color: white;
-        }
-
-        .btn-whatsapp i {
-            color: white;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-bottom: 8px;
-        }
-
-        .form-group label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .form-group input {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 12px;
-            outline: none;
-        }
-
-        .form-group input:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .form-row-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .pay-progress-box {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            margin-top: 4px;
-        }
-
-        .pay-progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #E2E8F0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .pay-progress-fill {
-            height: 100%;
-            width: 0%;
-            background-color: var(--danger);
-            border-radius: 4px;
-            transition: width 0.4s ease, background-color 0.4s ease;
-        }
-
-        .pay-progress-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
-        .finance-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-        }
-
-        .finance-table th, .finance-table td {
-            padding: 6px 4px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .finance-table th {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .boat-schema-container {
-            background-size: cover;
-            background-position: center;
-            border-radius: 16px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 300px;
-            position: relative;
-            background-color: rgba(10, 25, 47, 0.85);
-            background-blend-mode: overlay;
-        }
-
-        .boat-section-label {
-            color: #94A3B8;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin: 6px 0;
-        }
-
-        .boat-hull {
-            width: 100%;
-            max-width: 280px;
-            border: 2px dashed #38BDF8;
-            border-radius: 40px 40px 16px 16px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .boat-row-seats {
-            display: flex;
-            justify-content: space-around;
-            gap: 6px;
-        }
-
-        .seat-box {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 6px;
-            padding: 6px 4px;
-            flex: 1;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .seat-num {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--primary-blue);
-        }
-
-        .seat-name {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-main);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: var(--primary-dark);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #1e293b;
-        }
-
-        .nav-item {
-            background: none;
-            border: none;
-            color: #94A3B8;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: 500;
-        }
-
-        .nav-item.active {
-            color: white;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #10B981;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .modal-card {
-            background: white;
-            width: 100%;
-            max-width: 380px;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        /* Estilo para Impressão e PDF */
         @media print {
-            body {
-                background: white;
-                color: black;
-                padding: 0;
-            }
-            .app-container {
-                border: none;
-                box-shadow: none;
-                width: 100%;
-                max-width: 100%;
-                height: auto;
-            }
-            .status-bar, .bottom-nav, .action-grid, button {
-                display: none !important;
-            }
-            .screen {
-                display: block !important;
-                height: auto;
-            }
+            .main-nav, .btn-primary, .btn-danger, button { display: none !important; }
+            .screen { display: block !important; }
+            body { background: white; padding: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="status-bar">
-        <span><i class="fa-solid fa-anchor"></i> Pesca Justa</span>
-        <span id="clock">00:00:00</span>
-        <span><i class="fa-solid fa-bell"></i></span>
-    </div>
-
-    <!-- TELA 1: HOME -->
-    <div id="home-screen" class="screen active">
-        <div class="hero-banner" id="hero-banner-bg">
-            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" alt="Logo" class="logo" id="hero-logo-img">
-            <h1>PESCA JUSTA</h1>
-            <p>GESTÃO COMPLETA DE PESCARIA</p>
+    <!-- HERO BANNER -->
+    <div class="hero-banner" id="hero-banner-bg">
+        <div class="hero-header">
+            <img id="hero-logo-img" class="hero-logo" src="" alt="" style="display:none;">
+            <div class="clock-badge"><i class="fa-regular fa-clock"></i> <span id="clock">00:00:00</span></div>
         </div>
-
-        <div class="content-body">
-            <div class="card">
-                <div class="card-header-flex">
-                    <span class="card-title"><i class="fa-solid fa-ship"></i> <span id="lbl-barco-nome">Barco Imperador</span></span>
-                </div>
-                <div class="info-row"><i class="fa-solid fa-location-dot"></i> Destino: <span id="lbl-destino">Búzios - RJ</span></div>
-                <div class="info-row"><i class="fa-regular fa-calendar"></i> Saída: <span id="lbl-data-saida">17/10/2026 às 06:00</span></div>
-                <div class="info-row"><i class="fa-solid fa-clock"></i> Duração: <span id="lbl-duracao">12 horas</span></div>
-                <div class="info-row"><i class="fa-solid fa-flag-checkered"></i> Retorno Previsto: <span id="lbl-retorno">17/10/2026 às 18:00</span></div>
-                <div class="info-row"><i class="fa-solid fa-coins"></i> Custo Total Viagem: <strong id="lbl-custo-total">R$ 0,00</strong></div>
-            </div>
-
-            <div class="action-grid">
-                <button class="action-btn" onclick="switchScreen('participants-screen')">
-                    <i class="fa-solid fa-users"></i>
-                    <span>EQUIPE</span>
-                </button>
-                <button class="action-btn" onclick="switchScreen('finance-screen')">
-                    <i class="fa-solid fa-wallet"></i>
-                    <span>FINANÇAS</span>
-                </button>
-                <button class="action-btn" onclick="switchScreen('draw-screen')">
-                    <i class="fa-solid fa-dice"></i>
-                    <span>BARCO & SORTEIO</span>
-                </button>
-                <button class="action-btn" onclick="switchScreen('config-screen')">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>CONFIGURAR</span>
-                </button>
-                <button class="action-btn btn-whatsapp" onclick="exportarWhatsApp()">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    <span>ENVIAR ZAP</span>
-                </button>
-                <button class="action-btn" onclick="exportarPDF()">
-                    <i class="fa-solid fa-file-pdf"></i>
-                    <span>IMPRIMIR / PDF</span>
-                </button>
-            </div>
+        <h1 class="hero-title" id="lbl-barco-nome">Barco Imperador</h1>
+        <div class="hero-info-grid">
+            <div><b>Destino:</b> <span id="lbl-destino">Búzios - RJ</span></div>
+            <div><b>Saída:</b> <span id="lbl-data-saida">--/--/----</span></div>
+            <div><b>Duração:</b> <span id="lbl-duracao">12 horas</span></div>
+            <div><b>Retorno:</b> <span id="lbl-retorno">--/--/----</span></div>
         </div>
     </div>
 
-    <!-- TELA 2: PARTICIPANTES -->
-    <div id="participants-screen" class="screen">
-        <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
-            <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">GERENCIAR PESCADORES & PAGAMENTOS</h2>
-        </div>
-        <div class="content-body">
-            <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-user-plus"></i> Novo Pescador</span>
-                <div class="form-group">
-                    <label>Nome do Pescador *</label>
-                    <input type="text" id="input-nome" placeholder="Ex: Carlos Silva">
-                </div>
-                
-                <p style="font-size: 10px; font-weight: 700; color: var(--text-muted); margin: 6px 0 4px 0;">Valores Já Pagos (R$):</p>
-                <div class="form-row-grid">
-                    <div class="form-group"><label>Frete Barco</label><input type="number" id="input-frete" placeholder="0.00" value="0"></div>
-                    <div class="form-group"><label>Alimentação</label><input type="number" id="input-alim" placeholder="0.00" value="0"></div>
-                    <div class="form-group"><label>Iscas</label><input type="number" id="input-iscas" placeholder="0.00" value="0"></div>
-                    <div class="form-group"><label>Bebidas/Outros</label><input type="number" id="input-outros" placeholder="0.00" value="0"></div>
-                </div>
-
-                <button class="btn-primary" style="margin-top: 6px;" onclick="adicionarParticipante()">
-                    <i class="fa-solid fa-check"></i> CADASTRAR PESCADOR
-                </button>
-            </div>
-
-            <div class="card">
-                <div class="card-header-flex">
-                    <span class="card-title"><i class="fa-solid fa-list-check"></i> Lista de Pescadores</span>
-                    <span id="contador-pescadores" style="font-size: 11px; color: var(--text-muted); font-weight: 700;">0</span>
-                </div>
-                <div id="lista-participantes-div" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
-            </div>
-        </div>
+    <!-- NAVEGAÇÃO ENTRE ABAS -->
+    <div class="main-nav">
+        <button class="nav-btn active" onclick="switchScreen('scr-financas')"><i class="fa-solid fa-calculator"></i> Finanças</button>
+        <button class="nav-btn" onclick="switchScreen('scr-pescadores')"><i class="fa-solid fa-users"></i> Pescadores</button>
+        <button class="nav-btn" onclick="switchScreen('scr-barco')"><i class="fa-solid fa-ship"></i> Barco & Sorteio</button>
+        <button class="nav-btn" onclick="switchScreen('scr-config')"><i class="fa-solid fa-gear"></i> Configs</button>
     </div>
 
-    <!-- TELA 3: FINANÇAS -->
-    <div id="finance-screen" class="screen">
-        <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
-            <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONTROLE FINANCEIRO & RATEIO</h2>
-        </div>
-        <div class="content-body">
+    <div class="container">
+
+        <!-- ABA 1: FINANÇAS E RESUMO -->
+        <div id="scr-financas" class="screen active">
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-receipt"></i> Custo Total da Viagem</span>
-                <table class="finance-table">
-                    <thead>
-                        <tr><th>Tipo</th><th>Valor (R$)</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Aluguel Barco (Frete)</td><td><input type="number" id="desp-aluguel" value="1200" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
-                        <tr><td>Alimentação</td><td><input type="number" id="desp-alimentacao" value="300" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
-                        <tr><td>Iscas</td><td><input type="number" id="desp-iscas" value="150" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
-                        <tr><td>Gelo / Bebidas</td><td><input type="number" id="desp-bebidas" value="200" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
-                        <tr><td>Outros</td><td><input type="number" id="desp-outros" value="70" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
-                    </tbody>
-                </table>
-                <div style="font-size: 12px; margin-top: 10px; text-align: right; font-weight: 700;">
-                    Rateio Individual: <span id="lbl-rateio-ind" style="color: var(--primary-blue);">R$ 0,00</span>
+                <div class="card-title">Despesas Gerais do Grupo</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Aluguel Barco (R$)</label><input type="number" id="desp-aluguel" value="1200" onchange="calcularFinancas()"></div>
+                    <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="desp-alimentacao" value="300" onchange="calcularFinancas()"></div>
+                    <div class="form-group"><label>Iscas (R$)</label><input type="number" id="desp-iscas" value="150" onchange="calcularFinancas()"></div>
+                    <div class="form-group"><label>Bebidas (R$)</label><input type="number" id="desp-bebidas" value="200" onchange="calcularFinancas()"></div>
+                    <div class="form-group"><label>Outros (R$)</label><input type="number" id="desp-outros" value="70" onchange="calcularFinancas()"></div>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-header-flex">
-                    <span class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Tabela de Pagamentos</span>
+                <div class="card-title">
+                    <span>Resumo Financeiro</span>
+                    <span id="contador-pescadores" style="font-size: 12px; color: var(--accent-blue);">0 Pescadores</span>
                 </div>
-                <div style="overflow-x: auto;">
-                    <table class="finance-table" style="min-width: 520px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                    <div style="flex:1; background:#f1f5f9; padding:10px; border-radius:8px;">
+                        <span style="font-size:11px; color:var(--text-muted); font-weight:bold;">TOTAL DESPESAS</span>
+                        <div id="lbl-custo-total" style="font-size:18px; font-weight:800; color:var(--accent-navy);">R$ 0,00</div>
+                    </div>
+                    <div style="flex:1; background:#f1f5f9; padding:10px; border-radius:8px;">
+                        <span style="font-size:11px; color:var(--text-muted); font-weight:bold;">RATEIO / PESCADOR</span>
+                        <div id="lbl-rateio-ind" style="font-size:18px; font-weight:800; color:var(--accent-blue);">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Pescador</th>
                                 <th>Frete</th>
                                 <th>Alim.</th>
                                 <th>Iscas</th>
-                                <th>Beb.</th>
+                                <th>Outros</th>
                                 <th>Total</th>
                                 <th>Status</th>
-                                <th>Editar</th>
+                                <th>Ação</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-pagamentos-body"></tbody>
                     </table>
                 </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="btn-primary" onclick="exportarWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Compartilhar Whats</button>
+                    <button class="btn-primary" style="background: #475569;" onclick="exportarPDF()"><i class="fa-solid fa-file-pdf"></i> Imprimir / PDF</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- TELA 4: BARCO -->
-    <div id="draw-screen" class="screen">
-        <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
-            <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">SORTEIO E POSIÇÕES DO BARCO</h2>
+        <!-- ABA 2: PESCADORES -->
+        <div id="scr-pescadores" class="screen">
+            <div class="card">
+                <div class="card-title">Adicionar Novo Pescador</div>
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;"><label>Nome Completo (Espaço no fim = prefere Popa)</label><input type="text" id="input-nome" placeholder="Ex: João Silva"></div>
+                    <div class="form-group"><label>Frete Pago (R$)</label><input type="number" id="input-frete" value="0"></div>
+                    <div class="form-group"><label>Alim. Pagas (R$)</label><input type="number" id="input-alim" value="0"></div>
+                    <div class="form-group"><label>Iscas Pagas (R$)</label><input type="number" id="input-iscas" value="0"></div>
+                    <div class="form-group"><label>Outros (R$)</label><input type="number" id="input-outros" value="0"></div>
+                </div>
+                <button class="btn-primary" onclick="adicionarParticipante()"><i class="fa-solid fa-user-plus"></i> Adicionar Pescador</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Lista de Pescadores Cadastrados</div>
+                <div id="lista-participantes-div" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
         </div>
-        <div class="content-body">
-            <button class="btn-primary" onclick="realizarSorteioBarco()">
-                <i class="fa-solid fa-dice"></i> SORTEAR POSIÇÕES DO BARCO
-            </button>
 
-            <div class="boat-schema-container" id="boat-bg-container">
-                <div class="boat-section-label">PROA (Frente)</div>
+        <!-- ABA 3: BARCO & SORTEIO DE VAGAS -->
+        <div id="scr-barco" class="screen">
+            <div class="card">
+                <div class="card-title">Configurar Vagas e Layout</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Popa - Bancos</label><input type="number" id="cfg-popa-bancos" value="1" onchange="atualizarEsquemaBarco()"></div>
+                    <div class="form-group"><label>Popa - Pessoas/Banco</label><input type="number" id="cfg-popa-pessoas" value="2" onchange="atualizarEsquemaBarco()"></div>
+                    <div class="form-group"><label>Esq. - Bancos</label><input type="number" id="cfg-esq-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
+                    <div class="form-group"><label>Esq. - Pessoas/Banco</label><input type="number" id="cfg-esq-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
+                    <div class="form-group"><label>Dir. - Bancos</label><input type="number" id="cfg-dir-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
+                    <div class="form-group"><label>Dir. - Pessoas/Banco</label><input type="number" id="cfg-dir-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
+                </div>
+                <button class="btn-primary" style="background: #8b5cf6;" onclick="realizarSorteioBarco()"><i class="fa-solid fa-dice"></i> Realizar Sorteio de Vagas</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Mapa do Barco</div>
                 <div class="boat-hull" id="boat-hull-container"></div>
-                <div class="boat-section-label" style="margin-top: 10px;">POPA (Fundo)</div>
             </div>
         </div>
-    </div>
 
-    <!-- TELA 5: CONFIGURAÇÕES -->
-    <div id="config-screen" class="screen">
-        <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
-            <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONFIGURAR PESCARIA</h2>
-        </div>
-        <div class="content-body">
+        <!-- ABA 4: CONFIGURAÇÕES GERAIS -->
+        <div id="scr-config" class="screen">
             <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Dados Principais</span>
-                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>URL Imagem de Fundo</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>URL Logo</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="atualizarDadosPescaria()"></div>
-                <div class="form-group"><label>Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="atualizarDadosPescaria()"></div>
-            </div>
-
-            <div class="card">
-                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-chair"></i> Configuração de Assentos</span>
-                <div class="form-group"><label>Bancos na Popa</label><input type="number" id="cfg-popa-bancos" value="1" onchange="atualizarEsquemaBarco()"></div>
-                <div class="form-group"><label>Pessoas por Banco (Popa)</label><input type="number" id="cfg-popa-pessoas" value="2" onchange="atualizarEsquemaBarco()"></div>
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
-                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
-                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
-                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchScreen('home-screen')"><i class="fa-solid fa-house"></i><span>Início</span></button>
-        <button class="nav-item" onclick="switchScreen('participants-screen')"><i class="fa-solid fa-users"></i><span>Equipe</span></button>
-        <button class="nav-item" onclick="switchScreen('finance-screen')"><i class="fa-solid fa-wallet"></i><span>Finanças</span></button>
-        <button class="nav-item" onclick="switchScreen('draw-screen')"><i class="fa-solid fa-ship"></i><span>Barco</span></button>
-    </div>
-</div>
-
-<!-- MODAL EDIÇÃO PAGO -->
-<div class="modal-overlay" id="modal-pagamento">
-    <div class="modal-card">
-        <h3 style="font-size: 15px; color: var(--primary-dark);" id="modal-titulo-pescador">Editar Pagamento</h3>
-        <p style="font-size: 11px; color: var(--text-muted);">Valores pagos em cada categoria:</p>
-        
-        <div class="form-group"><label>Frete Barco (R$)</label><input type="number" id="mod-frete" value="0" step="0.01"></div>
-        <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="mod-alim" value="0" step="0.01"></div>
-        <div class="form-group"><label>Iscas (R$)</label><input type="number" id="mod-iscas" value="0" step="0.01"></div>
-        <div class="form-group"><label>Bebidas / Outros (R$)</label><input type="number" id="mod-outros" value="0" step="0.01"></div>
-
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button class="btn-primary" onclick="salvarPagamentoIndividual()">Salvar</button>
-            <button class="btn-primary" style="background-color: var(--text-muted);" onclick="fecharModal()">Cancelar</button>
-        </div>
-    </div>
-</div>
-
-<div id="toast" class="toast">Ação realizada!</div>
-
-<script>
-    let participantes = [
-        { id: 1, name: "João Silva", frete: 240, alim: 50, iscas: 0, outros: 0, vaga: 1 },
-        { id: 2, name: "Carlos Eduardo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
-        { id: 3, name: "Marcelo Santos", frete: 240, alim: 50, iscas: 30, outros: 0, vaga: 3 },
-        { id: 4, name: "Roberto Lima", frete: 100, alim: 0, iscas: 0, outros: 0, vaga: 4 },
-        { id: 5, name: "André Luiz", frete: 240, alim: 60, iscas: 30, outros: 14, vaga: 5 },
-        { id: 6, name: "Fernando C.", frete: 150, alim: 50, iscas: 30, outros: 0, vaga: 6 }
-    ];
-
-    let configBarco = { popaBancos: 1, popaPessoas: 2, esqBancos: 3, esqPessoas: 1, dirBancos: 3, dirPessoas: 1 };
-    let idPI = null;
-
-    function iniciarRelogio() {
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
-        }, 1000);
-    }
-    iniciarRelogio();
-
-    function atualizarDadosPescaria() {
-        document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
-        document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
-        
-        const sa = document.getElementById('cfg-data-saida').value;
-        if(sa) document.getElementById('lbl-data-saida').innerText = new Date(sa).toLocaleString('pt-BR');
-        
-        document.getElementById('lbl-duracao').innerText = document.getElementById('cfg-duracao').value + " horas";
-        
-        const re = document.getElementById('cfg-data-retorno').value;
-        if(re) document.getElementById('lbl-retorno').innerText = new Date(re).toLocaleString('pt-BR');
-
-        const bg = document.getElementById('cfg-barco-img').value;
-        if(bg) document.getElementById('boat-bg-container').style.backgroundImage = `url('${bg}')`;
-
-        const lg = document.getElementById('cfg-logo-img').value;
-        if(lg) {
-            document.getElementById('hero-banner-bg').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.85)), url('${lg}')`;
-            document.getElementById('hero-logo-img').src = lg;
-        }
-    }
-
-    function obterRateioIndividual() {
-        const aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
-        const alim = parseFloat(document.getElementById('desp-alimentacao').value) || 0;
-        const iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
-        const bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
-        const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
-
-        const totalDespesas = aluguel + alim + iscas + bebidas + outros;
-        const qtd = participantes.length > 0 ? participantes.length : 1;
-        return { totalDespesas, rateio: totalDespesas / qtd };
-    }
-
-    function calcularFinancas() {
-        const { totalDespesas, rateio } = obterRateioIndividual();
-
-        document.getElementById('lbl-custo-total').innerText = `R$ ${totalDespesas.toFixed(2)}`;
-        document.getElementById('lbl-rateio-ind').innerText = `R$ ${rateio.toFixed(2)}`;
-
-        renderizarTabelaPagamentos();
-        renderizarParticipantes();
-    }
-
-    function gerarHTMLBarraProgresso(totalPago, rateioTarget) {
-        let percentual = rateioTarget > 0 ? Math.min(100, Math.round((totalPago / rateioTarget) * 100)) : 100;
-        let corBarra = 'var(--danger)';
-        if(percentual >= 100) corBarra = 'var(--success)';
-        else if(percentual >= 50) corBarra = 'var(--warning)';
-
-        return `
-            <div class="pay-progress-box">
-                <div class="pay-progress-text">
-                    <span>R$ ${totalPago.toFixed(2)} / R$ ${rateioTarget.toFixed(2)}</span>
-                    <span>${percentual}%</span>
-                </div>
-                <div class="pay-progress-bar">
-                    <div class="pay-progress-fill" style="width: ${percentual}%; background-color: ${corBarra};"></div>
+                <div class="card-title">Informações do Evento</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="atualizarDadosPescaria()"></div>
+                    <div class="form-group"><label>Local de Saída / Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="atualizarDadosPescaria()"></div>
+                    <div class="form-group"><label>Data/Hora Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="atualizarDadosPescaria()"></div>
+                    <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="atualizarDadosPescaria()"></div>
+                    <div class="form-group"><label>Data/Hora Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="atualizarDadosPescaria()"></div>
+                    <div class="form-group"><label>URL Imagem de Fundo</label><input type="text" id="cfg-barco-img" placeholder="https://..." onchange="atualizarDadosPescaria()"></div>
+                    <div class="form-group"><label>URL Logo do Evento</label><input type="text" id="cfg-logo-img" placeholder="https://..." onchange="atualizarDadosPescaria()"></div>
                 </div>
             </div>
-        `;
-    }
 
-    function renderizarTabelaPagamentos() {
-        const tbody = document.getElementById('tabela-pagamentos-body');
-        tbody.innerHTML = '';
-        const { rateio } = obterRateioIndividual();
+            <div class="card" style="border: 1px solid var(--danger);">
+                <div class="card-title" style="color: var(--danger);">Zona de Perigo</div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Esta ação limpará todos os pescadores, valores pagos e configurações salvas nesta sessão.</p>
+                <button class="btn-danger" onclick="reiniciarPescaria()"><i class="fa-solid fa-rotate-left"></i> Reiniciar / Limpar Pescaria</button>
+            </div>
+        </div>
 
-        participantes.forEach(p => {
-            let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
-            tbody.innerHTML += `
-                <tr>
-                    <td><b>${p.name}</b></td>
-                    <td>R$ ${(p.frete || 0).toFixed(2)}</td>
-                    <td>R$ ${(p.alim || 0).toFixed(2)}</td>
-                    <td>R$ ${(p.iscas || 0).toFixed(2)}</td>
-                    <td>R$ ${(p.outros || 0).toFixed(2)}</td>
-                    <td><b>R$ ${totalPago.toFixed(2)}</b></td>
-                    <td style="min-width: 110px;">${gerarHTMLBarraProgresso(totalPago, rateio)}</td>
-                    <td>
-                        <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="abrirModalPagamento(${p.id})">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
+    </div>
 
-    function abrirModalPagamento(id) {
-        idPI = id;
-        const p = participantes.find(item => item.id === id);
-        if(p) {
-            document.getElementById('modal-titulo-pescador').innerText = `Pagamento: ${p.name}`;
-            document.getElementById('mod-frete').value = p.frete || 0;
-            document.getElementById('mod-alim').value = p.alim || 0;
-            document.getElementById('mod-iscas').value = p.iscas || 0;
-            document.getElementById('mod-outros').value = p.outros || 0;
-            document.getElementById('modal-pagamento').style.display = 'flex';
+    <!-- MODAL DE EDIÇÃO DE PAGAMENTO INDIVIDUAL -->
+    <div id="modal-pagamento" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-titulo-pescador" style="margin-bottom: 12px; font-size: 16px;">Pagamento</h3>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Frete Pago (R$)</label><input type="number" id="mod-frete"></div>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Alimentação Paga (R$)</label><input type="number" id="mod-alim"></div>
+            <div class="form-group" style="margin-bottom: 8px;"><label>Iscas Pagas (R$)</label><input type="number" id="mod-iscas"></div>
+            <div class="form-group" style="margin-bottom: 12px;"><label>Outros Valores (R$)</label><input type="number" id="mod-outros"></div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-primary" onclick="salvarPagamentoIndividual()">Salvar</button>
+                <button class="btn-primary" style="background: #64748b;" onclick="fecharModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast">Notificação</div>
+
+    <!-- JAVASCRIPT COMPLETO -->
+    <script>
+        // Estruturas de dados principais
+        let participantes = [
+            { id: 1, name: "João Silva", frete: 240, alim: 50, iscas: 0, outros: 0, vaga: 1 },
+            { id: 2, name: "Carlos Eduardo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
+            { id: 3, name: "Marcelo Santos", frete: 240, alim: 50, iscas: 30, outros: 0, vaga: 3 },
+            { id: 4, name: "Roberto Lima", frete: 100, alim: 0, iscas: 0, outros: 0, vaga: 4 },
+            { id: 5, name: "André Luiz", frete: 240, alim: 60, iscas: 30, outros: 14, vaga: 5 },
+            { id: 6, name: "Fernando C.", frete: 150, alim: 50, iscas: 30, outros: 0, vaga: 6 }
+        ];
+
+        let configBarco = { popaBancos: 1, popaPessoas: 2, esqBancos: 3, esqPessoas: 1, dirBancos: 3, dirPessoas: 1 };
+        let idPI = null;
+
+        // --- NAVEGAÇÃO DE ABAS ---
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.main-nav .nav-btn').forEach(n => n.classList.remove('active'));
+            
+            const btnAtivo = Array.from(document.querySelectorAll('.main-nav .nav-btn')).find(b => b.getAttribute('onclick').includes(id));
+            if(btnAtivo) btnAtivo.classList.add('active');
+            window.scrollTo(0, 0);
         }
-    }
 
-    function fecharModal() {
-        document.getElementById('modal-pagamento').style.display = 'none';
-        idPI = null;
-    }
+        // --- FUNÇÕES DE PERSISTÊNCIA (LOCALSTORAGE) ---
+        function salvarDadosLocal() {
+            const dadosCompletos = {
+                participantes,
+                configBarco,
+                despesas: {
+                    aluguel: document.getElementById('desp-aluguel').value,
+                    alimentacao: document.getElementById('desp-alimentacao').value,
+                    iscas: document.getElementById('desp-iscas').value,
+                    bebidas: document.getElementById('desp-bebidas').value,
+                    outros: document.getElementById('desp-outros').value
+                },
+                configGeral: {
+                    nomeBarco: document.getElementById('cfg-barco-nome').value,
+                    barcoImg: document.getElementById('cfg-barco-img').value,
+                    logoImg: document.getElementById('cfg-logo-img').value,
+                    local: document.getElementById('cfg-local').value,
+                    dataSaida: document.getElementById('cfg-data-saida').value,
+                    duracao: document.getElementById('cfg-duracao').value,
+                    dataRetorno: document.getElementById('cfg-data-retorno').value
+                }
+            };
+            localStorage.setItem('pescaJustaData', JSON.stringify(dadosCompletos));
+        }
 
-    function salvarPagamentoIndividual() {
-        if(idPI !== null) {
-            const p = participantes.find(item => item.id === idPI);
-            if(p) {
-                p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
-                p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
-                p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
-                p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
+        function carregarDadosLocal() {
+            const dadosSalvos = localStorage.getItem('pescaJustaData');
+            if (!dadosSalvos) return;
+
+            try {
+                const dados = JSON.parse(dadosSalvos);
+                if (dados.participantes) participantes = dados.participantes;
+                if (dados.configBarco) configBarco = dados.configBarco;
+
+                if (dados.despesas) {
+                    document.getElementById('desp-aluguel').value = dados.despesas.aluguel || 1200;
+                    document.getElementById('desp-alimentacao').value = dados.despesas.alimentacao || 300;
+                    document.getElementById('desp-iscas').value = dados.despesas.iscas || 150;
+                    document.getElementById('desp-bebidas').value = dados.despesas.bebidas || 200;
+                    document.getElementById('desp-outros').value = dados.despesas.outros || 70;
+                }
+
+                if (dados.configGeral) {
+                    document.getElementById('cfg-barco-nome').value = dados.configGeral.nomeBarco || "Barco Imperador";
+                    document.getElementById('cfg-barco-img').value = dados.configGeral.barcoImg || "";
+                    document.getElementById('cfg-logo-img').value = dados.configGeral.logoImg || "";
+                    document.getElementById('cfg-local').value = dados.configGeral.local || "Búzios - RJ";
+                    document.getElementById('cfg-data-saida').value = dados.configGeral.dataSaida || "2026-10-17T06:00";
+                    document.getElementById('cfg-duracao').value = dados.configGeral.duracao || 12;
+                    document.getElementById('cfg-data-retorno').value = dados.configGeral.dataRetorno || "2026-10-17T18:00";
+                }
+
+                document.getElementById('cfg-popa-bancos').value = configBarco.popaBancos;
+                document.getElementById('cfg-popa-pessoas').value = configBarco.popaPessoas;
+                document.getElementById('cfg-esq-bancos').value = configBarco.esqBancos;
+                document.getElementById('cfg-esq-pessoas').value = configBarco.esqPessoas;
+                document.getElementById('cfg-dir-bancos').value = configBarco.dirBancos;
+                document.getElementById('cfg-dir-pessoas').value = configBarco.dirPessoas;
+            } catch (e) {
+                console.error("Erro ao carregar dados salvos:", e);
             }
-            fecharModal();
-            calcularFinancas();
-            showToast("Pagamento individual atualizado!");
         }
-    }
 
-    function renderizarParticipantes() {
-        const div = document.getElementById('lista-participantes-div');
-        div.innerHTML = '';
-        document.getElementById('contador-pescadores').innerText = `${participantes.length} Pescadores`;
-        const { rateio } = obterRateioIndividual();
+        // --- LIMPAR/REINICIAR PESCARIA ---
+        function reiniciarPescaria() {
+            if (confirm("Tem certeza que deseja reiniciar a pescaria? Todos os pescadores, pagamentos e sorteios serão apagados.")) {
+                localStorage.removeItem('pescaJustaData');
+                participantes = [];
+                
+                document.getElementById('desp-aluguel').value = 0;
+                document.getElementById('desp-alimentacao').value = 0;
+                document.getElementById('desp-iscas').value = 0;
+                document.getElementById('desp-bebidas').value = 0;
+                document.getElementById('desp-outros').value = 0;
 
-        participantes.forEach((p, idx) => {
-            let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
-            div.innerHTML += `
-                <div style="display: flex; flex-direction: column; padding: 10px; background: white; border: 1px solid var(--border-color); border-radius: 10px; gap: 6px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; font-weight: 700;"><b>${idx+1}.</b> ${p.name}</span>
-                        <div style="display: flex; gap: 6px;">
-                            <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;" onclick="abrirModalPagamento(${p.id})">
+                calcularFinancas();
+                renderizarEsquemaVisual();
+                showToast("🔄 Pescaria reiniciada com sucesso!");
+            }
+        }
+
+        function iniciarRelogio() {
+            setInterval(() => {
+                document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
+            }, 1000);
+        }
+
+        function atualizarDadosPescaria() {
+            document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
+            document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
+            
+            const sa = document.getElementById('cfg-data-saida').value;
+            if(sa) document.getElementById('lbl-data-saida').innerText = new Date(sa).toLocaleString('pt-BR');
+            
+            document.getElementById('lbl-duracao').innerText = document.getElementById('cfg-duracao').value + " horas";
+            
+            const re = document.getElementById('cfg-data-retorno').value;
+            if(re) document.getElementById('lbl-retorno').innerText = new Date(re).toLocaleString('pt-BR');
+
+            const bg = document.getElementById('cfg-barco-img').value;
+            if(bg) document.getElementById('hero-banner-bg').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.95)), url('${bg}')`;
+
+            const lg = document.getElementById('cfg-logo-img').value;
+            if(lg) {
+                const logoEl = document.getElementById('hero-logo-img');
+                logoEl.src = lg;
+                logoEl.style.display = 'block';
+            }
+            salvarDadosLocal();
+        }
+
+        function obterRateioIndividual() {
+            const aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
+            const alim = parseFloat(document.getElementById('desp-alimentacao').value) || 0;
+            const iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
+            const bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
+            const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
+
+            const totalDespesas = aluguel + alim + iscas + bebidas + outros;
+            const qtd = participantes.length > 0 ? participantes.length : 1;
+            return { totalDespesas, rateio: totalDespesas / qtd };
+        }
+
+        function calcularFinancas() {
+            const { totalDespesas, rateio } = obterRateioIndividual();
+
+            document.getElementById('lbl-custo-total').innerText = `R$ ${totalDespesas.toFixed(2)}`;
+            document.getElementById('lbl-rateio-ind').innerText = `R$ ${rateio.toFixed(2)}`;
+
+            renderizarTabelaPagamentos();
+            renderizarParticipantes();
+            salvarDadosLocal();
+        }
+
+        function gerarHTMLBarraProgresso(totalPago, rateioTarget) {
+            let percentual = rateioTarget > 0 ? Math.min(100, Math.round((totalPago / rateioTarget) * 100)) : 100;
+            let corBarra = 'var(--danger)';
+            if(percentual >= 100) corBarra = 'var(--success)';
+            else if(percentual >= 50) corBarra = 'var(--warning)';
+
+            return `
+                <div class="pay-progress-box">
+                    <div class="pay-progress-text">
+                        <span>R$ ${totalPago.toFixed(2)} / R$ ${rateioTarget.toFixed(2)}</span>
+                        <span>${percentual}%</span>
+                    </div>
+                    <div class="pay-progress-bar">
+                        <div class="pay-progress-fill" style="width: ${percentual}%; background-color: ${corBarra};"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderizarTabelaPagamentos() {
+            const tbody = document.getElementById('tabela-pagamentos-body');
+            tbody.innerHTML = '';
+            const { rateio } = obterRateioIndividual();
+
+            participantes.forEach(p => {
+                let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${p.name}</b></td>
+                        <td>R$ ${(p.frete || 0).toFixed(2)}</td>
+                        <td>R$ ${(p.alim || 0).toFixed(2)}</td>
+                        <td>R$ ${(p.iscas || 0).toFixed(2)}</td>
+                        <td>R$ ${(p.outros || 0).toFixed(2)}</td>
+                        <td><b>R$ ${totalPago.toFixed(2)}</b></td>
+                        <td style="min-width: 110px;">${gerarHTMLBarraProgresso(totalPago, rateio)}</td>
+                        <td>
+                            <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="abrirModalPagamento(${p.id})">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;" onclick="removerParticipante(${p.id})">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function abrirModalPagamento(id) {
+            idPI = id;
+            const p = participantes.find(item => item.id === id);
+            if(p) {
+                document.getElementById('modal-titulo-pescador').innerText = `Pagamento: ${p.name}`;
+                document.getElementById('mod-frete').value = p.frete || 0;
+                document.getElementById('mod-alim').value = p.alim || 0;
+                document.getElementById('mod-iscas').value = p.iscas || 0;
+                document.getElementById('mod-outros').value = p.outros || 0;
+                document.getElementById('modal-pagamento').style.display = 'flex';
+            }
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-pagamento').style.display = 'none';
+            idPI = null;
+        }
+
+        function salvarPagamentoIndividual() {
+            if(idPI !== null) {
+                const p = participantes.find(item => item.id === idPI);
+                if(p) {
+                    p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
+                    p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
+                    p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
+                    p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
+                }
+                fecharModal();
+                calcularFinancas();
+                showToast("Pagamento individual atualizado!");
+            }
+        }
+
+        function renderizarParticipantes() {
+            const div = document.getElementById('lista-participantes-div');
+            div.innerHTML = '';
+            document.getElementById('contador-pescadores').innerText = `${participantes.length} Pescadores`;
+            const { rateio } = obterRateioIndividual();
+
+            participantes.forEach((p, idx) => {
+                let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
+                div.innerHTML += `
+                    <div style="display: flex; flex-direction: column; padding: 10px; background: white; border: 1px solid var(--border-color); border-radius: 10px; gap: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; font-weight: 700;"><b>${idx+1}.</b> ${p.name}</span>
+                            <div style="display: flex; gap: 6px;">
+                                <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;" onclick="abrirModalPagamento(${p.id})">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;" onclick="removerParticipante(${p.id})">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${gerarHTMLBarraProgresso(totalPago, rateio)}
+                    </div>
+                `;
+            });
+        }
+
+        function adicionarParticipante() {
+            const inputNome = document.getElementById('input-nome');
+            const nome = inputNome.value;
+            if(!nome.trim()) {
+                showToast("Informe o nome do pescador!");
+                return;
+            }
+
+            const frete = parseFloat(document.getElementById('input-frete').value) || 0;
+            const alim = parseFloat(document.getElementById('input-alim').value) || 0;
+            const iscas = parseFloat(document.getElementById('input-iscas').value) || 0;
+            const outros = parseFloat(document.getElementById('input-outros').value) || 0;
+
+            const novoId = participantes.length > 0 ? Math.max(...participantes.map(p => p.id)) + 1 : 1;
+            participantes.push({ id: novoId, name: nome, frete, alim, iscas, outros, vaga: null });
+
+            inputNome.value = '';
+            document.getElementById('input-frete').value = '0';
+            document.getElementById('input-alim').value = '0';
+            document.getElementById('input-iscas').value = '0';
+            document.getElementById('input-outros').value = '0';
+
+            calcularFinancas();
+            showToast("Pescador adicionado com sucesso!");
+        }
+
+        function removerParticipante(id) {
+            participantes = participantes.filter(p => p.id !== id);
+            calcularFinancas();
+            showToast("Pescador removido!");
+        }
+
+        function atualizarEsquemaBarco() {
+            configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
+            configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
+            configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 3;
+            configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
+            configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
+            configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
+
+            renderizarEsquemaVisual();
+            salvarDadosLocal();
+        }
+
+        // --- REPRESENTAÇÃO VISUAL CORRIGIDA (PROA NO TOPO / POPA NOS FUNDOS) ---
+        function renderizarEsquemaVisual() {
+            const container = document.getElementById('boat-hull-container');
+            const totalPopaVagas = configBarco.popaBancos * configBarco.popaPessoas;
+
+            container.innerHTML = `
+                <div style="text-align: center; font-size: 11px; font-weight: bold; color: var(--accent-blue); margin-bottom: 12px; letter-spacing: 1px;">▲ PROA (FRENTE) ▲</div>
+                <div style="display: flex; flex-direction: column; gap: 6px;" id="container-laterais"></div>
+                <div id="container-popa" style="display: flex; flex-direction: column; gap: 6px; margin-top: 14px; border-top: 2px dashed #cbd5e1; padding-top: 10px;"></div>
+                <div style="text-align: center; font-size: 11px; font-weight: bold; color: #64748b; margin-top: 10px; letter-spacing: 1px;">▼ POPA (FUNDOS) ▼</div>
+            `;
+
+            // 1. Renderiza os Bancos Laterais na Frente e Meio
+            let vagaContadorLateral = totalPopaVagas + 1;
+            const lateraisDiv = document.getElementById('container-laterais');
+            let maxBancosLateral = Math.max(configBarco.esqBancos, configBarco.dirBancos);
+
+            for(let b = 0; b < maxBancosLateral; b++) {
+                let rowEsq = b < configBarco.esqBancos ? participantes.find(item => item.vaga === vagaContadorLateral) : null;
+                let numEsq = b < configBarco.esqBancos ? vagaContadorLateral++ : null;
+
+                let rowDir = b < configBarco.dirBancos ? participantes.find(item => item.vaga === vagaContadorLateral) : null;
+                let numDir = b < configBarco.dirBancos ? vagaContadorLateral++ : null;
+
+                lateraisDiv.innerHTML += `
+                    <div class="boat-row-seats">
+                        <div class="seat-box" style="${numEsq === null ? 'visibility:hidden;' : ''}">
+                            <div class="seat-num">${numEsq || ''}</div>
+                            <div class="seat-name">${rowEsq ? rowEsq.name : (numEsq ? 'Vago' : '')}</div>
+                        </div>
+                        <div class="seat-box" style="${numDir === null ? 'visibility:hidden;' : ''}">
+                            <div class="seat-num">${numDir || ''}</div>
+                            <div class="seat-name">${rowDir ? rowDir.name : (numDir ? 'Vago' : '')}</div>
                         </div>
                     </div>
-                    ${gerarHTMLBarraProgresso(totalPago, rateio)}
-                </div>
-            `;
-        });
-    }
-
-    function adicionarParticipante() {
-        const inputNome = document.getElementById('input-nome');
-        const nome = inputNome.value.trim();
-        if(!nome) {
-            showToast("Informe o nome do pescador!");
-            return;
-        }
-
-        const frete = parseFloat(document.getElementById('input-frete').value) || 0;
-        const alim = parseFloat(document.getElementById('input-alim').value) || 0;
-        const iscas = parseFloat(document.getElementById('input-iscas').value) || 0;
-        const outros = parseFloat(document.getElementById('input-outros').value) || 0;
-
-        const novoId = participantes.length > 0 ? Math.max(...participantes.map(p => p.id)) + 1 : 1;
-        participantes.push({ id: novoId, name: nome, frete, alim, iscas, outros, vaga: null });
-
-        inputNome.value = '';
-        document.getElementById('input-frete').value = '0';
-        document.getElementById('input-alim').value = '0';
-        document.getElementById('input-iscas').value = '0';
-        document.getElementById('input-outros').value = '0';
-
-        calcularFinancas();
-        showToast("Pescador adicionado com sucesso!");
-    }
-
-    function removerParticipante(id) {
-        participantes = participantes.filter(p => p.id !== id);
-        calcularFinancas();
-        showToast("Pescador removido!");
-    }
-
-    function atualizarEsquemaBarco() {
-        configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
-        configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
-        configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 3;
-        configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
-        configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
-        configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
-
-        renderizarEsquemaVisual();
-    }
-
-    function renderizarEsquemaVisual() {
-        const container = document.getElementById('boat-hull-container');
-        container.innerHTML = `
-            <div id="container-popa" style="display: flex; flex-direction: column; gap: 6px;"></div>
-            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;" id="container-laterais"></div>
-        `;
-
-        let vagaContador = 1;
-        const popaDiv = document.getElementById('container-popa');
-        for(let b=0; b<configBarco.popaBancos; b++) {
-            let row = '<div class="boat-row-seats">';
-            for(let p=0; p<configBarco.popaPessoas; p++) {
-                let ocupante = participantes.find(item => item.vaga === vagaContador);
-                row += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
-                vagaContador++;
+                `;
             }
-            row += '</div>';
-            popaDiv.innerHTML += row;
+
+            // 2. Renderiza a Popa nos Fundos
+            let vagaContadorPopa = 1;
+            const popaDiv = document.getElementById('container-popa');
+            for(let b = 0; b < configBarco.popaBancos; b++) {
+                let row = '<div class="boat-row-seats">';
+                for(let p = 0; p < configBarco.popaPessoas; p++) {
+                    let ocupante = participantes.find(item => item.vaga === vagaContadorPopa);
+                    row += `<div class="seat-box"><div class="seat-num">${vagaContadorPopa}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
+                    vagaContadorPopa++;
+                }
+                row += '</div>';
+                popaDiv.innerHTML += row;
+            }
         }
 
-        const lateraisDiv = document.getElementById('container-laterais');
-        let maxBancosLateral = Math.max(configBarco.esqBancos, configBarco.dirBancos);
-        for(let b=0; b<maxBancosLateral; b++) {
-            let rowEsq = b < configBarco.esqBancos ? participantes.find(item => item.vaga === vagaContador) : null;
-            let numEsq = b < configBarco.esqBancos ? vagaContador++ : null;
+        function realizarSorteioBarco() {
+            const totalPopaVagas = configBarco.popaBancos * configBarco.popaPessoas;
+            const totalOutrasVagas = (configBarco.esqBancos * configBarco.esqPessoas) + (configBarco.dirBancos * configBarco.dirPessoas);
 
-            let rowDir = b < configBarco.dirBancos ? participantes.find(item => item.vaga === vagaContador) : null;
-            let numDir = b < configBarco.dirBancos ? vagaContador++ : null;
+            participantes.forEach(p => p.vaga = null);
 
-            lateraisDiv.innerHTML += `
-                <div class="boat-row-seats">
-                    <div class="seat-box" style="${numEsq === null ? 'visibility:hidden;' : ''}">
-                        <div class="seat-num">${numEsq || ''}</div>
-                        <div class="seat-name">${rowEsq ? rowEsq.name : (numEsq ? 'Vago' : '')}</div>
-                    </div>
-                    <div class="seat-box" style="${numDir === null ? 'visibility:hidden;' : ''}">
-                        <div class="seat-num">${numDir || ''}</div>
-                        <div class="seat-name">${rowDir ? rowDir.name : (numDir ? 'Vago' : '')}</div>
-                    </div>
-                </div>
-            `;
+            let vagasPopa = Array.from({ length: totalPopaVagas }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+            let outrasVagas = Array.from({ length: totalOutrasVagas }, (_, i) => i + totalPopaVagas + 1).sort(() => Math.random() - 0.5);
+
+            let listaSorteio = [...participantes].sort(() => Math.random() - 0.5);
+
+            let prefereFundos = listaSorteio.filter(p => p.name.endsWith(' '));
+            let semPreferencia = listaSorteio.filter(p => !p.name.endsWith(' '));
+
+            prefereFundos.forEach(p => {
+                if (vagasPopa.length > 0) {
+                    p.vaga = vagasPopa.pop();
+                } else if (outrasVagas.length > 0) {
+                    p.vaga = outrasVagas.pop();
+                }
+            });
+
+            let vagasRestantes = [...vagasPopa, ...outrasVagas].sort(() => Math.random() - 0.5);
+            semPreferencia.forEach(p => {
+                if (vagasRestantes.length > 0) {
+                    p.vaga = vagasRestantes.pop();
+                }
+            });
+
+            renderizarEsquemaVisual();
+            salvarDadosLocal();
+            showToast("🎲 Sorteio realizado com preferência nos fundos!");
         }
-    }
 
-    function realizarSorteioBarco() {
-        let totalVagas = (configBarco.popaBancos * configBarco.popaPessoas) + (configBarco.esqBancos * configBarco.esqPessoas) + (configBarco.dirBancos * configBarco.dirPessoas);
-        participantes.forEach(p => p.vaga = null);
-        let vagas = Array.from({length: totalVagas}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+        function exportarWhatsApp() {
+            const { totalDespesas, rateio } = obterRateioIndividual();
+            
+            let texto = `*⚓ RELATÓRIO PESCA JUSTA*\n`;
+            texto += `*Barco:* ${document.getElementById('lbl-barco-nome').innerText}\n`;
+            texto += `*Destino:* ${document.getElementById('lbl-destino').innerText}\n`;
+            texto += `*Saída:* ${document.getElementById('lbl-data-saida').innerText}\n`;
+            texto += `-----------------------------------\n`;
+            texto += `*Custo Total:* R$ ${totalDespesas.toFixed(2)}\n`;
+            texto += `*Rateio por Pescador:* R$ ${rateio.toFixed(2)}\n\n`;
+            texto += `*STATUS DE PAGAMENTOS:*\n`;
 
-        participantes.forEach((p, idx) => {
-            if(idx < vagas.length) p.vaga = vagas[idx];
-        });
+            participantes.forEach((p, i) => {
+                let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
+                let diff = totalPago - rateio;
+                let status = diff >= 0 ? "✅ Quitado" : `⚠️ Faltam R$ ${Math.abs(diff).toFixed(2)}`;
+                let vagaStr = p.vaga ? ` (Assento #${p.vaga})` : '';
+                texto += `${i+1}. *${p.name.trim()}*${vagaStr}\n   Pago: R$ ${totalPago.toFixed(2)} | ${status}\n`;
+            });
 
-        renderizarEsquemaVisual();
-        showToast("🎲 Sorteio realizado com sucesso!");
-    }
+            const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+            window.open(url, '_blank');
+        }
 
-    /* EXPORTAÇÃO WHATSAPP */
-    function exportarWhatsApp() {
-        const { totalDespesas, rateio } = obterRateioIndividual();
-        
-        let texto = `*⚓ RELATÓRIO PESCA JUSTA*\n`;
-        texto += `*Barco:* ${document.getElementById('lbl-barco-nome').innerText}\n`;
-        texto += `*Destino:* ${document.getElementById('lbl-destino').innerText}\n`;
-        texto += `*Saída:* ${document.getElementById('lbl-data-saida').innerText}\n`;
-        texto += `-----------------------------------\n`;
-        texto += `*Custo Total:* R$ ${totalDespesas.toFixed(2)}\n`;
-        texto += `*Rateio por Pescador:* R$ ${rateio.toFixed(2)}\n\n`;
-        texto += `*STATUS DE PAGAMENTOS:*\n`;
+        function exportarPDF() {
+            window.print();
+        }
 
-        participantes.forEach((p, i) => {
-            let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
-            let diff = totalPago - rateio;
-            let status = diff >= 0 ? "✅ Quitado" : `⚠️ Faltam R$ ${Math.abs(diff).toFixed(2)}`;
-            let vagaStr = p.vaga ? ` (Assento #${p.vaga})` : '';
-            texto += `${i+1}. *${p.name}*${vagaStr}\n   Pago: R$ ${totalPago.toFixed(2)} | ${status}\n`;
-        });
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
 
-        const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-        window.open(url, '_blank');
-    }
-
-    /* EXPORTAÇÃO PDF / IMPRESSÃO */
-    function exportarPDF() {
-        window.print();
-    }
-
-    function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
-        window.scrollTo(0, 0);
-    }
-
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    atualizarEsquemaBarco();
-    atualizarDadosPescaria();
-    calcularFinancas();
-</script>
-
+        // Inicialização
+        carregarDadosLocal();
+        iniciarRelogio();
+        atualizarEsquemaBarco();
+        atualizarDadosPescaria();
+        calcularFinancas();
+    </script>
 </body>
 </html>
