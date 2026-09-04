@@ -3,22 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Sorteio de Pescaria</title>
+  <title>PESCA_JUSTA - Sorteio de Posicionamento</title>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     :root {
-      --primary-color: #7c5cfc;
+      --primary-purple: #7c5cfc;
       --primary-hover: #6842f6;
-      --boat-bg: #0f6292;
-      --seat-bg: #f26522;
+      --pdf-red: #dc2626;
+      --pdf-hover: #b91c1c;
+      --boat-blue: #0969da;
+      --boat-hull: #084c9e;
+      --seat-orange: #f26522;
       --card-bg: #ffffff;
-      --bg-color: #f4f7f9;
-      --text-color: #333333;
-      --border-color: #e1e8ed;
+      --bg-color: #f6f8fa;
+      --text-color: #1f2328;
+      --border-color: #d0d7de;
     }
 
     * {
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
@@ -41,19 +50,20 @@
       background: var(--card-bg);
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       border: 1px solid var(--border-color);
     }
 
     h2 {
-      font-size: 1.2rem;
-      color: #1e293b;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
       margin-bottom: 16px;
     }
 
     .grid-inputs {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 16px;
       margin-bottom: 20px;
     }
@@ -65,13 +75,14 @@
     }
 
     .input-group label {
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.72rem;
+      font-weight: 800;
       color: #64748b;
       text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
-    .input-group input {
+    .input-group input, .input-group textarea {
       padding: 10px 12px;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
@@ -80,18 +91,34 @@
       transition: border-color 0.2s;
     }
 
-    .input-group input:focus {
-      border-color: var(--primary-color);
+    .input-group textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .input-group input:focus, .input-group textarea:focus {
+      border-color: var(--primary-purple);
+    }
+
+    .botoes-acao {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .botoes-acao {
+        grid-template-columns: 1fr;
+      }
     }
 
     .btn-action {
-      width: 100%;
       padding: 14px;
-      background-color: var(--primary-color);
+      background-color: var(--primary-purple);
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -105,20 +132,29 @@
       background-color: var(--primary-hover);
     }
 
-    /* Banner Informativo */
+    .btn-pdf {
+      background-color: var(--pdf-red);
+    }
+
+    .btn-pdf:hover {
+      background-color: var(--pdf-hover);
+    }
+
+    /* Banner da Pescaria */
     .banner-pescaria {
-      background: linear-gradient(135deg, #0f6292, #164e63);
+      background: linear-gradient(135deg, #0969da, #03499e);
       color: white;
-      padding: 16px;
+      padding: 18px;
       border-radius: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       text-align: center;
     }
 
     .banner-pescaria h1 {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       margin-bottom: 8px;
       letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .banner-detalhes {
@@ -152,7 +188,7 @@
     }
 
     .lista-lado h3 {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: #0f172a;
       margin-bottom: 12px;
       padding-bottom: 6px;
@@ -163,24 +199,23 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .lista-lado li {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: #334155;
       padding: 4px 0;
       border-bottom: 1px solid #f1f5f9;
     }
 
-    /* O Barco */
+    /* Desenho do Barco */
     .barco-desenho {
-      background-color: var(--boat-bg);
+      background-color: var(--boat-hull);
       border-radius: 120px 120px 20px 20px;
-      padding: 40px 20px 20px 20px;
+      padding: 35px 20px 20px 20px;
       color: white;
       text-align: center;
-      position: relative;
     }
 
     .proa-label {
@@ -193,14 +228,14 @@
     .grid-bancos {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
     .banco-box {
-      background-color: var(--seat-bg);
+      background-color: var(--seat-orange);
       border-radius: 6px;
-      padding: 8px;
+      padding: 8px 6px;
       color: white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
@@ -210,38 +245,37 @@
       font-weight: 800;
       display: block;
       margin-bottom: 2px;
-      opacity: 0.9;
+      letter-spacing: 0.5px;
     }
 
     .banco-nomes {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
     }
 
     .popa-area {
       border: 2px dashed rgba(255,255,255,0.4);
       border-radius: 10px;
-      padding: 12px;
+      padding: 10px;
       margin-top: 10px;
     }
 
     .popa-label {
       font-size: 0.8rem;
       font-weight: 700;
-      margin-top: 8px;
+      margin-top: 6px;
       letter-spacing: 1px;
     }
 
-    /* Cronograma dos Turnos */
     .secao-turnos {
-      margin-top: 30px;
-      padding-top: 20px;
+      margin-top: 24px;
+      padding-top: 16px;
       border-top: 1px solid var(--border-color);
     }
 
     .grid-turnos {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 12px;
       margin-top: 12px;
     }
@@ -249,15 +283,16 @@
     .card-turno {
       background: #f0fdf4;
       border-left: 4px solid #16a34a;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 6px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
 
     .nota-rotacao {
       font-size: 0.8rem;
       color: #64748b;
       margin-top: 16px;
+      line-height: 1.4;
     }
   </style>
 </head>
@@ -265,13 +300,12 @@
 
 <div class="container">
 
-  <!-- CARD 1: INFORMAÇÕES GERAIS -->
   <div class="card">
     <h2>Informações Gerais da Pescaria</h2>
     <div class="grid-inputs">
       <div class="input-group">
         <label>Nome do Barco</label>
-        <input type="text" id="info-barco" placeholder="Ex: Atlanticus">
+        <input type="text" id="info-barco" placeholder="Ex: PESCA_JUSTA">
       </div>
       <div class="input-group">
         <label>Local de Pesca</label>
@@ -292,9 +326,14 @@
     </div>
   </div>
 
-  <!-- CARD 2: CONFIGURAR ESTRUTURA DOS BANCOS -->
   <div class="card">
-    <h2>Configurar Estrutura dos Bancos</h2>
+    <h2>Configurar Estrutura e Participantes</h2>
+    
+    <div class="input-group" style="margin-bottom: 16px;">
+      <label>Participantes (Separe por vírgula - Máximo 3 com '_')</label>
+      <textarea id="lista-participantes">Lucas, Rafael, Roderley, Willian, João Garço, Gabriel, Valtair, Adhamo, Devlin, Wesley, Emiliano, Marcelo R., João_</textarea>
+    </div>
+
     <div class="grid-inputs">
       <div class="input-group">
         <label>Lado Esq. - Bancos</label>
@@ -322,17 +361,20 @@
       </div>
     </div>
 
-    <button class="btn-action" id="btn-sortear">
-      <span>🎲</span> Realizar Sorteio de Posicionamento
-    </button>
+    <div class="botoes-acao">
+      <button class="btn-action" id="btn-sortear">
+        <span>🎲</span> Realizar Sorteio de Posicionamento
+      </button>
+      <button class="btn-action btn-pdf" id="btn-gerar-pdf">
+        <span>📄</span> Baixar PDF das Posições e Turnos
+      </button>
+    </div>
   </div>
 
-  <!-- CARD 3: REPRESENTAÇÃO VISUAL DO BARCO -->
   <div class="card" id="area-print">
     
-    <!-- BANNER VISUAL (SAI NO PRINT) -->
     <div class="banner-pescaria">
-      <h1 id="disp-barco">PESCARIA: -</h1>
+      <h1 id="disp-barco">PESCARIA: PESCA_JUSTA</h1>
       <div class="banner-detalhes">
         <span>📍 <strong id="disp-local">Local:</strong> -</span>
         <span>📅 <strong id="disp-data">Data:</strong> -</span>
@@ -345,29 +387,22 @@
 
     <div class="layout-barco">
       
-      <!-- SORTEADOS ESQUERDA -->
       <div class="lista-lado">
         <h3>Sorteados Lado Esquerdo</h3>
         <ul id="lista-esq"></ul>
       </div>
 
-      <!-- DESENHO CENTRAL DO BARCO -->
       <div class="barco-desenho">
         <div class="proa-label">▲ PROA ▲</div>
         
-        <div class="grid-bancos" id="container-bancos-principais">
-          <!-- Gerado Via Script -->
-        </div>
+        <div class="grid-bancos" id="container-bancos-principais"></div>
 
         <div class="popa-area">
-          <div class="grid-bancos" id="container-bancos-popa">
-            <!-- Gerado Via Script -->
-          </div>
+          <div class="grid-bancos" id="container-bancos-popa"></div>
           <div class="popa-label">POPA</div>
         </div>
       </div>
 
-      <!-- SORTEADOS POPA E DIREITA -->
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <div class="lista-lado">
           <h3>Sorteados Popa (Inicial)</h3>
@@ -381,15 +416,13 @@
 
     </div>
 
-    <!-- CRONOGRAMA DE RELÓGIOS -->
     <div class="secao-turnos">
       <h2>🕒 Cronograma dos Turnos e Horários</h2>
-      <div class="grid-turnos" id="container-relógios"></div>
+      <div class="grid-turnos" id="container-relogios"></div>
     </div>
 
     <p class="nota-rotacao">
-      <strong>Nota de Rotação:</strong> O rodízio dos lugares é feito no sentido <strong>anti-horário</strong>. 
-      O algoritmo impede repetições nos bancos da Popa para que todos aproveitem igualmente a pescaria.
+      <strong>Nota de Rotação:</strong> O rodízio dos lugares é feito no sentido <strong>anti-horário</strong>. Os nomes com '_' entram no sorteio a partir da 2ª rodada.
     </p>
 
   </div>
@@ -397,65 +430,77 @@
 </div>
 
 <script>
-  const STORAGE_KEY = 'pesca_app_estado_v2';
+  const firebaseConfig = {
+    apiKey: "AIzaSyAY9YVSdP3qtBSIaQnSvs26B70RrP6fMVE",
+    authDomain: "pescaria-justa.firebaseapp.com",
+    databaseURL: "https://pescaria-justa-default-rtdb.firebaseio.com",
+    projectId: "pescaria-justa",
+    storageBucket: "pescaria-justa.firebasestorage.app",
+    messagingSenderId: "1042867642805",
+    appId: "1:1042867642805:web:092fc9ca84613ead51b9fc"
+  };
 
-  // Nomes Padrão de Exemplo
-  const PARTICIPANTES_PADRAO = [
-    "Lucas", "Rafael", "Roderley", "Willian", "João Garço", "Gabriel",
-    "Valtair", "Adhamo", "Devlin", "Wesley", "Emiliano", "Marcelo R.", "João"
-  ];
+  firebase.initializeApp(firebaseConfig);
+  const dbRef = firebase.database().ref('pescaria_estado_atual');
 
-  // Histórico para evitar repetição na Popa
   let historicoPopa = [];
+  let isUpdatingLocal = false;
 
   document.addEventListener('DOMContentLoaded', () => {
-    carregarEstadoOuPadrao();
+    dbRef.on('value', (snapshot) => {
+      const estado = snapshot.val();
+      if (estado) {
+        isUpdatingLocal = true;
+        
+        document.getElementById('info-barco').value = estado.info?.barco || '';
+        document.getElementById('info-local').value = estado.info?.local || '';
+        document.getElementById('info-data').value = estado.info?.data || '';
+        document.getElementById('info-horario-inicio').value = estado.info?.inicio || '06:00';
+        document.getElementById('info-duracao-turno').value = estado.info?.duracao || '2';
 
-    // Eventos para salvar alterações automaticamente
-    document.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', () => {
-        salvarEAtualizar();
+        if(estado.participantesTexto) {
+          document.getElementById('lista-participantes').value = estado.participantesTexto;
+        }
+
+        document.getElementById('cfg-esq-bancos').value = estado.cfg?.esqBancos ?? 3;
+        document.getElementById('cfg-esq-pessoas').value = estado.cfg?.esqPessoas ?? 2;
+        document.getElementById('cfg-dir-bancos').value = estado.cfg?.dirBancos ?? 3;
+        document.getElementById('cfg-dir-pessoas').value = estado.cfg?.dirPessoas ?? 2;
+        document.getElementById('cfg-popa-bancos').value = estado.cfg?.popaBancos ?? 2;
+        document.getElementById('cfg-popa-pessoas').value = estado.cfg?.popaPessoas ?? 2;
+
+        historicoPopa = estado.historicoPopa || [];
+
+        if (estado.ultimoResultado) {
+          renderizarTudo(estado.ultimoResultado);
+        } else {
+          executarSorteioComTrava();
+        }
+
+        isUpdatingLocal = false;
+      } else {
+        executarSorteioComTrava();
+      }
+    });
+
+    document.querySelectorAll('input, textarea').forEach(input => {
+      input.addEventListener('change', () => {
+        if (!isUpdatingLocal) salvarNaNuvem();
       });
     });
 
     document.getElementById('btn-sortear').addEventListener('click', () => {
       executarSorteioComTrava();
     });
+
+    document.getElementById('btn-gerar-pdf').addEventListener('click', () => {
+      gerarPDF();
+    });
   });
 
-  function carregarEstadoOuPadrao() {
-    const estadoSalvo = localStorage.getItem(STORAGE_KEY);
-    if (estadoSalvo) {
-      const estado = JSON.parse(estadoSalvo);
-      
-      // Restaura Inputs Gerais
-      document.getElementById('info-barco').value = estado.info.barco || '';
-      document.getElementById('info-local').value = estado.info.local || '';
-      document.getElementById('info-data').value = estado.info.data || '';
-      document.getElementById('info-horario-inicio').value = estado.info.inicio || '06:00';
-      document.getElementById('info-duracao-turno').value = estado.info.duracao || '2';
+  function salvarNaNuvem(resultadoSorteio = null) {
+    const snapshotSorteio = resultadoSorteio || window.ultimoResultadoGlobal;
 
-      // Restaura Estrutura
-      document.getElementById('cfg-esq-bancos').value = estado.cfg.esqBancos;
-      document.getElementById('cfg-esq-pessoas').value = estado.cfg.esqPessoas;
-      document.getElementById('cfg-dir-bancos').value = estado.cfg.dirBancos;
-      document.getElementById('cfg-dir-pessoas').value = estado.cfg.dirPessoas;
-      document.getElementById('cfg-popa-bancos').value = estado.cfg.popaBancos;
-      document.getElementById('cfg-popa-pessoas').value = estado.cfg.popaPessoas;
-
-      historicoPopa = estado.historicoPopa || [];
-
-      if (estado.ultimoResultado) {
-        renderizarTudo(estado.ultimoResultado);
-        return;
-      }
-    }
-    executarSorteioComTrava();
-  }
-
-  function salvarEAtualizar(resultadoSorteio = null) {
-    const estadoSalvo = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    
     const estado = {
       info: {
         barco: document.getElementById('info-barco').value,
@@ -464,6 +509,7 @@
         inicio: document.getElementById('info-horario-inicio').value,
         duracao: document.getElementById('info-duracao-turno').value,
       },
+      participantesTexto: document.getElementById('lista-participantes').value,
       cfg: {
         esqBancos: parseInt(document.getElementById('cfg-esq-bancos').value) || 0,
         esqPessoas: parseInt(document.getElementById('cfg-esq-pessoas').value) || 0,
@@ -473,32 +519,39 @@
         popaPessoas: parseInt(document.getElementById('cfg-popa-pessoas').value) || 0,
       },
       historicoPopa: historicoPopa,
-      ultimoResultado: resultadoSorteio || estadoSalvo.ultimoResultado
+      ultimoResultado: snapshotSorteio || null
     };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
-    
-    if (estado.ultimoResultado) {
-      renderizarTudo(estado.ultimoResultado);
-    }
+    dbRef.set(estado);
   }
 
   function executarSorteioComTrava() {
-    // Embaralha participantes
-    let listaEmbaralhada = [...PARTICIPANTES_PADRAO].sort(() => Math.random() - 0.5);
+    const textoParticipantes = document.getElementById('lista-participantes').value;
+    const listaCompleta = textoParticipantes.split(',').map(n => n.trim()).filter(n => n.length > 0);
 
-    // Vagas Popa (Bancos 1 e 2)
-    const vagasPopa = (parseInt(document.getElementById('cfg-popa-bancos').value) || 2) * 
-                     (parseInt(document.getElementById('cfg-popa-pessoas').value) || 2);
+    // Validação: Permitir apenas no máximo 3 nomes com '_'
+    const comUnderscore = listaCompleta.filter(nome => nome.includes('_'));
+    if (comUnderscore.length > 3) {
+      alert(`Atenção! Existem ${comUnderscore.length} nomes com '_'. É permitido no máximo 3 nomes com '_'.`);
+      return;
+    }
 
-    // Regra Anti-Repetição da Popa
+    const semUnderscore = listaCompleta.filter(nome => !nome.includes('_'));
+
+    // Embaralha separadamente cada grupo
+    let rodada1Embaralhada = [...semUnderscore].sort(() => Math.random() - 0.5);
+    let rodada2Embaralhada = [...comUnderscore].sort(() => Math.random() - 0.5);
+
+    // Junta: Rodada 1 entra primeiro, nomes com '_' entram na 2ª rodada
+    let listaEmbaralhada = [...rodada1Embaralhada, ...rodada2Embaralhada];
+
+    const vagasPopa = (parseInt(document.getElementById('cfg-popa-bancos').value) || 2) * (parseInt(document.getElementById('cfg-popa-pessoas').value) || 2);
+
     for (let i = 0; i < vagasPopa && i < listaEmbaralhada.length; i++) {
       let pessoa = listaEmbaralhada[i];
       if (historicoPopa.includes(pessoa)) {
-        // Busca alguém fora da Popa que ainda não esteve nela
         let indiceSubstituto = listaEmbaralhada.findIndex((p, idx) => idx >= vagasPopa && !historicoPopa.includes(p));
         if (indiceSubstituto !== -1) {
-          // Troca de Posição
           let temp = listaEmbaralhada[i];
           listaEmbaralhada[i] = listaEmbaralhada[indiceSubstituto];
           listaEmbaralhada[indiceSubstituto] = temp;
@@ -506,17 +559,18 @@
       }
     }
 
-    // Registra no histórico quem assumiu a Popa
     listaEmbaralhada.slice(0, vagasPopa).forEach(p => {
       if (!historicoPopa.includes(p)) historicoPopa.push(p);
     });
 
-    salvarEAtualizar(listaEmbaralhada);
+    window.ultimoResultadoGlobal = listaEmbaralhada;
+    salvarNaNuvem(listaEmbaralhada);
   }
 
   function renderizarTudo(listaPessoas) {
-    // 1. Atualizar Banner Superior
-    document.getElementById('disp-barco').innerText = `PESCARIA: ${(document.getElementById('info-barco').value || '-').toUpperCase()}`;
+    window.ultimoResultadoGlobal = listaPessoas;
+
+    document.getElementById('disp-barco').innerText = `PESCARIA: ${(document.getElementById('info-barco').value || 'PESCA_JUSTA').toUpperCase()}`;
     document.getElementById('disp-local').innerText = document.getElementById('info-local').value || '-';
     
     const dataVal = document.getElementById('info-data').value;
@@ -528,7 +582,6 @@
     document.getElementById('disp-horario').innerText = `${inicioVal}h`;
     document.getElementById('disp-duracao').innerText = `${duracaoVal}h por turno`;
 
-    // 2. Renderizar Listas de Sorteados
     const esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 0;
     const esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 0;
     const dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 0;
@@ -548,41 +601,36 @@
     preencherLista('lista-esq', pessoasEsq);
     preencherLista('lista-dir', pessoasDir);
 
-    // 3. Renderizar Barco Visual
     const containerPopa = document.getElementById('container-bancos-popa');
     const containerPrincipais = document.getElementById('container-bancos-principais');
     
     containerPopa.innerHTML = '';
     containerPrincipais.innerHTML = '';
 
-    // Monta Popa (Banco 01, Banco 02...)
     let contadorBanco = 1;
+
     for (let b = 0; b < popaBancos; b++) {
       let ocupantes = pessoasPopa.slice(b * popaPessoas, (b + 1) * popaPessoas).join(' / ') || 'Vago';
-      containerPopa.appendChild(criarCardBanco(`BANCO 0${contadorBanco++}`, ocupantes));
+      containerPopa.appendChild(criarCardBanco(`BANCO0${contadorBanco++}`, ocupantes));
     }
 
-    // Monta Lados (Esquerda e Direita intercalados para o desenho)
     let maxBancosLado = Math.max(esqBancos, dirBancos);
     for (let b = maxBancosLado - 1; b >= 0; b--) {
-      // Esquerda
       if (b < esqBancos) {
         let ocupantesEsq = pessoasEsq.slice(b * esqPessoas, (b + 1) * esqPessoas).join(' / ') || 'Vago';
-        containerPrincipais.appendChild(criarCardBanco(`BANCO 0${contadorBanco++}`, ocupantesEsq));
+        containerPrincipais.appendChild(criarCardBanco(`BANCO0${contadorBanco++}`, ocupantesEsq));
       } else {
         containerPrincipais.appendChild(document.createElement('div'));
       }
 
-      // Direita
       if (b < dirBancos) {
         let ocupantesDir = pessoasDir.slice(b * dirPessoas, (b + 1) * dirPessoas).join(' / ') || 'Vago';
-        containerPrincipais.appendChild(criarCardBanco(`BANCO 0${contadorBanco++}`, ocupantesDir));
+        containerPrincipais.appendChild(criarCardBanco(`BANCO0${contadorBanco++}`, ocupantesDir));
       } else {
         containerPrincipais.appendChild(document.createElement('div'));
       }
     }
 
-    // 4. Gerar Relógios dos Turnos
     gerarRelogiosTurnos(inicioVal, parseInt(duracaoVal), 4);
   }
 
@@ -604,7 +652,7 @@
   }
 
   function gerarRelogiosTurnos(horarioInicioStr, duracaoHoras, totalTurnos) {
-    const container = document.getElementById('container-relógios');
+    const container = document.getElementById('container-relogios');
     container.innerHTML = '';
 
     let [horas, minutos] = horarioInicioStr.split(':').map(Number);
@@ -621,6 +669,21 @@
       card.innerHTML = `<strong>Turno 0${t}</strong><br>🕒 ${inicio} às ${fim}`;
       container.appendChild(card);
     }
+  }
+
+  function gerarPDF() {
+    const elemento = document.getElementById('area-print');
+    const nomeBarco = document.getElementById('info-barco').value || 'pescaria';
+    
+    const opcoes = {
+      margin:       0.3,
+      filename:     `posicoes_e_turnos_${nomeBarco.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opcoes).from(elemento).save();
   }
 </script>
 
