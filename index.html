@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PESCA_JUSTA - Sorteio e Cronograma de Turnos</title>
+  <title>PESCA_JUSTA - Sistema Completo da Pescaria</title>
 
+  <!-- SDKs do Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
+  <!-- Biblioteca para Gerar PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -22,6 +24,7 @@
       --bg-color: #f6f8fa;
       --text-color: #1f2328;
       --border-color: #d0d7de;
+      --success-green: #16a34a;
     }
 
     * {
@@ -43,6 +46,46 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+
+    /* Navegação por Abas */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary-purple);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .tab-content.active {
+      display: flex;
     }
 
     .card {
@@ -81,7 +124,7 @@
       letter-spacing: 0.3px;
     }
 
-    .input-group input, .input-group textarea {
+    .input-group input, .input-group textarea, .input-group select {
       padding: 10px 12px;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
@@ -92,7 +135,7 @@
 
     .input-group textarea {
       resize: vertical;
-      min-height: 70px;
+      min-height: 80px;
     }
 
     .input-group input:focus, .input-group textarea:focus {
@@ -100,18 +143,14 @@
     }
 
     .botoes-acao {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 12px;
-    }
-
-    @media (max-width: 600px) {
-      .botoes-acao {
-        grid-template-columns: 1fr;
-      }
+      flex-wrap: wrap;
     }
 
     .btn-action {
+      flex: 1;
+      min-width: 200px;
       padding: 14px;
       background-color: var(--primary-purple);
       color: white;
@@ -137,6 +176,61 @@
 
     .btn-pdf:hover {
       background-color: var(--pdf-hover);
+    }
+
+    .btn-secondary {
+      background-color: #0284c7;
+    }
+
+    /* Tabelas e Finanças */
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .metricas-financas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card-metrica {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .card-metrica span {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    .card-metrica h3 {
+      font-size: 1.4rem;
+      color: #0f172a;
+      margin-top: 4px;
     }
 
     /* Banner da Pescaria */
@@ -266,7 +360,7 @@
       letter-spacing: 1px;
     }
 
-    /* Turnos e Horários */
+    /* Turnos */
     .secao-turnos {
       margin-top: 24px;
       padding-top: 16px;
@@ -288,11 +382,13 @@
       font-size: 0.88rem;
     }
 
-    .nota-rotacao {
-      font-size: 0.8rem;
-      color: #64748b;
-      margin-top: 16px;
-      line-height: 1.4;
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -300,141 +396,215 @@
 
 <div class="container">
 
-  <div class="card">
-    <h2>Informações Gerais e Programação dos Turnos</h2>
-    <div class="grid-inputs">
-      <div class="input-group">
-        <label>Nome do Barco</label>
-        <input type="text" id="info-barco" placeholder="Ex: PESCA_JUSTA">
+  <!-- BARRA DE NAVEGAÇÃO -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="trocarAba('aba-geral')">📋 Geral & Pescadores</button>
+    <button class="tab-btn" onclick="trocarAba('aba-financas')">💰 Finanças & Despesas</button>
+    <button class="tab-btn" onclick="trocarAba('aba-sorteio')">🎲 Sorteio & Barco</button>
+    <button class="tab-btn" onclick="trocarAba('aba-turnos')">🕒 Turnos & Horários</button>
+  </div>
+
+  <!-- ABA 1: GERENCIAMENTO GERAL & PESCADORES -->
+  <div id="aba-geral" class="tab-content active">
+    <div class="card">
+      <h2>Informações Gerais da Pescaria</h2>
+      <div class="grid-inputs">
+        <div class="input-group">
+          <label>Nome do Barco</label>
+          <input type="text" id="info-barco" placeholder="Ex: PESCA_JUSTA">
+        </div>
+        <div class="input-group">
+          <label>Local de Pesca</label>
+          <input type="text" id="info-local" placeholder="Ex: Ilha da Vitória">
+        </div>
+        <div class="input-group">
+          <label>Data da Pescaria</label>
+          <input type="date" id="info-data">
+        </div>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>Cadastro de Pescadores</h2>
       <div class="input-group">
-        <label>Local de Pesca</label>
-        <input type="text" id="info-local" placeholder="Ex: Ilha da Vitória">
+        <label>Lista de Integrantes (Separe por vírgula - Máximo 3 nomes com '_')</label>
+        <textarea id="lista-participantes" placeholder="Digite os nomes separados por vírgula...">Lucas, Rafael, Roderley, Willian, João Garço, Gabriel, Valtair, Adhamo, Devlin, Wesley, Emiliano, Marcelo R., João_</textarea>
       </div>
-      <div class="input-group">
-        <label>Data da Pescaria</label>
-        <input type="date" id="info-data">
+      <p style="font-size: 0.8rem; color: #64748b; margin-top: 8px;">
+        ℹ️ <strong>Regra Especial:</strong> Nomes finalizados com <code>_</code> (ex: <code>João_</code>) serão sorteados na 2ª rodada do barco. Permitido no máximo 3 integrantes com esse marcador.
+      </p>
+    </div>
+  </div>
+
+  <!-- ABA 2: FINANÇAS E DESPESAS -->
+  <div id="aba-financas" class="tab-content">
+    <div class="card">
+      <h2>Métricas Financeiras</h2>
+      <div class="metricas-financas">
+        <div class="card-metrica">
+          <span>Total de Despesas</span>
+          <h3 id="fin-total-despesas">R$ 0,00</h3>
+        </div>
+        <div class="card-metrica">
+          <span>Qtd. Pescadores</span>
+          <h3 id="fin-total-pescadores">0</h3>
+        </div>
+        <div class="card-metrica">
+          <span>Custo por Pescador</span>
+          <h3 id="fin-custo-pessoa">R$ 0,00</h3>
+        </div>
       </div>
-      <div class="input-group">
-        <label>Horário Inicial</label>
-        <input type="time" id="info-horario-inicio" value="06:00">
+
+      <h2>Adicionar Nova Despesa</h2>
+      <div class="grid-inputs">
+        <div class="input-group">
+          <label>Descrição da Despesa</label>
+          <input type="text" id="despesa-desc" placeholder="Ex: Combustível, Iscas, Gelo">
+        </div>
+        <div class="input-group">
+          <label>Valor (R$)</label>
+          <input type="number" id="despesa-valor" placeholder="0.00" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Pagador/Responsável</label>
+          <input type="text" id="despesa-pagador" placeholder="Ex: Devlin">
+        </div>
       </div>
-      <div class="input-group">
-        <label>Duração/Turno (Horas)</label>
-        <input type="number" id="info-duracao-turno" value="2" min="0.5" step="0.5">
-      </div>
-      <div class="input-group">
-        <label>Quantidade de Turnos</label>
-        <input type="number" id="info-qtd-turnos" value="4" min="1" max="12">
+      <button class="btn-action btn-secondary" onclick="adicionarDespesa()">➕ Cadastrar Despesa</button>
+    </div>
+
+    <div class="card">
+      <h2>Lista de Despesas Cadastradas</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Valor (R$)</th>
+              <th>Responsável</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-despesas"></tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>Participantes e Estrutura dos Bancos</h2>
-    
-    <div class="input-group" style="margin-bottom: 16px;">
-      <label>Participantes (Separe por vírgula - Máximo 3 nomes com '_')</label>
-      <textarea id="lista-participantes">Lucas, Rafael, Roderley, Willian, João Garço, Gabriel, Valtair, Adhamo, Devlin, Wesley, Emiliano, Marcelo R., João_</textarea>
+  <!-- ABA 3: SORTEIO E POSICIONAMENTO NO BARCO -->
+  <div id="aba-sorteio" class="tab-content">
+    <div class="card">
+      <h2>Configurar Estrutura dos Bancos</h2>
+      <div class="grid-inputs">
+        <div class="input-group">
+          <label>Lado Esq. - Bancos</label>
+          <input type="number" id="cfg-esq-bancos" value="3">
+        </div>
+        <div class="input-group">
+          <label>Lado Esq. - Pessoas/Banco</label>
+          <input type="number" id="cfg-esq-pessoas" value="2">
+        </div>
+        <div class="input-group">
+          <label>Lado Dir. - Bancos</label>
+          <input type="number" id="cfg-dir-bancos" value="3">
+        </div>
+        <div class="input-group">
+          <label>Lado Dir. - Pessoas/Banco</label>
+          <input type="number" id="cfg-dir-pessoas" value="2">
+        </div>
+        <div class="input-group">
+          <label>Popa - Bancos</label>
+          <input type="number" id="cfg-popa-bancos" value="2">
+        </div>
+        <div class="input-group">
+          <label>Popa - Pessoas/Banco</label>
+          <input type="number" id="cfg-popa-pessoas" value="2">
+        </div>
+      </div>
+
+      <div class="botoes-acao">
+        <button class="btn-action" id="btn-sortear">
+          <span>🎲</span> Realizar Sorteio de Posicionamento
+        </button>
+        <button class="btn-action btn-pdf" id="btn-gerar-pdf">
+          <span>📄</span> Exportar PDF (Sorteio e Turnos)
+        </button>
+      </div>
     </div>
 
-    <div class="grid-inputs">
-      <div class="input-group">
-        <label>Lado Esq. - Bancos</label>
-        <input type="number" id="cfg-esq-bancos" value="3">
+    <!-- ÁREA IMPRESSA NO PDF -->
+    <div class="card" id="area-print">
+      <div class="banner-pescaria">
+        <h1 id="disp-barco">PESCARIA: PESCA_JUSTA</h1>
+        <div class="banner-detalhes">
+          <span>📍 <strong id="disp-local">Local:</strong> -</span>
+          <span>📅 <strong id="disp-data">Data:</strong> -</span>
+          <span>⏰ <strong id="disp-horario">Início:</strong> -</span>
+          <span>⏳ <strong id="disp-duracao">Turnos:</strong> -</span>
+        </div>
       </div>
-      <div class="input-group">
-        <label>Lado Esq. - Pessoas/Banco</label>
-        <input type="number" id="cfg-esq-pessoas" value="2">
-      </div>
-      <div class="input-group">
-        <label>Lado Dir. - Bancos</label>
-        <input type="number" id="cfg-dir-bancos" value="3">
-      </div>
-      <div class="input-group">
-        <label>Lado Dir. - Pessoas/Banco</label>
-        <input type="number" id="cfg-dir-pessoas" value="2">
-      </div>
-      <div class="input-group">
-        <label>Popa - Bancos</label>
-        <input type="number" id="cfg-popa-bancos" value="2">
-      </div>
-      <div class="input-group">
-        <label>Popa - Pessoas/Banco</label>
-        <input type="number" id="cfg-popa-pessoas" value="2">
-      </div>
-    </div>
 
-    <div class="botoes-acao">
-      <button class="btn-action" id="btn-sortear">
-        <span>🎲</span> Realizar Sorteio de Posicionamento
-      </button>
-      <button class="btn-action btn-pdf" id="btn-gerar-pdf">
-        <span>📄</span> Baixar PDF (Sorteio e Turnos)
-      </button>
+      <h2>Representação Visual do Barco</h2>
+
+      <div class="layout-barco">
+        <div class="lista-lado">
+          <h3>Sorteados Lado Esquerdo</h3>
+          <ul id="lista-esq"></ul>
+        </div>
+
+        <div class="barco-desenho">
+          <div class="proa-label">▲ PROA ▲</div>
+          <div class="grid-bancos" id="container-bancos-principais"></div>
+          <div class="popa-area">
+            <div class="grid-bancos" id="container-bancos-popa"></div>
+            <div class="popa-label">POPA</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="lista-lado">
+            <h3>Sorteados Popa (Inicial)</h3>
+            <ul id="lista-popa"></ul>
+          </div>
+          <div class="lista-lado">
+            <h3>Sorteados Lado Direito</h3>
+            <ul id="lista-dir"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="secao-turnos">
+        <h2>🕒 Cronograma dos Turnos e Horários</h2>
+        <div class="grid-turnos" id="container-relogios"></div>
+      </div>
     </div>
   </div>
 
-  <div class="card" id="area-print">
-    
-    <div class="banner-pescaria">
-      <h1 id="disp-barco">PESCARIA: PESCA_JUSTA</h1>
-      <div class="banner-detalhes">
-        <span>📍 <strong id="disp-local">Local:</strong> -</span>
-        <span>📅 <strong id="disp-data">Data:</strong> -</span>
-        <span>⏰ <strong id="disp-horario">Início:</strong> -</span>
-        <span>⏳ <strong id="disp-duracao">Turnos:</strong> -</span>
-      </div>
-    </div>
-
-    <h2>Representação Visual do Barco</h2>
-
-    <div class="layout-barco">
-      
-      <div class="lista-lado">
-        <h3>Sorteados Lado Esquerdo</h3>
-        <ul id="lista-esq"></ul>
-      </div>
-
-      <div class="barco-desenho">
-        <div class="proa-label">▲ PROA ▲</div>
-        
-        <div class="grid-bancos" id="container-bancos-principais"></div>
-
-        <div class="popa-area">
-          <div class="grid-bancos" id="container-bancos-popa"></div>
-          <div class="popa-label">POPA</div>
+  <!-- ABA 4: PROGRAMAÇÃO DOS TURNOS -->
+  <div id="aba-turnos" class="tab-content">
+    <div class="card">
+      <h2>Configurar Regra dos Turnos</h2>
+      <div class="grid-inputs">
+        <div class="input-group">
+          <label>Horário Inicial</label>
+          <input type="time" id="info-horario-inicio" value="06:00">
+        </div>
+        <div class="input-group">
+          <label>Duração por Turno (Horas)</label>
+          <input type="number" id="info-duracao-turno" value="2" min="0.5" step="0.5">
+        </div>
+        <div class="input-group">
+          <label>Quantidade de Turnos</label>
+          <input type="number" id="info-qtd-turnos" value="4" min="1" max="12">
         </div>
       </div>
-
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <div class="lista-lado">
-          <h3>Sorteados Popa (Inicial)</h3>
-          <ul id="lista-popa"></ul>
-        </div>
-        <div class="lista-lado">
-          <h3>Sorteados Lado Direito</h3>
-          <ul id="lista-dir"></ul>
-        </div>
-      </div>
-
     </div>
-
-    <div class="secao-turnos">
-      <h2>🕒 Cronograma dos Turnos e Horários</h2>
-      <div class="grid-turnos" id="container-relogios"></div>
-    </div>
-
-    <p class="nota-rotacao">
-      <strong>Nota de Rotação:</strong> O rodízio dos lugares é feito no sentido <strong>anti-horário</strong>. Nomes com '_' são sorteados e posicionados na 2ª rodada.
-    </p>
-
   </div>
 
 </div>
 
 <script>
-  // Chaves de Configuração do Firebase
+  // Firebase Credentials
   const firebaseConfig = {
     apiKey: "AIzaSyAY9YVSdP3qtBSIaQnSvs26B70RrP6fMVE",
     authDomain: "pescaria-justa.firebaseapp.com",
@@ -448,11 +618,11 @@
   firebase.initializeApp(firebaseConfig);
   const dbRef = firebase.database().ref('pescaria_estado_atual');
 
+  let despesasLista = [];
   let historicoPopa = [];
   let isUpdatingLocal = false;
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Sincronização em Tempo Real (Firebase -> Tela)
     dbRef.on('value', (snapshot) => {
       const estado = snapshot.val();
       if (estado) {
@@ -476,7 +646,10 @@
         document.getElementById('cfg-popa-bancos').value = estado.cfg?.popaBancos ?? 2;
         document.getElementById('cfg-popa-pessoas').value = estado.cfg?.popaPessoas ?? 2;
 
+        despesasLista = estado.despesas || [];
         historicoPopa = estado.historicoPopa || [];
+
+        renderizarFinancas();
 
         if (estado.ultimoResultado) {
           renderizarTudo(estado.ultimoResultado);
@@ -490,8 +663,7 @@
       }
     });
 
-    // Atualiza o banco ao alterar qualquer campo
-    document.querySelectorAll('input, textarea').forEach(input => {
+    document.querySelectorAll('input, textarea, select').forEach(input => {
       input.addEventListener('change', () => {
         if (!isUpdatingLocal) salvarNaNuvem();
       });
@@ -506,6 +678,64 @@
     });
   });
 
+  function trocarAba(idAba) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(idAba).classList.add('active');
+  }
+
+  function adicionarDespesa() {
+    const desc = document.getElementById('despesa-desc').value.trim();
+    const valor = parseFloat(document.getElementById('despesa-valor').value);
+    const pagador = document.getElementById('despesa-pagador').value.trim();
+
+    if (!desc || isNaN(valor) || valor <= 0) {
+      alert('Preencha a descrição e um valor válido para a despesa.');
+      return;
+    }
+
+    despesasLista.push({ id: Date.now(), desc, valor, pagador: pagador || 'Geral' });
+    document.getElementById('despesa-desc').value = '';
+    document.getElementById('despesa-valor').value = '';
+    document.getElementById('despesa-pagador').value = '';
+
+    renderizarFinancas();
+    salvarNaNuvem();
+  }
+
+  function removerDespesa(id) {
+    despesasLista = despesasLista.filter(d => d.id !== id);
+    renderizarFinancas();
+    salvarNaNuvem();
+  }
+
+  function renderizarFinancas() {
+    const tbody = document.getElementById('tabela-despesas');
+    tbody.innerHTML = '';
+
+    let total = 0;
+    despesasLista.forEach(d => {
+      total += d.valor;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${d.desc}</td>
+        <td>R$ ${d.valor.toFixed(2)}</td>
+        <td>${d.pagador}</td>
+        <td><button class="btn-danger" onclick="removerDespesa(${d.id})">Excluir</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    const textoParticipantes = document.getElementById('lista-participantes').value;
+    const qtdPescadores = textoParticipantes.split(',').map(n => n.trim()).filter(n => n.length > 0).length || 1;
+
+    document.getElementById('fin-total-despesas').innerText = `R$ ${total.toFixed(2)}`;
+    document.getElementById('fin-total-pescadores').innerText = qtdPescadores;
+    document.getElementById('fin-custo-pessoa').innerText = `R$ ${(total / qtdPescadores).toFixed(2)}`;
+  }
+
   function salvarNaNuvem(resultadoSorteio = null) {
     const snapshotSorteio = resultadoSorteio || window.ultimoResultadoGlobal;
 
@@ -519,6 +749,7 @@
         qtdTurnos: document.getElementById('info-qtd-turnos').value,
       },
       participantesTexto: document.getElementById('lista-participantes').value,
+      despesas: despesasLista,
       cfg: {
         esqBancos: parseInt(document.getElementById('cfg-esq-bancos').value) || 0,
         esqPessoas: parseInt(document.getElementById('cfg-esq-pessoas').value) || 0,
@@ -538,25 +769,21 @@
     const textoParticipantes = document.getElementById('lista-participantes').value;
     const listaCompleta = textoParticipantes.split(',').map(n => n.trim()).filter(n => n.length > 0);
 
-    // Validação: Máximo de 3 nomes com '_'
     const comUnderscore = listaCompleta.filter(nome => nome.includes('_'));
     if (comUnderscore.length > 3) {
-      alert(`Erro: Você inseriu ${comUnderscore.length} nomes com '_'. O limite máximo permitido é 3.`);
+      alert(`Erro: Você colocou ${comUnderscore.length} nomes com '_'. É permitido no máximo 3.`);
       return;
     }
 
     const semUnderscore = listaCompleta.filter(nome => !nome.includes('_'));
 
-    // Sorteia cada grupo separadamente
     let rodada1Embaralhada = [...semUnderscore].sort(() => Math.random() - 0.5);
     let rodada2Embaralhada = [...comUnderscore].sort(() => Math.random() - 0.5);
 
-    // Junta as rodadas (Rodada 1 primeiro, Rodada 2 com '_' depois)
     let listaEmbaralhada = [...rodada1Embaralhada, ...rodada2Embaralhada];
 
     const vagasPopa = (parseInt(document.getElementById('cfg-popa-bancos').value) || 2) * (parseInt(document.getElementById('cfg-popa-pessoas').value) || 2);
 
-    // Trava para evitar repetição contínua na Popa
     for (let i = 0; i < vagasPopa && i < listaEmbaralhada.length; i++) {
       let pessoa = listaEmbaralhada[i];
       if (historicoPopa.includes(pessoa)) {
@@ -574,13 +801,13 @@
     });
 
     window.ultimoResultadoGlobal = listaEmbaralhada;
+    renderizarFinancas();
     salvarNaNuvem(listaEmbaralhada);
   }
 
   function renderizarTudo(listaPessoas) {
     window.ultimoResultadoGlobal = listaPessoas;
 
-    // Atualiza cabeçalho do Banner
     document.getElementById('disp-barco').innerText = `PESCARIA: ${(document.getElementById('info-barco').value || 'PESCA_JUSTA').toUpperCase()}`;
     document.getElementById('disp-local').innerText = document.getElementById('info-local').value || '-';
     
@@ -594,7 +821,6 @@
     document.getElementById('disp-horario').innerText = `${inicioVal}h`;
     document.getElementById('disp-duracao').innerText = `${qtdTurnosVal} turnos (${duracaoVal}h/cada)`;
 
-    // Configuração dos Bancos
     const esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 0;
     const esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 0;
     const dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 0;
@@ -622,13 +848,11 @@
 
     let contadorBanco = 1;
 
-    // Desenha Popa
     for (let b = 0; b < popaBancos; b++) {
       let ocupantes = pessoasPopa.slice(b * popaPessoas, (b + 1) * popaPessoas).join(' / ') || 'Vago';
       containerPopa.appendChild(criarCardBanco(`BANCO0${contadorBanco++}`, ocupantes));
     }
 
-    // Desenha Esquerda e Direita da Proa para a Popa
     let maxBancosLado = Math.max(esqBancos, dirBancos);
     for (let b = maxBancosLado - 1; b >= 0; b--) {
       if (b < esqBancos) {
@@ -646,7 +870,6 @@
       }
     }
 
-    // Calcula os relógios de cada turno automaticamente
     gerarRelogiosTurnos(inicioVal, duracaoVal, qtdTurnosVal);
   }
 
@@ -667,7 +890,6 @@
     return div;
   }
 
-  // Gera a sequência matemática exata dos horários de cada turno
   function gerarRelogiosTurnos(horarioInicioStr, duracaoHoras, totalTurnos) {
     const container = document.getElementById('container-relogios');
     container.innerHTML = '';
@@ -680,9 +902,7 @@
 
     for (let t = 1; t <= totalTurnos; t++) {
       const inicioStr = dataAtual.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      
       dataAtual.setMinutes(dataAtual.getMinutes() + duracaoEmMinutos);
-      
       const fimStr = dataAtual.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
       const card = document.createElement('div');
@@ -698,7 +918,7 @@
     
     const opcoes = {
       margin:       0.2,
-      filename:     `sorteio_turnos_${nomeBarco.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+      filename:     `relatorio_pescaria_${nomeBarco.toLowerCase().replace(/\s+/g, '_')}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true },
       jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
