@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesca Justa - Gerenciador de Pescarias</title>
+    <title>Pesca Justa - Gestão de Pescarias</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -16,6 +16,7 @@
             --text-main: #1E293B;
             --text-muted: #64748B;
             --success: #10B981;
+            --warning: #F59E0B;
             --danger: #EF4444;
             --danger-bg: #FEE2E2;
             --border-color: #E2E8F0;
@@ -33,298 +34,23 @@
             color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Permite rolagem no mobile */
+            align-items: center;
             min-height: 100vh;
-            padding: 10px;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--bg-light);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            height: 90vh; /* Altura flexível */
-            max-height: 850px;
-            border: 4px solid #1e293b;
-        }
-
-        .status-bar {
-            background: linear-gradient(135deg, #0A192F, #1E3A8A);
-            color: white;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .screen {
-            display: none;
-            flex-direction: column;
-            flex: 1;
-            overflow-y: auto; /* Correção do Scroll */
-            padding-bottom: 80px; 
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        .hero-banner {
-            background: linear-gradient(rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.8)), url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80') center/cover;
-            color: white;
-            padding: 24px 20px;
-            text-align: center;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-        }
-
-        .content-body {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 14px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-bottom: 10px;
-        }
-
-        .form-group label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
-        .form-group input {
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 13px;
-        }
-
-        .btn-primary {
-            background-color: var(--success);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* --- Tabela Financeira --- */
-        .finance-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-top: 10px;
-        }
-
-        .finance-table th, .finance-table td {
-            padding: 8px;
-            border-bottom: 1px solid var(--border-color);
-            text-align: left;
-        }
-
-        .finance-table th {
-            background: #F1F5F9;
-            color: var(--primary-dark);
-        }
-
-        .finance-input {
-            width: 70px;
-            padding: 4px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* --- Estrutura do Barco (Pronto para Imagem) --- */
-        .boat-schema-container {
-            position: relative;
-            background: #0A192F;
-            border-radius: 20px;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 400px;
-            /* Para usar a imagem do barco, adicione a URL abaixo e ajuste o padding */
-            /* background: url('SUA_IMAGEM.jpg') center/contain no-repeat #0A192F; */
-        }
-
-        .boat-hull {
-            width: 100%;
-            max-width: 320px;
-            background: rgba(30, 58, 138, 0.85);
-            border-radius: 40px 40px 15px 15px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            border: 3px solid #DEB887;
-        }
-
-        .boat-row-seats {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .seat-box {
-            background: white;
-            border-radius: 8px;
-            padding: 6px;
-            flex: 1;
-            text-align: center;
-            font-size: 10px;
-            border: 1px solid #CBD5E1;
-            position: relative; /* Mantido para fácil adaptação com imagem de fundo no container pai */
-        }
-
-        .seat-box .seat-num {
-            font-weight: 700;
-            color: var(--primary-dark);
-            font-size: 11px;
-        }
-
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--primary-dark);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            height: 65px;
-        }
-
-        .nav-item {
-            background: none;
-            border: none;
-            color: #94A3B8;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: 500;
-        }
-
-        .nav-item.active { color: white; }
-    </style>
-</head>
-<body>
-
-<div class="app-container">
-    <div class="status-bar">
-        <span><i class="fa-solid fa-anchor"></i> Pesca Justa</span>
-        <span>20:30</span>
-    </div>
-
-    <!-- TELA 1: HOME -->
-    <div id="home-screen" class="screen active">
-        <div class="hero-banner">
-            <h1>PESCA JUSTA</h1>
-            <p>GESTÃO COMPLETA</p>
-        </div>
-        <div class="content-body">
-            <div class="card">
-                <button class="btn-primary" onclick="switchScreen('participants-screen')">1. Equipe</button>
-                <button class="btn-primary" onclick="switchScreen('finance-screen')">2. Finanças</button>
-                <button class="btn-primary" onclick="switchScreen('draw-screen')">3. Sorteio do Barco</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- TELA 2: PARTICIPANTES -->
-    <div id="participants-screen" class="screen">
-        <div class="content-body">
-            <hAqui está o código completo, contínuo e atualizado com todas as melhorias solicitadas. Corrigi a rolagem (scroll), implementei o módulo financeiro com o rateio e o emoji 🤢, ajustei a lógica de distribuição do barco (Popa, Lado Esquerdo e Lado Direito) e deixei a estrutura preparada para a imagem de fundo real do barco.
-
-Copie o código abaixo e salve como um arquivo **`.html`** para testar:
-
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesca Justa - Gerenciador de Pescarias</title>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap)" rel="stylesheet">
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
-    <style>
-        :root {
-            --primary-dark: #0A192F;
-            --primary-blue: #1E3A8A;
-            --accent-blue: #3B82F6;
-            --bg-light: #F8FAFC;
-            --card-bg: #FFFFFF;
-            --text-main: #1E293B;
-            --text-muted: #64748B;
-            --success: #10B981;
-            --danger: #EF4444;
-            --danger-bg: #FEE2E2;
-            --border-color: #E2E8F0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--primary-dark);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 10px;
         }
 
         .app-container {
             width: 100%;
             max-width: 480px;
             background-color: var(--bg-light);
-            border-radius: 24px;
+            border-radius: 36px;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             position: relative;
             border: 8px solid #1e293b;
-            height: 90vh; /* Flexível para não cortar os botões */
-            max-height: 880px;
+            height: 900px;
         }
 
         .status-bar {
@@ -334,16 +60,15 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             flex-shrink: 0;
         }
 
         .screen {
             display: none;
             flex-direction: column;
-            flex: 1;
-            overflow-y: auto; /* Scroll global corrigido */
-            padding-bottom: 85px; /* Espaço para a barra inferior */
+            height: calc(100% - 110px);
+            overflow-y: auto;
         }
 
         .screen.active {
@@ -351,26 +76,34 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         }
 
         .hero-banner {
-            background: linear-gradient(rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.8)), url('[https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80](https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80)') center/cover;
+            background: linear-gradient(rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.85)), url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
             color: white;
             padding: 24px 20px;
             text-align: center;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
 
-        .hero-banner img.logo {
-            width: 70px;
-            height: 70px;
+        .hero-banner .logo {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 3px solid white;
+            border: 2px solid white;
             object-fit: cover;
-            margin-bottom: 8px;
         }
 
         .hero-banner h1 {
             font-size: 20px;
-            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .hero-banner p {
+            font-size: 11px;
+            color: #94A3B8;
         }
 
         .content-body {
@@ -383,7 +116,7 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         .card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 14px;
+            padding: 16px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
         }
@@ -396,8 +129,8 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         }
 
         .card-title {
-            font-size: 14px;
             font-weight: 700;
+            font-size: 14px;
             color: var(--primary-dark);
             display: flex;
             align-items: center;
@@ -407,7 +140,7 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         .info-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 8px;
             font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 6px;
@@ -415,193 +148,216 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
 
         .action-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
 
         .action-btn {
-            background: var(--card-bg);
+            background: white;
             border: 1px solid var(--border-color);
+            padding: 14px;
             border-radius: 12px;
-            padding: 12px 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 6px;
             cursor: pointer;
             transition: all 0.2s;
-            color: var(--text-main);
-        }
-
-        .action-btn:hover {
-            border-color: var(--accent-blue);
-            background: #F0F9FF;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 11px;
         }
 
         .action-btn i {
-            font-size: 18px;
-            color: var(--primary-blue);
+            font-size: 20px;
+            color: var(--accent-blue);
         }
 
-        .action-btn span {
-            font-size: 10px;
-            font-weight: 600;
+        .action-btn:active {
+            transform: scale(0.97);
+            background: #F1F5F9;
         }
 
-        .btn-primary {
-            background-color: var(--success);
+        .btn-whatsapp {
+            background-color: #25D366;
             color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-            margin-bottom: 10px;
-            margin-top: 10px;
         }
 
-        .btn-primary:hover {
-            background-color: #059669;
+        .btn-whatsapp i {
+            color: white;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .form-group label {
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-muted);
         }
 
         .form-group input {
-            padding: 8px 10px;
-            border-radius: 8px;
+            padding: 8px 12px;
             border: 1px solid var(--border-color);
-            font-size: 13px;
+            border-radius: 8px;
+            font-size: 12px;
             outline: none;
         }
 
-        /* Tabela Financeira e Configurações */
+        .form-group input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .form-row-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .pay-progress-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-top: 4px;
+        }
+
+        .pay-progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #E2E8F0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .pay-progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--danger);
+            border-radius: 4px;
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+
+        .pay-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
         .finance-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
-            margin-top: 10px;
+            font-size: 11px;
         }
 
         .finance-table th, .finance-table td {
-            padding: 8px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 6px 4px;
             text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .finance-table th {
-            background: #F1F5F9;
-            color: var(--primary-dark);
-            font-weight: 700;
-        }
-        
-        .finance-table td input {
-            width: 70px;
-            padding: 4px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
-        /* Estrutura do Barco Preparada para Imagem */
         .boat-schema-container {
-            position: relative;
-            background: #0A192F;
-            border-radius: 20px;
-            padding: 20px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 400px;
-            overflow: hidden;
-            /* Dica: Para colocar a imagem de fundo real, use a linha abaixo: */
-            /* background: url('[https://link-da-sua-imagem.com/barco.jpg](https://link-da-sua-imagem.com/barco.jpg)') center/cover no-repeat; */
+            min-height: 300px;
+            position: relative;
+            background-color: rgba(10, 25, 47, 0.85);
+            background-blend-mode: overlay;
+        }
+
+        .boat-section-label {
+            color: #94A3B8;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 6px 0;
         }
 
         .boat-hull {
             width: 100%;
-            max-width: 320px;
-            background: rgba(30, 58, 138, 0.7); /* Transparente para ver a foto do barco por trás */
-            border-radius: 60px 60px 15px 15px;
-            padding: 30px 15px 15px 15px;
+            max-width: 280px;
+            border: 2px dashed #38BDF8;
+            border-radius: 40px 40px 16px 16px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            border: 2px dashed #DEB887;
-        }
-
-        .boat-section-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: #93C5FD;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
+            gap: 8px;
         }
 
         .boat-row-seats {
             display: flex;
-            justify-content: center;
-            gap: 8px;
+            justify-content: space-around;
+            gap: 6px;
         }
 
         .seat-box {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 8px;
-            padding: 6px;
-            min-width: 65px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 6px;
+            padding: 6px 4px;
+            flex: 1;
             text-align: center;
-            border: 1px solid #CBD5E1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .seat-box .seat-num {
-            font-weight: 700;
-            color: var(--primary-dark);
-            font-size: 11px;
-        }
-
-        .seat-box .seat-name {
+        .seat-num {
             font-size: 9px;
-            color: var(--text-main);
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .seat-name {
+            font-size: 10px;
             font-weight: 600;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 80px;
-            margin: 0 auto;
         }
 
-        /* Navegação Inferior */
         .bottom-nav {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
+            height: 60px;
             background: var(--primary-dark);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            height: 65px;
-            z-index: 100;
+            align-items: center;
+            border-top: 1px solid #1e293b;
         }
 
         .nav-item {
@@ -621,7 +377,6 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
             color: white;
         }
 
-        /* Toast de Notificação */
         .toast {
             position: fixed;
             bottom: 80px;
@@ -629,7 +384,7 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
             transform: translateX(-50%) translateY(100px);
             background: #10B981;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
@@ -641,6 +396,54 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         .toast.show {
             transform: translateX(-50%) translateY(0);
         }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Estilo para Impressão e PDF */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                padding: 0;
+            }
+            .app-container {
+                border: none;
+                box-shadow: none;
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
+            .status-bar, .bottom-nav, .action-grid, button {
+                display: none !important;
+            }
+            .screen {
+                display: block !important;
+                height: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -648,14 +451,14 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
 <div class="app-container">
     <div class="status-bar">
         <span><i class="fa-solid fa-anchor"></i> Pesca Justa</span>
-        <span id="clock">07:52</span>
+        <span id="clock">00:00:00</span>
         <span><i class="fa-solid fa-bell"></i></span>
     </div>
 
     <!-- TELA 1: HOME -->
     <div id="home-screen" class="screen active">
-        <div class="hero-banner">
-            <img src="[https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80](https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80)" alt="Logo" class="logo">
+        <div class="hero-banner" id="hero-banner-bg">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" alt="Logo" class="logo" id="hero-logo-img">
             <h1>PESCA JUSTA</h1>
             <p>GESTÃO COMPLETA DE PESCARIA</p>
         </div>
@@ -663,11 +466,13 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         <div class="content-body">
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title"><i class="fa-solid fa-ship"></i> PRÓXIMA SAÍDA</span>
+                    <span class="card-title"><i class="fa-solid fa-ship"></i> <span id="lbl-barco-nome">Barco Imperador</span></span>
                 </div>
-                <div class="info-row"><i class="fa-solid fa-location-dot"></i> <span>Ilha da Vitória - SP</span></div>
-                <div class="info-row"><i class="fa-regular fa-calendar"></i> <span>Outubro de 2026</span></div>
-                <div class="info-row"><i class="fa-solid fa-coins"></i> <strong id="lbl-custo-total-home">R$ 0,00</strong></div>
+                <div class="info-row"><i class="fa-solid fa-location-dot"></i> Destino: <span id="lbl-destino">Búzios - RJ</span></div>
+                <div class="info-row"><i class="fa-regular fa-calendar"></i> Saída: <span id="lbl-data-saida">17/10/2026 às 06:00</span></div>
+                <div class="info-row"><i class="fa-solid fa-clock"></i> Duração: <span id="lbl-duracao">12 horas</span></div>
+                <div class="info-row"><i class="fa-solid fa-flag-checkered"></i> Retorno Previsto: <span id="lbl-retorno">17/10/2026 às 18:00</span></div>
+                <div class="info-row"><i class="fa-solid fa-coins"></i> Custo Total Viagem: <strong id="lbl-custo-total">R$ 0,00</strong></div>
             </div>
 
             <div class="action-grid">
@@ -681,19 +486,19 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
                 </button>
                 <button class="action-btn" onclick="switchScreen('draw-screen')">
                     <i class="fa-solid fa-dice"></i>
-                    <span>SORTEIO</span>
+                    <span>BARCO & SORTEIO</span>
                 </button>
                 <button class="action-btn" onclick="switchScreen('config-screen')">
                     <i class="fa-solid fa-gear"></i>
-                    <span>BARCO</span>
+                    <span>CONFIGURAR</span>
                 </button>
-                <button class="action-btn" onclick="executarRodizio()">
-                    <i class="fa-solid fa-rotate"></i>
-                    <span>RODÍZIO</span>
+                <button class="action-btn btn-whatsapp" onclick="exportarWhatsApp()">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>ENVIAR ZAP</span>
                 </button>
-                <button class="action-btn" onclick="showToast('Relatório salvo em PDF!')">
-                    <i class="fa-solid fa-file-lines"></i>
-                    <span>RELATÓRIO</span>
+                <button class="action-btn" onclick="exportarPDF()">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>IMPRIMIR / PDF</span>
                 </button>
             </div>
         </div>
@@ -703,27 +508,35 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
     <div id="participants-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">GERENCIAR PESCADORES</h2>
+            <h2 style="font-size: 15px;">GERENCIAR PESCADORES & PAGAMENTOS</h2>
         </div>
         <div class="content-body">
             <div class="card">
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-user-plus"></i> Novo Pescador</span>
                 <div class="form-group">
-                    <label>Nome do Pescador</label>
-                    <input type="text" id="input-nome" placeholder="Ex: Devlin Mariano">
+                    <label>Nome do Pescador *</label>
+                    <input type="text" id="input-nome" placeholder="Ex: Carlos Silva">
                 </div>
-                <button class="btn-primary" onclick="adicionarParticipante()">
-                    <i class="fa-solid fa-user-plus"></i> CADASTRAR PESCADOR
+                
+                <p style="font-size: 10px; font-weight: 700; color: var(--text-muted); margin: 6px 0 4px 0;">Valores Já Pagos (R$):</p>
+                <div class="form-row-grid">
+                    <div class="form-group"><label>Frete Barco</label><input type="number" id="input-frete" placeholder="0.00" value="0"></div>
+                    <div class="form-group"><label>Alimentação</label><input type="number" id="input-alim" placeholder="0.00" value="0"></div>
+                    <div class="form-group"><label>Iscas</label><input type="number" id="input-iscas" placeholder="0.00" value="0"></div>
+                    <div class="form-group"><label>Bebidas/Outros</label><input type="number" id="input-outros" placeholder="0.00" value="0"></div>
+                </div>
+
+                <button class="btn-primary" style="margin-top: 6px;" onclick="adicionarParticipante()">
+                    <i class="fa-solid fa-check"></i> CADASTRAR PESCADOR
                 </button>
             </div>
 
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title">Pescadores Cadastrados</span>
-                    <span id="contador-pescadores" style="font-size: 11px; color: var(--text-muted); font-weight: 700;">0 Total</span>
+                    <span class="card-title"><i class="fa-solid fa-list-check"></i> Lista de Pescadores</span>
+                    <span id="contador-pescadores" style="font-size: 11px; color: var(--text-muted); font-weight: 700;">0</span>
                 </div>
-                <div id="lista-participantes-div" style="display: flex; flex-direction: column; gap: 6px;">
-                    <!-- Preenchido via JS -->
-                </div>
+                <div id="lista-participantes-div" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
         </div>
     </div>
@@ -732,292 +545,390 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
     <div id="finance-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONTROLE FINANCEIRO</h2>
+            <h2 style="font-size: 15px;">CONTROLE FINANCEIRO & RATEIO</h2>
         </div>
         <div class="content-body">
-            
             <div class="card">
-                <div class="card-header-flex">
-                    <span class="card-title">Despesas Totais</span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group"><label>Aluguel do Barco (R$)</label><input type="number" id="desp-barco" value="0" oninput="calcularFinancas()"></div>
-                    <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="desp-alim" value="0" oninput="calcularFinancas()"></div>
-                    <div class="form-group"><label>Iscas (R$)</label><input type="number" id="desp-isca" value="0" oninput="calcularFinancas()"></div>
-                    <div class="form-group"><label>Bebidas e Outros (R$)</label><input type="number" id="desp-outros" value="0" oninput="calcularFinancas()"></div>
-                </div>
-                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 10px 0;">
-                <div class="info-row">
-                    <span style="font-weight: bold; color: var(--text-main);">Custo Total:</span>
-                    <strong id="lbl-custo-total-fin" style="color: var(--danger); font-size: 14px;">R$ 0,00</strong>
-                </div>
-                <div class="info-row">
-                    <span style="font-weight: bold; color: var(--text-main);">Rateio por Pescador:</span>
-                    <strong id="lbl-rateio-fin" style="color: var(--primary-blue); font-size: 14px;">R$ 0,00</strong>
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-receipt"></i> Custo Total da Viagem</span>
+                <table class="finance-table">
+                    <thead>
+                        <tr><th>Tipo</th><th>Valor (R$)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Aluguel Barco (Frete)</td><td><input type="number" id="desp-aluguel" value="1200" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
+                        <tr><td>Alimentação</td><td><input type="number" id="desp-alimentacao" value="300" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
+                        <tr><td>Iscas</td><td><input type="number" id="desp-iscas" value="150" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
+                        <tr><td>Gelo / Bebidas</td><td><input type="number" id="desp-bebidas" value="200" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
+                        <tr><td>Outros</td><td><input type="number" id="desp-outros" value="70" onchange="calcularFinancas()" style="width: 80px;"></td></tr>
+                    </tbody>
+                </table>
+                <div style="font-size: 12px; margin-top: 10px; text-align: right; font-weight: 700;">
+                    Rateio Individual: <span id="lbl-rateio-ind" style="color: var(--primary-blue);">R$ 0,00</span>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title">Extrato Individual</span>
+                    <span class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Tabela de Pagamentos</span>
                 </div>
-                <table class="finance-table">
-                    <thead>
-                        <tr>
-                            <th>Pescador</th>
-                            <th>Pago (R$)</th>
-                            <th>Falta (R$)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-financas">
-                        <!-- Preenchido via JS -->
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="finance-table" style="min-width: 520px;">
+                        <thead>
+                            <tr>
+                                <th>Pescador</th>
+                                <th>Frete</th>
+                                <th>Alim.</th>
+                                <th>Iscas</th>
+                                <th>Beb.</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Editar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-pagamentos-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- TELA 4: SORTEIO E BARCO -->
+    <!-- TELA 4: BARCO -->
     <div id="draw-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">POSIÇÕES NO BARCO</h2>
+            <h2 style="font-size: 15px;">SORTEIO E POSIÇÕES DO BARCO</h2>
         </div>
         <div class="content-body">
-            <button class="btn-primary" onclick="realizarSorteioBarco()" style="margin-top: 0;">
-                <i class="fa-solid fa-dice"></i> REALIZAR SORTEIO AGORA
+            <button class="btn-primary" onclick="realizarSorteioBarco()">
+                <i class="fa-solid fa-dice"></i> SORTEAR POSIÇÕES DO BARCO
             </button>
-            <button class="btn-primary" onclick="executarRodizio()" style="background: var(--primary-blue); margin-top: 0;">
-                <i class="fa-solid fa-rotate"></i> APLICAR RODÍZIO
-            </button>
-            
-            <div class="boat-schema-container">
-                <div class="boat-hull" id="boat-hull-container">
-                    <!-- Esquema Visual será injetado aqui -->
-                </div>
+
+            <div class="boat-schema-container" id="boat-bg-container">
+                <div class="boat-section-label">PROA (Frente)</div>
+                <div class="boat-hull" id="boat-hull-container"></div>
+                <div class="boat-section-label" style="margin-top: 10px;">POPA (Fundo)</div>
             </div>
         </div>
     </div>
 
-    <!-- TELA 5: CONFIGURAR BARCO -->
+    <!-- TELA 5: CONFIGURAÇÕES -->
     <div id="config-screen" class="screen">
         <div style="background: var(--primary-dark); color: white; padding: 14px; display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-chevron-left" style="cursor: pointer;" onclick="switchScreen('home-screen')"></i>
-            <h2 style="font-size: 15px;">CONFIGURAR BARCO</h2>
+            <h2 style="font-size: 15px;">CONFIGURAR PESCARIA</h2>
         </div>
         <div class="content-body">
             <div class="card">
-                <span class="card-title" style="margin-bottom: 10px;">Lado Esquerdo</span>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Qtd de Bancos</label>
-                        <input type="number" id="cfg-esq-bancos" value="3" onchange="atualizarEsquemaBarco()">
-                    </div>
-                    <div class="form-group">
-                        <label>Pessoas por Banco</label>
-                        <input type="number" id="cfg-esq-pessoas" value="1" onchange="atualizarEsquemaBarco()">
-                    </div>
-                </div>
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-ship"></i> Dados Principais</span>
+                <div class="form-group"><label>Nome do Barco</label><input type="text" id="cfg-barco-nome" value="Barco Imperador" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>URL Imagem de Fundo</label><input type="text" id="cfg-barco-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>URL Logo</label><input type="text" id="cfg-logo-img" value="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Destino</label><input type="text" id="cfg-local" value="Búzios - RJ" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Saída</label><input type="datetime-local" id="cfg-data-saida" value="2026-10-17T06:00" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Duração (Horas)</label><input type="number" id="cfg-duracao" value="12" onchange="atualizarDadosPescaria()"></div>
+                <div class="form-group"><label>Retorno</label><input type="datetime-local" id="cfg-data-retorno" value="2026-10-17T18:00" onchange="atualizarDadosPescaria()"></div>
             </div>
+
             <div class="card">
-                <span class="card-title" style="margin-bottom: 10px;">Lado Direito</span>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Qtd de Bancos</label>
-                        <input type="number" id="cfg-dir-bancos" value="3" onchange="atualizarEsquemaBarco()">
-                    </div>
-                    <div class="form-group">
-                        <label>Pessoas por Banco</label>
-                        <input type="number" id="cfg-dir-pessoas" value="1" onchange="atualizarEsquemaBarco()">
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <span class="card-title" style="margin-bottom: 10px;">Popa (Fundo)</span>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Qtd de Bancos</label>
-                        <input type="number" id="cfg-popa-bancos" value="1" onchange="atualizarEsquemaBarco()">
-                    </div>
-                    <div class="form-group">
-                        <label>Pessoas por Banco</label>
-                        <input type="number" id="cfg-popa-pessoas" value="2" onchange="atualizarEsquemaBarco()">
-                    </div>
-                </div>
+                <span class="card-title" style="margin-bottom: 8px;"><i class="fa-solid fa-chair"></i> Configuração de Assentos</span>
+                <div class="form-group"><label>Bancos na Popa</label><input type="number" id="cfg-popa-bancos" value="1" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Pessoas por Banco (Popa)</label><input type="number" id="cfg-popa-pessoas" value="2" onchange="atualizarEsquemaBarco()"></div>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
+                <div class="form-group"><label>Bancos no Lado Esquerdo</label><input type="number" id="cfg-esq-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Pessoas por Banco (Esq)</label><input type="number" id="cfg-esq-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
+                <div class="form-group"><label>Bancos no Lado Direito</label><input type="number" id="cfg-dir-bancos" value="3" onchange="atualizarEsquemaBarco()"></div>
+                <div class="form-group"><label>Pessoas por Banco (Dir)</label><input type="number" id="cfg-dir-pessoas" value="1" onchange="atualizarEsquemaBarco()"></div>
             </div>
         </div>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR -->
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchScreen('home-screen'); setActiveNav(this);">
-            <i class="fa-solid fa-house"></i><span>Início</span>
-        </button>
-        <button class="nav-item" onclick="switchScreen('participants-screen'); setActiveNav(this);">
-            <i class="fa-solid fa-users"></i><span>Equipe</span>
-        </button>
-        <button class="nav-item" onclick="switchScreen('finance-screen'); setActiveNav(this);">
-            <i class="fa-solid fa-wallet"></i><span>Caixa</span>
-        </button>
-        <button class="nav-item" onclick="switchScreen('draw-screen'); setActiveNav(this);">
-            <i class="fa-solid fa-ship"></i><span>Sorteio</span>
-        </button>
+        <button class="nav-item active" onclick="switchScreen('home-screen')"><i class="fa-solid fa-house"></i><span>Início</span></button>
+        <button class="nav-item" onclick="switchScreen('participants-screen')"><i class="fa-solid fa-users"></i><span>Equipe</span></button>
+        <button class="nav-item" onclick="switchScreen('finance-screen')"><i class="fa-solid fa-wallet"></i><span>Finanças</span></button>
+        <button class="nav-item" onclick="switchScreen('draw-screen')"><i class="fa-solid fa-ship"></i><span>Barco</span></button>
+    </div>
+</div>
+
+<!-- MODAL EDIÇÃO PAGO -->
+<div class="modal-overlay" id="modal-pagamento">
+    <div class="modal-card">
+        <h3 style="font-size: 15px; color: var(--primary-dark);" id="modal-titulo-pescador">Editar Pagamento</h3>
+        <p style="font-size: 11px; color: var(--text-muted);">Valores pagos em cada categoria:</p>
+        
+        <div class="form-group"><label>Frete Barco (R$)</label><input type="number" id="mod-frete" value="0" step="0.01"></div>
+        <div class="form-group"><label>Alimentação (R$)</label><input type="number" id="mod-alim" value="0" step="0.01"></div>
+        <div class="form-group"><label>Iscas (R$)</label><input type="number" id="mod-iscas" value="0" step="0.01"></div>
+        <div class="form-group"><label>Bebidas / Outros (R$)</label><input type="number" id="mod-outros" value="0" step="0.01"></div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn-primary" onclick="salvarPagamentoIndividual()">Salvar</button>
+            <button class="btn-primary" style="background-color: var(--text-muted);" onclick="fecharModal()">Cancelar</button>
+        </div>
     </div>
 </div>
 
 <div id="toast" class="toast">Ação realizada!</div>
 
 <script>
-    let participantes = [];
+    let participantes = [
+        { id: 1, name: "João Silva", frete: 240, alim: 50, iscas: 0, outros: 0, vaga: 1 },
+        { id: 2, name: "Carlos Eduardo", frete: 0, alim: 0, iscas: 0, outros: 0, vaga: 2 },
+        { id: 3, name: "Marcelo Santos", frete: 240, alim: 50, iscas: 30, outros: 0, vaga: 3 },
+        { id: 4, name: "Roberto Lima", frete: 100, alim: 0, iscas: 0, outros: 0, vaga: 4 },
+        { id: 5, name: "André Luiz", frete: 240, alim: 60, iscas: 30, outros: 14, vaga: 5 },
+        { id: 6, name: "Fernando C.", frete: 150, alim: 50, iscas: 30, outros: 0, vaga: 6 }
+    ];
+
     let configBarco = { popaBancos: 1, popaPessoas: 2, esqBancos: 3, esqPessoas: 1, dirBancos: 3, dirPessoas: 1 };
+    let idPI = null;
 
-    function adicionarParticipante() {
-        const input = document.getElementById('input-nome');
-        const nome = input.value.trim();
-        if(!nome) return;
+    function iniciarRelogio() {
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
+        }, 1000);
+    }
+    iniciarRelogio();
 
-        const novoId = participantes.length > 0 ? Math.max(...participantes.map(p => p.id)) + 1 : 1;
-        participantes.push({ id: novoId, name: nome, pago: 0, vaga: null });
-        input.value = '';
-        renderizarParticipantes();
-        calcularFinancas();
-        showToast("Pescador adicionado!");
+    function atualizarDadosPescaria() {
+        document.getElementById('lbl-barco-nome').innerText = document.getElementById('cfg-barco-nome').value;
+        document.getElementById('lbl-destino').innerText = document.getElementById('cfg-local').value;
+        
+        const sa = document.getElementById('cfg-data-saida').value;
+        if(sa) document.getElementById('lbl-data-saida').innerText = new Date(sa).toLocaleString('pt-BR');
+        
+        document.getElementById('lbl-duracao').innerText = document.getElementById('cfg-duracao').value + " horas";
+        
+        const re = document.getElementById('cfg-data-retorno').value;
+        if(re) document.getElementById('lbl-retorno').innerText = new Date(re).toLocaleString('pt-BR');
+
+        const bg = document.getElementById('cfg-barco-img').value;
+        if(bg) document.getElementById('boat-bg-container').style.backgroundImage = `url('${bg}')`;
+
+        const lg = document.getElementById('cfg-logo-img').value;
+        if(lg) {
+            document.getElementById('hero-banner-bg').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.85)), url('${lg}')`;
+            document.getElementById('hero-logo-img').src = lg;
+        }
     }
 
-    function removerParticipante(id) {
-        participantes = participantes.filter(p => p.id !== id);
-        renderizarParticipantes();
-        calcularFinancas();
-        showToast("Removido com sucesso!");
-    }
+    function obterRateioIndividual() {
+        const aluguel = parseFloat(document.getElementById('desp-aluguel').value) || 0;
+        const alim = parseFloat(document.getElementById('desp-alimentacao').value) || 0;
+        const iscas = parseFloat(document.getElementById('desp-iscas').value) || 0;
+        const bebidas = parseFloat(document.getElementById('desp-bebidas').value) || 0;
+        const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
 
-    function renderizarParticipantes() {
-        const div = document.getElementById('lista-participantes-div');
-        div.innerHTML = '';
-        document.getElementById('contador-pescadores').innerText = `${participantes.length} Total`;
-
-        participantes.forEach((p, idx) => {
-            div.innerHTML += `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px;">
-                    <span><b>${idx+1}.</b> ${p.name}</span>
-                    <button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;" onclick="removerParticipante(${p.id})">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            `;
-        });
-        renderizarEsquemaVisual();
+        const totalDespesas = aluguel + alim + iscas + bebidas + outros;
+        const qtd = participantes.length > 0 ? participantes.length : 1;
+        return { totalDespesas, rateio: totalDespesas / qtd };
     }
 
     function calcularFinancas() {
-        const barco = parseFloat(document.getElementById('desp-barco').value) || 0;
-        const alim = parseFloat(document.getElementById('desp-alim').value) || 0;
-        const isca = parseFloat(document.getElementById('desp-isca').value) || 0;
-        const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
+        const { totalDespesas, rateio } = obterRateioIndividual();
 
-        const custoTotal = barco + alim + isca + outros;
-        const qtd = participantes.length > 0 ? participantes.length : 1;
-        const rateio = custoTotal / qtd;
+        document.getElementById('lbl-custo-total').innerText = `R$ ${totalDespesas.toFixed(2)}`;
+        document.getElementById('lbl-rateio-ind').innerText = `R$ ${rateio.toFixed(2)}`;
 
-        document.getElementById('lbl-custo-total-home').innerText = `R$ ${custoTotal.toFixed(2)}`;
-        document.getElementById('lbl-custo-total-fin').innerText = `R$ ${custoTotal.toFixed(2)}`;
-        document.getElementById('lbl-rateio-fin').innerText = `R$ ${rateio.toFixed(2)} por pessoa`;
+        renderizarTabelaPagamentos();
+        renderizarParticipantes();
+    }
 
-        const tbody = document.getElementById('tabela-financas');
+    function gerarHTMLBarraProgresso(totalPago, rateioTarget) {
+        let percentual = rateioTarget > 0 ? Math.min(100, Math.round((totalPago / rateioTarget) * 100)) : 100;
+        let corBarra = 'var(--danger)';
+        if(percentual >= 100) corBarra = 'var(--success)';
+        else if(percentual >= 50) corBarra = 'var(--warning)';
+
+        return `
+            <div class="pay-progress-box">
+                <div class="pay-progress-text">
+                    <span>R$ ${totalPago.toFixed(2)} / R$ ${rateioTarget.toFixed(2)}</span>
+                    <span>${percentual}%</span>
+                </div>
+                <div class="pay-progress-bar">
+                    <div class="pay-progress-fill" style="width: ${percentual}%; background-color: ${corBarra};"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderizarTabelaPagamentos() {
+        const tbody = document.getElementById('tabela-pagamentos-body');
         tbody.innerHTML = '';
+        const { rateio } = obterRateioIndividual();
 
         participantes.forEach(p => {
-            let diferenca = rateio - p.pago;
-            // Carinha de nojo se não pagou nada ou se estiver devendo muito (ajuste a regra se preferir)
-            let emojiNojo = (p.pago === 0 && custoTotal > 0) ? ' 🤢' : '';
-            
+            let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
             tbody.innerHTML += `
                 <tr>
-                    <td>${p.name}${emojiNojo}</td>
-                    <td><input type="number" value="${p.pago}" onchange="atualizarValorPago(${p.id}, this.value)"></td>
-                    <td style="color: ${diferenca <= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight: 700;">
-                        R$ ${diferenca.toFixed(2)}
+                    <td><b>${p.name}</b></td>
+                    <td>R$ ${(p.frete || 0).toFixed(2)}</td>
+                    <td>R$ ${(p.alim || 0).toFixed(2)}</td>
+                    <td>R$ ${(p.iscas || 0).toFixed(2)}</td>
+                    <td>R$ ${(p.outros || 0).toFixed(2)}</td>
+                    <td><b>R$ ${totalPago.toFixed(2)}</b></td>
+                    <td style="min-width: 110px;">${gerarHTMLBarraProgresso(totalPago, rateio)}</td>
+                    <td>
+                        <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="abrirModalPagamento(${p.id})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
                     </td>
                 </tr>
             `;
         });
     }
 
-    function atualizarValorPago(id, valor) {
+    function abrirModalPagamento(id) {
+        idPI = id;
         const p = participantes.find(item => item.id === id);
         if(p) {
-            p.pago = parseFloat(valor) || 0;
-            calcularFinancas();
+            document.getElementById('modal-titulo-pescador').innerText = `Pagamento: ${p.name}`;
+            document.getElementById('mod-frete').value = p.frete || 0;
+            document.getElementById('mod-alim').value = p.alim || 0;
+            document.getElementById('mod-iscas').value = p.iscas || 0;
+            document.getElementById('mod-outros').value = p.outros || 0;
+            document.getElementById('modal-pagamento').style.display = 'flex';
         }
     }
 
+    function fecharModal() {
+        document.getElementById('modal-pagamento').style.display = 'none';
+        idPI = null;
+    }
+
+    function salvarPagamentoIndividual() {
+        if(idPI !== null) {
+            const p = participantes.find(item => item.id === idPI);
+            if(p) {
+                p.frete = parseFloat(document.getElementById('mod-frete').value) || 0;
+                p.alim = parseFloat(document.getElementById('mod-alim').value) || 0;
+                p.iscas = parseFloat(document.getElementById('mod-iscas').value) || 0;
+                p.outros = parseFloat(document.getElementById('mod-outros').value) || 0;
+            }
+            fecharModal();
+            calcularFinancas();
+            showToast("Pagamento individual atualizado!");
+        }
+    }
+
+    function renderizarParticipantes() {
+        const div = document.getElementById('lista-participantes-div');
+        div.innerHTML = '';
+        document.getElementById('contador-pescadores').innerText = `${participantes.length} Pescadores`;
+        const { rateio } = obterRateioIndividual();
+
+        participantes.forEach((p, idx) => {
+            let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
+            div.innerHTML += `
+                <div style="display: flex; flex-direction: column; padding: 10px; background: white; border: 1px solid var(--border-color); border-radius: 10px; gap: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; font-weight: 700;"><b>${idx+1}.</b> ${p.name}</span>
+                        <div style="display: flex; gap: 6px;">
+                            <button style="background: var(--accent-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;" onclick="abrirModalPagamento(${p.id})">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button style="background: var(--danger-bg); color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;" onclick="removerParticipante(${p.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    ${gerarHTMLBarraProgresso(totalPago, rateio)}
+                </div>
+            `;
+        });
+    }
+
+    function adicionarParticipante() {
+        const inputNome = document.getElementById('input-nome');
+        const nome = inputNome.value.trim();
+        if(!nome) {
+            showToast("Informe o nome do pescador!");
+            return;
+        }
+
+        const frete = parseFloat(document.getElementById('input-frete').value) || 0;
+        const alim = parseFloat(document.getElementById('input-alim').value) || 0;
+        const iscas = parseFloat(document.getElementById('input-iscas').value) || 0;
+        const outros = parseFloat(document.getElementById('input-outros').value) || 0;
+
+        const novoId = participantes.length > 0 ? Math.max(...participantes.map(p => p.id)) + 1 : 1;
+        participantes.push({ id: novoId, name: nome, frete, alim, iscas, outros, vaga: null });
+
+        inputNome.value = '';
+        document.getElementById('input-frete').value = '0';
+        document.getElementById('input-alim').value = '0';
+        document.getElementById('input-iscas').value = '0';
+        document.getElementById('input-outros').value = '0';
+
+        calcularFinancas();
+        showToast("Pescador adicionado com sucesso!");
+    }
+
+    function removerParticipante(id) {
+        participantes = participantes.filter(p => p.id !== id);
+        calcularFinancas();
+        showToast("Pescador removido!");
+    }
+
     function atualizarEsquemaBarco() {
+        configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
+        configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
         configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 3;
         configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
         configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
         configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
-        configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
-        configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
-        
+
         renderizarEsquemaVisual();
-        showToast("Layout do barco atualizado!");
     }
 
     function renderizarEsquemaVisual() {
         const container = document.getElementById('boat-hull-container');
-        let html = '';
+        container.innerHTML = `
+            <div id="container-popa" style="display: flex; flex-direction: column; gap: 6px;"></div>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;" id="container-laterais"></div>
+        `;
+
         let vagaContador = 1;
-
-        // SEÇÃO LATERAIS (Esquerda / Direita)
-        html += `<div class="boat-section-label">Laterais</div>`;
-        html += `<div style="display: flex; justify-content: space-between; gap: 20px; width: 100%;">`;
-        
-        // Esquerda
-        html += `<div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">`;
-        for(let b = 0; b < configBarco.esqBancos; b++) {
-            html += `<div class="boat-row-seats" style="justify-content: flex-start;">`;
-            for(let p = 0; p < configBarco.esqPessoas; p++) {
+        const popaDiv = document.getElementById('container-popa');
+        for(let b=0; b<configBarco.popaBancos; b++) {
+            let row = '<div class="boat-row-seats">';
+            for(let p=0; p<configBarco.popaPessoas; p++) {
                 let ocupante = participantes.find(item => item.vaga === vagaContador);
-                html += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
+                row += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
                 vagaContador++;
             }
-            html += `</div>`;
+            row += '</div>';
+            popaDiv.innerHTML += row;
         }
-        html += `</div>`;
 
-        // Direita
-        html += `<div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">`;
-        for(let b = 0; b < configBarco.dirBancos; b++) {
-            html += `<div class="boat-row-seats" style="justify-content: flex-end;">`;
-            for(let p = 0; p < configBarco.dirPessoas; p++) {
-                let ocupante = participantes.find(item => item.vaga === vagaContador);
-                html += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
-                vagaContador++;
-            }
-            html += `</div>`;
+        const lateraisDiv = document.getElementById('container-laterais');
+        let maxBancosLateral = Math.max(configBarco.esqBancos, configBarco.dirBancos);
+        for(let b=0; b<maxBancosLateral; b++) {
+            let rowEsq = b < configBarco.esqBancos ? participantes.find(item => item.vaga === vagaContador) : null;
+            let numEsq = b < configBarco.esqBancos ? vagaContador++ : null;
+
+            let rowDir = b < configBarco.dirBancos ? participantes.find(item => item.vaga === vagaContador) : null;
+            let numDir = b < configBarco.dirBancos ? vagaContador++ : null;
+
+            lateraisDiv.innerHTML += `
+                <div class="boat-row-seats">
+                    <div class="seat-box" style="${numEsq === null ? 'visibility:hidden;' : ''}">
+                        <div class="seat-num">${numEsq || ''}</div>
+                        <div class="seat-name">${rowEsq ? rowEsq.name : (numEsq ? 'Vago' : '')}</div>
+                    </div>
+                    <div class="seat-box" style="${numDir === null ? 'visibility:hidden;' : ''}">
+                        <div class="seat-num">${numDir || ''}</div>
+                        <div class="seat-name">${rowDir ? rowDir.name : (numDir ? 'Vago' : '')}</div>
+                    </div>
+                </div>
+            `;
         }
-        html += `</div></div>`;
-
-        // SEÇÃO POPA (Fundo)
-        html += `<div class="boat-section-label" style="margin-top: 15px;">Popa (Fundo)</div>`;
-        html += `<div style="display: flex; flex-direction: column; gap: 8px;">`;
-        for(let b = 0; b < configBarco.popaBancos; b++) {
-            html += `<div class="boat-row-seats">`;
-            for(let p = 0; p < configBarco.popaPessoas; p++) {
-                let ocupante = participantes.find(item => item.vaga === vagaContador);
-                html += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupante ? ocupante.name : 'Vago'}</div></div>`;
-                vagaContador++;
-            }
-            html += `</div>`;
-        }
-        html += `</div>`;
-
-        container.innerHTML = html;
     }
 
     function realizarSorteioBarco() {
         let totalVagas = (configBarco.popaBancos * configBarco.popaPessoas) + (configBarco.esqBancos * configBarco.esqPessoas) + (configBarco.dirBancos * configBarco.dirPessoas);
-        
         participantes.forEach(p => p.vaga = null);
         let vagas = Array.from({length: totalVagas}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
 
@@ -1029,39 +940,41 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         showToast("🎲 Sorteio realizado com sucesso!");
     }
 
-    function executarRodizio() {
-        // Encontra quem tem vaga atribuída
-        let ocupados = participantes.filter(p => p.vaga !== null);
-        if(ocupados.length > 1) {
-            // Mapeia os números das vagas ativas
-            let vagasAtivas = ocupados.map(p => p.vaga);
-            
-            // Rotaciona: a última vaga da lista vai para o primeiro lugar
-            let ultima = vagasAtivas.pop();
-            vagasAtivas.unshift(ultima);
-            
-            // Reatribui as vagas nas novas posições
-            ocupados.forEach((p, idx) => {
-                p.vaga = vagasAtivas[idx];
-            });
-            
-            renderizarEsquemaVisual();
-            showToast("🔄 Rodízio de posições aplicado!");
-        } else {
-            showToast("⚠️ Realize o sorteio inicial primeiro.");
-        }
+    /* EXPORTAÇÃO WHATSAPP */
+    function exportarWhatsApp() {
+        const { totalDespesas, rateio } = obterRateioIndividual();
+        
+        let texto = `*⚓ RELATÓRIO PESCA JUSTA*\n`;
+        texto += `*Barco:* ${document.getElementById('lbl-barco-nome').innerText}\n`;
+        texto += `*Destino:* ${document.getElementById('lbl-destino').innerText}\n`;
+        texto += `*Saída:* ${document.getElementById('lbl-data-saida').innerText}\n`;
+        texto += `-----------------------------------\n`;
+        texto += `*Custo Total:* R$ ${totalDespesas.toFixed(2)}\n`;
+        texto += `*Rateio por Pescador:* R$ ${rateio.toFixed(2)}\n\n`;
+        texto += `*STATUS DE PAGAMENTOS:*\n`;
+
+        participantes.forEach((p, i) => {
+            let totalPago = (p.frete || 0) + (p.alim || 0) + (p.iscas || 0) + (p.outros || 0);
+            let diff = totalPago - rateio;
+            let status = diff >= 0 ? "✅ Quitado" : `⚠️ Faltam R$ ${Math.abs(diff).toFixed(2)}`;
+            let vagaStr = p.vaga ? ` (Assento #${p.vaga})` : '';
+            texto += `${i+1}. *${p.name}*${vagaStr}\n   Pago: R$ ${totalPago.toFixed(2)} | ${status}\n`;
+        });
+
+        const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+    }
+
+    /* EXPORTAÇÃO PDF / IMPRESSÃO */
+    function exportarPDF() {
+        window.print();
     }
 
     function switchScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        // Rolamos o conteúdo interno da tela para cima, não o body
-        document.getElementById(id).scrollTo(0, 0);
-    }
-
-    function setActiveNav(element) {
         document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
-        element.classList.add('active');
+        window.scrollTo(0, 0);
     }
 
     function showToast(msg) {
@@ -1071,9 +984,9 @@ Copie o código abaixo e salve como um arquivo **`.html`** para testar:
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // Inicialização
-    renderizarParticipantes();
     atualizarEsquemaBarco();
+    atualizarDadosPescaria();
+    calcularFinancas();
 </script>
 
 </body>
