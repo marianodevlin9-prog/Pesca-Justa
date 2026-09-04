@@ -16,9 +16,6 @@
             --text-main: #1E293B;
             --text-muted: #64748B;
             --success: #10B981;
-            --success-bg: #D1FAE5;
-            --warning: #F59E0B;
-            --warning-bg: #FEF3C7;
             --danger: #EF4444;
             --danger-bg: #FEE2E2;
             --border-color: #E2E8F0;
@@ -531,7 +528,6 @@
         </div>
     </div>
 
-    <!-- Navegação Inferior -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchScreen('home-screen')"><i class="fa-solid fa-house"></i><span>Início</span></button>
         <button class="nav-item" onclick="switchScreen('participants-screen')"><i class="fa-solid fa-users"></i><span>Equipe</span></button>
@@ -569,20 +565,17 @@
         const outros = parseFloat(document.getElementById('desp-outros').value) || 0;
 
         const totalDespesas = aluguel + alimentacao + iscas + gelo + bebidas + outros;
-        const lblCustoTotal = document.getElementById('lbl-custo-total');
-        if (lblCustoTotal) lblCustoTotal.innerText = `R$ ${totalDespesas.toFixed(2)}`;
+        document.getElementById('lbl-custo-total').innerText = `R$ ${totalDespesas.toFixed(2)}`;
 
         const qtdPessoas = participantes.length > 0 ? participantes.length : 1;
         const rateio = totalDespesas / qtdPessoas;
-        const lblRateioInd = document.getElementById('lbl-rateio-ind');
-        if (lblRateioInd) lblRateioInd.innerText = `R$ ${rateio.toFixed(2)}`;
+        document.getElementById('lbl-rateio-ind').innerText = `R$ ${rateio.toFixed(2)}`;
 
         renderizarTabelaPagamentos(rateio);
     }
 
     function renderizarTabelaPagamentos(rateio) {
         const tbody = document.getElementById('tabela-pagamentos-body');
-        if (!tbody) return;
         tbody.innerHTML = '';
 
         participantes.forEach(p => {
@@ -611,10 +604,8 @@
 
     function renderizarParticipantes() {
         const div = document.getElementById('lista-participantes-div');
-        if (!div) return;
         div.innerHTML = '';
-        const contador = document.getElementById('contador-pescadores');
-        if (contador) contador.innerText = `${participantes.length} Total`;
+        document.getElementById('contador-pescadores').innerText = `${participantes.length} Total`;
 
         participantes.forEach((p, idx) => {
             div.innerHTML += `
@@ -631,7 +622,6 @@
 
     function adicionarParticipante() {
         const input = document.getElementById('input-nome');
-        if (!input) return;
         const nome = input.value.trim();
         if(!nome) return;
 
@@ -649,39 +639,32 @@
     }
 
     function atualizarEsquemaBarco() {
-        const popaBancos = document.getElementById('cfg-popa-bancos');
-        const popaPessoas = document.getElementById('cfg-popa-pessoas');
-        const esqBancos = document.getElementById('cfg-esq-bancos');
-        const esqPessoas = document.getElementById('cfg-esq-pessoas');
-        const dirBancos = document.getElementById('cfg-dir-bancos');
-        const dirPessoas = document.getElementById('cfg-dir-pessoas');
-
-        if (popaBancos) configBarco.popaBancos = parseInt(popaBancos.value) || 1;
-        if (popaPessoas) configBarco.popaPessoas = parseInt(popaPessoas.value) || 2;
-        if (esqBancos) configBarco.esqBancos = parseInt(esqBancos.value) || 3;
-        if (esqPessoas) configBarco.esqPessoas = parseInt(esqPessoas.value) || 1;
-        if (dirBancos) configBarco.dirBancos = parseInt(dirBancos.value) || 3;
-        if (dirPessoas) configBarco.dirPessoas = parseInt(dirPessoas.value) || 1;
+        configBarco.popaBancos = parseInt(document.getElementById('cfg-popa-bancos').value) || 1;
+        configBarco.popaPessoas = parseInt(document.getElementById('cfg-popa-pessoas').value) || 2;
+        configBarco.esqBancos = parseInt(document.getElementById('cfg-esq-bancos').value) || 3;
+        configBarco.esqPessoas = parseInt(document.getElementById('cfg-esq-pessoas').value) || 1;
+        configBarco.dirBancos = parseInt(document.getElementById('cfg-dir-bancos').value) || 3;
+        configBarco.dirPessoas = parseInt(document.getElementById('cfg-dir-pessoas').value) || 1;
 
         renderizarEsquemaVisual();
     }
 
     function renderizarEsquemaVisual() {
         const container = document.getElementById('boat-hull-container');
-        if (!container) return;
         container.innerHTML = `
             <div class="boat-section-label">Popa (Fundo)</div>
             <div id="container-popa" style="display: flex; flex-direction: column; gap: 6px;"></div>
             
             <div class="boat-section-label" style="margin-top: 8px;">Lado Esquerdo / Direito</div>
             <div style="display: flex; justify-content: space-between; gap: 10px;">
-                <div id="container-esq" style="flex: 1; display: flex; flex-direction: column; gap: 6px;"></div>
-                <div id="container-dir" style="flex: 1; display: flex; flex-direction: column; gap: 6px;"></div>
+               <div id="container-esq" style="flex: 1; display: flex; flex-direction: column; gap: 6px;"></div>
+               <div id="container-dir" style="flex: 1; display: flex; flex-direction: column; gap: 6px;"></div>
             </div>
         `;
 
         let vagaContador = 1;
 
+        // Renderizar Popa
         const popaDiv = document.getElementById('container-popa');
         for(let b=0; b<configBarco.popaBancos; b++) {
             let row = '<div class="boat-row-seats">';
@@ -691,9 +674,10 @@
                 vagaContador++;
             }
             row += '</div>';
-            if (popaDiv) popaDiv.innerHTML += row;
+            popaDiv.innerHTML += row;
         }
 
+        // Renderizar Esquerda e Direita simultaneamente por fileira
         const esqDiv = document.getElementById('container-esq');
         const dirDiv = document.getElementById('container-dir');
         
@@ -701,12 +685,12 @@
         for(let b=0; b<maxBancosLateral; b++) {
             if(b < configBarco.esqBancos) {
                 let ocupanteEsq = participantes.find(item => item.vaga === vagaContador);
-                if (esqDiv) esqDiv.innerHTML += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupanteEsq ? ocupanteEsq.name : 'Vago'}</div></div>`;
+                esqDiv.innerHTML += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupanteEsq ? ocupanteEsq.name : 'Vago'}</div></div>`;
                 vagaContador++;
             }
             if(b < configBarco.dirBancos) {
                 let ocupanteDir = participantes.find(item => item.vaga === vagaContador);
-                if (dirDiv) dirDiv.innerHTML += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupanteDir ? ocupanteDir.name : 'Vago'}</div></div>`;
+                dirDiv.innerHTML += `<div class="seat-box"><div class="seat-num">${vagaContador}</div><div class="seat-name">${ocupanteDir ? ocupanteDir.name : 'Vago'}</div></div>`;
                 vagaContador++;
             }
         }
@@ -746,25 +730,21 @@
 
     function switchScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(id);
-        if (target) target.classList.add('active');
+        document.getElementById(id).classList.add('active');
         document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
         window.scrollTo(0, 0);
     }
 
     function showToast(msg) {
         const t = document.getElementById('toast');
-        if (!t) return;
         t.innerText = msg;
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // Inicialização ao carregar a página
-    window.onload = function() {
-        renderizarParticipantes();
-        atualizarEsquemaBarco();
-    };
+    // Inicialização
+    renderizarParticipantes();
+    atualizarEsquemaBarco();
 </script>
 
 </body>
