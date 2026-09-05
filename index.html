@@ -18,7 +18,6 @@
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-16">
-
   <!-- Header / Topbar -->
   <header class="bg-indigo-900 text-white py-6 shadow-md mb-8">
     <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-4">
@@ -38,9 +37,7 @@
       </div>
     </div>
   </header>
-
   <main class="max-w-7xl mx-auto px-4 space-y-8">
-
     <!-- Configuração da Pescaria (Datas, Horários e Local) -->
     <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
       <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -64,7 +61,6 @@
         </div>
       </div>
     </section>
-
     <!-- Linha do Financeiro: Entrada de Dados e Abatimentos -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
@@ -92,7 +88,6 @@
               <i class="fa-solid fa-plus mr-1"></i> Adicionar Despesa
             </button>
           </form>
-
           <div class="mt-6">
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Itens Cadastrados</h3>
             <ul id="lista-despesas-cadastradas" class="divide-y border rounded-lg text-sm max-h-48 overflow-y-auto">
@@ -100,7 +95,6 @@
             </ul>
           </div>
         </div>
-
         <!-- 2. Cadastro de Pescadores -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -125,12 +119,9 @@
             </button>
           </form>
         </div>
-
       </section>
-
       <!-- Coluna 2: Lançamento de Abatimentos e Demonstrativo -->
       <section class="lg:col-span-7 space-y-8">
-
         <!-- 3. Abatimentos por Pescador -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <div class="flex justify-between items-center mb-4">
@@ -139,18 +130,15 @@
             </h2>
             <span class="text-xs text-slate-500">Informe o valor pago por item</span>
           </div>
-
           <div id="container-pescadores" class="space-y-6">
             <!-- Renderizado via JS -->
           </div>
         </div>
-
         <!-- 4. Demonstrativo Financeiro -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
             <i class="fa-solid fa-chart-pie text-indigo-600"></i> 4. Demonstrativo Financeiro
           </h2>
-
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             <div class="bg-slate-50 p-3 rounded-lg border text-center">
               <span class="block text-xs text-slate-500">Custo Total</span>
@@ -169,7 +157,6 @@
               <span id="resumo-saldo-pendente" class="text-sm font-bold text-amber-600">R$ 0,00</span>
             </div>
           </div>
-
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
@@ -187,10 +174,8 @@
             </table>
           </div>
         </div>
-
       </section>
     </div>
-
     <!-- Seção do Sorteio Equilibrado de Posições no Barco -->
     <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
       <div class="flex flex-wrap justify-between items-center gap-4">
@@ -204,13 +189,11 @@
           <i class="fa-solid fa-dice"></i> Realizar Sorteio Equilibrado
         </button>
       </div>
-
       <!-- Representação Visual do Barco -->
       <div id="container-visual-barco" class="hidden border-2 border-indigo-200 rounded-2xl p-6 bg-slate-50">
         <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 mb-4 bg-indigo-100 py-1.5 rounded-lg max-w-xs mx-auto">
           <i class="fa-solid fa-arrow-up mr-1"></i> Proa (Frente da Embarcação)
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
           <!-- Passadiço Esquerdo (Bombordo) -->
           <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm">
@@ -222,7 +205,6 @@
               <!-- Renderizado via JS -->
             </ul>
           </div>
-
           <!-- Passadiço Direito (Estibordo) -->
           <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm">
             <h3 class="font-bold text-emerald-900 border-b border-emerald-100 pb-2 mb-3 text-sm flex justify-between items-center">
@@ -234,13 +216,11 @@
             </ul>
           </div>
         </div>
-
         <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 mt-4 bg-indigo-100 py-1.5 rounded-lg max-w-xs mx-auto">
           <i class="fa-solid fa-anchor mr-1"></i> Popa (Traseira da Embarcação)
         </div>
       </div>
     </section>
-
     <!-- Seção do Cronograma de Turnos -->
     <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
       <div class="flex flex-wrap justify-between items-center gap-4">
@@ -261,14 +241,15 @@
           </button>
         </div>
       </div>
-
       <div id="container-cronograma" class="overflow-x-auto">
         <p class="text-xs text-slate-400 italic text-center py-4">Clique em "Gerar Cronograma" para visualizar as trocas de turnos.</p>
       </div>
     </section>
-
   </main>
-
+  
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script> 
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  
   <script>
     // --- Estado Global da Aplicação com LocalStorage ---
     let despesas = JSON.parse(localStorage.getItem('pj_despesas')) || [];
@@ -276,12 +257,50 @@
     let infoPescaria = JSON.parse(localStorage.getItem('pj_info')) || { inicio: '', termino: '', local: '' };
     let resultadoSorteio = JSON.parse(localStorage.getItem('pj_sorteio')) || null;
 
-    function salvarEstado() {
-      localStorage.setItem('pj_despesas', JSON.stringify(despesas));
-      localStorage.setItem('pj_pescadores', JSON.stringify(pescadores));
-      localStorage.setItem('pj_info', JSON.stringify(infoPescaria));
-      localStorage.setItem('pj_sorteio', JSON.stringify(resultadoSorteio));
-      renderizarTudo();
+    // --- Configuração e Inicialização do Firebase ---
+    const firebaseConfig = { 
+      apiKey: "SUA_API_KEY_REAL", 
+      authDomain: "pescaria-justa-default-rtdb.firebaseapp.com", 
+      databaseURL: "https://pescaria-justa-default-rtdb.firebaseio.com", 
+      projectId: "pescaria-justa-default-rtdb", 
+      storageBucket: "pescaria-justa-default-rtdb.appspot.com", 
+      messagingSenderId: "SEU_SENDER_ID_REAL", 
+      appId: "SEU_APP_ID_REAL" 
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // --- Escuta as alterações no Firebase em tempo real ---
+    db.ref('pescaria_estado_atual').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        despesas = data.despesas || [];
+        pescadores = data.pescadores || [];
+        infoPescaria = data.info || { inicio: '', termino: '', local: '' };
+        resultadoSorteio = data.ultimoResultado || null;
+        
+        if (typeof carregarInfoPescaria === 'function') carregarInfoPescaria();
+        if (typeof renderizarTudo === 'function') renderizarTudo();
+      }
+    });
+
+    // --- Sincronização Local e Remota ---
+    function salvarEstado() { 
+      localStorage.setItem('pj_despesas', JSON.stringify(despesas)); 
+      localStorage.setItem('pj_pescadores', JSON.stringify(pescadores)); 
+      localStorage.setItem('pj_info', JSON.stringify(infoPescaria)); 
+      localStorage.setItem('pj_sorteio', JSON.stringify(resultadoSorteio)); 
+      
+      // Sincroniza também com o Firebase em tempo real 
+      db.ref('pescaria_estado_atual').set({ 
+        despesas: despesas, 
+        pescadores: pescadores, 
+        info: infoPescaria, 
+        ultimoResultado: resultadoSorteio 
+      }); 
+      
+      renderizarTudo(); 
     }
 
     function limparDados() {
@@ -321,13 +340,11 @@
       e.preventDefault();
       const nomeInput = document.getElementById('despesa-nome');
       const valorInput = document.getElementById('despesa-valor');
-
       const novaDespesa = {
         id: Date.now().toString(),
         descricao: nomeInput.value.trim(),
         valor: parseFloat(valorInput.value) || 0
       };
-
       despesas.push(novaDespesa);
       nomeInput.value = '';
       valorInput.value = '';
@@ -349,14 +366,12 @@
       e.preventDefault();
       const nomeInput = document.getElementById('pescador-nome');
       const telInput = document.getElementById('pescador-telefone');
-
       const novoPescador = {
         id: Date.now().toString(),
         nome: nomeInput.value.trim(),
         telefone: telInput.value.trim(),
         pagamentos: {}
       };
-
       pescadores.push(novoPescador);
       nomeInput.value = '';
       telInput.value = '';
@@ -388,7 +403,6 @@
         alert("Cadastre pelo menos um pescador antes de realizar o sorteio.");
         return;
       }
-
       // Função Auxiliar de Embaralhamento (Fisher-Yates)
       const embaralhar = (array) => {
         const arr = [...array];
@@ -398,24 +412,21 @@
         }
         return arr;
       };
-
+      
       // Separar pescadores em 1ª Rodada (sem '_') e 2ª Rodada (com '_')
       const rodada1 = pescadores.filter(p => !p.nome.includes('_'));
       const rodada2 = pescadores.filter(p => p.nome.includes('_'));
-
       const rodada1Sorteada = embaralhar(rodada1);
       const rodada2Sorteada = embaralhar(rodada2);
-
+      
       // Ordem final do sorteio combinando as duas rodadas
       const ordemFinal = [...rodada1Sorteada, ...rodada2Sorteada];
-
+      
       // Distribuição estritamente alternada entre Esquerda e Direita
       const ladoEsquerda = [];
       const ladoDireita = [];
-
       // Sorteia aleatoriamente qual lado recebe a primeira pessoa da rodada
       let alternaEsquerda = Math.random() < 0.5;
-
       ordemFinal.forEach((pescador) => {
         if (alternaEsquerda) {
           ladoEsquerda.push(pescador);
@@ -425,14 +436,13 @@
         // Inverte a vez para a próxima pessoa
         alternaEsquerda = !alternaEsquerda;
       });
-
+      
       resultadoSorteio = {
         esquerda: ladoEsquerda,
         direita: ladoDireita,
         ordemCompleta: ordemFinal,
         data: new Date().toLocaleString('pt-BR')
       };
-
       salvarEstado();
     }
 
@@ -443,12 +453,11 @@
         container.innerHTML = `<p class="text-xs text-amber-600 bg-amber-50 p-3 rounded-lg text-center">Realize o sorteio das posições primeiro para gerar o cronograma de turnos.</p>`;
         return;
       }
-
       const duracaoHoras = parseInt(document.getElementById('duracao-turno').value) || 2;
       const dataInicioStr = document.getElementById('info-inicio').value;
       let dataInicio = dataInicioStr ? new Date(dataInicioStr) : new Date();
-
       const numTurnos = 4; // Quantidade de turnos simulados
+      
       let htmlTabela = `
         <table class="w-full text-left text-xs border-collapse">
           <thead>
@@ -460,18 +469,16 @@
           </thead>
           <tbody class="divide-y">
       `;
-
       let esqAtual = [...resultadoSorteio.esquerda];
       let dirAtual = [...resultadoSorteio.direita];
-
+      
       for (let t = 1; t <= numTurnos; t++) {
         let horaFim = new Date(dataInicio.getTime() + duracaoHoras * 60 * 60 * 1000);
         
         const formatHora = (d) => d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         const formatData = (d) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-
         const intervaloStr = `Turno ${t}<br><span class="text-slate-400 font-normal">${formatData(dataInicio)} ${formatHora(dataInicio)} às ${formatHora(horaFim)}</span>`;
-
+        
         htmlTabela += `
           <tr class="hover:bg-slate-50">
             <td class="p-2 border font-bold text-slate-800 bg-slate-50">${intervaloStr}</td>
@@ -479,14 +486,12 @@
             <td class="p-2 border text-emerald-900">${dirAtual.map(p => p.nome).join(', ')}</td>
           </tr>
         `;
-
+        
         // Rotaciona as posições para o próximo turno (muda a pessoa da proa para a popa)
         if (esqAtual.length > 0) esqAtual.push(esqAtual.shift());
         if (dirAtual.length > 0) dirAtual.push(dirAtual.shift());
-
         dataInicio = horaFim;
       }
-
       htmlTabela += `</tbody></table>`;
       container.innerHTML = htmlTabela;
     }
@@ -510,7 +515,6 @@
         ul.innerHTML = `<li class="p-3 text-slate-400 text-xs text-center">Nenhuma despesa cadastrada.</li>`;
         return;
       }
-
       ul.innerHTML = despesas.map(d => `
         <li class="p-3 flex justify-between items-center bg-slate-50 hover:bg-slate-100">
           <div>
@@ -530,16 +534,13 @@
         container.innerHTML = `<p class="text-slate-400 text-sm text-center py-6">Nenhum pescador cadastrado ainda.</p>`;
         return;
       }
-
       container.innerHTML = pescadores.map(p => {
         let totalPagoPeloPescador = 0;
-
         const listaItensDespesa = despesas.length === 0 
           ? `<p class="text-xs text-slate-400 italic">Cadastre despesas para lançar pagamentos.</p>`
           : despesas.map(d => {
               const valorPago = (p.pagamentos && p.pagamentos[d.id]) ? p.pagamentos[d.id] : '';
               if (valorPago) totalPagoPeloPescador += parseFloat(valorPago);
-
               return `
                 <div class="flex items-center justify-between text-xs py-1 border-b border-slate-100">
                   <span class="text-slate-600">${d.descricao} <span class="text-slate-400">(${formatarMoeda(d.valor)})</span></span>
@@ -554,7 +555,6 @@
                 </div>
               `;
             }).join('');
-
         return `
           <div class="p-4 border rounded-xl bg-slate-50/50">
             <div class="flex justify-between items-start mb-3">
@@ -567,14 +567,12 @@
                 <span class="text-sm font-bold text-emerald-600">${formatarMoeda(totalPagoPeloPescador)}</span>
               </div>
             </div>
-
             <div class="bg-white p-3 rounded-lg border mt-2 space-y-2">
               <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
                 Lançar Pagamento / Abatimento por Item
               </span>
               ${listaItensDespesa}
             </div>
-
             <div class="mt-2 text-right no-print">
               <button onclick="removerPescador('${p.id}')" class="text-xs text-red-500 hover:underline">
                 <i class="fa-solid fa-trash mr-1"></i> Remover Pescador
@@ -589,9 +587,7 @@
       const totalDespesas = despesas.reduce((acc, d) => acc + d.valor, 0);
       const totalPescadores = pescadores.length;
       const cotaParte = totalPescadores > 0 ? (totalDespesas / totalPescadores) : 0;
-
       let totalGeralPago = 0;
-
       const linhasTabela = pescadores.map(p => {
         let totalPagoPescador = 0;
         if (p.pagamentos) {
@@ -600,9 +596,7 @@
           });
         }
         totalGeralPago += totalPagoPescador;
-
         const saldo = cotaParte - totalPagoPescador;
-
         let badgeStatus = '';
         if (Math.abs(saldo) < 0.01) {
           badgeStatus = `<span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Quitado</span>`;
@@ -611,7 +605,6 @@
         } else {
           badgeStatus = `<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">A Receber ${formatarMoeda(Math.abs(saldo))}</span>`;
         }
-
         return `
           <tr class="hover:bg-slate-50">
             <td class="p-3 font-medium text-slate-800">${p.nome}</td>
@@ -624,14 +617,13 @@
           </tr>
         `;
       }).join('');
-
+      
       const saldoGeralPendente = totalDespesas - totalGeralPago;
-
       document.getElementById('resumo-total-despesas').innerText = formatarMoeda(totalDespesas);
       document.getElementById('resumo-cota-pessoa').innerText = formatarMoeda(cotaParte);
       document.getElementById('resumo-total-pago').innerText = formatarMoeda(totalGeralPago);
       document.getElementById('resumo-saldo-pendente').innerText = formatarMoeda(saldoGeralPendente);
-
+      
       const tbody = document.getElementById('tabela-demonstrativo');
       if (pescadores.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">Nenhum pescador disponível para cálculo.</td></tr>`;
@@ -646,24 +638,21 @@
       const listaDir = document.getElementById('lista-barco-direita');
       const badgeEsq = document.getElementById('badge-qtd-esquerda');
       const badgeDir = document.getElementById('badge-qtd-direita');
-
       if (!resultadoSorteio || !resultadoSorteio.esquerda) {
         containerVisual.classList.add('hidden');
         return;
       }
-
       containerVisual.classList.remove('hidden');
-
       badgeEsq.innerText = `${resultadoSorteio.esquerda.length} Pessoas`;
       badgeDir.innerText = `${resultadoSorteio.direita.length} Pessoas`;
-
+      
       listaEsq.innerHTML = resultadoSorteio.esquerda.map((p, idx) => `
         <li class="p-2.5 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between">
           <span class="font-bold text-blue-900">${idx + 1}º - ${p.nome}</span>
           ${p.nome.includes('_') ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold">2ª Rodada</span>' : ''}
         </li>
       `).join('');
-
+      
       listaDir.innerHTML = resultadoSorteio.direita.map((p, idx) => `
         <li class="p-2.5 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center justify-between">
           <span class="font-bold text-emerald-900">${idx + 1}º - ${p.nome}</span>
@@ -678,4 +667,3 @@
   </script>
 </body>
 </html>
-
