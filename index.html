@@ -3,12 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesca-Justa - Sistema Integrado de Gestão e Sorteio</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Pesca-Justa - Gestão Completa de Pescaria</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- html2pdf.js para Exportação em PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @media print {
@@ -17,302 +14,370 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-16">
-  <!-- Header / Topbar -->
-  <header class="bg-indigo-900 text-white py-6 shadow-md mb-8">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen pb-16">
+  
+  <!-- Header Moderno -->
+  <header class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white py-5 shadow-lg mb-6">
     <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-4">
-      <div>
-        <h1 class="text-2xl font-bold flex items-center gap-2">
-          <i class="fa-solid fa-fish text-amber-400"></i> Pesca-Justa
-        </h1>
-        <p class="text-indigo-200 text-sm">Gestão de Despesas, Abatimentos, Sorteio Equilibrado e Turnos</p>
+      <div class="flex items-center gap-3">
+        <div class="bg-amber-400 p-2.5 rounded-xl text-indigo-950 font-bold shadow">
+          <i class="fa-solid fa-fish text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight">Pesca-Justa</h1>
+          <p class="text-indigo-200 text-xs">Gestão de Embarcação, Sorteio de Popa, Rateio e Logística</p>
+        </div>
       </div>
       <div class="flex items-center gap-2 no-print">
-        <button onclick="exportarPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-          <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+        <button onclick="exportarPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
+          <i class="fa-solid fa-file-pdf"></i> PDF
         </button>
-        <button onclick="limparDados()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-          <i class="fa-solid fa-trash-can"></i> Resetar Tudo
+        <button onclick="limparDados()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
+          <i class="fa-solid fa-trash-can"></i> Resetar
         </button>
       </div>
     </div>
   </header>
-  <main class="max-w-7xl mx-auto px-4 space-y-8">
-    <!-- Configuração da Pescaria (Datas, Horários e Local) -->
-    <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-      <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-calendar-days text-indigo-600"></i> Informações da Pescaria
-      </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Início da Pescaria</label>
-          <input type="datetime-local" id="info-inicio" onchange="salvarInfoPescaria()" 
-                 class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Término da Pescaria</label>
-          <input type="datetime-local" id="info-termino" onchange="salvarInfoPescaria()" 
-                 class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Embarcação / Local</label>
-          <input type="text" id="info-local" placeholder="Ex: Embarcação Atlanticus - Ilha da Vitória" onchange="salvarInfoPescaria()" 
-                 class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-        </div>
-      </div>
-    </section>
-    <!-- Linha do Financeiro: Entrada de Dados e Abatimentos -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      <!-- Coluna 1: Formulários de Cadastro (Despesas e Pescadores) -->
-      <section class="lg:col-span-5 space-y-8">
+
+  <!-- Sistema de Abas (Navegação Centralizada) -->
+  <nav class="max-w-7xl mx-auto px-4 mb-6 no-print">
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+      <button onclick="mudarAba('cadastros')" id="btn-tab-cadastros" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm">
+        <i class="fa-solid fa-sliders"></i> 1. Central de Cadastros
+      </button>
+      <button onclick="mudarAba('despesas')" id="btn-tab-despesas" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
+        <i class="fa-solid fa-receipt"></i> 2. Despesas & Rateio
+      </button>
+      <button onclick="mudarAba('sorteio')" id="btn-tab-sorteio" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
+        <i class="fa-solid fa-dice"></i> 3. Sorteio (Popa/Laterais)
+      </button>
+      <button onclick="mudarAba('logistica')" id="btn-tab-logistica" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
+        <i class="fa-solid fa-comments"></i> 4. Chat & Ponto de Encontro
+      </button>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4">
+    
+    <!-- ABA 1: CENTRAL DE CADASTROS -->
+    <div id="tab-cadastros" class="tab-content space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- 1. Despesas da Pescaria -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-receipt text-indigo-600"></i> 1. Despesas Coletivas
+        <!-- Configuração da Embarcação -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
+            <i class="fa-solid fa-ship text-indigo-600"></i> Dados da Embarcação e Viagem
           </h2>
-          
-          <form id="form-despesa" onsubmit="adicionarDespesa(event)" class="space-y-4 no-print">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Descrição do Item</label>
-              <input type="text" id="despesa-nome" placeholder="Ex: Barco, Iscas, Gasolina, Gelo" required 
-                     class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Início da Pescaria</label>
+              <input type="datetime-local" id="info-inicio" onchange="salvarConfiguracaoBarco()" 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Término</label>
+              <input type="datetime-local" id="info-termino" onchange="salvarConfiguracaoBarco()" 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome do Barco / Local de Saída</label>
+              <input type="text" id="info-local" placeholder="Ex: Atlanticus - Ilha da Vitória (São Sebastião)" onchange="salvarConfiguracaoBarco()" 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Total de Bancos / Cadeiras</label>
+              <input type="number" id="barco-bancos" min="1" value="6" onchange="salvarConfiguracaoBarco()" 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Vagas na Popa (Fundo)</label>
+              <input type="number" id="barco-vagas-popa" min="1" value="2" onchange="salvarConfiguracaoBarco()" 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+          </div>
+        </div>
+
+        <!-- Cadastro de Pescadores -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
+            <i class="fa-solid fa-users text-indigo-600"></i> Participantes / Pescadores
+          </h2>
+          <form id="form-pescador" onsubmit="adicionarPescador(event)" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome</label>
+                <input type="text" id="pescador-nome" placeholder="Ex: João Silva" required 
+                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Telefone / WhatsApp</label>
+                <input type="tel" id="pescador-telefone" placeholder="(11) 99999-9999" 
+                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+              </div>
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
+              <i class="fa-solid fa-user-plus mr-1"></i> Adicionar Pescador
+            </button>
+          </form>
+          <div class="mt-4">
+            <ul id="lista-pescadores-cadastrados" class="divide-y border rounded-xl text-sm max-h-44 overflow-y-auto">
+              <!-- Renderizado via JS -->
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ABA 2: DESPESAS E RATEIO -->
+    <div id="tab-despesas" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Cadastro de Despesa -->
+        <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
+            <i class="fa-solid fa-receipt text-indigo-600"></i> Cadastro de Despesas Coletivas
+          </h2>
+          <form id="form-despesa" onsubmit="adicionarDespesa(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Item / Descrição</label>
+              <input type="text" id="despesa-descricao" placeholder="Ex: Aluguel do Barco, Iscas, Gelo, Combustível" required 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Valor Total (R$)</label>
               <input type="number" step="0.01" min="0.01" id="despesa-valor" placeholder="0.00" required 
-                     class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
             </div>
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold text-sm transition">
-              <i class="fa-solid fa-plus mr-1"></i> Adicionar Despesa
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
+              <i class="fa-solid fa-plus mr-1"></i> Salvar Despesa
             </button>
           </form>
-          <div class="mt-6">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Itens Cadastrados</h3>
-            <ul id="lista-despesas-cadastradas" class="divide-y border rounded-lg text-sm max-h-48 overflow-y-auto">
-              <!-- Renderizado via JS -->
-            </ul>
+
+          <div class="mt-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Despesas Lançadas</h3>
+            <div class="overflow-x-auto border rounded-xl">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-600 uppercase">
+                  <tr>
+                    <th class="p-2.5 border-b">Item</th>
+                    <th class="p-2.5 border-b">Valor</th>
+                    <th class="p-2.5 border-b text-center no-print">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-despesas-cadastradas" class="divide-y">
+                  <!-- Renderizado via JS -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <!-- 2. Cadastro de Pescadores -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-user-plus text-indigo-600"></i> 2. Cadastro de Pescador
-          </h2>
-          <p class="text-xs text-slate-500 mb-3">Dica: Adicione <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-700">_</code> no nome para pescadores do sorteio.</p>
-          <form id="form-pescador" onsubmit="adicionarPescador(event)" class="space-y-4 no-print">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome</label>
-                <input type="text" id="pescador-nome" placeholder="Ex: João_Silva" required 
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Telefone</label>
-                <input type="tel" id="pescador-telefone" placeholder="(11) 99999-9999" 
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-              </div>
-            </div>
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold text-sm transition">
-              <i class="fa-solid fa-user-check mr-1"></i> Cadastrar Pescador
-            </button>
-          </form>
-        </div>
-      </section>
-      <!-- Coluna 2: Lançamento de Abatimentos e Demonstrativo -->
-      <section class="lg:col-span-7 space-y-8">
-        <!-- 3. Abatimentos por Pescador -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-hand-holding-dollar text-indigo-600"></i> 3. Abatimentos e Pagamentos
+
+        <!-- Abatimentos e Demonstrativo -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4">
+              <i class="fa-solid fa-hand-holding-dollar text-indigo-600"></i> Abatimento Individual por Participante
             </h2>
-            <span class="text-xs text-slate-500">Informe o valor pago por item</span>
+            <div id="container-abatimentos" class="space-y-3 max-h-72 overflow-y-auto pr-1">
+              <!-- Renderizado via JS -->
+            </div>
           </div>
-          <div id="container-pescadores" class="space-y-6">
-            <!-- Renderizado via JS -->
+
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4">
+              <i class="fa-solid fa-chart-pie text-indigo-600"></i> Demonstrativo Financeiro
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div class="bg-slate-50 p-3 rounded-xl border text-center">
+                <span class="block text-[11px] text-slate-500">Custo Total</span>
+                <span id="resumo-total-despesas" class="text-sm font-bold text-slate-800">R$ 0,00</span>
+              </div>
+              <div class="bg-slate-50 p-3 rounded-xl border text-center">
+                <span class="block text-[11px] text-slate-500">Cota / Pessoa</span>
+                <span id="resumo-cota-pessoa" class="text-sm font-bold text-indigo-600">R$ 0,00</span>
+              </div>
+              <div class="bg-slate-50 p-3 rounded-xl border text-center">
+                <span class="block text-[11px] text-slate-500">Arrecadado</span>
+                <span id="resumo-total-pago" class="text-sm font-bold text-emerald-600">R$ 0,00</span>
+              </div>
+              <div class="bg-slate-50 p-3 rounded-xl border text-center">
+                <span class="block text-[11px] text-slate-500">Pendente</span>
+                <span id="resumo-saldo-pendente" class="text-sm font-bold text-amber-600">R$ 0,00</span>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+                  <tr>
+                    <th class="p-2.5">Pescador</th>
+                    <th class="p-2.5">Cota-Parte</th>
+                    <th class="p-2.5">Abatido</th>
+                    <th class="p-2.5">Saldo</th>
+                    <th class="p-2.5">Situação</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-demonstrativo" class="divide-y">
+                  <!-- Renderizado via JS -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <!-- 4. Demonstrativo Financeiro -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <i class="fa-solid fa-chart-pie text-indigo-600"></i> 4. Demonstrativo Financeiro
-          </h2>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-            <div class="bg-slate-50 p-3 rounded-lg border text-center">
-              <span class="block text-xs text-slate-500">Custo Total</span>
-              <span id="resumo-total-despesas" class="text-sm font-bold text-slate-800">R$ 0,00</span>
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border text-center">
-              <span class="block text-xs text-slate-500">Custo / Pessoa</span>
-              <span id="resumo-cota-pessoa" class="text-sm font-bold text-indigo-600">R$ 0,00</span>
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border text-center">
-              <span class="block text-xs text-slate-500">Total Abatido</span>
-              <span id="resumo-total-pago" class="text-sm font-bold text-emerald-600">R$ 0,00</span>
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border text-center">
-              <span class="block text-xs text-slate-500">Saldo Geral Pendente</span>
-              <span id="resumo-saldo-pendente" class="text-sm font-bold text-amber-600">R$ 0,00</span>
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-              <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
-                <tr>
-                  <th class="p-3 rounded-l-lg">Pescador</th>
-                  <th class="p-3">Cota-Parte</th>
-                  <th class="p-3">Total Abatido</th>
-                  <th class="p-3">Saldo Individual</th>
-                  <th class="p-3 rounded-r-lg">Situação</th>
-                </tr>
-              </thead>
-              <tbody id="tabela-demonstrativo" class="divide-y">
-                <!-- Renderizado via JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+
+      </div>
     </div>
-    <!-- Seção do Sorteio Equilibrado de Posições no Barco -->
-    <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <div>
-          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-ship text-indigo-600"></i> 5. Sorteio Equilibrado de Posições no Barco
-          </h2>
-          <p class="text-xs text-slate-500">Distribuição automatizada com alternância estrita entre as laterais (máximo 1 pessoa de diferença).</p>
-        </div>
-        <button onclick="realizarSorteioEquilibrado()" class="no-print bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-5 rounded-lg shadow text-sm transition flex items-center gap-2">
-          <i class="fa-solid fa-dice"></i> Realizar Sorteio Equilibrado
-        </button>
-      </div>
-      <!-- Representação Visual do Barco -->
-      <div id="container-visual-barco" class="hidden border-2 border-indigo-200 rounded-2xl p-6 bg-slate-50">
-        <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 mb-4 bg-indigo-100 py-1.5 rounded-lg max-w-xs mx-auto">
-          <i class="fa-solid fa-arrow-up mr-1"></i> Proa (Frente da Embarcação)
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
-          <!-- Passadiço Esquerdo (Bombordo) -->
-          <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm">
-            <h3 class="font-bold text-blue-900 border-b border-blue-100 pb-2 mb-3 text-sm flex justify-between items-center">
-              <span><i class="fa-solid fa-left-long text-blue-600 mr-1"></i> Passadiço Esquerdo (Bombordo)</span>
-              <span id="badge-qtd-esquerda" class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
-            </h3>
-            <ul id="lista-barco-esquerda" class="space-y-2 text-sm">
-              <!-- Renderizado via JS -->
-            </ul>
+
+    <!-- ABA 3: SORTEIO -->
+    <div id="tab-sorteio" class="tab-content hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-dice text-indigo-600"></i> Sorteio de Posições (Popa / Fundo vs. Laterais)
+            </h2>
+            <p class="text-xs text-slate-500">As vagas da <strong>Popa</strong> são sorteadas primeiro por serem as mais disputadas. As demais ficam com as posições livres.</p>
           </div>
-          <!-- Passadiço Direito (Estibordo) -->
-          <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm">
-            <h3 class="font-bold text-emerald-900 border-b border-emerald-100 pb-2 mb-3 text-sm flex justify-between items-center">
-              <span><i class="fa-solid fa-right-long text-emerald-600 mr-1"></i> Passadiço Direito (Estibordo)</span>
-              <span id="badge-qtd-direita" class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
-            </h3>
-            <ul id="lista-barco-direita" class="space-y-2 text-sm">
-              <!-- Renderizado via JS -->
-            </ul>
-          </div>
-        </div>
-        <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 mt-4 bg-indigo-100 py-1.5 rounded-lg max-w-xs mx-auto">
-          <i class="fa-solid fa-anchor mr-1"></i> Popa (Traseira da Embarcação)
-        </div>
-      </div>
-    </section>
-    <!-- Seção do Cronograma de Turnos -->
-    <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <div>
-          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-clock text-indigo-600"></i> 6. Cronograma de Turnos e Rotação
-          </h2>
-          <p class="text-xs text-slate-500">Gere a escala de revezamento das posições ao longo da pescaria.</p>
-        </div>
-        <div class="flex items-center gap-3 no-print">
-          <div class="flex items-center gap-1 text-xs">
-            <span class="text-slate-600">Duração Turno:</span>
-            <input type="number" id="duracao-turno" value="2" min="1" max="12" class="w-14 px-2 py-1 border rounded text-center">
-            <span class="text-slate-600">horas</span>
-          </div>
-          <button onclick="gerarCronogramaTurnos()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded-lg shadow text-xs transition">
-            Gerar Cronograma
+          <button onclick="realizarSorteioPopaELaterais()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow text-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-shuffle"></i> Realizar Sorteio do Barco
           </button>
         </div>
+
+        <div id="container-visual-barco" class="hidden border-2 border-indigo-200 rounded-2xl p-6 bg-slate-50 space-y-6">
+          <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 bg-indigo-100 py-2 rounded-xl max-w-md mx-auto shadow-xs">
+            <i class="fa-solid fa-arrow-up mr-1"></i> Proa (Frente da Embarcação)
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-amber-50 border-2 border-amber-300 p-4 rounded-xl shadow-xs">
+              <h3 class="font-bold text-amber-900 border-b border-amber-200 pb-2 mb-3 text-sm flex justify-between items-center">
+                <span><i class="fa-solid fa-star text-amber-500 mr-1"></i> Posições da Popa (Fundo do Barco)</span>
+                <span id="badge-qtd-popa" class="bg-amber-200 text-amber-900 text-xs px-2 py-0.5 rounded-full font-bold">0 vagas</span>
+              </h3>
+              <ul id="lista-popa" class="space-y-2 text-sm"></ul>
+            </div>
+
+            <div class="bg-white border border-slate-300 p-4 rounded-xl shadow-xs">
+              <h3 class="font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3 text-sm flex justify-between items-center">
+                <span><i class="fa-solid fa-arrows-left-right text-indigo-600 mr-1"></i> Posições das Laterais (Livres)</span>
+                <span id="badge-qtd-laterais" class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold">0 vagas</span>
+              </h3>
+              <ul id="lista-laterais" class="space-y-2 text-sm"></ul>
+            </div>
+          </div>
+
+          <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 bg-indigo-100 py-2 rounded-xl max-w-md mx-auto shadow-xs">
+            <i class="fa-solid fa-anchor mr-1"></i> Popa / Traseira (Área das Vagas Premium)
+          </div>
+        </div>
       </div>
-      <div id="container-cronograma" class="overflow-x-auto">
-        <p class="text-xs text-slate-400 italic text-center py-4">Clique em "Gerar Cronograma" para visualizar as trocas de turnos.</p>
+    </div>
+
+    <!-- ABA 4: CHAT, GRUPOS E LOGÍSTICA DE VIAGEM -->
+    <div id="tab-logistica" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Criar / Escolher Grupo de Carona ou Ponto de Encontro -->
+        <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
+            <i class="fa-solid fa-car-side text-indigo-600"></i> Grupos de Viagem & Caronas
+          </h2>
+          <form id="form-grupo" onsubmit="criarGrupoViagem(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome do Grupo / Carro</label>
+              <input type="text" id="grupo-nome" placeholder="Ex: Carro do João (Saindo de SBC)" required 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Ponto de Encontro Marcado</label>
+              <input type="text" id="grupo-ponto" placeholder="Ex: Posto Petrobras - Rod. Anchieta km 14" required 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Horário de Saída</label>
+              <input type="time" id="grupo-horario" required 
+                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
+              <i class="fa-solid fa-users-rectangle mr-1"></i> Criar Grupo de Viagem
+            </button>
+          </form>
+
+          <div class="mt-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Grupos Ativos</h3>
+            <div id="lista-grupos" class="space-y-2 max-h-60 overflow-y-auto">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat / Mural de Interação da Viagem -->
+        <div class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-[520px]">
+          <div>
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+              <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-comments text-indigo-600"></i> Mural / Chat da Viagem
+              </h2>
+              <span id="chat-grupo-ativo-titulo" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-bold">Geral da Pescaria</span>
+            </div>
+          </div>
+
+          <!-- Mensagens -->
+          <div id="chat-mensagens" class="flex-1 overflow-y-auto space-y-3 pr-2 border rounded-xl p-4 bg-slate-50 mb-4">
+            <!-- Renderizado via JS -->
+          </div>
+
+          <!-- Enviar Mensagem -->
+          <form id="form-chat" onsubmit="enviarMensagemChat(event)" class="flex gap-2">
+            <select id="chat-autor" class="border rounded-xl px-3 py-2 text-xs bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              <!-- Renderizado via JS com os pescadores -->
+            </select>
+            <input type="text" id="chat-texto" placeholder="Digite sua mensagem, combine carona..." required 
+                   class="flex-1 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition shadow-sm">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+
       </div>
-    </section>
+    </div>
+
   </main>
-  
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script> 
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-  
+
+  <!-- Script da Aplicação -->
   <script>
-    // --- Estado Global da Aplicação com LocalStorage ---
+    // --- Estado Global ---
     let despesas = JSON.parse(localStorage.getItem('pj_despesas')) || [];
     let pescadores = JSON.parse(localStorage.getItem('pj_pescadores')) || [];
-    let infoPescaria = JSON.parse(localStorage.getItem('pj_info')) || { inicio: '', termino: '', local: '' };
-    let resultadoSorteio = JSON.parse(localStorage.getItem('pj_sorteio')) || null;
-
-    // --- Configuração e Inicialização do Firebase ---
-    const firebaseConfig = { 
-      apiKey: "SUA_API_KEY_REAL", 
-      authDomain: "pescaria-justa-default-rtdb.firebaseapp.com", 
-      databaseURL: "https://pescaria-justa-default-rtdb.firebaseio.com", 
-      projectId: "pescaria-justa-default-rtdb", 
-      storageBucket: "pescaria-justa-default-rtdb.appspot.com", 
-      messagingSenderId: "SEU_SENDER_ID_REAL", 
-      appId: "SEU_APP_ID_REAL" 
+    let configBarco = JSON.parse(localStorage.getItem('pj_config_barco')) || {
+      inicio: '', termino: '', local: '', bancos: 6, vagasPopa: 2
     };
+    let resultadoSorteio = JSON.parse(localStorage.getItem('pj_sorteio')) || null;
+    let gruposViagem = JSON.parse(localStorage.getItem('pj_grupos')) || [];
+    let mensagensChat = JSON.parse(localStorage.getItem('pj_chat')) || [
+      { id: '1', autor: 'Sistema', texto: 'Bem-vindo ao chat do Pesca-Justa! Combine aqui as caronas e os pontos de encontro.', horario: '08:00', grupo: 'Geral' }
+    ];
+    let grupoAtivo = 'Geral';
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // --- Escuta as alterações no Firebase em tempo real ---
-    db.ref('pescaria_estado_atual').on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        despesas = data.despesas || [];
-        pescadores = data.pescadores || [];
-        infoPescaria = data.info || { inicio: '', termino: '', local: '' };
-        resultadoSorteio = data.ultimoResultado || null;
-        
-        if (typeof carregarInfoPescaria === 'function') carregarInfoPescaria();
-        if (typeof renderizarTudo === 'function') renderizarTudo();
-      }
-    });
-
-    // --- Sincronização Local e Remota ---
-    function salvarEstado() { 
-      localStorage.setItem('pj_despesas', JSON.stringify(despesas)); 
-      localStorage.setItem('pj_pescadores', JSON.stringify(pescadores)); 
-      localStorage.setItem('pj_info', JSON.stringify(infoPescaria)); 
-      localStorage.setItem('pj_sorteio', JSON.stringify(resultadoSorteio)); 
-      
-      // Sincroniza também com o Firebase em tempo real 
-      db.ref('pescaria_estado_atual').set({ 
-        despesas: despesas, 
-        pescadores: pescadores, 
-        info: infoPescaria, 
-        ultimoResultado: resultadoSorteio 
-      }); 
-      
-      renderizarTudo(); 
+    function salvarEstado() {
+      localStorage.setItem('pj_despesas', JSON.stringify(despesas));
+      localStorage.setItem('pj_pescadores', JSON.stringify(pescadores));
+      localStorage.setItem('pj_config_barco', JSON.stringify(configBarco));
+      localStorage.setItem('pj_sorteio', JSON.stringify(resultadoSorteio));
+      localStorage.setItem('pj_grupos', JSON.stringify(gruposViagem));
+      localStorage.setItem('pj_chat', JSON.stringify(mensagensChat));
+      renderizarTudo();
     }
 
     function limparDados() {
-      if (confirm("Tem certeza que deseja apagar todos os dados registrados nesta sessão?")) {
+      if (confirm("Deseja apagar todos os dados e reiniciar o sistema?")) {
         localStorage.clear();
-        despesas = [];
-        pescadores = [];
-        infoPescaria = { inicio: '', termino: '', local: '' };
+        despesas = []; pescadores = []; gruposViagem = [];
+        configBarco = { inicio: '', termino: '', local: '', bancos: 6, vagasPopa: 2 };
         resultadoSorteio = null;
-        document.getElementById('info-inicio').value = '';
-        document.getElementById('info-termino').value = '';
-        document.getElementById('info-local').value = '';
+        mensagensChat = [{ id: '1', autor: 'Sistema', texto: 'Sistema reiniciado.', horario: '08:00', grupo: 'Geral' }];
+        carregarConfiguracaoInputs();
         salvarEstado();
       }
     }
@@ -321,60 +386,53 @@
       window.print();
     }
 
-    // --- 1. Informações da Pescaria ---
-    function salvarInfoPescaria() {
-      infoPescaria.inicio = document.getElementById('info-inicio').value;
-      infoPescaria.termino = document.getElementById('info-termino').value;
-      infoPescaria.local = document.getElementById('info-local').value;
-      localStorage.setItem('pj_info', JSON.stringify(infoPescaria));
-    }
-
-    function carregarInfoPescaria() {
-      if (infoPescaria.inicio) document.getElementById('info-inicio').value = infoPescaria.inicio;
-      if (infoPescaria.termino) document.getElementById('info-termino').value = infoPescaria.termino;
-      if (infoPescaria.local) document.getElementById('info-local').value = infoPescaria.local;
-    }
-
-    // --- 2. Despesas ---
-    function adicionarDespesa(e) {
-      e.preventDefault();
-      const nomeInput = document.getElementById('despesa-nome');
-      const valorInput = document.getElementById('despesa-valor');
-      const novaDespesa = {
-        id: Date.now().toString(),
-        descricao: nomeInput.value.trim(),
-        valor: parseFloat(valorInput.value) || 0
-      };
-      despesas.push(novaDespesa);
-      nomeInput.value = '';
-      valorInput.value = '';
-      salvarEstado();
-    }
-
-    function removerDespesa(id) {
-      despesas = despesas.filter(d => d.id !== id);
-      pescadores.forEach(p => {
-        if (p.pagamentos && p.pagamentos[id]) {
-          delete p.pagamentos[id];
-        }
+    // --- Controle de Abas ---
+    function mudarAba(abaId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-white', 'text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
       });
-      salvarEstado();
+
+      document.getElementById(`tab-${abaId}`).classList.remove('hidden');
+      const ativoBtn = document.getElementById(`btn-tab-${abaId}`);
+      ativoBtn.classList.remove('bg-white', 'text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+      ativoBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
     }
 
-    // --- 3. Pescadores ---
+    // --- Configuração da Embarcação ---
+    function salvarConfiguracaoBarco() {
+      configBarco.inicio = document.getElementById('info-inicio').value;
+      configBarco.termino = document.getElementById('info-termino').value;
+      configBarco.local = document.getElementById('info-local').value;
+      configBarco.bancos = parseInt(document.getElementById('barco-bancos').value) || 6;
+      configBarco.vagasPopa = parseInt(document.getElementById('barco-vagas-popa').value) || 2;
+      localStorage.setItem('pj_config_barco', JSON.stringify(configBarco));
+    }
+
+    function carregarConfiguracaoInputs() {
+      document.getElementById('info-inicio').value = configBarco.inicio || '';
+      document.getElementById('info-termino').value = configBarco.termino || '';
+      document.getElementById('info-local').value = configBarco.local || '';
+      document.getElementById('barco-bancos').value = configBarco.bancos || 6;
+      document.getElementById('barco-vagas-popa').value = configBarco.vagasPopa || 2;
+    }
+
+    // --- Pescadores ---
     function adicionarPescador(e) {
       e.preventDefault();
       const nomeInput = document.getElementById('pescador-nome');
       const telInput = document.getElementById('pescador-telefone');
-      const novoPescador = {
+      
+      const novo = {
         id: Date.now().toString(),
         nome: nomeInput.value.trim(),
         telefone: telInput.value.trim(),
         pagamentos: {}
       };
-      pescadores.push(novoPescador);
-      nomeInput.value = '';
-      telInput.value = '';
+      
+      pescadores.push(novo);
+      nomeInput.value = ''; telInput.value = '';
       salvarEstado();
     }
 
@@ -383,27 +441,46 @@
       salvarEstado();
     }
 
-    function atualizarPagamento(pescadorId, despesaId, valor) {
+    // --- Despesas ---
+    function adicionarDespesa(e) {
+      e.preventDefault();
+      const descInput = document.getElementById('despesa-descricao');
+      const valInput = document.getElementById('despesa-valor');
+      
+      const novaDespesa = {
+        id: Date.now().toString(),
+        descricao: descInput.value.trim(),
+        valor: parseFloat(valInput.value) || 0
+      };
+      
+      despesas.push(novaDespesa);
+      descInput.value = ''; valInput.value = '';
+      salvarEstado();
+    }
+
+    function removerDespesa(id) {
+      despesas = despesas.filter(d => d.id !== id);
+      pescadores.forEach(p => { if (p.pagamentos && p.pagamentos[id]) delete p.pagamentos[id]; });
+      salvarEstado();
+    }
+
+    function atualizarAbatimento(pescadorId, despesaId, valorStr) {
       const pescador = pescadores.find(p => p.id === pescadorId);
       if (pescador) {
         if (!pescador.pagamentos) pescador.pagamentos = {};
-        const valNum = parseFloat(valor);
-        if (isNaN(valNum) || valNum <= 0) {
-          delete pescador.pagamentos[despesaId];
-        } else {
-          pescador.pagamentos[despesaId] = valNum;
-        }
+        const valor = parseFloat(valorStr);
+        if (isNaN(valor) || valor <= 0) delete pescador.pagamentos[despesaId];
+        else pescador.pagamentos[despesaId] = valor;
         salvarEstado();
       }
     }
 
-    // --- 4. Algoritmo de Sorteio com Equilíbrio de Laterais ---
-    function realizarSorteioEquilibrado() {
+    // --- Sorteio ---
+    function realizarSorteioPopaELaterais() {
       if (pescadores.length === 0) {
-        alert("Cadastre pelo menos um pescador antes de realizar o sorteio.");
+        alert("Cadastre pelo menos um pescador na Central de Cadastros.");
         return;
       }
-      // Função Auxiliar de Embaralhamento (Fisher-Yates)
       const embaralhar = (array) => {
         const arr = [...array];
         for (let i = arr.length - 1; i > 0; i--) {
@@ -412,172 +489,146 @@
         }
         return arr;
       };
-      
-      // Separar pescadores em 1ª Rodada (sem '_') e 2ª Rodada (com '_')
-      const rodada1 = pescadores.filter(p => !p.nome.includes('_'));
-      const rodada2 = pescadores.filter(p => p.nome.includes('_'));
-      const rodada1Sorteada = embaralhar(rodada1);
-      const rodada2Sorteada = embaralhar(rodada2);
-      
-      // Ordem final do sorteio combinando as duas rodadas
-      const ordemFinal = [...rodada1Sorteada, ...rodada2Sorteada];
-      
-      // Distribuição estritamente alternada entre Esquerda e Direita
-      const ladoEsquerda = [];
-      const ladoDireita = [];
-      // Sorteia aleatoriamente qual lado recebe a primeira pessoa da rodada
-      let alternaEsquerda = Math.random() < 0.5;
-      ordemFinal.forEach((pescador) => {
-        if (alternaEsquerda) {
-          ladoEsquerda.push(pescador);
-        } else {
-          ladoDireita.push(pescador);
-        }
-        // Inverte a vez para a próxima pessoa
-        alternaEsquerda = !alternaEsquerda;
-      });
-      
+
+      const pescadoresEmbaralhados = embaralhar(pescadores);
+      const qtdPopa = Math.min(configBarco.vagasPopa, pescadoresEmbaralhados.length);
+
       resultadoSorteio = {
-        esquerda: ladoEsquerda,
-        direita: ladoDireita,
-        ordemCompleta: ordemFinal,
+        popa: pescadoresEmbaralhados.slice(0, qtdPopa),
+        laterais: pescadoresEmbaralhados.slice(qtdPopa),
         data: new Date().toLocaleString('pt-BR')
       };
       salvarEstado();
     }
 
-    // --- 5. Gerador de Cronograma de Turnos ---
-    function gerarCronogramaTurnos() {
-      const container = document.getElementById('container-cronograma');
-      if (!resultadoSorteio || !resultadoSorteio.ordemCompleta || resultadoSorteio.ordemCompleta.length === 0) {
-        container.innerHTML = `<p class="text-xs text-amber-600 bg-amber-50 p-3 rounded-lg text-center">Realize o sorteio das posições primeiro para gerar o cronograma de turnos.</p>`;
-        return;
-      }
-      const duracaoHoras = parseInt(document.getElementById('duracao-turno').value) || 2;
-      const dataInicioStr = document.getElementById('info-inicio').value;
-      let dataInicio = dataInicioStr ? new Date(dataInicioStr) : new Date();
-      const numTurnos = 4; // Quantidade de turnos simulados
+    // --- Grupos e Chat ---
+    function criarGrupoViagem(e) {
+      e.preventDefault();
+      const nome = document.getElementById('grupo-nome').value.trim();
+      const ponto = document.getElementById('grupo-ponto').value.trim();
+      const horario = document.getElementById('grupo-horario').value;
+
+      const novoGrupo = { id: Date.now().toString(), nome, ponto, horario, membros: [] };
+      gruposViagem.push(novoGrupo);
       
-      let htmlTabela = `
-        <table class="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr class="bg-slate-100 text-slate-700 uppercase border-b">
-              <th class="p-2 border">Turno / Horário</th>
-              <th class="p-2 border">Passadiço Esquerdo (Bombordo)</th>
-              <th class="p-2 border">Passadiço Direito (Estibordo)</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y">
-      `;
-      let esqAtual = [...resultadoSorteio.esquerda];
-      let dirAtual = [...resultadoSorteio.direita];
-      
-      for (let t = 1; t <= numTurnos; t++) {
-        let horaFim = new Date(dataInicio.getTime() + duracaoHoras * 60 * 60 * 1000);
-        
-        const formatHora = (d) => d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        const formatData = (d) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-        const intervaloStr = `Turno ${t}<br><span class="text-slate-400 font-normal">${formatData(dataInicio)} ${formatHora(dataInicio)} às ${formatHora(horaFim)}</span>`;
-        
-        htmlTabela += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-2 border font-bold text-slate-800 bg-slate-50">${intervaloStr}</td>
-            <td class="p-2 border text-blue-900">${esqAtual.map(p => p.nome).join(', ')}</td>
-            <td class="p-2 border text-emerald-900">${dirAtual.map(p => p.nome).join(', ')}</td>
-          </tr>
-        `;
-        
-        // Rotaciona as posições para o próximo turno (muda a pessoa da proa para a popa)
-        if (esqAtual.length > 0) esqAtual.push(esqAtual.shift());
-        if (dirAtual.length > 0) dirAtual.push(dirAtual.shift());
-        dataInicio = horaFim;
-      }
-      htmlTabela += `</tbody></table>`;
-      container.innerHTML = htmlTabela;
+      document.getElementById('grupo-nome').value = '';
+      document.getElementById('grupo-ponto').value = '';
+      document.getElementById('grupo-horario').value = '';
+      salvarEstado();
     }
 
-    // --- Auxiliares de Formatação ---
+    function selecionarGrupoChat(nomeGrupo) {
+      grupoAtivo = nomeGrupo;
+      document.getElementById('chat-grupo-ativo-titulo').innerText = nomeGrupo === 'Geral' ? 'Geral da Pescaria' : `Grupo: ${nomeGrupo}`;
+      renderizarChat();
+    }
+
+    function enviarMensagemChat(e) {
+      e.preventDefault();
+      const autorSelect = document.getElementById('chat-autor');
+      const textoInput = document.getElementById('chat-texto');
+
+      if (!autorSelect.value) {
+        alert("Cadastre e selecione um pescador para enviar mensagens.");
+        return;
+      }
+
+      const novaMsg = {
+        id: Date.now().toString(),
+        autor: autorSelect.value,
+        texto: textoInput.value.trim(),
+        horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        grupo: grupoAtivo
+      };
+
+      mensagensChat.push(novaMsg);
+      textoInput.value = '';
+      salvarEstado();
+    }
+
+    // --- Renderização Geral ---
     function formatarMoeda(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // --- Renderização Geral da Interface ---
     function renderizarTudo() {
-      renderizarListaDespesas();
-      renderizarPescadoresEAbatimentos();
+      renderizarPescadores();
+      renderizarTabelaDespesas();
+      renderizarAbatimentos();
       renderizarDemonstrativo();
-      renderizarSorteio();
+      renderizarSorteioVisual();
+      renderizarGrupos();
+      renderizarSelectAutores();
+      renderizarChat();
     }
 
-    function renderizarListaDespesas() {
-      const ul = document.getElementById('lista-despesas-cadastradas');
-      if (despesas.length === 0) {
-        ul.innerHTML = `<li class="p-3 text-slate-400 text-xs text-center">Nenhuma despesa cadastrada.</li>`;
+    function renderizarPescadores() {
+      const ul = document.getElementById('lista-pescadores-cadastrados');
+      if (pescadores.length === 0) {
+        ul.innerHTML = `<li class="p-3 text-slate-400 text-xs text-center">Nenhum pescador cadastrado.</li>`;
         return;
       }
-      ul.innerHTML = despesas.map(d => `
-        <li class="p-3 flex justify-between items-center bg-slate-50 hover:bg-slate-100">
+      ul.innerHTML = pescadores.map(p => `
+        <li class="p-2.5 flex justify-between items-center bg-slate-50 hover:bg-slate-100 text-sm">
           <div>
-            <span class="font-medium text-slate-700 block">${d.descricao}</span>
-            <span class="text-xs text-indigo-600 font-semibold">${formatarMoeda(d.valor)}</span>
+            <span class="font-medium text-slate-700">${p.nome}</span>
+            <span class="text-xs text-slate-400 block">${p.telefone || 'Sem telefone'}</span>
           </div>
-          <button onclick="removerDespesa('${d.id}')" class="text-red-500 hover:text-red-700 p-1 no-print">
-            <i class="fa-solid fa-xmark"></i>
+          <button onclick="removerPescador('${p.id}')" class="text-rose-500 hover:text-rose-700 text-xs no-print">
+            <i class="fa-solid fa-trash"></i>
           </button>
         </li>
       `).join('');
     }
 
-    function renderizarPescadoresEAbatimentos() {
-      const container = document.getElementById('container-pescadores');
-      if (pescadores.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-sm text-center py-6">Nenhum pescador cadastrado ainda.</p>`;
+    function renderizarTabelaDespesas() {
+      const tbody = document.getElementById('tabela-despesas-cadastradas');
+      if (despesas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-slate-400 text-center text-xs">Nenhuma despesa.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = despesas.map(d => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-2 font-medium text-slate-700">${d.descricao}</td>
+          <td class="p-2 text-indigo-600 font-semibold">${formatarMoeda(d.valor)}</td>
+          <td class="p-2 text-center no-print">
+            <button onclick="removerDespesa('${d.id}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-xmark"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderizarAbatimentos() {
+      const container = document.getElementById('container-abatimentos');
+      if (pescadores.length === 0 || despesas.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-xs text-center py-4">Cadastre pescadores e despesas para gerenciar abatimentos.</p>`;
         return;
       }
       container.innerHTML = pescadores.map(p => {
-        let totalPagoPeloPescador = 0;
-        const listaItensDespesa = despesas.length === 0 
-          ? `<p class="text-xs text-slate-400 italic">Cadastre despesas para lançar pagamentos.</p>`
-          : despesas.map(d => {
-              const valorPago = (p.pagamentos && p.pagamentos[d.id]) ? p.pagamentos[d.id] : '';
-              if (valorPago) totalPagoPeloPescador += parseFloat(valorPago);
-              return `
-                <div class="flex items-center justify-between text-xs py-1 border-b border-slate-100">
-                  <span class="text-slate-600">${d.descricao} <span class="text-slate-400">(${formatarMoeda(d.valor)})</span></span>
-                  <div class="flex items-center gap-1">
-                    <span class="text-slate-400">R$</span>
-                    <input type="number" step="0.01" min="0" 
-                           placeholder="0,00" 
-                           value="${valorPago}" 
-                           onchange="atualizarPagamento('${p.id}', '${d.id}', this.value)"
-                           class="w-24 px-2 py-1 border rounded text-right focus:ring-1 focus:ring-indigo-500 outline-none">
-                  </div>
-                </div>
-              `;
-            }).join('');
+        let totalPagoPescador = 0;
+        const inputs = despesas.map(d => {
+          const pago = (p.pagamentos && p.pagamentos[d.id]) ? p.pagamentos[d.id] : '';
+          if (pago) totalPagoPescador += parseFloat(pago);
+          return `
+            <div class="flex justify-between items-center text-xs py-1 border-b border-slate-100">
+              <span class="text-slate-600">${d.descricao}</span>
+              <div class="flex items-center gap-1">
+                <span class="text-slate-400">R$</span>
+                <input type="number" step="0.01" min="0" placeholder="0,00" value="${pago}"
+                       onchange="atualizarAbatimento('${p.id}', '${d.id}', this.value)"
+                       class="w-24 px-2 py-1 border rounded-lg text-right focus:ring-1 focus:ring-indigo-500 outline-none">
+              </div>
+            </div>
+          `;
+        }).join('');
+
         return `
-          <div class="p-4 border rounded-xl bg-slate-50/50">
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h3 class="font-bold text-slate-800 text-base">${p.nome}</h3>
-                <p class="text-xs text-slate-500">${p.telefone || 'Sem telefone'}</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-500 block">Total Abatido</span>
-                <span class="text-sm font-bold text-emerald-600">${formatarMoeda(totalPagoPeloPescador)}</span>
-              </div>
+          <div class="p-3 border rounded-xl bg-slate-50/50 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-800 text-sm">${p.nome}</span>
+              <span class="text-xs font-semibold text-emerald-600">Pago: ${formatarMoeda(totalPagoPescador)}</span>
             </div>
-            <div class="bg-white p-3 rounded-lg border mt-2 space-y-2">
-              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                Lançar Pagamento / Abatimento por Item
-              </span>
-              ${listaItensDespesa}
-            </div>
-            <div class="mt-2 text-right no-print">
-              <button onclick="removerPescador('${p.id}')" class="text-xs text-red-500 hover:underline">
-                <i class="fa-solid fa-trash mr-1"></i> Remover Pescador
-              </button>
-            </div>
+            <div class="bg-white p-2.5 rounded-xl border space-y-1">${inputs}</div>
           </div>
         `;
       }).join('');
@@ -585,84 +636,102 @@
 
     function renderizarDemonstrativo() {
       const totalDespesas = despesas.reduce((acc, d) => acc + d.valor, 0);
-      const totalPescadores = pescadores.length;
-      const cotaParte = totalPescadores > 0 ? (totalDespesas / totalPescadores) : 0;
+      const cotaParte = pescadores.length > 0 ? (totalDespesas / pescadores.length) : 0;
       let totalGeralPago = 0;
-      const linhasTabela = pescadores.map(p => {
-        let totalPagoPescador = 0;
-        if (p.pagamentos) {
-          Object.values(p.pagamentos).forEach(v => {
-            totalPagoPescador += parseFloat(v) || 0;
-          });
-        }
-        totalGeralPago += totalPagoPescador;
-        const saldo = cotaParte - totalPagoPescador;
-        let badgeStatus = '';
-        if (Math.abs(saldo) < 0.01) {
-          badgeStatus = `<span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Quitado</span>`;
-        } else if (saldo > 0) {
-          badgeStatus = `<span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">Devendo ${formatarMoeda(saldo)}</span>`;
-        } else {
-          badgeStatus = `<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">A Receber ${formatarMoeda(Math.abs(saldo))}</span>`;
-        }
+
+      const linhas = pescadores.map(p => {
+        let pagoPescador = 0;
+        if (p.pagamentos) Object.values(p.pagamentos).forEach(v => pagoPescador += parseFloat(v) || 0);
+        totalGeralPago += pagoPescador;
+        const saldo = cotaParte - pagoPescador;
+
+        let badge = Math.abs(saldo) < 0.01 ? `<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Quitado</span>` :
+                    (saldo > 0 ? `<span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">Deve ${formatarMoeda(saldo)}</span>` :
+                                 `<span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Crédito ${formatarMoeda(Math.abs(saldo))}</span>`);
+
         return `
           <tr class="hover:bg-slate-50">
-            <td class="p-3 font-medium text-slate-800">${p.nome}</td>
-            <td class="p-3 text-slate-600">${formatarMoeda(cotaParte)}</td>
-            <td class="p-3 text-emerald-600 font-semibold">${formatarMoeda(totalPagoPescador)}</td>
-            <td class="p-3 font-semibold ${saldo > 0 ? 'text-amber-600' : (saldo < 0 ? 'text-blue-600' : 'text-slate-600')}">
-              ${formatarMoeda(saldo)}
-            </td>
-            <td class="p-3">${badgeStatus}</td>
+            <td class="p-2.5 font-medium text-slate-800">${p.nome}</td>
+            <td class="p-2.5 text-slate-600">${formatarMoeda(cotaParte)}</td>
+            <td class="p-2.5 text-emerald-600 font-semibold">${formatarMoeda(pagoPescador)}</td>
+            <td class="p-2.5 font-semibold ${saldo > 0 ? 'text-amber-600' : 'text-blue-600'}">${formatarMoeda(saldo)}</td>
+            <td class="p-2.5">${badge}</td>
           </tr>
         `;
       }).join('');
-      
-      const saldoGeralPendente = totalDespesas - totalGeralPago;
+
       document.getElementById('resumo-total-despesas').innerText = formatarMoeda(totalDespesas);
       document.getElementById('resumo-cota-pessoa').innerText = formatarMoeda(cotaParte);
       document.getElementById('resumo-total-pago').innerText = formatarMoeda(totalGeralPago);
-      document.getElementById('resumo-saldo-pendente').innerText = formatarMoeda(saldoGeralPendente);
-      
-      const tbody = document.getElementById('tabela-demonstrativo');
-      if (pescadores.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">Nenhum pescador disponível para cálculo.</td></tr>`;
-      } else {
-        tbody.innerHTML = linhasTabela;
-      }
+      document.getElementById('resumo-saldo-pendente').innerText = formatarMoeda(totalDespesas - totalGeralPago);
+      document.getElementById('tabela-demonstrativo').innerHTML = pescadores.length === 0 ? `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">Sem participantes.</td></tr>` : linhas;
     }
 
-    function renderizarSorteio() {
-      const containerVisual = document.getElementById('container-visual-barco');
-      const listaEsq = document.getElementById('lista-barco-esquerda');
-      const listaDir = document.getElementById('lista-barco-direita');
-      const badgeEsq = document.getElementById('badge-qtd-esquerda');
-      const badgeDir = document.getElementById('badge-qtd-direita');
-      if (!resultadoSorteio || !resultadoSorteio.esquerda) {
-        containerVisual.classList.add('hidden');
+    function renderizarSorteioVisual() {
+      const container = document.getElementById('container-visual-barco');
+      if (!resultadoSorteio || !resultadoSorteio.popa) {
+        container.classList.add('hidden');
         return;
       }
-      containerVisual.classList.remove('hidden');
-      badgeEsq.innerText = `${resultadoSorteio.esquerda.length} Pessoas`;
-      badgeDir.innerText = `${resultadoSorteio.direita.length} Pessoas`;
-      
-      listaEsq.innerHTML = resultadoSorteio.esquerda.map((p, idx) => `
-        <li class="p-2.5 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between">
-          <span class="font-bold text-blue-900">${idx + 1}º - ${p.nome}</span>
-          ${p.nome.includes('_') ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold">2ª Rodada</span>' : ''}
+      container.classList.remove('hidden');
+      document.getElementById('badge-qtd-popa').innerText = `${resultadoSorteio.popa.length} vagas`;
+      document.getElementById('badge-qtd-laterais').innerText = `${resultadoSorteio.laterais.length} vagas`;
+
+      document.getElementById('lista-popa').innerHTML = resultadoSorteio.popa.map((p, idx) => `
+        <li class="p-2.5 bg-white border border-amber-200 rounded-xl flex items-center justify-between shadow-xs">
+          <span class="font-bold text-amber-900"><i class="fa-solid fa-crown text-amber-500 mr-1.5"></i> Popa ${idx + 1}: ${p.nome}</span>
+          <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">Premium</span>
         </li>
       `).join('');
-      
-      listaDir.innerHTML = resultadoSorteio.direita.map((p, idx) => `
-        <li class="p-2.5 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center justify-between">
-          <span class="font-bold text-emerald-900">${idx + 1}º - ${p.nome}</span>
-          ${p.nome.includes('_') ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold">2ª Rodada</span>' : ''}
+
+      document.getElementById('lista-laterais').innerHTML = resultadoSorteio.laterais.map((p, idx) => `
+        <li class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+          <span class="font-medium text-slate-700">Lateral ${idx + 1}: ${p.nome}</span>
         </li>
       `).join('');
     }
 
-    // Inicialização da Página
-    carregarInfoPescaria();
+    function renderizarGrupos() {
+      const div = document.getElementById('lista-grupos');
+      let html = `
+        <div onclick="selecionarGrupoChat('Geral')" class="p-3 border rounded-xl cursor-pointer transition ${grupoAtivo === 'Geral' ? 'bg-indigo-50 border-indigo-300' : 'bg-slate-50 hover:bg-slate-100'}">
+          <span class="font-bold text-xs text-indigo-900 block"><i class="fa-solid fa-comments mr-1"></i> Geral da Pescaria</span>
+          <span class="text-[11px] text-slate-500">Canal principal para todos</span>
+        </div>
+      `;
+      html += gruposViagem.map(g => `
+        <div onclick="selecionarGrupoChat('${g.nome}')" class="p-3 border rounded-xl cursor-pointer transition ${grupoAtivo === g.nome ? 'bg-indigo-50 border-indigo-300' : 'bg-slate-50 hover:bg-slate-100'}">
+          <span class="font-bold text-xs text-slate-800 block"><i class="fa-solid fa-car mr-1"></i> ${g.nome}</span>
+          <span class="text-[11px] text-slate-500 block"><i class="fa-solid fa-location-dot"></i> ${g.ponto} às ${g.horario}</span>
+        </div>
+      `).join('');
+      div.innerHTML = html;
+    }
+
+    function renderizarSelectAutores() {
+      const select = document.getElementById('chat-autor');
+      select.innerHTML = pescadores.length === 0 ? `<option value="">Cadastre pescadores</option>` : 
+        pescadores.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
+    }
+
+    function renderizarChat() {
+      const container = document.getElementById('chat-mensagens');
+      const msgsFiltradas = mensagensChat.filter(m => m.grupo === grupoAtivo);
+      
+      container.innerHTML = msgsFiltradas.map(m => `
+        <div class="p-2.5 bg-white border rounded-xl shadow-xs space-y-1">
+          <div class="flex justify-between items-center text-[10px] text-slate-400">
+            <span class="font-bold text-indigo-700">${m.autor}</span>
+            <span>${m.horario}</span>
+          </div>
+          <p class="text-xs text-slate-700">${m.texto}</p>
+        </div>
+      `).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // Inicialização
+    carregarConfiguracaoInputs();
     renderizarTudo();
   </script>
 </body>
