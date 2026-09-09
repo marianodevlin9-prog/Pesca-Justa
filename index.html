@@ -72,7 +72,7 @@
                 </button>
             </div>
 
-            <!-- Navegação por Abas -->
+            <!-- Navegação por Abas (Atualizada com a Aba de IA) -->
             <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
                 <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow">
                     <i class="fa-solid fa-users-gear mr-1.5"></i>Cadastros
@@ -88,6 +88,9 @@
                 </button>
                 <button onclick="switchTab('chat')" id="btn-chat" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
                     <i class="fa-solid fa-comments mr-1.5"></i>Encontro
+                </button>
+                <button onclick="switchTab('ia')" id="btn-ia" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-robot mr-1.5 text-blue-400"></i>Especialista IA
                 </button>
             </nav>
         </div>
@@ -386,10 +389,36 @@
             </div>
         </section>
 
+        <!-- ABA 6: ESPECIALISTA IA EM PESCA -->
+        <section id="tab-ia" class="hidden space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-4xl mx-auto flex flex-col h-[550px]">
+                <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-slate-700 pb-3">
+                    <i class="fa-solid fa-robot text-blue-500"></i> Especialista IA em Pesca & Dicas
+                </h2>
+                
+                <!-- Histórico de Mensagens do Chat -->
+                <div id="ai-chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <span class="font-semibold text-xs text-blue-400 block mb-1">Assistente IA</span>
+                        <p class="text-slate-300">Olá! Sou seu especialista em pesca. Pergunte sobre espécies, iscas, nós, marés ou pontos no litoral de SP.</p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Envio -->
+                <form id="ai-chat-form" class="flex gap-2" onsubmit="askFishingAI(event)">
+                    <input type="text" id="ai-chat-input" placeholder="Ex: Qual a melhor isca para robalo ou profundidade da Ilha da Vitória?" required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <button type="submit" id="ai-send-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl transition-all"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </section>
+
     </main>
 
     <!-- Script Principal com Regra de Senha e Acessos -->
     <script>
+        // CHAVE DA API CONFIGURADA A PARTIR DO SEU GOOGLE AI STUDIO
+        const GEMINI_API_KEY = "AQ.Ab8RN6K1_hQaCGQatyLohCYV58e24CwlbghAzwJYHIYIL4OZ5Q";
+
         // SENHA DO ADMINISTRADOR DEFINIDA DIRETAMENTE NO CÓDIGO
         const ADMIN_PASSWORD_FIXED = "pesca2026";
 
@@ -591,6 +620,83 @@
             db.chat.push({ sender, text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
             document.getElementById('chat-text').value = '';
             saveData();
+        }
+
+        // Função de integração do Chat IA de Pesca
+        async function askFishingAI(e) {
+            e.preventDefault();
+            const inputField = document.getElementById('ai-chat-input');
+            const sendBtn = document.getElementById('ai-send-btn');
+            const messagesContainer = document.getElementById('ai-chat-messages');
+            const question = inputField.value.trim();
+
+            if (!question) return;
+
+            messagesContainer.innerHTML += `
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 ml-8">
+                    <span class="font-semibold text-xs text-emerald-400 block mb-1">Você</span>
+                    <p class="text-slate-300">${escapeHtml(question)}</p>
+                </div>
+            `;
+
+            inputField.value = '';
+            inputField.disabled = true;
+            sendBtn.disabled = true;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            messagesContainer.innerHTML += `
+                <div id="${loadingId}" class="bg-slate-900 p-3 rounded-xl border border-slate-700 mr-8">
+                    <span class="font-semibold text-xs text-blue-400 block mb-1">Assistente IA</span>
+                    <p class="text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Pesquisando sobre pesca...</p>
+                </div>
+            `;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Você é um guia especialista em pesca esportiva e oceânica, com foco especial no litoral do estado de São Paulo (ilhas, parcéis, espécies, profundidades e técnicas). Responda de forma direta e útil à seguinte pergunta: ${question}`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById(loadingId).remove();
+
+                const aiReply = data.candidates && data.candidates[0].content.parts[0].text 
+                    ? data.candidates[0].content.parts[0].text 
+                    : "Desculpe, não consegui processar sua resposta no momento.";
+
+                messagesContainer.innerHTML += `
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 mr-8">
+                        <span class="font-semibold text-xs text-blue-400 block mb-1">Assistente IA</span>
+                        <p class="text-slate-300 whitespace-pre-line">${escapeHtml(aiReply)}</p>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                messagesContainer.innerHTML += `
+                    <div class="bg-slate-900 p-3 rounded-xl border border-rose-900/50 mr-8">
+                        <span class="font-semibold text-xs text-rose-400 block mb-1">Erro</span>
+                        <p class="text-slate-300">Falha ao se conectar com a IA. Verifique sua chave de API.</p>
+                    </div>
+                `;
+            }
+
+            inputField.disabled = false;
+            sendBtn.disabled = false;
+            inputField.focus();
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
         function runLottery() {
