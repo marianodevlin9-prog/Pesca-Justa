@@ -565,12 +565,14 @@
             document.getElementById('participant-count').innerText = db.participants.length;
             let pBody = '';
             let payerSelect = '';
+            let defaultPayer = db.participants.length > 0 ? db.participants[0].name : "Geral";
+            
             db.participants.forEach(p => {
                 pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400">${p.phone}</td><td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 payerSelect += `<option value="${p.name}">${p.name}</option>`;
             });
             document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
-            document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="">Cadastre um participante</option>`;
+            document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="Geral">Cadastre um participante</option>`;
 
             let etHtml = '';
             let typeSelect = '';
@@ -587,11 +589,12 @@
             db.participants.forEach(p => { paidMap[p.name] = 0; });
 
             db.expenses.forEach(ex => {
+                let actualPayer = ex.payer && ex.payer.trim() !== "" ? ex.payer : defaultPayer;
                 totalExp += ex.value;
-                if(paidMap[ex.payer] !== undefined) {
-                    paidMap[ex.payer] += ex.value;
+                if(paidMap[actualPayer] !== undefined) {
+                    paidMap[actualPayer] += ex.value;
                 }
-                eBody += `<tr><td class="p-2.5"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${ex.payer}</td><td class="p-2.5 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                eBody += `<tr><td class="p-2.5"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${actualPayer}</td><td class="p-2.5 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
             let perPerson = db.participants.length > 0 ? totalExp / db.participants.length : 0;
@@ -621,8 +624,6 @@
 
             renderBoatSeats();
         }
-
-        renderAll();
     </script>
 </body>
 </html>
