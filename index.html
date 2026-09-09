@@ -23,17 +23,20 @@
             </div>
             <!-- Navegação por Abas -->
             <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
-                <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow">
-                    <i class="fa-solid fa-users-gear mr-2"></i>Cadastros
+                <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow">
+                    <i class="fa-solid fa-users-gear mr-1.5"></i>Cadastros
                 </button>
-                <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-dice mr-2"></i>Sorteio
+                <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-dice mr-1.5"></i>Sorteio & Planta
                 </button>
-                <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-wallet mr-2"></i>Despesas & Rateio
+                <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-wallet mr-1.5"></i>Despesas & Rateio
                 </button>
-                <button onclick="switchTab('chat')" id="btn-chat" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-comments mr-2"></i>Ponto de Encontro
+                <button onclick="switchTab('pontos')" id="btn-pontos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-map-location-dot mr-1.5"></i>Pontos
+                </button>
+                <button onclick="switchTab('chat')" id="btn-chat" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-comments mr-1.5"></i>Encontro
                 </button>
             </nav>
         </div>
@@ -44,47 +47,89 @@
 
         <!-- ABA 1: CADASTROS -->
         <section id="tab-cadastros" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Configurações da Viagem -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-gear text-blue-500"></i> Dados da Viagem
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Configurações do Barco / Viagem -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-gear text-blue-500"></i> Dados do Barco & Horários
                     </h2>
                     <form id="trip-form" class="space-y-4" onsubmit="saveTripConfig(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Local de Saída</label>
                             <input type="text" id="trip-location" value="Atlanticus - Ilha da Vitória" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Data e Hora</label>
-                                <input type="datetime-local" id="trip-date" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Data/Hora Saída</label>
+                                <input type="datetime-local" id="trip-departure" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Vagas na Popa</label>
-                                <input type="number" id="trip-popa" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Data/Hora Retorno</label>
+                                <input type="datetime-local" id="trip-return" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             </div>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20">Salvar Configurações</button>
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700/60 flex justify-between items-center text-sm">
+                            <span class="text-slate-400">Tempo Total de Pesca Calculado:</span>
+                            <span id="calculated-fishing-hours" class="font-bold text-blue-400">0 horas</span>
+                        </div>
+
+                        <div class="border-t border-slate-700 pt-4">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Distribuição de Bancos na Planta do Barco</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div>
+                                    <span class="text-[11px] text-slate-400">Popa (Fundo)</span>
+                                    <input type="number" id="seats-popa" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <span class="text-[11px] text-slate-400">Lado Direito</span>
+                                    <input type="number" id="seats-right" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <span class="text-[11px] text-slate-400">Lado Esquerdo</span>
+                                    <input type="number" id="seats-left" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <span class="text-[11px] text-slate-400">Proa (Frente)</span>
+                                    <input type="number" id="seats-bow" value="2" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20">Salvar Dados da Viagem</button>
                     </form>
                 </div>
 
-                <!-- Cadastro de Participantes -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador
-                    </h2>
-                    <form id="participant-form" class="space-y-4" onsubmit="addParticipant(event)">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome Completo</label>
-                            <input type="text" id="p-name" placeholder="Ex: João da Silva" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                <!-- Cadastro de Participantes & Tipos de Despesa -->
+                <div class="space-y-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador
+                        </h2>
+                        <form id="participant-form" class="space-y-3" onsubmit="addParticipant(event)">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome Completo</label>
+                                <input type="text" id="p-name" placeholder="Ex: João da Silva" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp (Opcional)</label>
+                                <input type="text" id="p-phone" placeholder="(11) 99999-9999" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-emerald-600/20">Cadastrar Participante</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                        <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-tags text-blue-500"></i> Tipos de Despesa
+                        </h2>
+                        <form id="expense-type-form" class="flex gap-2 mb-3" onsubmit="addExpenseType(event)">
+                            <input type="text" id="et-name" placeholder="Ex: Iscas, Combustível, Churrasco..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium">Adicionar</button>
+                        </form>
+                        <div id="expense-types-list" class="flex flex-wrap gap-2">
+                            <!-- Preenchido via JS -->
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp</label>
-                            <input type="text" id="p-phone" placeholder="(11) 99999-9999" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
-                        </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/20">Cadastrar Participante</button>
-                    </form>
+                    </div>
                 </div>
             </div>
 
@@ -112,66 +157,92 @@
             </div>
         </section>
 
-        <!-- ABA 2: SORTEIO -->
+        <!-- ABA 2: SORTEIO & PLANTA DO BARCO -->
         <section id="tab-sorteio" class="hidden space-y-6">
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center">
-                <h2 class="text-xl font-bold text-white mb-2">Sorteio de Vagas (Popa & Laterais)</h2>
-                <p class="text-sm text-slate-400 mb-6">O sistema prioriza automaticamente as vagas da popa e distribui o restante nas laterais.</p>
+                <h2 class="text-xl font-bold text-white mb-2">Sorteio de Assentos & Planta do Barco</h2>
+                <p class="text-sm text-slate-400 mb-6">Distribuição visual interativa dos assentos informados na configuração do barco.</p>
                 <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-amber-600/30">
-                    <i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio Agora
+                    <i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio nos Bancos
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="lottery-results-container">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                    <h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-anchor"></i> Vagas na Popa (Fundo)
-                    </h3>
-                    <ul id="popa-list" class="space-y-2 text-slate-300">
-                        <li class="text-slate-500 italic">Sorteio não realizado.</li>
-                    </ul>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                    <h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-bars"></i> Vagas nas Laterais
-                    </h3>
-                    <ul id="lateral-list" class="space-y-2 text-slate-300">
-                        <li class="text-slate-500 italic">Sorteio não realizado.</li>
-                    </ul>
+            <!-- Simulação Visual Estilizada da Planta do Barco -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-base font-semibold text-white mb-4 text-center"><i class="fa-solid fa-ship text-blue-400 mr-2"></i> Planta Esquemática do Barco</h3>
+                <div class="max-w-3xl mx-auto bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 space-y-6 relative">
+                    <!-- PROA (Frente) -->
+                    <div class="text-center">
+                        <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Proa (Frente)</span>
+                        <div id="boat-bow" class="grid grid-cols-2 sm:flex sm:justify-center gap-3">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8 border-y border-slate-800 py-6">
+                        <!-- Lado Esquerdo -->
+                        <div class="text-center border-r border-slate-800 pr-4">
+                            <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Lado Esquerdo (Boreste/Bombordo)</span>
+                            <div id="boat-left" class="space-y-2">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+                        <!-- Lado Direito -->
+                        <div class="text-center pl-4">
+                            <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Lado Direito</span>
+                            <div id="boat-right" class="space-y-2">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- POPA (Fundo) -->
+                    <div class="text-center">
+                        <span class="text-xs uppercase tracking-widest text-blue-400 block mb-2 font-bold"><i class="fa-solid fa-anchor mr-1"></i> Popa (Fundo do Barco)</span>
+                        <div id="boat-popa" class="grid grid-cols-2 sm:flex sm:justify-center gap-3">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- ABA 3: DESPESAS & RATEIO -->
         <section id="tab-despesas" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Lançar Despesa -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl md:col-span-1">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-receipt text-blue-500"></i> Nova Despesa
                     </h2>
                     <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição</label>
-                            <input type="text" id="exp-desc" placeholder="Ex: Iscas / Combustível" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor (R$)</label>
-                            <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem Pagou?</label>
-                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
+                            <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                                 <!-- Preenchido via JS -->
                             </select>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all">Lançar Despesa</button>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
+                            <input type="text" id="exp-desc" placeholder="Ex: Camarão e sardinha" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor (R$)</label>
+                            <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem Pagou?</label>
+                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm">Lançar Despesa</button>
                     </form>
                 </div>
 
-                <!-- Demonstrativo e Rateio -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl md:col-span-2 space-y-6">
-                    <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                <!-- Demonstrativo, Extrato Geral e Histórico Individual -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-700 pb-4 gap-4">
                         <div>
                             <p class="text-xs text-slate-400 uppercase font-semibold">Total de Gastos</p>
                             <h3 class="text-2xl font-bold text-white" id="total-expenses">R$ 0,00</h3>
@@ -181,13 +252,15 @@
                             <h3 class="text-2xl font-bold text-blue-400" id="per-person-expense">R$ 0,00</h3>
                         </div>
                     </div>
+
+                    <!-- Extrato Geral Resumido -->
                     <div>
-                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato de Despesas</h4>
-                        <div class="overflow-x-auto max-h-48 overflow-y-auto">
+                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato Geral de Despesas</h4>
+                        <div class="overflow-x-auto max-h-40 overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
                                     <tr>
-                                        <th class="p-2.5">Descrição</th>
+                                        <th class="p-2.5">Tipo / Descrição</th>
                                         <th class="p-2.5">Valor</th>
                                         <th class="p-2.5">Pagador</th>
                                         <th class="p-2.5 text-center">Ação</th>
@@ -199,11 +272,65 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Histórico Individual por Pescador -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Balanço e Histórico Individual</h4>
+                        <div class="overflow-x-auto max-h-48 overflow-y-auto">
+                            <table class="w-full text-left text-sm text-slate-300">
+                                <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
+                                    <tr>
+                                        <th class="p-2.5">Pescador</th>
+                                        <th class="p-2.5">Total Pago</th>
+                                        <th class="p-2.5">Diferença / Acerto</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="individual-balance-body" class="divide-y divide-slate-700">
+                                    <!-- Preenchido via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- ABA 4: CHAT & PONTO DE ENCONTRO -->
+        <!-- ABA 4: PONTOS DE PESCA -->
+        <section id="tab-pontos" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-map-pin text-blue-500"></i> Cadastrar Ponto
+                    </h2>
+                    <form id="spot-form" class="space-y-4" onsubmit="addFishingSpot(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Ponto</label>
+                            <input type="text" id="spot-name" placeholder="Ex: Laje da Cação / Ilha Vitória" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Espécies Alvo</label>
+                            <input type="text" id="spot-species" placeholder="Ex: Garoupa, Olho-de-cão, Pargo" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Profundidade / Observações</label>
+                            <textarea id="spot-obs" placeholder="Ex: 35 a 50 metros, fundo de pedra." rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm">Salvar Ponto</button>
+                    </form>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-blue-500"></i> Pontos de Pesca Cadastrados
+                    </h2>
+                    <div id="spots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 5: CHAT & PONTO DE ENCONTRO -->
         <section id="tab-chat" class="hidden space-y-6">
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-2xl mx-auto flex flex-col h-[500px]">
                 <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-slate-700 pb-3">
@@ -222,17 +349,28 @@
 
     </main>
 
-    <!-- Script de Gestão do Aplicativo -->
+    <!-- Script Principal -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db')) || {
-            trip: { location: "Atlanticus - Ilha da Vitória", date: "2026-09-15T05:00", popa: 4 },
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v2')) || {
+            trip: {
+                location: "Atlanticus - Ilha da Vitória",
+                departure: "2026-09-15T05:00",
+                return: "2026-09-15T17:00",
+                popa: 4,
+                right: 4,
+                left: 4,
+                bow: 2
+            },
             participants: [],
+            expenseTypes: ["Iscas", "Combustível", "Alimentação / Churrasco", "Gelo", "Taxa do Barco"],
             expenses: [],
-            chat: []
+            spots: [],
+            chat: [],
+            lottery: { popa: [], right: [], left: [], bow: [] }
         };
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v2', JSON.stringify(db));
             renderAll();
         }
 
@@ -251,16 +389,20 @@
         function saveTripConfig(e) {
             e.preventDefault();
             db.trip.location = document.getElementById('trip-location').value;
-            db.trip.date = document.getElementById('trip-date').value;
-            db.trip.popa = parseInt(document.getElementById('trip-popa').value);
+            db.trip.departure = document.getElementById('trip-departure').value;
+            db.trip.return = document.getElementById('trip-return').value;
+            db.trip.popa = parseInt(document.getElementById('seats-popa').value) || 0;
+            db.trip.right = parseInt(document.getElementById('seats-right').value) || 0;
+            db.trip.left = parseInt(document.getElementById('seats-left').value) || 0;
+            db.trip.bow = parseInt(document.getElementById('seats-bow').value) || 0;
             saveData();
-            alert('Configurações salvas com sucesso!');
+            alert('Configurações da viagem e assentos salvas com sucesso!');
         }
 
         function addParticipant(e) {
             e.preventDefault();
             const name = document.getElementById('p-name').value;
-            const phone = document.getElementById('p-phone').value;
+            const phone = document.getElementById('p-phone').value || "Não informado";
             db.participants.push({ id: Date.now(), name, phone });
             document.getElementById('participant-form').reset();
             saveData();
@@ -271,18 +413,49 @@
             saveData();
         }
 
+        function addExpenseType(e) {
+            e.preventDefault();
+            const name = document.getElementById('et-name').value.trim();
+            if(name && !db.expenseTypes.includes(name)) {
+                db.expenseTypes.push(name);
+                document.getElementById('expense-type-form').reset();
+                saveData();
+            }
+        }
+
+        function removeExpenseType(name) {
+            db.expenseTypes = db.expenseTypes.filter(t => t !== name);
+            saveData();
+        }
+
         function addExpense(e) {
             e.preventDefault();
+            const type = document.getElementById('exp-type').value;
             const description = document.getElementById('exp-desc').value;
             const value = parseFloat(document.getElementById('exp-value').value);
             const payer = document.getElementById('exp-payer').value;
-            db.expenses.push({ id: Date.now(), description, value, payer });
+            db.expenses.push({ id: Date.now(), type, description, value, payer });
             document.getElementById('expense-form').reset();
             saveData();
         }
 
         function removeExpense(id) {
             db.expenses = db.expenses.filter(ex => ex.id !== id);
+            saveData();
+        }
+
+        function addFishingSpot(e) {
+            e.preventDefault();
+            const name = document.getElementById('spot-name').value;
+            const species = document.getElementById('spot-species').value;
+            const obs = document.getElementById('spot-obs').value;
+            db.spots.push({ id: Date.now(), name, species, obs });
+            document.getElementById('spot-form').reset();
+            saveData();
+        }
+
+        function removeFishingSpot(id) {
+            db.spots = db.spots.filter(s => s.id !== id);
             saveData();
         }
 
@@ -301,45 +474,135 @@
                 return;
             }
             let shuffled = [...db.participants].sort(() => Math.random() - 0.5);
-            let popaCount = db.trip.popa;
-            let popaList = shuffled.slice(0, popaCount);
-            let lateralList = shuffled.slice(popaCount);
+            let pPopa = db.trip.popa;
+            let pRight = db.trip.right;
+            let pLeft = db.trip.left;
+            let pBow = db.trip.bow;
 
-            let popaHTML = popaList.length ? popaList.map((p, i) => `<li class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between"><span>#${i+1} ${p.name}</span><span class="text-xs text-blue-400">Popa</span></li>`).join('') : '<li class="text-slate-500">Nenhum na popa.</li>';
-            let lateralHTML = lateralList.length ? lateralList.map((p, i) => `<li class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between"><span>#${i+1} ${p.name}</span><span class="text-xs text-purple-400">Lateral</span></li>`).join('') : '<li class="text-slate-500 font-semibold">Sem excedente para laterais.</li>';
+            db.lottery.popa = shuffled.splice(0, pPopa);
+            db.lottery.right = shuffled.splice(0, pRight);
+            db.lottery.left = shuffled.splice(0, pLeft);
+            db.lottery.bow = shuffled.splice(0, pBow);
+            // Sobras vão para lista geral ou excedentes se houver mais pessoas que assentos
 
-            document.getElementById('popa-list').innerHTML = popaHTML;
-            document.getElementById('lateral-list').innerHTML = lateralHTML;
+            saveData();
+        }
+
+        function renderBoatSeats() {
+            let renderSeatGroup = (list, titleColor) => {
+                if(!list || list.length === 0) return '<p class="text-xs text-slate-500 italic">Vago</p>';
+                return list.map((p, i) => `<div class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs flex justify-between items-center"><span class="font-medium text-white">${i+1}. ${p.name}</span></div>`).join('');
+            };
+
+            // Popa
+            let popaHtml = '';
+            for(let i=0; i<db.trip.popa; i++) {
+                let p = db.lottery.popa && db.lottery.popa[i];
+                popaHtml += `<div class="bg-slate-950 border border-blue-500/40 rounded-xl p-3 text-center min-w-[110px]"><span class="text-[10px] text-blue-400 block font-bold mb-1">Popa #${i+1}</span><span class="text-xs font-semibold text-white">${p ? p.name : '<span class="text-slate-500 italic font-normal">Disponível</span>'}</span></div>`;
+            }
+            document.getElementById('boat-popa').innerHTML = popaHtml || '<span class="text-slate-500 text-xs">Nenhum banco configurado na popa.</span>';
+
+            // Proa
+            let bowHtml = '';
+            for(let i=0; i<db.trip.bow; i++) {
+                let p = db.lottery.bow && db.lottery.bow[i];
+                bowHtml += `<div class="bg-slate-950 border border-emerald-500/40 rounded-xl p-3 text-center min-w-[110px]"><span class="text-[10px] text-emerald-400 block font-bold mb-1">Proa #${i+1}</span><span class="text-xs font-semibold text-white">${p ? p.name : '<span class="text-slate-500 italic font-normal">Disponível</span>'}</span></div>`;
+            }
+            document.getElementById('boat-bow').innerHTML = bowHtml || '<span class="text-slate-500 text-xs">Nenhum banco configurado na proa.</span>';
+
+            // Lado Esquerdo
+            let leftHtml = '';
+            for(let i=0; i<db.trip.left; i++) {
+                let p = db.lottery.left && db.lottery.left[i];
+                leftHtml += `<div class="bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs flex justify-between items-center"><span class="text-[10px] text-slate-400 mr-2">Esq #${i+1}</span><span class="font-medium text-white truncate">${p ? p.name : '<span class="text-slate-500 italic">Disponível</span>'}</span></div>`;
+            }
+            document.getElementById('boat-left').innerHTML = leftHtml || '<span class="text-slate-500 text-xs">Nenhum assento.</span>';
+
+            // Lado Direito
+            let rightHtml = '';
+            for(let i=0; i<db.trip.right; i++) {
+                let p = db.lottery.right && db.lottery.right[i];
+                rightHtml += `<div class="bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs flex justify-between items-center"><span class="font-medium text-white truncate">${p ? p.name : '<span class="text-slate-500 italic">Disponível</span>'}</span><span class="text-[10px] text-slate-400 ml-2">Dir #${i+1}</span></div>`;
+            }
+            document.getElementById('boat-right').innerHTML = rightHtml || '<span class="text-slate-500 text-xs">Nenhum assento.</span>';
         }
 
         function renderAll() {
-            // Trip Inputs
+            // Configurações do Barco / Viagem
             document.getElementById('trip-location').value = db.trip.location;
-            document.getElementById('trip-date').value = db.trip.date;
-            document.getElementById('trip-popa').value = db.trip.popa;
+            document.getElementById('trip-departure').value = db.trip.departure;
+            document.getElementById('trip-return').value = db.trip.return;
+            document.getElementById('seats-popa').value = db.trip.popa;
+            document.getElementById('seats-right').value = db.trip.right;
+            document.getElementById('seats-left').value = db.trip.left;
+            document.getElementById('seats-bow').value = db.trip.bow;
 
-            // Participants
+            // Cálculo das horas de pesca
+            if(db.trip.departure && db.trip.return) {
+                let d1 = new Date(db.trip.departure);
+                let d2 = new Date(db.trip.return);
+                let diffMs = d2 - d1;
+                let diffHrs = diffMs > 0 ? (diffMs / (1000 * 60 * 60)).toFixed(1) : 0;
+                document.getElementById('calculated-fishing-hours').innerText = `${diffHrs} horas`;
+            } else {
+                document.getElementById('calculated-fishing-hours').innerText = `0 horas`;
+            }
+
+            // Pescadores & Seletor de pagadores
             document.getElementById('participant-count').innerText = db.participants.length;
             let pBody = '';
             let payerSelect = '';
             db.participants.forEach(p => {
-                pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3">${p.phone}</td><td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400">${p.phone}</td><td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 payerSelect += `<option value="${p.name}">${p.name}</option>`;
             });
             document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
             document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="">Cadastre um participante</option>`;
 
-            // Expenses
+            // Tipos de despesa
+            let etHtml = '';
+            let typeSelect = '';
+            db.expenseTypes.forEach(t => {
+                etHtml += `<span class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2"><span>${t}</span><button onclick="removeExpenseType('${t}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid xmark"></i>&times;</button></span>`;
+                typeSelect += `<option value="${t}">${t}</option>`;
+            });
+            document.getElementById('expense-types-list').innerHTML = etHtml;
+            document.getElementById('exp-type').innerHTML = typeSelect || `<option value="Geral">Geral</option>`;
+
+            // Despesas, Rateio e Balanço Individual
             let totalExp = 0;
             let eBody = '';
+            let paidMap = {};
+            db.participants.forEach(p => { paidMap[p.name] = 0; });
+
             db.expenses.forEach(ex => {
                 totalExp += ex.value;
-                eBody += `<tr><td class="p-2.5">${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${ex.payer}</td><td class="p-2.5 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                if(paidMap[ex.payer] !== undefined) {
+                    paidMap[ex.payer] += ex.value;
+                }
+                eBody += `<tr><td class="p-2.5"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${ex.payer}</td><td class="p-2.5 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
             let perPerson = db.participants.length > 0 ? totalExp / db.participants.length : 0;
             document.getElementById('per-person-expense').innerText = `R$ ${perPerson.toFixed(2)}`;
             document.getElementById('expenses-table-body').innerHTML = eBody || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma despesa registrada.</td></tr>`;
+
+            // Tabela Individual
+            let indBody = '';
+            db.participants.forEach(p => {
+                let pPaid = paidMap[p.name] || 0;
+                let diff = pPaid - perPerson;
+                let diffFormatted = diff >= 0 ? `<span class="text-emerald-400">+ R$ ${diff.toFixed(2)} (Crédito)</span>` : `<span class="text-rose-400">- R$ ${Math.abs(diff).toFixed(2)} (Deve)</span>`;
+                indBody += `<tr><td class="p-2.5 font-medium text-white">${p.name}</td><td class="p-2.5">R$ ${pPaid.toFixed(2)}</td><td class="p-2.5">${diffFormatted}</td></tr>`;
+            });
+            document.getElementById('individual-balance-body').innerHTML = indBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Cadastre participantes para ver o balanço.</td></tr>`;
+
+            // Pontos de Pesca
+            let spotsHtml = '';
+            db.spots.forEach(s => {
+                spotsHtml += `<div class="bg-slate-900 border border-slate-700 rounded-xl p-4 relative flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><h3 class="font-semibold text-white text-sm"><i class="fa-solid fa-anchor text-blue-400 mr-1.5"></i>${s.name}</h3><button onclick="removeFishingSpot(${s.id})" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button></div><p class="text-xs text-blue-300 mb-1"><strong class="text-slate-400">Espécies:</strong> ${s.species}</p><p class="text-xs text-slate-300">${s.obs}</p></div></div>`;
+            });
+            document.getElementById('spots-container').innerHTML = spotsHtml || `<p class="text-slate-500 text-sm italic col-span-2">Nenhum ponto de pesca cadastrado.</p>`;
 
             // Chat
             let chatBody = '';
@@ -347,9 +610,11 @@
                 chatBody += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700"><div class="flex justify-between items-center mb-1"><span class="font-semibold text-xs text-blue-400">${c.sender}</span><span class="text-[10px] text-slate-500">${c.time}</span></div><p class="text-slate-300">${c.text}</p></div>`;
             });
             document.getElementById('chat-messages').innerHTML = chatBody || `<p class="text-center text-slate-500 italic mt-20">Nenhuma mensagem no mural ainda.</p>`;
+
+            // Renderizar Planta do Barco
+            renderBoatSeats();
         }
 
-        // Inicialização
         renderAll();
     </script>
 </body>
