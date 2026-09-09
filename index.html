@@ -16,6 +16,42 @@
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen pb-16">
   
   <!-- Header Moderno -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+  
+  <!-- Coluna Esquerda: Bloco da Planta do Barco -->
+  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+    <h3 class="font-bold text-gray-800 mb-3">Vista superior posições do barco</h3>
+    <!-- Container onde a planta e os bancos dinâmicos vão aparecer -->
+    <div id="boat-diagram-container" class="relative rounded-lg bg-slate-900 text-white p-4 min-h-[280px] flex items-center justify-center">
+      <span class="text-sm text-gray-400">Diagrama gerado dinamicamente</span>
+    </div>
+  </div>
+
+  <!-- Coluna Direita: Módulo de Fotos (Bento Grid) -->
+  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 grid grid-cols-3 gap-3">
+    <!-- Foto Principal (Destaque maior à esquerda) -->
+    <div class="col-span-2 row-span-2 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[140px]">
+      <span class="text-xs font-medium text-gray-600">+ Foto Principal do Barco</span>
+    </div>
+    <!-- Foto Detalhe 1 -->
+    <div class="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[65px]">
+      <span class="text-[10px] text-gray-500">+ Popa</span>
+    </div>
+    <!-- Foto Detalhe 2 -->
+    <div class="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[65px]">
+      <span class="text-[10px] text-gray-500">+ Proa</span>
+    </div>
+    <!-- Foto Detalhe 3 (Preenchendo o espaço inferior direito) -->
+    <div class="col-span-2 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[65px]">
+      <span class="text-[10px] text-gray-500">+ Interior / Detalhes</span>
+    </div>
+  </div>
+
+</div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+  <!-- Bloco da Esquerda (Planta do barco) -->
+  <!-- Bloco da Direita (Fotos) -->
+</div>
   <header class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white py-5 shadow-lg mb-6">
     <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center gap-3">
@@ -402,7 +438,7 @@
       if (confirm("Deseja apagar todos os dados e reiniciar o sistema?")) {
         localStorage.clear();
         despesas = []; pescadores = []; gruposViagem = [];
-        itensPreCadastrados = ['Aluguel do Barco / Embarcação', 'Iscas Vivas', 'Gelo', 'Combustível / Carona', 'Alimentação / Churrasco', 'Taxa de Embarque'];
+        itensPreCadastrados = ['Aluguel do Barco / Embarcação', 'Iscas ', 'Gelo', 'Combustível / Carona', 'Alimentação / Churrasco', 'Taxa de Embarque'];
         configBarco = { inicio: '', termino: '', local: '', bancos: 6, vagasPopa: 2 };
         resultadoSorteio = null;
         mensagensChat = [{ id: '1', autor: 'Sistema', texto: 'Sistema reiniciado.', horario: '08:00', grupo: 'Geral' }];
