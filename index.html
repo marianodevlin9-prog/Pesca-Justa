@@ -133,41 +133,63 @@
                 </div>
             </div>
 
-            <!-- Seção Inferior: Grid Responsivo com o Diagrama do Barco e Bento Grid de Fotos -->
+            <!-- Seção Inferior: Grid Responsivo com o Diagrama do Barco e Bento Grid de Fotos Funcional -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-                <!-- Coluna Esquerda: Bloco da Planta do Barco -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                    <h3 class="font-bold text-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-ship text-blue-500"></i> Vista superior posições do barco
-                    </h3>
-                    <div id="boat-diagram-container" class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[280px] flex items-center justify-center border border-slate-700/60">
-                        <span class="text-sm text-slate-400">Diagrama gerado dinamicamente</span>
+                <!-- Coluna Esquerda: Bloco da Planta do Barco Funcional -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-ship text-blue-500"></i> Vista superior posições do barco
+                        </h3>
+                    </div>
+                    <div id="mini-boat-preview" class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[260px] flex flex-col justify-between border border-slate-700/60">
+                        <div class="text-center pb-2 border-b border-slate-800 text-[11px] text-emerald-400 font-bold uppercase">Proa (Frente): <span id="prev-bow" class="text-white">0</span> assentos</div>
+                        <div class="flex justify-between items-center py-2 text-[11px] text-slate-400 font-bold">
+                            <span>Esq: <span id="prev-left" class="text-white">0</span></span>
+                            <span class="text-slate-600 font-normal italic">Esquema Configurado</span>
+                            <span>Dir: <span id="prev-right" class="text-white">0</span></span>
+                        </div>
+                        <div class="text-center pt-2 border-t border-slate-800 text-[11px] text-blue-400 font-bold uppercase">Popa (Fundo): <span id="prev-popa" class="text-white">0</span> assentos</div>
                     </div>
                 </div>
 
-                <!-- Coluna Direita: Módulo de Fotos (Bento Grid) -->
+                <!-- Coluna Direita: Módulo de Fotos Funcional (Bento Grid) -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl grid grid-cols-3 gap-3">
-                    <div class="col-span-3 mb-1">
+                    <div class="col-span-3 mb-1 flex justify-between items-center">
                         <h3 class="font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-camera text-blue-500"></i> Fotos da Embarcação
                         </h3>
+                        <span class="text-xs text-slate-400">Clique para enviar</span>
                     </div>
+
+                    <!-- Input oculto universal para upload -->
+                    <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+
                     <!-- Foto Principal (Destaque maior à esquerda) -->
-                    <div class="col-span-2 row-span-2 border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-4 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[140px]">
-                        <i class="fa-solid fa-image text-blue-400 mb-2 text-lg"></i>
-                        <span class="text-xs font-medium text-slate-300 text-center">+ Foto Principal do Barco</span>
+                    <div onclick="triggerImageUpload('main')" id="slot-main" class="col-span-2 row-span-2 border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-4 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[140px] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-main" style="display: none;"></div>
+                        <div class="z-10 flex flex-col items-center bg-slate-900/80 p-2 rounded-lg group-hover:bg-slate-900 transition">
+                            <i class="fa-solid fa-image text-blue-400 mb-2 text-lg"></i>
+                            <span class="text-xs font-medium text-slate-300 text-center" id="text-main">+ Foto Principal do Barco</span>
+                        </div>
                     </div>
-                    <!-- Foto Detalhe 1 -->
-                    <div class="border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px]">
-                        <span class="text-[10px] text-slate-300 font-semibold">+ Popa</span>
+
+                    <!-- Foto Detalhe 1 (Popa) -->
+                    <div onclick="triggerImageUpload('popa')" id="slot-popa" class="border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-popa" style="display: none;"></div>
+                        <span class="text-[10px] text-slate-300 font-semibold z-10 bg-slate-900/80 px-1.5 py-0.5 rounded" id="text-popa">+ Popa</span>
                     </div>
-                    <!-- Foto Detalhe 2 -->
-                    <div class="border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px]">
-                        <span class="text-[10px] text-slate-300 font-semibold">+ Proa</span>
+
+                    <!-- Foto Detalhe 2 (Proa) -->
+                    <div onclick="triggerImageUpload('proa')" id="slot-proa" class="border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-proa" style="display: none;"></div>
+                        <span class="text-[10px] text-slate-300 font-semibold z-10 bg-slate-900/80 px-1.5 py-0.5 rounded" id="text-proa">+ Proa</span>
                     </div>
-                    <!-- Foto Detalhe 3 -->
-                    <div class="col-span-2 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px]">
-                        <span class="text-[10px] text-slate-300 font-semibold">+ Interior / Detalhes</span>
+
+                    <!-- Foto Detalhe 3 (Interior) -->
+                    <div onclick="triggerImageUpload('interior')" id="slot-interior" class="col-span-2 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-interior" style="display: none;"></div>
+                        <span class="text-[10px] text-slate-300 font-semibold z-10 bg-slate-900/80 px-1.5 py-0.5 rounded" id="text-interior">+ Interior / Detalhes</span>
                     </div>
                 </div>
             </div>
@@ -298,7 +320,7 @@
                         </div>
                     </div>
 
-                    <!-- Balanço e Histórico Individual (Quanto cada um pagou vs Saldo a Acertar) -->
+                    <!-- Balanço e Histórico Individual -->
                     <div>
                         <h4 class="text-sm font-semibold text-slate-300 mb-1">Balanço e Histórico Individual (Saldo / Acerto)</h4>
                         <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio, indicando o crédito ou o valor restante que falta pagar.</p>
@@ -375,9 +397,9 @@
 
     </main>
 
-    <!-- Script Principal -->
+    <!-- Script Principal com Gestão de Imagens e Diagrama Ativos -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v3')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v4')) || {
             trip: {
                 location: "Atlanticus - Ilha da Vitória",
                 departure: "2026-09-15T05:00",
@@ -387,6 +409,12 @@
                 left: 4,
                 bow: 2
             },
+            images: {
+                main: "",
+                popa: "",
+                proa: "",
+                interior: ""
+            },
             participants: [],
             expenseTypes: ["Taxa do Barco", "Iscas", "Combustível", "Alimentação / Churrasco", "Gelo"],
             expenses: [],
@@ -395,8 +423,10 @@
             lottery: { popa: [], right: [], left: [], bow: [] }
         };
 
+        let currentImageSlot = null;
+
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v3', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v4', JSON.stringify(db));
             renderAll();
         }
 
@@ -423,6 +453,24 @@
             db.trip.bow = parseInt(document.getElementById('seats-bow').value) || 0;
             saveData();
             alert('Configurações da viagem e assentos salvas com sucesso!');
+        }
+
+        function triggerImageUpload(slot) {
+            currentImageSlot = slot;
+            document.getElementById('image-upload-input').click();
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file || !currentImageSlot) return;
+
+            const reader = new FileReader();
+            reader.onload = function(uploadEvent) {
+                db.images[currentImageSlot] = uploadEvent.target.result;
+                saveData();
+            };
+            reader.readAsDataURL(file);
+            e.target.value = ''; // Limpa o input
         }
 
         function addParticipant(e) {
@@ -543,6 +591,28 @@
             document.getElementById('boat-right').innerHTML = rightHtml || '<span class="text-slate-500 text-xs">Nenhum assento.</span>';
         }
 
+        function renderImages() {
+            ['main', 'popa', 'proa', 'interior'].forEach(slot => {
+                const imgData = db.images[slot];
+                const previewEl = document.getElementById(`img-preview-${slot}`);
+                const textEl = document.getElementById(`text-${slot}`);
+                
+                if (imgData) {
+                    previewEl.style.backgroundImage = `url('${imgData}')`;
+                    previewEl.style.display = 'block';
+                    textEl.innerText = 'Alterar Foto';
+                    textEl.classList.add('bg-slate-900/90', 'px-2', 'py-1', 'rounded');
+                } else {
+                    previewEl.style.display = 'none';
+                    textEl.classList.remove('bg-slate-900/90', 'px-2', 'py-1', 'rounded');
+                    if(slot === 'main') textEl.innerText = '+ Foto Principal do Barco';
+                    if(slot === 'popa') textEl.innerText = '+ Popa';
+                    if(slot === 'proa') textEl.innerText = '+ Proa';
+                    if(slot === 'interior') textEl.innerText = '+ Interior / Detalhes';
+                }
+            });
+        }
+
         function renderAll() {
             document.getElementById('trip-location').value = db.trip.location;
             document.getElementById('trip-departure').value = db.trip.departure;
@@ -551,6 +621,11 @@
             document.getElementById('seats-right').value = db.trip.right;
             document.getElementById('seats-left').value = db.trip.left;
             document.getElementById('seats-bow').value = db.trip.bow;
+
+            document.getElementById('prev-popa').innerText = db.trip.popa;
+            document.getElementById('prev-right').innerText = db.trip.right;
+            document.getElementById('prev-left').innerText = db.trip.left;
+            document.getElementById('prev-bow').innerText = db.trip.bow;
 
             if(db.trip.departure && db.trip.return) {
                 let d1 = new Date(db.trip.departure);
@@ -623,7 +698,10 @@
             document.getElementById('chat-messages').innerHTML = chatBody || `<p class="text-center text-slate-500 italic mt-20">Nenhuma mensagem no mural ainda.</p>`;
 
             renderBoatSeats();
+            renderImages();
         }
+
+        renderAll();
     </script>
 </body>
 </html>
