@@ -282,89 +282,63 @@
             </div>
         </section>
 
-        <!-- ABA 3: DESPESAS & RATEIO -->
+        <!-- ABA 3: DESPESAS & RATEIO (Com quadros separados) -->
         <section id="tab-despesas" class="hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Módulo 1: Cadastro de Despesas Gerais -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1 space-y-6">
-                    <div>
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-receipt text-blue-500"></i> Cadastro de Despesas Gerais
-                        </h2>
-                        <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
-                                <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
-                                <input type="text" id="exp-desc" placeholder="Ex: Aluguel do Barco / Iscas" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Total do Gasto (R$)</label>
-                                <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem desembolsou / pagou?</label>
-                                <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                                </select>
-                            </div>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-blue-600/20">Registrar Despesa Geral</button>
-                        </form>
-                    </div>
+            <!-- Indicadores Principais de Resumo -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <p class="text-xs text-slate-400 uppercase font-semibold">Montante Total de Gastos</p>
+                    <h3 class="text-3xl font-bold text-white mt-1" id="total-expenses">R$ 0,00</h3>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <p class="text-xs text-slate-400 uppercase font-semibold">Rateio Igualitário por Pescador</p>
+                    <h3 class="text-3xl font-bold text-blue-400 mt-1" id="per-person-expense">R$ 0,00</h3>
+                </div>
+            </div>
 
-                    <!-- Módulo 2: Cadastro / Controle de Pagamentos Individuais por Pescador -->
-                    <div class="border-t border-slate-700 pt-6">
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-wallet text-emerald-500"></i> Pagamento por Pescador
-                        </h2>
-                        <form id="payment-form" class="space-y-4" onsubmit="addOrUpdateFishermanPayment(event)">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pescador</label>
-                                <select id="pay-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Quitado / Pago (R$)</label>
-                                <input type="number" step="0.01" id="pay-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Status do Pagamento</label>
-                                <select id="pay-status" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                                    <option value="Pendente">Pendente</option>
-                                    <option value="Parcial">Parcial</option>
-                                    <option value="Pago">Pago</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-emerald-600/20">Salvar Status / Pagamento</button>
-                        </form>
-                    </div>
+            <!-- QUADRO 1: Lançamento e Extrato de Despesas Gerais -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-receipt text-blue-500"></i> Lançar Despesa Geral
+                    </h2>
+                    <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
+                            <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
+                            <input type="text" id="exp-desc" placeholder="Ex: Aluguel do Barco / Iscas" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Total do Gasto (R$)</label>
+                            <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem desembolsou / pagou?</label>
+                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-blue-600/20">Registrar Despesa</button>
+                    </form>
                 </div>
 
-                <!-- Painéis Visuais de Despesas, Extrato e Controle de Pescadores -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-700 pb-4">
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60">
-                            <p class="text-xs text-slate-400 uppercase font-semibold">Montante Total de Gastos</p>
-                            <h3 class="text-2xl font-bold text-white mt-1" id="total-expenses">R$ 0,00</h3>
-                        </div>
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60">
-                            <p class="text-xs text-slate-400 uppercase font-semibold">Rateio Igualitário por Pescador</p>
-                            <h3 class="text-2xl font-bold text-blue-400 mt-1" id="per-person-expense">R$ 0,00</h3>
-                        </div>
-                    </div>
-
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 flex flex-col justify-between">
                     <div>
-                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato Geral de Gastos</h4>
-                        <div class="overflow-x-auto max-h-40 overflow-y-auto">
+                        <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-list text-blue-500"></i> Extrato de Despesas Gerais
+                        </h2>
+                        <p class="text-xs text-slate-400 mb-4">Lista de todos os custos inseridos para a viagem de pesca.</p>
+                        <div class="overflow-x-auto max-h-[320px] overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
                                     <tr>
-                                        <th class="p-2.5">Tipo / Descrição</th>
-                                        <th class="p-2.5">Valor</th>
-                                        <th class="p-2.5">Quem Pagou</th>
-                                        <th class="p-2.5 text-center">Ação</th>
+                                        <th class="p-3">Tipo / Descrição</th>
+                                        <th class="p-3">Valor</th>
+                                        <th class="p-3">Pagador</th>
+                                        <th class="p-3 text-center">Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody id="expenses-table-body" class="divide-y divide-slate-700">
@@ -372,18 +346,51 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
 
+            <!-- QUADRO 2: Cadastro e Controle de Pagamentos Individuais (Quem Pagou) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-wallet text-emerald-500"></i> Lançar Pagamento Pescador
+                    </h2>
+                    <form id="payment-form" class="space-y-4" onsubmit="addOrUpdateFishermanPayment(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Selecione o Pescador</label>
+                            <select id="pay-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Pago / Quitado (R$)</label>
+                            <input type="number" step="0.01" id="pay-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Status do Acerto</label>
+                            <select id="pay-status" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                <option value="Pendente">Pendente</option>
+                                <option value="Parcial">Parcial</option>
+                                <option value="Pago">Pago</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-emerald-600/20">Salvar Acerto do Pescador</button>
+                    </form>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 flex flex-col justify-between">
                     <div>
-                        <h4 class="text-sm font-semibold text-slate-300 mb-1">Controle de Pagamentos Individuais (Status & Acerto)</h4>
-                        <p class="text-xs text-slate-400 mb-3">Monitora o status e o balanço financeiro individual de cada pescador na expedição.</p>
-                        <div class="overflow-x-auto max-h-48 overflow-y-auto">
+                        <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-users-rectangle text-emerald-500"></i> Controle de Pagamento Individual
+                        </h2>
+                        <p class="text-xs text-slate-400 mb-4">Acompanhamento do status financeiro e balanço de cada pescador (quem já pagou, parcial ou pendente).</p>
+                        <div class="overflow-x-auto max-h-[320px] overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
                                     <tr>
-                                        <th class="p-2.5">Pescador</th>
-                                        <th class="p-2.5">Valor Quitado</th>
-                                        <th class="p-2.5">Status</th>
-                                        <th class="p-2.5">Balanço / Diferença</th>
+                                        <th class="p-3">Pescador</th>
+                                        <th class="p-3">Valor Pago</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3">Balanço / Diferença</th>
                                     </tr>
                                 </thead>
                                 <tbody id="individual-balance-body" class="divide-y divide-slate-700">
@@ -447,7 +454,7 @@
 
     </main>
 
-    <!-- Script Principal com Gestão Unificada de Despesas e Pagamentos Individuais -->
+    <!-- Script Principal -->
     <script>
         let db = JSON.parse(localStorage.getItem('pesca_justa_db_v6')) || {
             trip: {
@@ -463,7 +470,7 @@
             participants: [],
             expenseTypes: ["Taxa do Barco", "Iscas", "Combustível", "Alimentação / Churrasco", "Gelo"],
             expenses: [],
-            fishermanPayments: {}, // Armazena { [nomePescador]: { paidValue, status } }
+            fishermanPayments: {},
             spots: [],
             chat: [],
             lottery: { popa: [], right: [], left: [], bow: [] }
@@ -500,7 +507,7 @@
             db.trip.bow = { benches: parseInt(document.getElementById('bow-benches').value) || 0, per: parseInt(document.getElementById('bow-per').value) || 0 };
             
             saveData();
-            alert('Configurações de bancos e viagem salvas com sucesso!');
+            alert('Configurações salvas com sucesso!');
         }
 
         function triggerImageUpload(slot) {
@@ -587,7 +594,7 @@
                 db.fishermanPayments[fishermanName] = { paidValue, status };
                 document.getElementById('payment-form').reset();
                 saveData();
-                alert('Pagamento individual atualizado com sucesso!');
+                alert('Pagamento individual salvo com sucesso!');
             }
         }
 
@@ -751,7 +758,7 @@
             db.expenses.forEach(ex => {
                 let actualPayer = ex.payer && ex.payer.trim() !== "" ? ex.payer : defaultPayer;
                 totalExp += ex.value;
-                eBody += `<tr><td class="p-2.5"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${actualPayer}</td><td class="p-2.5 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                eBody += `<tr><td class="p-3"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-3">R$ ${ex.value.toFixed(2)}</td><td class="p-3 text-slate-400">${actualPayer}</td><td class="p-3 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
             let perPerson = db.participants.length > 0 ? totalExp / db.participants.length : 0;
@@ -772,7 +779,7 @@
                 }
 
                 let diffFormatted = diff >= 0 ? `<span class="text-emerald-400 font-semibold">+ R$ ${diff.toFixed(2)} (Crédito)</span>` : `<span class="text-rose-400 font-semibold">- R$ ${Math.abs(diff).toFixed(2)} (Falta)</span>`;
-                indBody += `<tr><td class="p-2.5 font-medium text-white">${p.name}</td><td class="p-2.5">R$ ${pData.paidValue.toFixed(2)}</td><td class="p-2.5">${statusBadge}</td><td class="p-2.5">${diffFormatted}</td></tr>`;
+                indBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3">R$ ${pData.paidValue.toFixed(2)}</td><td class="p-3">${statusBadge}</td><td class="p-3">${diffFormatted}</td></tr>`;
             });
             document.getElementById('individual-balance-body').innerHTML = indBody || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Cadastre participantes para ver o controle individual de pagamentos.</td></tr>`;
 
