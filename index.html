@@ -9,6 +9,45 @@
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
 
+    <!-- MODAL DE LOGIN / AUTENTICAÇÃO -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="bg-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto text-white shadow-lg shadow-blue-600/30">
+                    <i class="fa-solid fa-lock text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">Acesso Restrito - Pesca-Justa</h2>
+                <p class="text-xs text-slate-400">Selecione seu perfil e informe a senha de acesso</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Acesso</label>
+                    <select id="login-type" onchange="toggleLoginFields()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        <option value="admin">Administrador</option>
+                        <option value="pescador">Convidado / Pescador</option>
+                    </select>
+                </div>
+
+                <!-- Campo exclusivo para Pescador selecionar o nome -->
+                <div id="pescador-select-box" class="hidden">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Selecione seu Nome</label>
+                    <select id="login-pescador-name" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        <!-- Preenchido dinamicamente via JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label id="password-label" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha do Administrador</label>
+                    <input type="password" id="login-password" placeholder="Digite a senha..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <p id="password-hint" class="text-[10px] text-slate-500 mt-1">Senha padrão configurada: <strong class="text-slate-300">pesca2026</strong></p>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm">Entrar no Sistema</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Header / Barra de Identificação de Perfil -->
     <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -22,13 +61,15 @@
                 </div>
             </div>
 
-            <!-- Seletor de Perfil de Acesso -->
+            <!-- Perfil Logado & Botão de Sair -->
             <div class="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-700">
-                <span class="text-xs text-slate-400 font-semibold uppercase">Acesso Atual:</span>
-                <select id="user-role-select" onchange="changeUserRole(this.value)" class="bg-slate-800 text-blue-400 font-bold text-sm rounded-lg px-3 py-1 border border-slate-700 focus:outline-none focus:border-blue-500">
-                    <option value="admin">Administrador (Total)</option>
-                    <option value="convidado">Convidado / Pescador (Visualização)</option>
-                </select>
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase block">Logado como:</span>
+                    <span id="current-user-display" class="text-xs font-bold text-blue-400">Administrador</span>
+                </div>
+                <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-rose-400 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-700 transition-all" title="Trocar de Conta">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+                </button>
             </div>
 
             <!-- Navegação por Abas -->
@@ -121,8 +162,9 @@
                                 <input type="text" id="p-name" placeholder="Ex: João da Silva" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp (Opcional)</label>
-                                <input type="text" id="p-phone" placeholder="(11) 99999-9999" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp (Necessário p/ Senha)</label>
+                                <input type="text" id="p-phone" placeholder="(11) 99999-8888" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-500 block mt-1">A senha de acesso do pescador serão os <strong>4 últimos dígitos</strong> do celular.</span>
                             </div>
                             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-emerald-600/20">Cadastrar Participante</button>
                         </form>
@@ -269,7 +311,7 @@
                         </div>
                     </div>
 
-                    <!-- Balanço e Histórico Individual (Quanto cada um pagou vs Saldo a Acertar) -->
+                    <!-- Balanço e Histórico Individual -->
                     <div>
                         <h4 class="text-sm font-semibold text-slate-300 mb-1">Balanço e Histórico Individual (Saldo / Acerto)</h4>
                         <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio, indicando o crédito ou o valor restante que falta pagar.</p>
@@ -337,7 +379,7 @@
                     <!-- Preenchido via JS -->
                 </div>
                 <form id="chat-form" class="flex gap-2" onsubmit="addChatMessage(event)">
-                    <input type="text" id="chat-sender" placeholder="Seu Nome" required class="w-1/3 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <input type="text" id="chat-sender" readonly class="w-1/3 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-blue-400 text-sm font-semibold focus:outline-none cursor-not-allowed">
                     <input type="text" id="chat-text" placeholder="Escreva sobre caronas, horários..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl transition-all"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
@@ -346,18 +388,18 @@
 
     </main>
 
-    <!-- Script Principal com Controle de Acesso -->
+    <!-- Script Principal com Regra de Senha e Acessos -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v4')) || {
-            role: "admin", // Perfil padrão: 'admin' ou 'convidado'
+        // SENHA DO ADMINISTRADOR DEFINIDA DIRETAMENTE NO CÓDIGO
+        const ADMIN_PASSWORD_FIXED = "pesca2026";
+
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v5')) || {
+            auth: { logged: false, role: "convidado", name: "" },
             trip: {
                 location: "Atlanticus - Ilha da Vitória",
                 departure: "2026-09-15T05:00",
                 return: "2026-09-15T17:00",
-                popa: 4,
-                right: 4,
-                left: 4,
-                bow: 2
+                popa: 4, right: 4, left: 4, bow: 2
             },
             participants: [],
             expenseTypes: ["Taxa do Barco", "Iscas", "Combustível", "Alimentação / Churrasco", "Gelo"],
@@ -368,12 +410,83 @@
         };
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v4', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v5', JSON.stringify(db));
             renderAll();
         }
 
-        function changeUserRole(newRole) {
-            db.role = newRole;
+        // Controle da Tela de Login
+        function toggleLoginFields() {
+            const loginType = document.getElementById('login-type').value;
+            const pescadorBox = document.getElementById('pescador-select-box');
+            const passwordLabel = document.getElementById('password-label');
+            const passwordHint = document.getElementById('password-hint');
+            const passwordInput = document.getElementById('login-password');
+
+            passwordInput.value = '';
+
+            if (loginType === 'admin') {
+                pescadorBox.classList.add('hidden');
+                passwordLabel.innerText = "Senha do Administrador";
+                passwordHint.classList.remove('hidden');
+            } else {
+                pescadorBox.classList.remove('hidden');
+                passwordLabel.innerText = "Senha (4 últimos dígitos do celular)";
+                passwordHint.classList.add('hidden');
+                populateLoginPescadores();
+            }
+        }
+
+        function populateLoginPescadores() {
+            const select = document.getElementById('login-pescador-name');
+            select.innerHTML = '';
+            if (db.participants.length === 0) {
+                select.innerHTML = '<option value="">Nenhum pescador cadastrado pelo ADM</option>';
+                return;
+            }
+            db.participants.forEach(p => {
+                select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+            });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const loginType = document.getElementById('login-type').value;
+            const passwordInput = document.getElementById('login-password').value.trim();
+
+            if (loginType === 'admin') {
+                if (passwordInput === ADMIN_PASSWORD_FIXED) {
+                    db.auth = { logged: true, role: 'admin', name: 'Administrador' };
+                    saveData();
+                } else {
+                    alert('Senha de Administrador incorreta!');
+                }
+            } else {
+                const selectedName = document.getElementById('login-pescador-name').value;
+                if (!selectedName) {
+                    alert('Selecione um pescador válido.');
+                    return;
+                }
+                const pescador = db.participants.find(p => p.name === selectedName);
+                if (!pescador) {
+                    alert('Pescador não encontrado.');
+                    return;
+                }
+
+                // Extrair os 4 últimos dígitos do telefone cadastrado (removendo caracteres especiais)
+                const cleanPhone = pescador.phone.replace(/\D/g, '');
+                const last4Digits = cleanPhone.slice(-4);
+
+                if (passwordInput === last4Digits) {
+                    db.auth = { logged: true, role: 'convidado', name: pescador.name };
+                    saveData();
+                } else {
+                    alert(`Senha incorreta! Para o pescador ${pescador.name}, a senha são os 4 últimos dígitos do celular (${last4Digits}).`);
+                }
+            }
+        }
+
+        function logout() {
+            db.auth.logged = false;
             saveData();
         }
 
@@ -391,7 +504,7 @@
 
         function saveTripConfig(e) {
             e.preventDefault();
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             db.trip.location = document.getElementById('trip-location').value;
             db.trip.departure = document.getElementById('trip-departure').value;
             db.trip.return = document.getElementById('trip-return').value;
@@ -405,23 +518,23 @@
 
         function addParticipant(e) {
             e.preventDefault();
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             const name = document.getElementById('p-name').value;
-            const phone = document.getElementById('p-phone').value || "Não informado";
+            const phone = document.getElementById('p-phone').value;
             db.participants.push({ id: Date.now(), name, phone });
             document.getElementById('participant-form').reset();
             saveData();
         }
 
         function removeParticipant(id) {
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             db.participants = db.participants.filter(p => p.id !== id);
             saveData();
         }
 
         function addExpenseType(e) {
             e.preventDefault();
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             const name = document.getElementById('et-name').value.trim();
             if(name && !db.expenseTypes.includes(name)) {
                 db.expenseTypes.push(name);
@@ -431,14 +544,14 @@
         }
 
         function removeExpenseType(name) {
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             db.expenseTypes = db.expenseTypes.filter(t => t !== name);
             saveData();
         }
 
         function addExpense(e) {
             e.preventDefault();
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             const type = document.getElementById('exp-type').value;
             const description = document.getElementById('exp-desc').value;
             const value = parseFloat(document.getElementById('exp-value').value);
@@ -449,14 +562,14 @@
         }
 
         function removeExpense(id) {
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             db.expenses = db.expenses.filter(ex => ex.id !== id);
             saveData();
         }
 
         function addFishingSpot(e) {
             e.preventDefault();
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             const name = document.getElementById('spot-name').value;
             const species = document.getElementById('spot-species').value;
             const obs = document.getElementById('spot-obs').value;
@@ -466,14 +579,14 @@
         }
 
         function removeFishingSpot(id) {
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             db.spots = db.spots.filter(s => s.id !== id);
             saveData();
         }
 
         function addChatMessage(e) {
             e.preventDefault();
-            const sender = document.getElementById('chat-sender').value;
+            const sender = db.auth.name;
             const text = document.getElementById('chat-text').value;
             db.chat.push({ sender, text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
             document.getElementById('chat-text').value = '';
@@ -481,22 +594,16 @@
         }
 
         function runLottery() {
-            if (db.role !== 'admin') return alert('Acesso restrito a administradores.');
+            if (db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             if (db.participants.length === 0) {
                 alert('Cadastre participantes antes de realizar o sorteio.');
                 return;
             }
             let shuffled = [...db.participants].sort(() => Math.random() - 0.5);
-            let pPopa = db.trip.popa;
-            let pRight = db.trip.right;
-            let pLeft = db.trip.left;
-            let pBow = db.trip.bow;
-
-            db.lottery.popa = shuffled.splice(0, pPopa);
-            db.lottery.right = shuffled.splice(0, pRight);
-            db.lottery.left = shuffled.splice(0, pLeft);
-            db.lottery.bow = shuffled.splice(0, pBow);
-
+            db.lottery.popa = shuffled.splice(0, db.trip.popa);
+            db.lottery.right = shuffled.splice(0, db.trip.right);
+            db.lottery.left = shuffled.splice(0, db.trip.left);
+            db.lottery.bow = shuffled.splice(0, db.trip.bow);
             saveData();
         }
 
@@ -530,21 +637,25 @@
             document.getElementById('boat-right').innerHTML = rightHtml || '<span class="text-slate-500 text-xs">Nenhum assento.</span>';
         }
 
-        function applyRolePermissions() {
-            document.getElementById('user-role-select').value = db.role;
-            const isAdmin = db.role === 'admin';
+        function renderAll() {
+            const modal = document.getElementById('login-modal');
+            if (!db.auth.logged) {
+                modal.classList.remove('hidden');
+                return;
+            } else {
+                modal.classList.add('hidden');
+            }
 
-            // Formulários e botões de cadastro exclusivos do Admin
+            document.getElementById('current-user-display').innerText = db.auth.role === 'admin' ? 'Administrador' : `Pescador: ${db.auth.name}`;
+            document.getElementById('chat-sender').value = db.auth.name;
+
+            const isAdmin = db.auth.role === 'admin';
             const adminOnlyElements = document.querySelectorAll('#participant-card-box, #expense-type-card-box, #lottery-action-box, #expense-register-box, #spot-register-box');
             adminOnlyElements.forEach(el => {
-                if(isAdmin) {
-                    el.classList.remove('hidden');
-                } else {
-                    el.classList.add('hidden');
-                }
+                if(isAdmin) el.classList.remove('hidden');
+                else el.classList.add('hidden');
             });
 
-            // Ajustar largura dos containers de visualização se admin estiver oculto
             const expenseViewBox = document.getElementById('expense-view-box');
             const spotsViewBox = document.getElementById('spots-view-box');
             if(isAdmin) {
@@ -555,19 +666,10 @@
                 spotsViewBox.className = "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3";
             }
 
-            // Ocultar colunas de exclusão nas tabelas para convidados
-            const actionCols = document.querySelectorAll('.action-col');
-            actionCols.forEach(col => {
-                if(isAdmin) {
-                    col.classList.remove('hidden');
-                } else {
-                    col.classList.add('hidden');
-                }
+            document.querySelectorAll('.action-col').forEach(col => {
+                if(isAdmin) col.classList.remove('hidden');
+                else col.classList.add('hidden');
             });
-        }
-
-        function renderAll() {
-            applyRolePermissions();
 
             document.getElementById('trip-location').value = db.trip.location;
             document.getElementById('trip-departure').value = db.trip.departure;
@@ -578,47 +680,36 @@
             document.getElementById('seats-bow').value = db.trip.bow;
 
             if(db.trip.departure && db.trip.return) {
-                let d1 = new Date(db.trip.departure);
-                let d2 = new Date(db.trip.return);
-                let diffMs = d2 - d1;
+                let diffMs = new Date(db.trip.return) - new Date(db.trip.departure);
                 let diffHrs = diffMs > 0 ? (diffMs / (1000 * 60 * 60)).toFixed(1) : 0;
                 document.getElementById('calculated-fishing-hours').innerText = `${diffHrs} horas`;
-            } else {
-                document.getElementById('calculated-fishing-hours').innerText = `0 horas`;
             }
 
             document.getElementById('participant-count').innerText = db.participants.length;
-            let pBody = '';
-            let payerSelect = '';
+            let pBody = '', payerSelect = '';
             db.participants.forEach(p => {
-                let actionBtn = db.role === 'admin' ? `<td class="p-3 text-center action-col"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : `<td class="p-3 text-center action-col hidden"></td>`;
+                let actionBtn = isAdmin ? `<td class="p-3 text-center action-col"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : `<td class="p-3 text-center action-col hidden"></td>`;
                 pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400">${p.phone}</td>${actionBtn}</tr>`;
                 payerSelect += `<option value="${p.name}">${p.name}</option>`;
             });
             document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
             document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="">Cadastre um participante</option>`;
 
-            let etHtml = '';
-            let typeSelect = '';
+            let etHtml = '', typeSelect = '';
             db.expenseTypes.forEach(t => {
-                let removeTagBtn = db.role === 'admin' ? `<button onclick="removeExpenseType('${t}')" class="text-rose-400 hover:text-rose-300">&times;</button>` : '';
+                let removeTagBtn = isAdmin ? `<button onclick="removeExpenseType('${t}')" class="text-rose-400 hover:text-rose-300">&times;</button>` : '';
                 etHtml += `<span class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2"><span>${t}</span>${removeTagBtn}</span>`;
                 typeSelect += `<option value="${t}">${t}</option>`;
             });
             document.getElementById('expense-types-list').innerHTML = etHtml;
             document.getElementById('exp-type').innerHTML = typeSelect || `<option value="Geral">Geral</option>`;
 
-            let totalExp = 0;
-            let eBody = '';
-            let paidMap = {};
+            let totalExp = 0, eBody = '', paidMap = {};
             db.participants.forEach(p => { paidMap[p.name] = 0; });
-
             db.expenses.forEach(ex => {
                 totalExp += ex.value;
-                if(paidMap[ex.payer] !== undefined) {
-                    paidMap[ex.payer] += ex.value;
-                }
-                let actionExp = db.role === 'admin' ? `<td class="p-2.5 text-center action-col"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : `<td class="p-2.5 text-center action-col hidden"></td>`;
+                if(paidMap[ex.payer] !== undefined) paidMap[ex.payer] += ex.value;
+                let actionExp = isAdmin ? `<td class="p-2.5 text-center action-col"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : `<td class="p-2.5 text-center action-col hidden"></td>`;
                 eBody += `<tr><td class="p-2.5"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${ex.payer}</td>${actionExp}</tr>`;
             });
             document.getElementById('total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
@@ -637,7 +728,7 @@
 
             let spotsHtml = '';
             db.spots.forEach(s => {
-                let deleteSpotBtn = db.role === 'admin' ? `<button onclick="removeFishingSpot(${s.id})" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>` : '';
+                let deleteSpotBtn = isAdmin ? `<button onclick="removeFishingSpot(${s.id})" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>` : '';
                 spotsHtml += `<div class="bg-slate-900 border border-slate-700 rounded-xl p-4 relative flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><h3 class="font-semibold text-white text-sm"><i class="fa-solid fa-anchor text-blue-400 mr-1.5"></i>${s.name}</h3>${deleteSpotBtn}</div><p class="text-xs text-blue-300 mb-1"><strong class="text-slate-400">Espécies:</strong> ${s.species}</p><p class="text-xs text-slate-300">${s.obs}</p></div></div>`;
             });
             document.getElementById('spots-container').innerHTML = spotsHtml || `<p class="text-slate-500 text-sm italic col-span-2">Nenhum ponto de pesca cadastrado.</p>`;
