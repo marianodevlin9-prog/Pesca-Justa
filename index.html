@@ -1,1039 +1,356 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesca-Justa - Gestão Completa de Pescaria</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-  <!-- Coluna Esquerda: Vista Superior e Configurações -->
-  <div class="w-full">
-    <!-- Conteúdo da planta do barco -->
-  </div>
-
-  <!-- Coluna Direita: Módulo de Fotos (Bento Grid) -->
-  <div class="w-full">
-    <!-- Conteúdo das fotos -->
-  </div>
-</div>
-  <style>
-    @media print {
-      .no-print { display: none !important; }
-      body { background-color: white !important; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesca-Justa - Gestão Completa de Pescaria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen pb-16">
-  
-  <!-- Header Moderno -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-  
-  <!-- Coluna Esquerda: Bloco da Planta do Barco -->
-  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-    <h3 class="font-bold text-gray-800 mb-3">Vista superior posições do barco</h3>
-    <!-- Container onde a planta e os bancos dinâmicos vão aparecer -->
-    <div id="boat-diagram-container" class="relative rounded-lg bg-slate-900 text-white p-4 min-h-[280px] flex items-center justify-center">
-      <span class="text-sm text-gray-400">Diagrama gerado dinamicamente</span>
-    </div>
-  </div>
-
-  <!-- Coluna Direita: Módulo de Fotos (Bento Grid) -->
-  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 grid grid-cols-3 gap-3">
-    <!-- Foto Principal (Destaque maior à esquerda) -->
-    <div class="col-span-2 row-span-2 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[140px]">
-      <span class="text-xs font-medium text-gray-600">+ Foto Principal do Barco</span>
-    </div>
-    <!-- Foto Detalhe 1 -->
-    <div class="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[65px]">
-      <span class="text-[10px] text-gray-500">+ Popa</span>
-    </div>
-    <!-- Foto Detalhe 2 -->
-    <div class="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[65px]">
-      <span class="text-[10px] text-gray-500">+ Proa</span>
-    </div>
-    <!-- Foto Detalhe 3 (Preenchendo o espaço inferior direito) -->
-    <div class="col-span-2 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-2 bg-gray-50 hover:bg-gray-100 transition cursor-pointer min-h-[65px]">
-      <span class="text-[10px] text-gray-500">+ Interior / Detalhes</span>
-    </div>
-  </div>
-
-</div>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-  <!-- Bloco da Esquerda (Planta do barco) -->
-  <!-- Bloco da Direita (Fotos) -->
-</div>
-  <header class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white py-5 shadow-lg mb-6">
-    <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-4">
-      <div class="flex items-center gap-3">
-        <div class="bg-amber-400 p-2.5 rounded-xl text-indigo-950 font-bold shadow">
-          <i class="fa-solid fa-fish text-xl"></i>
-        </div>
-        <div>
-          <h1 class="text-xl font-bold tracking-tight">Pesca-Justa</h1>
-          <p class="text-indigo-200 text-xs">Gestão de Embarcação, Sorteio de Popa, Rateio e Logística</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 no-print">
-        <button onclick="gerarResumoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
-          <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
-        </button>
-        <button onclick="exportarPDF()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
-          <i class="fa-solid fa-file-pdf"></i> PDF
-        </button>
-        <button onclick="limparDados()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
-          <i class="fa-solid fa-trash-can"></i> Resetar
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Sistema de Abas -->
-  <nav class="max-w-7xl mx-auto px-4 mb-6 no-print">
-    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
-      <button onclick="mudarAba('cadastros')" id="btn-tab-cadastros" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm">
-        <i class="fa-solid fa-sliders"></i> 1. Central de Cadastros
-      </button>
-      <button onclick="mudarAba('despesas')" id="btn-tab-despesas" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
-        <i class="fa-solid fa-receipt"></i> 2. Despesas & Rateio
-      </button>
-      <button onclick="mudarAba('sorteio')" id="btn-tab-sorteio" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
-        <i class="fa-solid fa-dice"></i> 3. Sorteio (Popa/Laterais)
-      </button>
-      <button onclick="mudarAba('logistica')" id="btn-tab-logistica" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
-        <i class="fa-solid fa-comments"></i> 4. Chat & Ponto de Encontro
-      </button>
-    </div>
-  </nav>
-
-  <main class="max-w-7xl mx-auto px-4">
-    
-    <!-- ABA 1: CENTRAL DE CADASTROS -->
-    <div id="tab-cadastros" class="tab-content space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- Configuração da Embarcação -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
-            <i class="fa-solid fa-ship text-indigo-600"></i> Dados da Embarcação e Viagem
-          </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Início da Pescaria</label>
-              <input type="datetime-local" id="info-inicio" onchange="salvarConfiguracaoBarco()" 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Término</label>
-              <input type="datetime-local" id="info-termino" onchange="salvarConfiguracaoBarco()" 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome do Barco / Local de Saída</label>
-              <input type="text" id="info-local" placeholder="Ex: Atlanticus - Ilha da Vitória (São Sebastião)" onchange="salvarConfiguracaoBarco()" 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Total de Bancos / Cadeiras</label>
-              <input type="number" id="barco-bancos" min="1" value="6" onchange="salvarConfiguracaoBarco()" 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Vagas na Popa (Fundo)</label>
-              <input type="number" id="barco-vagas-popa" min="1" value="2" onchange="salvarConfiguracaoBarco()" 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-          </div>
-        </div>
-
-        <!-- Cadastro de Pescadores -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
-            <i class="fa-solid fa-users text-indigo-600"></i> Participantes / Pescadores
-          </h2>
-          <form id="form-pescador" onsubmit="salvarPescador(event)" class="space-y-3">
-            <input type="hidden" id="pescador-id-editando">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome</label>
-                <input type="text" id="pescador-nome" placeholder="Ex: João Silva" required 
-                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Telefone / WhatsApp</label>
-                <input type="tel" id="pescador-telefone" placeholder="(11) 99999-9999" 
-                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <button type="submit" id="btn-salvar-pescador" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
-                <i class="fa-solid fa-user-plus mr-1"></i> Adicionar Pescador
-              </button>
-              <button type="button" id="btn-cancelar-edicao-pescador" onclick="cancelarEdicaoPescador()" class="hidden bg-slate-300 hover:bg-slate-400 text-slate-700 px-4 py-2.5 rounded-xl font-semibold text-sm transition">
-                Cancelar
-              </button>
-            </div>
-          </form>
-          <div class="mt-4">
-            <ul id="lista-pescadores-cadastrados" class="divide-y border rounded-xl text-sm max-h-44 overflow-y-auto">
-              <!-- Renderizado via JS -->
-            </ul>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ABA 2: DESPESAS E RATEIO -->
-    <div id="tab-despesas" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Cadastro de Despesa -->
-        <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
-            <i class="fa-solid fa-receipt text-indigo-600"></i> Lançar Despesa Coletiva
-          </h2>
-          <form id="form-despesa" onsubmit="adicionarDespesa(event)" class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Item / Descrição</label>
-              <div class="flex gap-2">
-                <input type="text" id="despesa-descricao" placeholder="Ex: Aluguel do Barco, Iscas, Gelo" required 
-                       class="flex-1 px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                <select id="select-itens-salvos" onchange="selecionarItemPreCadastrado(this.value)" class="border rounded-xl px-2 text-xs bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none">
-                  <option value="">Itens Salvos...</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Valor Total (R$)</label>
-              <input type="number" step="0.01" min="0.01" id="despesa-valor" placeholder="0.00" required 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Tipo de Rateio</label>
-              <select id="despesa-tipo" class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white">
-                <option value="geral">Geral (Rateado entre todos os pescadores)</option>
-                <option value="opcional">Opcional / Por Consumo (Apenas para quem aderir)</option>
-              </select>
-            </div>
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
-              <i class="fa-solid fa-plus mr-1"></i> Lançar Despesa
-            </button>
-          </form>
-
-          <div class="mt-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Despesas Lançadas</h3>
-            <div class="overflow-x-auto border rounded-xl">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-slate-100 text-slate-600 uppercase">
-                  <tr>
-                    <th class="p-2.5 border-b">Item</th>
-                    <th class="p-2.5 border-b">Tipo</th>
-                    <th class="p-2.5 border-b">Valor</th>
-                    <th class="p-2.5 border-b text-center no-print">Ação</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-despesas-cadastradas" class="divide-y">
-                  <!-- Renderizado via JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Abatimentos e Demonstrativo -->
-        <div class="lg:col-span-7 space-y-6">
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4">
-              <i class="fa-solid fa-hand-holding-dollar text-indigo-600"></i> Abatimento Individual & Consumo por Participante
-            </h2>
-            <div id="container-abatimentos" class="space-y-3 max-h-72 overflow-y-auto pr-1">
-              <!-- Renderizado via JS -->
-            </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4">
-              <i class="fa-solid fa-chart-pie text-indigo-600"></i> Demonstrativo Financeiro
-            </h2>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-              <div class="bg-slate-50 p-3 rounded-xl border text-center">
-                <span class="block text-[11px] text-slate-500">Custo Total</span>
-                <span id="resumo-total-despesas" class="text-sm font-bold text-slate-800">R$ 0,00</span>
-              </div>
-              <div class="bg-slate-50 p-3 rounded-xl border text-center">
-                <span class="block text-[11px] text-slate-500">Média / Pessoa</span>
-                <span id="resumo-cota-pessoa" class="text-sm font-bold text-indigo-600">R$ 0,00</span>
-              </div>
-              <div class="bg-slate-50 p-3 rounded-xl border text-center">
-                <span class="block text-[11px] text-slate-500">Arrecadado</span>
-                <span id="resumo-total-pago" class="text-sm font-bold text-emerald-600">R$ 0,00</span>
-              </div>
-              <div class="bg-slate-50 p-3 rounded-xl border text-center">
-                <span class="block text-[11px] text-slate-500">Pendente</span>
-                <span id="resumo-saldo-pendente" class="text-sm font-bold text-amber-600">R$ 0,00</span>
-              </div>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
-                  <tr>
-                    <th class="p-2.5">Pescador</th>
-                    <th class="p-2.5">Sua Cota</th>
-                    <th class="p-2.5">Pago</th>
-                    <th class="p-2.5">Saldo</th>
-                    <th class="p-2.5">Situação</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-demonstrativo" class="divide-y">
-                  <!-- Renderizado via JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ABA 3: SORTEIO -->
-    <div id="tab-sorteio" class="tab-content hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-        <div class="flex flex-wrap justify-between items-center gap-4 border-b pb-4">
-          <div>
-            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-dice text-indigo-600"></i> Sorteio de Posições (Popa / Fundo vs. Laterais)
-            </h2>
-            <p class="text-xs text-slate-500">As vagas da <strong>Popa</strong> são sorteadas primeiro por serem as mais disputadas.</p>
-          </div>
-          <button onclick="realizarSorteioPopaELaterais()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow text-sm transition flex items-center gap-2">
-            <i class="fa-solid fa-shuffle"></i> Realizar Sorteio do Barco
-          </button>
-        </div>
-
-        <div id="container-visual-barco" class="hidden border-2 border-indigo-200 rounded-2xl p-6 bg-slate-50 space-y-6">
-          <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 bg-indigo-100 py-2 rounded-xl max-w-md mx-auto shadow-xs">
-            <i class="fa-solid fa-arrow-up mr-1"></i> Proa (Frente da Embarcação)
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-amber-50 border-2 border-amber-300 p-4 rounded-xl shadow-xs">
-              <h3 class="font-bold text-amber-900 border-b border-amber-200 pb-2 mb-3 text-sm flex justify-between items-center">
-                <span><i class="fa-solid fa-star text-amber-500 mr-1"></i> Posições da Popa (Fundo do Barco)</span>
-                <span id="badge-qtd-popa" class="bg-amber-200 text-amber-900 text-xs px-2 py-0.5 rounded-full font-bold">0 vagas</span>
-              </h3>
-              <ul id="lista-popa" class="space-y-2 text-sm"></ul>
-            </div>
-
-            <div class="bg-white border border-slate-300 p-4 rounded-xl shadow-xs">
-              <h3 class="font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3 text-sm flex justify-between items-center">
-                <span><i class="fa-solid fa-arrows-left-right text-indigo-600 mr-1"></i> Posições das Laterais (Livres)</span>
-                <span id="badge-qtd-laterais" class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold">0 vagas</span>
-              </h3>
-              <ul id="lista-laterais" class="space-y-2 text-sm"></ul>
-            </div>
-          </div>
-
-          <div class="text-center font-bold text-xs uppercase tracking-widest text-indigo-800 bg-indigo-100 py-2 rounded-xl max-w-md mx-auto shadow-xs">
-            <i class="fa-solid fa-anchor mr-1"></i> Popa / Traseira (Área das Vagas Premium)
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA 4: CHAT, GRUPOS E LOGÍSTICA -->
-    <div id="tab-logistica" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
-            <i class="fa-solid fa-car-side text-indigo-600"></i> Caronas & Grupos de Viagem
-          </h2>
-          <form id="form-grupo" onsubmit="criarGrupoViagem(event)" class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome do Carro / Motorista</label>
-              <input type="text" id="grupo-nome" placeholder="Ex: Carro do João (Saindo de SBC)" required 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Horário de Saída</label>
-                <input type="time" id="grupo-horario" required 
-                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Vagas Totais</label>
-                <input type="number" id="grupo-vagas" min="1" max="10" value="4" required 
-                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Ponto de Encontro</label>
-              <input type="text" id="grupo-ponto" placeholder="Ex: Posto Petrobras - Anchieta km 14" required 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            </div>
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
-              <i class="fa-solid fa-users-rectangle mr-1"></i> Criar Grupo de Carona
-            </button>
-          </form>
-
-          <div class="mt-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Carros Disponíveis</h3>
-            <div id="lista-grupos" class="space-y-3 max-h-60 overflow-y-auto">
-              <!-- Renderizado via JS -->
-            </div>
-          </div>
-        </div>
-
-        <div class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-[520px]">
-          <div>
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-              <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                <i class="fa-solid fa-comments text-indigo-600"></i> Mural / Chat da Viagem
-              </h2>
-              <span id="chat-grupo-ativo-titulo" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-bold">Geral da Pescaria</span>
-            </div>
-          </div>
-
-          <div id="chat-mensagens" class="flex-1 overflow-y-auto space-y-3 pr-2 border rounded-xl p-4 bg-slate-50 mb-4">
-            <!-- Renderizado via JS -->
-          </div>
-
-          <form id="form-chat" onsubmit="enviarMensagemChat(event)" class="flex gap-2">
-            <select id="chat-autor" class="border rounded-xl px-3 py-2 text-xs bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
-              <!-- Renderizado via JS -->
-            </select>
-            <input type="text" id="chat-texto" placeholder="Digite sua mensagem, combine carona..." required 
-                   class="flex-1 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition shadow-sm">
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
-          </form>
-        </div>
-
-      </div>
-    </div>
-
-  </main>
-
-  <!-- Script da Aplicação -->
-  <script>
-    // --- Estado Global ---
-    let despesas = JSON.parse(localStorage.getItem('pj_despesas')) || [];
-    let pescadores = JSON.parse(localStorage.getItem('pj_pescadores')) || [];
-    let itensPreCadastrados = JSON.parse(localStorage.getItem('pj_itens_despesa')) || [
-      'Aluguel do Barco / Embarcação', 'Iscas Vivas', 'Gelo', 'Combustível / Carona', 'Alimentação / Churrasco', 'Taxa de Embarque'
-    ];
-    let configBarco = JSON.parse(localStorage.getItem('pj_config_barco')) || {
-      inicio: '', termino: '', local: '', bancos: 6, vagasPopa: 2
-    };
-    let resultadoSorteio = JSON.parse(localStorage.getItem('pj_sorteio')) || null;
-    let gruposViagem = JSON.parse(localStorage.getItem('pj_grupos')) || [];
-    let mensagensChat = JSON.parse(localStorage.getItem('pj_chat')) || [
-      { id: '1', autor: 'Sistema', texto: 'Bem-vindo ao chat do Pesca-Justa! Combine aqui as caronas e os pontos de encontro.', horario: '08:00', grupo: 'Geral' }
-    ];
-    let grupoAtivo = 'Geral';
-
-    function salvarEstado() {
-      localStorage.setItem('pj_despesas', JSON.stringify(despesas));
-      localStorage.setItem('pj_pescadores', JSON.stringify(pescadores));
-      localStorage.setItem('pj_itens_despesa', JSON.stringify(itensPreCadastrados));
-      localStorage.setItem('pj_config_barco', JSON.stringify(configBarco));
-      localStorage.setItem('pj_sorteio', JSON.stringify(resultadoSorteio));
-      localStorage.setItem('pj_grupos', JSON.stringify(gruposViagem));
-      localStorage.setItem('pj_chat', JSON.stringify(mensagensChat));
-      renderizarTudo();
-    }
-
-    function limparDados() {
-      if (confirm("Deseja apagar todos os dados e reiniciar o sistema?")) {
-        localStorage.clear();
-        despesas = []; pescadores = []; gruposViagem = [];
-        itensPreCadastrados = ['Aluguel do Barco / Embarcação', 'Iscas ', 'Gelo', 'Combustível / Carona', 'Alimentação / Churrasco', 'Taxa de Embarque'];
-        configBarco = { inicio: '', termino: '', local: '', bancos: 6, vagasPopa: 2 };
-        resultadoSorteio = null;
-        mensagensChat = [{ id: '1', autor: 'Sistema', texto: 'Sistema reiniciado.', horario: '08:00', grupo: 'Geral' }];
-        carregarConfiguracaoInputs();
-        salvarEstado();
-      }
-    }
-
-    function exportarPDF() {
-      window.print();
-    }
-
-    // --- Compartilhamento WhatsApp ---
-    function gerarResumoWhatsApp() {
-      if (pescadores.length === 0 || despesas.length === 0) {
-        alert("Cadastre pescadores e despesas primeiro.");
-        return;
-      }
-      
-      const totalDespesas = despesas.reduce((acc, d) => acc + d.valor, 0);
-      let totalGeralPago = 0;
-      
-      // Cálculo simplificado para o resumo do zap
-      let texto = `🎣 *RESUMO DA PESCARIA - ${configBarco.local || 'Pesca-Justa'}* 🎣\n`;
-      if(configBarco.inicio) texto += `📅 Data: ${new Date(configBarco.inicio).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'short'})}\n`;
-      texto += `💰 *Custo Total:* ${formatarMoeda(totalDespesas)}\n\n`;
-      
-      texto += `📋 *Situação Financeira:*\n`;
-      pescadores.forEach(p => {
-        let pagoPescador = 0;
-        if (p.pagamentos) Object.values(p.pagamentos).forEach(v => pagoPescador += parseFloat(v) || 0);
-        totalGeralPago += pagoPescador;
-        
-        // Cota específica do pescador considerando opcionais
-        let cotaPescador = 0;
-        despesas.forEach(d => {
-          if (d.tipo === 'geral') {
-            cotaPescador += d.valor / pescadores.length;
-          } else if (d.tipo === 'opcional') {
-            const aderiu = d.aderentes && d.aderentes.includes(p.id);
-            const qtdAderentes = (d.aderentes || []).length;
-            if (aderiu && qtdAderentes > 0) cotaPescador += d.valor / qtdAderentes;
-          }
-        });
-
-        const saldo = cotaPescador - pagoPescador;
-        const status = Math.abs(saldo) < 0.01 ? "✅ Quitado" : (saldo > 0 ? `⚠️ Deve ${formatarMoeda(saldo)}` : `🔵 Crédito ${formatarMoeda(Math.abs(saldo))}`);
-        texto += `- ${p.nome}: ${status}\n`;
-      });
-
-      if (resultadoSorteio && resultadoSorteio.popa) {
-        texto += `\n🎲 *Sorteio das Posições:*\n`;
-        resultadoSorteio.popa.forEach((p, i) => texto += `⭐ Popa ${i+1}: ${p.nome}\n`);
-        resultadoSorteio.laterais.forEach((p, i) => texto += `⚓ Lateral ${i+1}: ${p.nome}\n`);
-      }
-
-      if (gruposViagem.length > 0) {
-        texto += `\n🚗 *Caronas e Veículos:*\n`;
-        gruposViagem.forEach(g => {
-          const membrosNomes = (g.membros || []).map(id => {
-            const pesc = pescadores.find(p => p.id === id);
-            return pesc ? pesc.nome : '';
-          }).filter(Boolean).join(', ');
-          texto += `- *${g.nome}* (${g.horario} - ${g.ponto})\n  Passageiros: ${membrosNomes || 'Nenhum ainda'}\n`;
-        });
-      }
-
-      const urlWpp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-      window.open(urlWpp, '_blank');
-    }
-
-    // --- Controle de Abas ---
-    function mudarAba(abaId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-        btn.classList.add('bg-white', 'text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
-      });
-
-      document.getElementById(`tab-${abaId}`).classList.remove('hidden');
-      const ativoBtn = document.getElementById(`btn-tab-${abaId}`);
-      ativoBtn.classList.remove('bg-white', 'text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
-      ativoBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-    }
-
-    // --- Configuração da Embarcação ---
-    function salvarConfiguracaoBarco() {
-      configBarco.inicio = document.getElementById('info-inicio').value;
-      configBarco.termino = document.getElementById('info-termino').value;
-      configBarco.local = document.getElementById('info-local').value;
-      configBarco.bancos = parseInt(document.getElementById('barco-bancos').value) || 6;
-      configBarco.vagasPopa = parseInt(document.getElementById('barco-vagas-popa').value) || 2;
-      localStorage.setItem('pj_config_barco', JSON.stringify(configBarco));
-    }
-
-    function carregarConfiguracaoInputs() {
-      document.getElementById('info-inicio').value = configBarco.inicio || '';
-      document.getElementById('info-termino').value = configBarco.termino || '';
-      document.getElementById('info-local').value = configBarco.local || '';
-      document.getElementById('barco-bancos').value = configBarco.bancos || 6;
-      document.getElementById('barco-vagas-popa').value = configBarco.vagasPopa || 2;
-    }
-
-    // --- Pescadores ---
-    function salvarPescador(e) {
-      e.preventDefault();
-      const idEditando = document.getElementById('pescador-id-editando').value;
-      const nomeInput = document.getElementById('pescador-nome');
-      const telInput = document.getElementById('pescador-telefone');
-      
-      const nome = nomeInput.value.trim();
-      const telefone = telInput.value.trim();
-
-      if (idEditando) {
-        const pescador = pescadores.find(p => p.id === idEditando);
-        if (pescador) {
-          pescador.nome = nome;
-          pescador.telefone = telefone;
-        }
-        cancelarEdicaoPescador();
-      } else {
-        const novo = {
-          id: Date.now().toString(),
-          nome,
-          telefone,
-          pagamentos: {}
-        };
-        pescadores.push(novo);
-        nomeInput.value = ''; 
-        telInput.value = '';
-      }
-      salvarEstado();
-    }
-
-    function prepararEdicaoPescador(id) {
-      const p = pescadores.find(item => item.id === id);
-      if (p) {
-        document.getElementById('pescador-id-editando').value = p.id;
-        document.getElementById('pescador-nome').value = p.nome;
-        document.getElementById('pescador-telefone').value = p.telefone || '';
-        
-        const btnSalvar = document.getElementById('btn-salvar-pescador');
-        btnSalvar.innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Salvar Alterações`;
-        btnSalvar.className = "flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm";
-        document.getElementById('btn-cancelar-edicao-pescador').classList.remove('hidden');
-        document.getElementById('pescador-nome').focus();
-      }
-    }
-
-    function cancelarEdicaoPescador() {
-      document.getElementById('pescador-id-editando').value = '';
-      document.getElementById('pescador-nome').value = '';
-      document.getElementById('pescador-telefone').value = '';
-      
-      const btnSalvar = document.getElementById('btn-salvar-pescador');
-      btnSalvar.innerHTML = `<i class="fa-solid fa-user-plus mr-1"></i> Adicionar Pescador`;
-      btnSalvar.className = "flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm";
-      document.getElementById('btn-cancelar-edicao-pescador').classList.add('hidden');
-    }
-
-    function removerPescador(id) {
-      pescadores = pescadores.filter(p => p.id !== id);
-      // Remove de caronas e limpa sorteio se necessário
-      gruposViagem.forEach(g => {
-        if(g.membros) g.membros = g.membros.filter(mId => mId !== id);
-      });
-      if (resultadoSorteio) {
-        if (resultadoSorteio.popa) resultadoSorteio.popa = resultadoSorteio.popa.filter(p => p.id !== id);
-        if (resultadoSorteio.laterais) resultadoSorteio.laterais = resultadoSorteio.laterais.filter(p => p.id !== id);
-      }
-      salvarEstado();
-    }
-
-    // --- Despesas & Itens Salvos ---
-    function selecionarItemPreCadastrado(valor) {
-      if (valor) {
-        document.getElementById('despesa-descricao').value = valor;
-      }
-    }
-
-    function adicionarDespesa(e) {
-      e.preventDefault();
-      const descInput = document.getElementById('despesa-descricao');
-      const valInput = document.getElementById('despesa-valor');
-      const tipoInput = document.getElementById('despesa-tipo');
-      
-      const descricao = descInput.value.trim();
-      const valor = parseFloat(valInput.value) || 0;
-      const tipo = tipoInput.value;
-
-      if (descricao && !itensPreCadastrados.includes(descricao)) {
-        itensPreCadastrados.push(descricao);
-      }
-      
-      const novaDespesa = {
-        id: Date.now().toString(),
-        descricao,
-        valor,
-        tipo,
-        aderentes: tipo === 'opcional' ? pescadores.map(p => p.id) : [] // Por padrão todos entram, mas podem desmarcar
-      };
-      
-      despesas.push(novaDespesa);
-      descInput.value = ''; 
-      valInput.value = '';
-      salvarEstado();
-    }
-
-    function removerDespesa(id) {
-      despesas = despesas.filter(d => d.id !== id);
-      pescadores.forEach(p => { if (p.pagamentos && p.pagamentos[id]) delete p.pagamentos[id]; });
-      salvarEstado();
-    }
-
-    function atualizarAbatimento(pescadorId, despesaId, valorStr) {
-      const pescador = pescadores.find(p => p.id === pescadorId);
-      if (pescador) {
-        if (!pescador.pagamentos) pescador.pagamentos = {};
-        const valor = parseFloat(valorStr);
-        if (isNaN(valor) || valor <= 0) delete pescador.pagamentos[despesaId];
-        else pescador.pagamentos[despesaId] = valor;
-        salvarEstado();
-      }
-    }
-
-    function alternarAderenciaOpcional(despesaId, pescadorId) {
-      const d = despesas.find(item => item.id === despesaId);
-      if (d && d.tipo === 'opcional') {
-        if (!d.aderentes) d.aderentes = [];
-        const index = d.aderentes.indexOf(pescadorId);
-        if (index > -1) {
-          d.aderentes.splice(index, 1);
-        } else {
-          d.aderentes.push(pescadorId);
-        }
-        salvarEstado();
-      }
-    }
-
-    // --- Sorteio ---
-    function realizarSorteioPopaELaterais() {
-      if (pescadores.length === 0) {
-        alert("Cadastre pelo menos um pescador na Central de Cadastros.");
-        return;
-      }
-      const embaralhar = (array) => {
-        const arr = [...array];
-        for (let i = arr.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-      };
-
-      const pescadoresEmbaralhados = embaralhar(pescadores);
-      const qtdPopa = Math.min(configBarco.vagasPopa, pescadoresEmbaralhados.length);
-
-      resultadoSorteio = {
-        popa: pescadoresEmbaralhados.slice(0, qtdPopa),
-        laterais: pescadoresEmbaralhados.slice(qtdPopa),
-        data: new Date().toLocaleString('pt-BR')
-      };
-      salvarEstado();
-    }
-
-    // --- Grupos / Caronas & Chat ---
-    function criarGrupoViagem(e) {
-      e.preventDefault();
-      const nome = document.getElementById('grupo-nome').value.trim();
-      const ponto = document.getElementById('grupo-ponto').value.trim();
-      const horario = document.getElementById('grupo-horario').value;
-      const vagas = parseInt(document.getElementById('grupo-vagas').value) || 4;
-
-      const novoGrupo = { id: Date.now().toString(), nome, ponto, horario, vagas, membros: [] };
-      gruposViagem.push(novoGrupo);
-      
-      document.getElementById('grupo-nome').value = '';
-      document.getElementById('grupo-ponto').value = '';
-      document.getElementById('grupo-horario').value = '';
-      document.getElementById('grupo-vagas').value = '4';
-      salvarEstado();
-    }
-
-    function entrarNoCarro(grupoId, pescadorId) {
-      const grupo = gruposViagem.find(g => g.id === grupoId);
-      if (!grupo) return;
-      if (!grupo.membros) grupo.membros = [];
-      
-      const idx = grupo.membros.indexOf(pescadorId);
-      if (idx > -1) {
-        grupo.membros.splice(idx, 1);
-      } else {
-        if (grupo.membros.length >= grupo.vagas) {
-          alert("Este carro já está lotado!");
-          return;
-        }
-        grupo.membros.push(pescadorId);
-      }
-      salvarEstado();
-    }
-
-    function removerGrupoViagem(id) {
-      gruposViagem = gruposViagem.filter(g => g.id !== id);
-      salvarEstado();
-    }
-
-    function selecionarGrupoChat(nomeGrupo) {
-      grupoAtivo = nomeGrupo;
-      document.getElementById('chat-grupo-ativo-titulo').innerText = nomeGrupo === 'Geral' ? 'Geral da Pescaria' : `Carro: ${nomeGrupo}`;
-      renderizarChat();
-    }
-
-    function enviarMensagemChat(e) {
-      e.preventDefault();
-      const autorSelect = document.getElementById('chat-autor');
-      const textoInput = document.getElementById('chat-texto');
-
-      if (!autorSelect.value) {
-        alert("Cadastre e selecione um pescador para enviar mensagens.");
-        return;
-      }
-
-      const novaMsg = {
-        id: Date.now().toString(),
-        autor: autorSelect.value,
-        texto: textoInput.value.trim(),
-        horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        grupo: grupoAtivo
-      };
-
-      mensagensChat.push(novaMsg);
-      textoInput.value = '';
-      salvarEstado();
-    }
-
-    // --- Renderização ---
-    function formatarMoeda(val) {
-      return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
-
-    function renderizarTudo() {
-      renderizarPescadores();
-      renderizarSelectItensSalvos();
-      renderizarTabelaDespesas();
-      renderizarAbatimentos();
-      renderizarDemonstrativo();
-      renderizarSorteioVisual();
-      renderizarGrupos();
-      renderizarSelectAutores();
-      renderizarChat();
-    }
-
-    function renderizarPescadores() {
-      const ul = document.getElementById('lista-pescadores-cadastrados');
-      if (pescadores.length === 0) {
-        ul.innerHTML = `<li class="p-3 text-slate-400 text-xs text-center">Nenhum pescador cadastrado.</li>`;
-        return;
-      }
-      ul.innerHTML = pescadores.map(p => `
-        <li class="p-2.5 flex justify-between items-center bg-slate-50 hover:bg-slate-100 text-sm">
-          <div>
-            <span class="font-medium text-slate-700">${p.nome}</span>
-            <span class="text-xs text-slate-400 block">${p.telefone || 'Sem telefone'}</span>
-          </div>
-          <div class="flex items-center gap-2 no-print">
-            <button onclick="prepararEdicaoPescador('${p.id}')" class="text-indigo-600 hover:text-indigo-800 text-xs px-2 py-1 bg-indigo-50 rounded">
-              <i class="fa-solid fa-pen"></i>
-            </button>
-            <button onclick="removerPescador('${p.id}')" class="text-rose-500 hover:text-rose-700 text-xs px-2 py-1 bg-rose-50 rounded">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </li>
-      `).join('');
-    }
-
-    function renderizarSelectItensSalvos() {
-      const select = document.getElementById('select-itens-salvos');
-      select.innerHTML = `<option value="">Itens Salvos...</option>` + 
-        itensPreCadastrados.map(item => `<option value="${item}">${item}</option>`).join('');
-    }
-
-    function renderizarTabelaDespesas() {
-      const tbody = document.getElementById('tabela-despesas-cadastradas');
-      if (despesas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-slate-400 text-center text-xs">Nenhuma despesa.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = despesas.map(d => `
-        <tr class="hover:bg-slate-50">
-          <td class="p-2 font-medium text-slate-700">${d.descricao}</td>
-          <td class="p-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${d.tipo === 'opcional' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-800'}">${d.tipo === 'opcional' ? 'Opcional' : 'Geral'}</span></td>
-          <td class="p-2 text-indigo-600 font-semibold">${formatarMoeda(d.valor)}</td>
-          <td class="p-2 text-center no-print">
-            <button onclick="removerDespesa('${d.id}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-xmark"></i></button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function renderizarAbatimentos() {
-      const container = document.getElementById('container-abatimentos');
-      if (pescadores.length === 0 || despesas.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-xs text-center py-4">Cadastre pescadores e despesas para gerenciar abatimentos e consumo.</p>`;
-        return;
-      }
-      container.innerHTML = pescadores.map(p => {
-        let totalPagoPescador = 0;
-        const inputs = despesas.map(d => {
-          const pago = (p.pagamentos && p.pagamentos[d.id]) ? p.pagamentos[d.id] : '';
-          if (pago) totalPagoPescador += parseFloat(pago);
-
-          let opcionalHTML = '';
-          if (d.tipo === 'opcional') {
-            const aderiu = d.aderentes && d.aderentes.includes(p.id);
-            opcionalHTML = `
-              <label class="flex items-center gap-1.5 text-[11px] text-slate-500 cursor-pointer">
-                <input type="checkbox" ${aderiu ? 'checked' : ''} onchange="alternarAderenciaOpcional('${d.id}', '${p.id}')" class="rounded text-indigo-600 focus:ring-indigo-500">
-                Consome este item
-              </label>
-            `;
-          }
-
-          return `
-            <div class="flex flex-col gap-1 py-1.5 border-b border-slate-100 text-xs">
-              <div class="flex justify-between items-center">
-                <span class="text-slate-600 font-medium">${d.descricao}</span>
-                <div class="flex items-center gap-1">
-                  <span class="text-slate-400">R$ pago:</span>
-                  <input type="number" step="0.01" min="0" placeholder="0,00" value="${pago}"
-                         onchange="atualizarAbatimento('${p.id}', '${d.id}', this.value)"
-                         class="w-24 px-2 py-1 border rounded-lg text-right focus:ring-1 focus:ring-indigo-500 outline-none">
+<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-600/30">
+                    <i class="fa-solid fa-ship text-xl"></i>
                 </div>
-              </div>
-              ${opcionalHTML}
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">Pesca-Justa</h1>
+                    <p class="text-xs text-slate-400">Gestão Completa de Pescaria</p>
+                </div>
             </div>
-          `;
-        }).join('');
+            <!-- Navegação por Abas -->
+            <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
+                <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow">
+                    <i class="fa-solid fa-users-gear mr-2"></i>Cadastros
+                </button>
+                <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-dice mr-2"></i>Sorteio
+                </button>
+                <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-wallet mr-2"></i>Despesas & Rateio
+                </button>
+                <button onclick="switchTab('chat')" id="btn-chat" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-comments mr-2"></i>Ponto de Encontro
+                </button>
+            </nav>
+        </div>
+    </header>
 
-        return `
-          <div class="p-3 border rounded-xl bg-slate-50/50 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-slate-800 text-sm">${p.nome}</span>
-              <span class="text-xs font-semibold text-emerald-600">Total Pago: ${formatarMoeda(totalPagoPescador)}</span>
+    <!-- Main Content -->
+    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow">
+
+        <!-- ABA 1: CADASTROS -->
+        <section id="tab-cadastros" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Configurações da Viagem -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-gear text-blue-500"></i> Dados da Viagem
+                    </h2>
+                    <form id="trip-form" class="space-y-4" onsubmit="saveTripConfig(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Local de Saída</label>
+                            <input type="text" id="trip-location" value="Atlanticus - Ilha da Vitória" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Data e Hora</label>
+                                <input type="datetime-local" id="trip-date" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Vagas na Popa</label>
+                                <input type="number" id="trip-popa" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20">Salvar Configurações</button>
+                    </form>
+                </div>
+
+                <!-- Cadastro de Participantes -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador
+                    </h2>
+                    <form id="participant-form" class="space-y-4" onsubmit="addParticipant(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome Completo</label>
+                            <input type="text" id="p-name" placeholder="Ex: João da Silva" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp</label>
+                            <input type="text" id="p-phone" placeholder="(11) 99999-9999" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/20">Cadastrar Participante</button>
+                    </form>
+                </div>
             </div>
-            <div class="bg-white p-2.5 rounded-xl border space-y-1">${inputs}</div>
-          </div>
-        `;
-      }).join('');
-    }
 
-    function renderizarDemonstrativo() {
-      const totalDespesas = despesas.reduce((acc, d) => acc + d.valor, 0);
-      let totalGeralPago = 0;
+            <!-- Lista de Pescadores -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-users text-blue-500"></i> Pescadores Confirmados (<span id="participant-count">0</span>)
+                    </h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900 uppercase text-xs text-slate-400 border-b border-slate-700">
+                            <tr>
+                                <th class="p-3">Nome</th>
+                                <th class="p-3">Telefone</th>
+                                <th class="p-3 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="participants-table-body" class="divide-y divide-slate-700">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-      const linhas = pescadores.map(p => {
-        let pagoPescador = 0;
-        if (p.pagamentos) Object.values(p.pagamentos).forEach(v => pagoPescador += parseFloat(v) || 0);
-        totalGeralPago += pagoPescador;
+        <!-- ABA 2: SORTEIO -->
+        <section id="tab-sorteio" class="hidden space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center">
+                <h2 class="text-xl font-bold text-white mb-2">Sorteio de Vagas (Popa & Laterais)</h2>
+                <p class="text-sm text-slate-400 mb-6">O sistema prioriza automaticamente as vagas da popa e distribui o restante nas laterais.</p>
+                <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-amber-600/30">
+                    <i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio Agora
+                </button>
+            </div>
 
-        // Calcular cota individual considerando despesas gerais e opcionais
-        let cotaPescador = 0;
-        despesas.forEach(d => {
-          if (d.tipo === 'geral') {
-            if (pescadores.length > 0) cotaPescador += d.valor / pescadores.length;
-          } else if (d.tipo === 'opcional') {
-            const aderiu = d.aderentes && d.aderentes.includes(p.id);
-            const qtdAderentes = (d.aderentes || []).length;
-            if (aderiu && qtdAderentes > 0) {
-              cotaPescador += d.valor / qtdAderentes;
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="lottery-results-container">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-anchor"></i> Vagas na Popa (Fundo)
+                    </h3>
+                    <ul id="popa-list" class="space-y-2 text-slate-300">
+                        <li class="text-slate-500 italic">Sorteio não realizado.</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-bars"></i> Vagas nas Laterais
+                    </h3>
+                    <ul id="lateral-list" class="space-y-2 text-slate-300">
+                        <li class="text-slate-500 italic">Sorteio não realizado.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 3: DESPESAS & RATEIO -->
+        <section id="tab-despesas" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Lançar Despesa -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl md:col-span-1">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-receipt text-blue-500"></i> Nova Despesa
+                    </h2>
+                    <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição</label>
+                            <input type="text" id="exp-desc" placeholder="Ex: Iscas / Combustível" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor (R$)</label>
+                            <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem Pagou?</label>
+                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all">Lançar Despesa</button>
+                    </form>
+                </div>
+
+                <!-- Demonstrativo e Rateio -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl md:col-span-2 space-y-6">
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                        <div>
+                            <p class="text-xs text-slate-400 uppercase font-semibold">Total de Gastos</p>
+                            <h3 class="text-2xl font-bold text-white" id="total-expenses">R$ 0,00</h3>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 uppercase font-semibold">Rateio por Pessoa</p>
+                            <h3 class="text-2xl font-bold text-blue-400" id="per-person-expense">R$ 0,00</h3>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato de Despesas</h4>
+                        <div class="overflow-x-auto max-h-48 overflow-y-auto">
+                            <table class="w-full text-left text-sm text-slate-300">
+                                <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
+                                    <tr>
+                                        <th class="p-2.5">Descrição</th>
+                                        <th class="p-2.5">Valor</th>
+                                        <th class="p-2.5">Pagador</th>
+                                        <th class="p-2.5 text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-table-body" class="divide-y divide-slate-700">
+                                    <!-- Preenchido via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 4: CHAT & PONTO DE ENCONTRO -->
+        <section id="tab-chat" class="hidden space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-2xl mx-auto flex flex-col h-[500px]">
+                <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-slate-700 pb-3">
+                    <i class="fa-solid fa-comments text-blue-500"></i> Mural / Ponto de Encontro & Caronas
+                </h2>
+                <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm">
+                    <!-- Preenchido via JS -->
+                </div>
+                <form id="chat-form" class="flex gap-2" onsubmit="addChatMessage(event)">
+                    <input type="text" id="chat-sender" placeholder="Seu Nome" required class="w-1/3 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <input type="text" id="chat-text" placeholder="Escreva sobre caronas, horários..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl transition-all"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Script de Gestão do Aplicativo -->
+    <script>
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db')) || {
+            trip: { location: "Atlanticus - Ilha da Vitória", date: "2026-09-15T05:00", popa: 4 },
+            participants: [],
+            expenses: [],
+            chat: []
+        };
+
+        function saveData() {
+            localStorage.setItem('pesca_justa_db', JSON.stringify(db));
+            renderAll();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('section[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-blue-600', 'text-white', 'shadow');
+                el.classList.add('text-slate-400');
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
+            activeBtn.classList.remove('text-slate-400');
+        }
+
+        function saveTripConfig(e) {
+            e.preventDefault();
+            db.trip.location = document.getElementById('trip-location').value;
+            db.trip.date = document.getElementById('trip-date').value;
+            db.trip.popa = parseInt(document.getElementById('trip-popa').value);
+            saveData();
+            alert('Configurações salvas com sucesso!');
+        }
+
+        function addParticipant(e) {
+            e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const phone = document.getElementById('p-phone').value;
+            db.participants.push({ id: Date.now(), name, phone });
+            document.getElementById('participant-form').reset();
+            saveData();
+        }
+
+        function removeParticipant(id) {
+            db.participants = db.participants.filter(p => p.id !== id);
+            saveData();
+        }
+
+        function addExpense(e) {
+            e.preventDefault();
+            const description = document.getElementById('exp-desc').value;
+            const value = parseFloat(document.getElementById('exp-value').value);
+            const payer = document.getElementById('exp-payer').value;
+            db.expenses.push({ id: Date.now(), description, value, payer });
+            document.getElementById('expense-form').reset();
+            saveData();
+        }
+
+        function removeExpense(id) {
+            db.expenses = db.expenses.filter(ex => ex.id !== id);
+            saveData();
+        }
+
+        function addChatMessage(e) {
+            e.preventDefault();
+            const sender = document.getElementById('chat-sender').value;
+            const text = document.getElementById('chat-text').value;
+            db.chat.push({ sender, text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+            document.getElementById('chat-text').value = '';
+            saveData();
+        }
+
+        function runLottery() {
+            if (db.participants.length === 0) {
+                alert('Cadastre participantes antes de realizar o sorteio.');
+                return;
             }
-          }
-        });
+            let shuffled = [...db.participants].sort(() => Math.random() - 0.5);
+            let popaCount = db.trip.popa;
+            let popaList = shuffled.slice(0, popaCount);
+            let lateralList = shuffled.slice(popaCount);
 
-        const saldo = cotaPescador - pagoPescador;
+            let popaHTML = popaList.length ? popaList.map((p, i) => `<li class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between"><span>#${i+1} ${p.name}</span><span class="text-xs text-blue-400">Popa</span></li>`).join('') : '<li class="text-slate-500">Nenhum na popa.</li>';
+            let lateralHTML = lateralList.length ? lateralList.map((p, i) => `<li class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between"><span>#${i+1} ${p.name}</span><span class="text-xs text-purple-400">Lateral</span></li>`).join('') : '<li class="text-slate-500 font-semibold">Sem excedente para laterais.</li>';
 
-        let badge = Math.abs(saldo) < 0.01 ? `<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Quitado</span>` :
-                    (saldo > 0 ? `<span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">Deve ${formatarMoeda(saldo)}</span>` :
-                                 `<span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Crédito ${formatarMoeda(Math.abs(saldo))}</span>`);
+            document.getElementById('popa-list').innerHTML = popaHTML;
+            document.getElementById('lateral-list').innerHTML = lateralHTML;
+        }
 
-        return `
-          <tr class="hover:bg-slate-50">
-            <td class="p-2.5 font-medium text-slate-800">${p.nome}</td>
-            <td class="p-2.5 text-slate-600">${formatarMoeda(cotaPescador)}</td>
-            <td class="p-2.5 text-emerald-600 font-semibold">${formatarMoeda(pagoPescador)}</td>
-            <td class="p-2.5 font-semibold ${saldo > 0 ? 'text-amber-600' : 'text-blue-600'}">${formatarMoeda(saldo)}</td>
-            <td class="p-2.5">${badge}</td>
-          </tr>
-        `;
-      }).join('');
+        function renderAll() {
+            // Trip Inputs
+            document.getElementById('trip-location').value = db.trip.location;
+            document.getElementById('trip-date').value = db.trip.date;
+            document.getElementById('trip-popa').value = db.trip.popa;
 
-      document.getElementById('resumo-total-despesas').innerText = formatarMoeda(totalDespesas);
-      document.getElementById('resumo-cota-pessoa').innerText = pescadores.length > 0 ? formatarMoeda(totalDespesas / pescadores.length) : 'R$ 0,00';
-      document.getElementById('resumo-total-pago').innerText = formatarMoeda(totalGeralPago);
-      document.getElementById('resumo-saldo-pendente').innerText = formatarMoeda(totalDespesas - totalGeralPago);
-      document.getElementById('tabela-demonstrativo').innerHTML = pescadores.length === 0 ? `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">Sem participantes.</td></tr>` : linhas;
-    }
+            // Participants
+            document.getElementById('participant-count').innerText = db.participants.length;
+            let pBody = '';
+            let payerSelect = '';
+            db.participants.forEach(p => {
+                pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3">${p.phone}</td><td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                payerSelect += `<option value="${p.name}">${p.name}</option>`;
+            });
+            document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
+            document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="">Cadastre um participante</option>`;
 
-    function renderizarSorteioVisual() {
-      const container = document.getElementById('container-visual-barco');
-      if (!resultadoSorteio || !resultadoSorteio.popa) {
-        container.classList.add('hidden');
-        return;
-      }
-      container.classList.remove('hidden');
-      document.getElementById('badge-qtd-popa').innerText = `${resultadoSorteio.popa.length} vagas`;
-      document.getElementById('badge-qtd-laterais').innerText = `${resultadoSorteio.laterais.length} vagas`;
+            // Expenses
+            let totalExp = 0;
+            let eBody = '';
+            db.expenses.forEach(ex => {
+                totalExp += ex.value;
+                eBody += `<tr><td class="p-2.5">${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${ex.payer}</td><td class="p-2.5 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            });
+            document.getElementById('total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
+            let perPerson = db.participants.length > 0 ? totalExp / db.participants.length : 0;
+            document.getElementById('per-person-expense').innerText = `R$ ${perPerson.toFixed(2)}`;
+            document.getElementById('expenses-table-body').innerHTML = eBody || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma despesa registrada.</td></tr>`;
 
-      document.getElementById('lista-popa').innerHTML = resultadoSorteio.popa.map((p, idx) => `
-        <li class="p-2.5 bg-white border border-amber-200 rounded-xl flex items-center justify-between shadow-xs">
-          <span class="font-bold text-amber-900"><i class="fa-solid fa-crown text-amber-500 mr-1.5"></i> Popa ${idx + 1}: ${p.nome}</span>
-          <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">Premium</span>
-        </li>
-      `).join('');
+            // Chat
+            let chatBody = '';
+            db.chat.forEach(c => {
+                chatBody += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700"><div class="flex justify-between items-center mb-1"><span class="font-semibold text-xs text-blue-400">${c.sender}</span><span class="text-[10px] text-slate-500">${c.time}</span></div><p class="text-slate-300">${c.text}</p></div>`;
+            });
+            document.getElementById('chat-messages').innerHTML = chatBody || `<p class="text-center text-slate-500 italic mt-20">Nenhuma mensagem no mural ainda.</p>`;
+        }
 
-      document.getElementById('lista-laterais').innerHTML = resultadoSorteio.laterais.map((p, idx) => `
-        <li class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
-          <span class="font-medium text-slate-700">Lateral ${idx + 1}: ${p.nome}</span>
-        </li>
-      `).join('');
-    }
-
-    function renderizarGrupos() {
-      const div = document.getElementById('lista-grupos');
-      let html = `
-        <div onclick="selecionarGrupoChat('Geral')" class="p-3 border rounded-xl cursor-pointer transition ${grupoAtivo === 'Geral' ? 'bg-indigo-50 border-indigo-300' : 'bg-slate-50 hover:bg-slate-100'}">
-          <span class="font-bold text-xs text-indigo-900 block"><i class="fa-solid fa-comments mr-1"></i> Geral da Pescaria</span>
-          <span class="text-[11px] text-slate-500">Canal principal para conversas</span>
-        </div>
-      `;
-      html += gruposViagem.map(g => {
-        const membrosNomes = (g.membros || []).map(id => {
-          const p = pescadores.find(item => item.id === id);
-          return p ? p.nome : '';
-        }).filter(Boolean).join(', ');
-
-        return `
-          <div class="p-3 border rounded-xl bg-slate-50 space-y-2">
-            <div class="flex justify-between items-start">
-              <div onclick="selecionarGrupoChat('${g.nome}')" class="cursor-pointer flex-1">
-                <span class="font-bold text-xs text-slate-800 block"><i class="fa-solid fa-car mr-1"></i> ${g.nome}</span>
-                <span class="text-[11px] text-slate-500 block"><i class="fa-solid fa-location-dot"></i> ${g.ponto} às ${g.horario}</span>
-                <span class="text-[10px] text-indigo-600 font-semibold block mt-1">Vagas: ${(g.membros || []).length}/${g.vagas} (Passageiros: ${membrosNomes || 'Nenhum'})</span>
-              </div>
-              <button onclick="removerGrupoViagem('${g.id}')" class="text-rose-500 hover:text-rose-700 text-xs p-1 no-print"><i class="fa-solid fa-trash"></i></button>
-            </div>
-            <div class="pt-2 border-t border-slate-200 flex flex-wrap gap-1">
-              <span class="text-[10px] font-semibold text-slate-500 self-center mr-1">Entrar no carro:</span>
-              ${pescadores.map(p => {
-                const noCarro = g.membros && g.membros.includes(p.id);
-                return `<button onclick="entrarNoCarro('${g.id}', '${p.id}')" class="text-[10px] px-2 py-0.5 rounded-full border transition ${noCarro ? 'bg-emerald-600 text-white border-emerald-600 font-bold' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'}">${p.nome}</button>`;
-              }).join('')}
-            </div>
-          </div>
-        `;
-      }).join('');
-      div.innerHTML = html;
-    }
-
-    function renderizarSelectAutores() {
-      const select = document.getElementById('chat-autor');
-      select.innerHTML = pescadores.length === 0 ? `<option value="">Cadastre pescadores</option>` : 
-        pescadores.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
-    }
-
-    function renderizarChat() {
-      const container = document.getElementById('chat-mensagens');
-      const msgsFiltradas = mensagensChat.filter(m => m.grupo === grupoAtivo);
-      
-      container.innerHTML = msgsFiltradas.map(m => `
-        <div class="p-2.5 bg-white border rounded-xl shadow-xs space-y-1">
-          <div class="flex justify-between items-center text-[10px] text-slate-400">
-            <span class="font-bold text-indigo-700">${m.autor}</span>
-            <span>${m.horario}</span>
-          </div>
-          <p class="text-xs text-slate-700">${m.texto}</p>
-        </div>
-      `).join('');
-      container.scrollTop = container.scrollHeight;
-    }
-
-    // Inicialização
-    carregarConfiguracaoInputs();
-    renderizarTudo();
-  </script>
+        // Inicialização
+        renderAll();
+    </script>
 </body>
 </html>
