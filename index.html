@@ -9,7 +9,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- Header -->
+    <!-- Header com Seletor de Perfil Ativo -->
     <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -21,6 +21,16 @@
                     <p class="text-xs text-slate-400">Gestão Completa de Pescaria</p>
                 </div>
             </div>
+
+            <!-- Controle de Perfil / Usuário Logado -->
+            <div class="flex items-center gap-3 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700">
+                <span class="text-xs text-slate-400"><i class="fa-solid fa-user-shield mr-1 text-blue-400"></i> Perfil:</span>
+                <select id="current-user-role" onchange="changeUserRole(this.value)" class="bg-slate-800 text-white text-xs font-medium rounded-lg px-2.5 py-1.5 border border-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="admin">Administrador (Acesso Total)</option>
+                    <option value="user">Usuário Comum (Visualizador)</option>
+                </select>
+            </div>
+
             <!-- Navegação por Abas -->
             <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
                 <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow">
@@ -47,6 +57,12 @@
 
         <!-- ABA 1: CADASTROS -->
         <section id="tab-cadastros" class="space-y-6">
+            <!-- Aviso visual para usuários comuns -->
+            <div id="admin-warning-cadastros" class="hidden bg-amber-500/10 border border-amber-500/30 text-amber-400 p-4 rounded-xl text-sm flex items-center gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                <span>Você está visualizando como <strong>Usuário Comum</strong>. Os formulários de alteração, inserção e exclusão estão desativados nesta aba.</span>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Configurações do Barco / Viagem -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
@@ -129,13 +145,13 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20">Salvar Dados da Viagem</button>
+                        <button type="submit" id="admin-btn-trip" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20">Salvar Dados da Viagem</button>
                     </form>
                 </div>
 
                 <!-- Cadastro de Participantes & Tipos de Despesa -->
                 <div class="space-y-6">
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <div id="admin-card-participant" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
                         <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                             <i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador
                         </h2>
@@ -152,7 +168,7 @@
                         </form>
                     </div>
 
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <div id="admin-card-expense-types" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
                         <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-tags text-blue-500"></i> Tipos de Despesa Geral
                         </h2>
@@ -160,9 +176,7 @@
                             <input type="text" id="et-name" placeholder="Ex: Iscas, Combustível..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium">Adicionar</button>
                         </form>
-                        <div id="expense-types-list" class="flex flex-wrap gap-2">
-                            <!-- Preenchido via JS -->
-                        </div>
+                        <div id="expense-types-list" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
             </div>
@@ -193,7 +207,7 @@
                         <h3 class="font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-camera text-blue-500"></i> Fotos da Embarcação
                         </h3>
-                        <span class="text-xs text-slate-400">Clique para enviar</span>
+                        <span id="photo-upload-hint" class="text-xs text-slate-400">Clique para enviar</span>
                     </div>
 
                     <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
@@ -236,12 +250,10 @@
                             <tr>
                                 <th class="p-3">Nome</th>
                                 <th class="p-3">Telefone</th>
-                                <th class="p-3 text-center">Ações</th>
+                                <th class="p-3 text-center action-col-header">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="participants-table-body" class="divide-y divide-slate-700">
-                            <!-- Preenchido via JS -->
-                        </tbody>
+                        <tbody id="participants-table-body" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
@@ -252,7 +264,7 @@
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center">
                 <h2 class="text-xl font-bold text-white mb-2">Sorteio de Assentos & Planta do Barco</h2>
                 <p class="text-sm text-slate-400 mb-6">Distribuição visual agrupada por bancos conforme configuração.</p>
-                <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-amber-600/30">
+                <button id="btn-run-lottery" onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-amber-600/30">
                     <i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio nos Bancos
                 </button>
             </div>
@@ -282,7 +294,7 @@
             </div>
         </section>
 
-        <!-- ABA 3: DESPESAS & RATEIO (Com quadros separados) -->
+        <!-- ABA 3: DESPESAS & RATEIO -->
         <section id="tab-despesas" class="hidden space-y-6">
             <!-- Indicadores Principais de Resumo -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -298,15 +310,14 @@
 
             <!-- QUADRO 1: Lançamento e Extrato de Despesas Gerais -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                <div id="admin-card-expense" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-receipt text-blue-500"></i> Lançar Despesa Geral
                     </h2>
                     <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
-                            <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </select>
+                            <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
@@ -318,14 +329,13 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem desembolsou / pagou?</label>
-                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </select>
+                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"></select>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-blue-600/20">Registrar Despesa</button>
                     </form>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 flex flex-col justify-between">
+                <div id="extrato-despesas-wrapper" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3 flex flex-col justify-between transition-all">
                     <div>
                         <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-list text-blue-500"></i> Extrato de Despesas Gerais
@@ -338,11 +348,10 @@
                                         <th class="p-3">Tipo / Descrição</th>
                                         <th class="p-3">Valor</th>
                                         <th class="p-3">Pagador</th>
-                                        <th class="p-3 text-center">Ação</th>
+                                        <th class="p-3 text-center exp-action-col">Ação</th>
                                     </tr>
                                 </thead>
-                                <tbody id="expenses-table-body" class="divide-y divide-slate-700">
-                                </tbody>
+                                <tbody id="expenses-table-body" class="divide-y divide-slate-700"></tbody>
                             </table>
                         </div>
                     </div>
@@ -351,15 +360,14 @@
 
             <!-- QUADRO 2: Cadastro e Controle de Pagamentos Individuais (Quem Pagou) -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                <div id="admin-card-payment" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-wallet text-emerald-500"></i> Lançar Pagamento Pescador
                     </h2>
                     <form id="payment-form" class="space-y-4" onsubmit="addOrUpdateFishermanPayment(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Selecione o Pescador</label>
-                            <select id="pay-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </select>
+                            <select id="pay-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Pago / Quitado (R$)</label>
@@ -377,7 +385,7 @@
                     </form>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 flex flex-col justify-between">
+                <div id="controle-pagamento-wrapper" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3 flex flex-col justify-between transition-all">
                     <div>
                         <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-users-rectangle text-emerald-500"></i> Controle de Pagamento Individual
@@ -393,8 +401,7 @@
                                         <th class="p-3">Balanço / Diferença</th>
                                     </tr>
                                 </thead>
-                                <tbody id="individual-balance-body" class="divide-y divide-slate-700">
-                                </tbody>
+                                <tbody id="individual-balance-body" class="divide-y divide-slate-700"></tbody>
                             </table>
                         </div>
                     </div>
@@ -405,7 +412,7 @@
         <!-- ABA 4: PONTOS DE PESCA -->
         <section id="tab-pontos" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                <div id="admin-card-spot" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-map-pin text-blue-500"></i> Cadastrar Ponto
                     </h2>
@@ -426,12 +433,11 @@
                     </form>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2">
+                <div id="spots-list-wrapper" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 transition-all">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-compass text-blue-500"></i> Pontos de Pesca Cadastrados
                     </h2>
-                    <div id="spots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    </div>
+                    <div id="spots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
             </div>
         </section>
@@ -442,8 +448,7 @@
                 <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-slate-700 pb-3">
                     <i class="fa-solid fa-comments text-blue-500"></i> Mural / Ponto de Encontro & Caronas
                 </h2>
-                <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm">
-                </div>
+                <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm"></div>
                 <form id="chat-form" class="flex gap-2" onsubmit="addChatMessage(event)">
                     <input type="text" id="chat-sender" placeholder="Seu Nome" required class="w-1/3 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                     <input type="text" id="chat-text" placeholder="Escreva sobre caronas, horários..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
@@ -454,9 +459,10 @@
 
     </main>
 
-    <!-- Script Principal -->
+    <!-- Script Principal com Controle de Permissões -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v6')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v7')) || {
+            currentUserRole: 'admin', // 'admin' ou 'user'
             trip: {
                 location: "Atlanticus - Ilha da Vitória",
                 departure: "2026-09-15T05:00",
@@ -479,8 +485,13 @@
         let currentImageSlot = null;
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v6', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v7', JSON.stringify(db));
             renderAll();
+        }
+
+        function changeUserRole(role) {
+            db.currentUserRole = role;
+            saveData();
         }
 
         function switchTab(tabId) {
@@ -495,8 +506,57 @@
             activeBtn.classList.remove('text-slate-400');
         }
 
+        function applyRolePermissions() {
+            const isAdmin = db.currentUserRole === 'admin';
+            
+            // Sincronizar select do header
+            document.getElementById('current-user-role').value = db.currentUserRole;
+
+            // Elementos de formulários de cadastro / alteração que somem ou travam para 'user'
+            const adminCards = [
+                'admin-card-participant', 
+                'admin-card-expense-types', 
+                'admin-card-expense', 
+                'admin-card-payment', 
+                'admin-card-spot',
+                'admin-warning-cadastros'
+            ];
+
+            adminCards.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    if(id === 'admin-warning-cadastros') {
+                        el.style.display = isAdmin ? 'none' : 'flex';
+                    } else {
+                        el.style.display = isAdmin ? 'block' : 'none';
+                    }
+                }
+            });
+
+            // Ajustar larguras das tabelas de extrato/relatório quando sem o card lateral de inserção
+            const extratoWrapper = document.getElementById('extrato-despesas-wrapper');
+            const pagamentoWrapper = document.getElementById('controle-pagamento-wrapper');
+            const spotsWrapper = document.getElementById('spots-list-wrapper');
+
+            if(extratoWrapper) extratoWrapper.className = isAdmin ? "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 flex flex-col justify-between" : "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3 flex flex-col justify-between";
+            if(pagamentoWrapper) pagamentoWrapper.className = isAdmin ? "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 flex flex-col justify-between" : "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3 flex flex-col justify-between";
+            if(spotsWrapper) spotsWrapper.className = isAdmin ? "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2" : "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3";
+
+            // Botão de salvar dados da viagem e de sorteio
+            const btnTrip = document.getElementById('admin-btn-trip');
+            if(btnTrip) btnTrip.style.display = isAdmin ? 'block' : 'none';
+
+            const btnLottery = document.getElementById('btn-run-lottery');
+            if(btnLottery) btnLottery.style.display = isAdmin ? 'inline-block' : 'none';
+
+            // Dicas de upload de foto
+            const photoHint = document.getElementById('photo-upload-hint');
+            if(photoHint) photoHint.innerText = isAdmin ? 'Clique para enviar' : 'Apenas visualização';
+        }
+
         function saveTripConfig(e) {
             e.preventDefault();
+            if(db.currentUserRole !== 'admin') return alert('Acesso restrito ao administrador.');
             db.trip.location = document.getElementById('trip-location').value;
             db.trip.departure = document.getElementById('trip-departure').value;
             db.trip.return = document.getElementById('trip-return').value;
@@ -511,6 +571,7 @@
         }
 
         function triggerImageUpload(slot) {
+            if(db.currentUserRole !== 'admin') return;
             currentImageSlot = slot;
             document.getElementById('image-upload-input').click();
         }
@@ -530,6 +591,7 @@
 
         function addParticipant(e) {
             e.preventDefault();
+            if(db.currentUserRole !== 'admin') return;
             const name = document.getElementById('p-name').value.trim();
             const phone = document.getElementById('p-phone').value || "Não informado";
             if(name && !db.participants.some(p => p.name.toLowerCase() === name.toLowerCase())) {
@@ -545,6 +607,7 @@
         }
 
         function removeParticipant(id) {
+            if(db.currentUserRole !== 'admin') return;
             const p = db.participants.find(item => item.id === id);
             if(p) {
                 delete db.fishermanPayments[p.name];
@@ -555,6 +618,7 @@
 
         function addExpenseType(e) {
             e.preventDefault();
+            if(db.currentUserRole !== 'admin') return;
             const name = document.getElementById('et-name').value.trim();
             if(name && !db.expenseTypes.includes(name)) {
                 db.expenseTypes.push(name);
@@ -564,12 +628,14 @@
         }
 
         function removeExpenseType(name) {
+            if(db.currentUserRole !== 'admin') return;
             db.expenseTypes = db.expenseTypes.filter(t => t !== name);
             saveData();
         }
 
         function addExpense(e) {
             e.preventDefault();
+            if(db.currentUserRole !== 'admin') return;
             const type = document.getElementById('exp-type').value;
             const description = document.getElementById('exp-desc').value;
             const value = parseFloat(document.getElementById('exp-value').value);
@@ -580,12 +646,14 @@
         }
 
         function removeExpense(id) {
+            if(db.currentUserRole !== 'admin') return;
             db.expenses = db.expenses.filter(ex => ex.id !== id);
             saveData();
         }
 
         function addOrUpdateFishermanPayment(e) {
             e.preventDefault();
+            if(db.currentUserRole !== 'admin') return;
             const fishermanName = document.getElementById('pay-fisherman').value;
             const paidValue = parseFloat(document.getElementById('pay-value').value) || 0;
             const status = document.getElementById('pay-status').value;
@@ -600,6 +668,7 @@
 
         function addFishingSpot(e) {
             e.preventDefault();
+            if(db.currentUserRole !== 'admin') return;
             const name = document.getElementById('spot-name').value;
             const species = document.getElementById('spot-species').value;
             const obs = document.getElementById('spot-obs').value;
@@ -609,6 +678,7 @@
         }
 
         function removeFishingSpot(id) {
+            if(db.currentUserRole !== 'admin') return;
             db.spots = db.spots.filter(s => s.id !== id);
             saveData();
         }
@@ -623,6 +693,7 @@
         }
 
         function runLottery() {
+            if(db.currentUserRole !== 'admin') return;
             if (db.participants.length === 0) {
                 alert('Cadastre participantes antes de realizar o sorteio.');
                 return;
@@ -643,7 +714,7 @@
         }
 
         function renderBoatSeats() {
-            function renderSectionBenches(zoneConfig, lotteryList, zoneName, borderColor) {
+            function renderSectionBenches(zoneConfig, lotteryList, borderColor) {
                 if (zoneConfig.benches <= 0 || zoneConfig.per <= 0) {
                     return `<span class="text-slate-500 text-xs italic">Nenhum banco configurado.</span>`;
                 }
@@ -671,10 +742,10 @@
             document.getElementById('prev-left').innerText = totalLeft;
             document.getElementById('prev-right').innerText = totalRight;
 
-            document.getElementById('boat-popa').innerHTML = renderSectionBenches(db.trip.popa, db.lottery.popa, 'Popa', 'blue');
-            document.getElementById('boat-bow').innerHTML = renderSectionBenches(db.trip.bow, db.lottery.bow, 'Proa', 'emerald');
-            document.getElementById('boat-left').innerHTML = renderSectionBenches(db.trip.left, db.lottery.left, 'Esq', 'slate');
-            document.getElementById('boat-right').innerHTML = renderSectionBenches(db.trip.right, db.lottery.right, 'Dir', 'slate');
+            document.getElementById('boat-popa').innerHTML = renderSectionBenches(db.trip.popa, db.lottery.popa, 'blue');
+            document.getElementById('boat-bow').innerHTML = renderSectionBenches(db.trip.bow, db.lottery.bow, 'emerald');
+            document.getElementById('boat-left').innerHTML = renderSectionBenches(db.trip.left, db.lottery.left, 'slate');
+            document.getElementById('boat-right').innerHTML = renderSectionBenches(db.trip.right, db.lottery.right, 'slate');
         }
 
         function renderImages() {
@@ -686,7 +757,7 @@
                 if (imgData) {
                     previewEl.style.backgroundImage = `url('${imgData}')`;
                     previewEl.style.display = 'block';
-                    textEl.innerText = 'Alterar Foto';
+                    textEl.innerText = db.currentUserRole === 'admin' ? 'Alterar Foto' : 'Foto da Embarcação';
                     textEl.classList.add('bg-slate-900/90', 'px-2', 'py-1', 'rounded');
                 } else {
                     previewEl.style.display = 'none';
@@ -700,6 +771,10 @@
         }
 
         function renderAll() {
+            applyRolePermissions();
+
+            const isAdmin = db.currentUserRole === 'admin';
+
             document.getElementById('trip-location').value = db.trip.location;
             document.getElementById('trip-departure').value = db.trip.departure;
             document.getElementById('trip-return').value = db.trip.return;
@@ -729,7 +804,8 @@
             let paymentFishermanSelect = '';
             
             db.participants.forEach(p => {
-                pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400">${p.phone}</td><td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                let actionTd = isAdmin ? `<td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : '';
+                pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400">${p.phone}</td>${actionTd}</tr>`;
                 payerSelect += `<option value="${p.name}">${p.name}</option>`;
                 paymentFishermanSelect += `<option value="${p.name}">${p.name}</option>`;
 
@@ -738,6 +814,9 @@
                 }
             });
 
+            // Ocultar coluna de ações na tabela se for user comum
+            document.querySelectorAll('.action-col-header').forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
+
             document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
             document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="Geral">Cadastre um participante</option>`;
             document.getElementById('pay-fisherman').innerHTML = paymentFishermanSelect || `<option value="">Cadastre um participante</option>`;
@@ -745,7 +824,8 @@
             let etHtml = '';
             let typeSelect = '';
             db.expenseTypes.forEach(t => {
-                etHtml += `<span class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2"><span>${t}</span><button onclick="removeExpenseType('${t}')" class="text-rose-400 hover:text-rose-300">&times;</button></span>`;
+                let removeBtn = isAdmin ? `<button onclick="removeExpenseType('${t}')" class="text-rose-400 hover:text-rose-300">&times;</button>` : '';
+                etHtml += `<span class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2"><span>${t}</span>${removeBtn}</span>`;
                 typeSelect += `<option value="${t}">${t}</option>`;
             });
             document.getElementById('expense-types-list').innerHTML = etHtml;
@@ -758,8 +838,11 @@
             db.expenses.forEach(ex => {
                 let actualPayer = ex.payer && ex.payer.trim() !== "" ? ex.payer : defaultPayer;
                 totalExp += ex.value;
-                eBody += `<tr><td class="p-3"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-3">R$ ${ex.value.toFixed(2)}</td><td class="p-3 text-slate-400">${actualPayer}</td><td class="p-3 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                let actionTd = isAdmin ? `<td class="p-3 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : '';
+                eBody += `<tr><td class="p-3"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-3">R$ ${ex.value.toFixed(2)}</td><td class="p-3 text-slate-400">${actualPayer}</td>${actionTd}</tr>`;
             });
+            document.querySelectorAll('.exp-action-col').forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
+
             document.getElementById('total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
             let perPerson = db.participants.length > 0 ? totalExp / db.participants.length : 0;
             document.getElementById('per-person-expense').innerText = `R$ ${perPerson.toFixed(2)}`;
@@ -785,7 +868,8 @@
 
             let spotsHtml = '';
             db.spots.forEach(s => {
-                spotsHtml += `<div class="bg-slate-900 border border-slate-700 rounded-xl p-4 relative flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><h3 class="font-semibold text-white text-sm"><i class="fa-solid fa-anchor text-blue-400 mr-1.5"></i>${s.name}</h3><button onclick="removeFishingSpot(${s.id})" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button></div><p class="text-xs text-blue-300 mb-1"><strong class="text-slate-400">Espécies:</strong> ${s.species}</p><p class="text-xs text-slate-300">${s.obs}</p></div></div>`;
+                let deleteBtn = isAdmin ? `<button onclick="removeFishingSpot(${s.id})" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>` : '';
+                spotsHtml += `<div class="bg-slate-900 border border-slate-700 rounded-xl p-4 relative flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><h3 class="font-semibold text-white text-sm"><i class="fa-solid fa-anchor text-blue-400 mr-1.5"></i>${s.name}</h3>${deleteBtn}</div><p class="text-xs text-blue-300 mb-1"><strong class="text-slate-400">Espécies:</strong> ${s.species}</p><p class="text-xs text-slate-300">${s.obs}</p></div></div>`;
             });
             document.getElementById('spots-container').innerHTML = spotsHtml || `<p class="text-slate-500 text-sm italic col-span-2">Nenhum ponto de pesca cadastrado.</p>`;
 
