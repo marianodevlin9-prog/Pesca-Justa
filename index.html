@@ -123,7 +123,7 @@
                             <i class="fa-solid fa-tags text-blue-500"></i> Tipos de Despesa
                         </h2>
                         <form id="expense-type-form" class="flex gap-2 mb-3" onsubmit="addExpenseType(event)">
-                            <input type="text" id="et-name" placeholder="Ex: Iscas, Combustível, Churrasco..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="et-name" placeholder="Ex: Iscas, Combustível..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium">Adicionar</button>
                         </form>
                         <div id="expense-types-list" class="flex flex-wrap gap-2">
@@ -167,41 +167,26 @@
                 </button>
             </div>
 
-            <!-- Simulação Visual Estilizada da Planta do Barco -->
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
                 <h3 class="text-base font-semibold text-white mb-4 text-center"><i class="fa-solid fa-ship text-blue-400 mr-2"></i> Planta Esquemática do Barco</h3>
                 <div class="max-w-3xl mx-auto bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 space-y-6 relative">
-                    <!-- PROA (Frente) -->
                     <div class="text-center">
                         <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Proa (Frente)</span>
-                        <div id="boat-bow" class="grid grid-cols-2 sm:flex sm:justify-center gap-3">
-                            <!-- Preenchido via JS -->
-                        </div>
+                        <div id="boat-bow" class="grid grid-cols-2 sm:flex sm:justify-center gap-3"></div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-8 border-y border-slate-800 py-6">
-                        <!-- Lado Esquerdo -->
                         <div class="text-center border-r border-slate-800 pr-4">
-                            <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Lado Esquerdo (Boreste/Bombordo)</span>
-                            <div id="boat-left" class="space-y-2">
-                                <!-- Preenchido via JS -->
-                            </div>
+                            <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Lado Esquerdo</span>
+                            <div id="boat-left" class="space-y-2"></div>
                         </div>
-                        <!-- Lado Direito -->
                         <div class="text-center pl-4">
                             <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Lado Direito</span>
-                            <div id="boat-right" class="space-y-2">
-                                <!-- Preenchido via JS -->
-                            </div>
+                            <div id="boat-right" class="space-y-2"></div>
                         </div>
                     </div>
-
-                    <!-- POPA (Fundo) -->
                     <div class="text-center">
                         <span class="text-xs uppercase tracking-widest text-blue-400 block mb-2 font-bold"><i class="fa-solid fa-anchor mr-1"></i> Popa (Fundo do Barco)</span>
-                        <div id="boat-popa" class="grid grid-cols-2 sm:flex sm:justify-center gap-3">
-                            <!-- Preenchido via JS -->
-                        </div>
+                        <div id="boat-popa" class="grid grid-cols-2 sm:flex sm:justify-center gap-3"></div>
                     </div>
                 </div>
             </div>
@@ -213,7 +198,7 @@
                 <!-- Lançar Despesa -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-receipt text-blue-500"></i> Nova Despesa
+                        <i class="fa-solid fa-receipt text-blue-500"></i> Registrar Gasto / Pagamento
                     </h2>
                     <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
                         <div>
@@ -224,45 +209,46 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
-                            <input type="text" id="exp-desc" placeholder="Ex: Camarão e sardinha" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="exp-desc" placeholder="Ex: Aluguel do Barco / Iscas" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor (R$)</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor do Gasto (R$)</label>
                             <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem Pagou?</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem desembolsou / pagou?</label>
                             <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                                 <!-- Preenchido via JS -->
                             </select>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm">Lançar Despesa</button>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-blue-600/20">Registrar Despesa</button>
                     </form>
                 </div>
 
                 <!-- Demonstrativo, Extrato Geral e Histórico Individual -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-700 pb-4 gap-4">
-                        <div>
-                            <p class="text-xs text-slate-400 uppercase font-semibold">Total de Gastos</p>
-                            <h3 class="text-2xl font-bold text-white" id="total-expenses">R$ 0,00</h3>
+                    <!-- Resumo Geral em Cards de Destaque -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-700 pb-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60">
+                            <p class="text-xs text-slate-400 uppercase font-semibold">Montante Total de Gastos</p>
+                            <h3 class="text-2xl font-bold text-white mt-1" id="total-expenses">R$ 0,00</h3>
                         </div>
-                        <div>
-                            <p class="text-xs text-slate-400 uppercase font-semibold">Rateio por Pessoa</p>
-                            <h3 class="text-2xl font-bold text-blue-400" id="per-person-expense">R$ 0,00</h3>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60">
+                            <p class="text-xs text-slate-400 uppercase font-semibold">Rateio Igualitário por Pescador</p>
+                            <h3 class="text-2xl font-bold text-blue-400 mt-1" id="per-person-expense">R$ 0,00</h3>
                         </div>
                     </div>
 
                     <!-- Extrato Geral Resumido -->
                     <div>
-                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato Geral de Despesas</h4>
+                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato Geral de Gastos</h4>
                         <div class="overflow-x-auto max-h-40 overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
                                     <tr>
                                         <th class="p-2.5">Tipo / Descrição</th>
                                         <th class="p-2.5">Valor</th>
-                                        <th class="p-2.5">Pagador</th>
+                                        <th class="p-2.5">Quem Pagou</th>
                                         <th class="p-2.5 text-center">Ação</th>
                                     </tr>
                                 </thead>
@@ -273,9 +259,10 @@
                         </div>
                     </div>
 
-                    <!-- Histórico Individual por Pescador -->
+                    <!-- Balanço e Histórico Individual (Quanto cada um pagou vs Saldo a Acertar) -->
                     <div>
-                        <h4 class="text-sm font-semibold text-slate-300 mb-3">Balanço e Histórico Individual</h4>
+                        <h4 class="text-sm font-semibold text-slate-300 mb-1">Balanço e Histórico Individual (Saldo / Acerto)</h4>
+                        <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio, indicando o crédito ou o valor restante que falta pagar.</p>
                         <div class="overflow-x-auto max-h-48 overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
@@ -351,7 +338,7 @@
 
     <!-- Script Principal -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v2')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v3')) || {
             trip: {
                 location: "Atlanticus - Ilha da Vitória",
                 departure: "2026-09-15T05:00",
@@ -362,7 +349,7 @@
                 bow: 2
             },
             participants: [],
-            expenseTypes: ["Iscas", "Combustível", "Alimentação / Churrasco", "Gelo", "Taxa do Barco"],
+            expenseTypes: ["Taxa do Barco", "Iscas", "Combustível", "Alimentação / Churrasco", "Gelo"],
             expenses: [],
             spots: [],
             chat: [],
@@ -370,7 +357,7 @@
         };
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v2', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v3', JSON.stringify(db));
             renderAll();
         }
 
@@ -483,18 +470,11 @@
             db.lottery.right = shuffled.splice(0, pRight);
             db.lottery.left = shuffled.splice(0, pLeft);
             db.lottery.bow = shuffled.splice(0, pBow);
-            // Sobras vão para lista geral ou excedentes se houver mais pessoas que assentos
 
             saveData();
         }
 
         function renderBoatSeats() {
-            let renderSeatGroup = (list, titleColor) => {
-                if(!list || list.length === 0) return '<p class="text-xs text-slate-500 italic">Vago</p>';
-                return list.map((p, i) => `<div class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs flex justify-between items-center"><span class="font-medium text-white">${i+1}. ${p.name}</span></div>`).join('');
-            };
-
-            // Popa
             let popaHtml = '';
             for(let i=0; i<db.trip.popa; i++) {
                 let p = db.lottery.popa && db.lottery.popa[i];
@@ -502,7 +482,6 @@
             }
             document.getElementById('boat-popa').innerHTML = popaHtml || '<span class="text-slate-500 text-xs">Nenhum banco configurado na popa.</span>';
 
-            // Proa
             let bowHtml = '';
             for(let i=0; i<db.trip.bow; i++) {
                 let p = db.lottery.bow && db.lottery.bow[i];
@@ -510,7 +489,6 @@
             }
             document.getElementById('boat-bow').innerHTML = bowHtml || '<span class="text-slate-500 text-xs">Nenhum banco configurado na proa.</span>';
 
-            // Lado Esquerdo
             let leftHtml = '';
             for(let i=0; i<db.trip.left; i++) {
                 let p = db.lottery.left && db.lottery.left[i];
@@ -518,7 +496,6 @@
             }
             document.getElementById('boat-left').innerHTML = leftHtml || '<span class="text-slate-500 text-xs">Nenhum assento.</span>';
 
-            // Lado Direito
             let rightHtml = '';
             for(let i=0; i<db.trip.right; i++) {
                 let p = db.lottery.right && db.lottery.right[i];
@@ -528,7 +505,6 @@
         }
 
         function renderAll() {
-            // Configurações do Barco / Viagem
             document.getElementById('trip-location').value = db.trip.location;
             document.getElementById('trip-departure').value = db.trip.departure;
             document.getElementById('trip-return').value = db.trip.return;
@@ -537,7 +513,6 @@
             document.getElementById('seats-left').value = db.trip.left;
             document.getElementById('seats-bow').value = db.trip.bow;
 
-            // Cálculo das horas de pesca
             if(db.trip.departure && db.trip.return) {
                 let d1 = new Date(db.trip.departure);
                 let d2 = new Date(db.trip.return);
@@ -548,7 +523,6 @@
                 document.getElementById('calculated-fishing-hours').innerText = `0 horas`;
             }
 
-            // Pescadores & Seletor de pagadores
             document.getElementById('participant-count').innerText = db.participants.length;
             let pBody = '';
             let payerSelect = '';
@@ -559,17 +533,15 @@
             document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
             document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="">Cadastre um participante</option>`;
 
-            // Tipos de despesa
             let etHtml = '';
             let typeSelect = '';
             db.expenseTypes.forEach(t => {
-                etHtml += `<span class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2"><span>${t}</span><button onclick="removeExpenseType('${t}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid xmark"></i>&times;</button></span>`;
+                etHtml += `<span class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2"><span>${t}</span><button onclick="removeExpenseType('${t}')" class="text-rose-400 hover:text-rose-300">&times;</button></span>`;
                 typeSelect += `<option value="${t}">${t}</option>`;
             });
             document.getElementById('expense-types-list').innerHTML = etHtml;
             document.getElementById('exp-type').innerHTML = typeSelect || `<option value="Geral">Geral</option>`;
 
-            // Despesas, Rateio e Balanço Individual
             let totalExp = 0;
             let eBody = '';
             let paidMap = {};
@@ -587,31 +559,27 @@
             document.getElementById('per-person-expense').innerText = `R$ ${perPerson.toFixed(2)}`;
             document.getElementById('expenses-table-body').innerHTML = eBody || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma despesa registrada.</td></tr>`;
 
-            // Tabela Individual
             let indBody = '';
             db.participants.forEach(p => {
                 let pPaid = paidMap[p.name] || 0;
                 let diff = pPaid - perPerson;
-                let diffFormatted = diff >= 0 ? `<span class="text-emerald-400">+ R$ ${diff.toFixed(2)} (Crédito)</span>` : `<span class="text-rose-400">- R$ ${Math.abs(diff).toFixed(2)} (Deve)</span>`;
+                let diffFormatted = diff >= 0 ? `<span class="text-emerald-400 font-semibold">+ R$ ${diff.toFixed(2)} (Crédito)</span>` : `<span class="text-rose-400 font-semibold">- R$ ${Math.abs(diff).toFixed(2)} (Deve)</span>`;
                 indBody += `<tr><td class="p-2.5 font-medium text-white">${p.name}</td><td class="p-2.5">R$ ${pPaid.toFixed(2)}</td><td class="p-2.5">${diffFormatted}</td></tr>`;
             });
-            document.getElementById('individual-balance-body').innerHTML = indBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Cadastre participantes para ver o balanço.</td></tr>`;
+            document.getElementById('individual-balance-body').innerHTML = indBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Cadastre participantes para ver o balanço individual.</td></tr>`;
 
-            // Pontos de Pesca
             let spotsHtml = '';
             db.spots.forEach(s => {
                 spotsHtml += `<div class="bg-slate-900 border border-slate-700 rounded-xl p-4 relative flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><h3 class="font-semibold text-white text-sm"><i class="fa-solid fa-anchor text-blue-400 mr-1.5"></i>${s.name}</h3><button onclick="removeFishingSpot(${s.id})" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button></div><p class="text-xs text-blue-300 mb-1"><strong class="text-slate-400">Espécies:</strong> ${s.species}</p><p class="text-xs text-slate-300">${s.obs}</p></div></div>`;
             });
             document.getElementById('spots-container').innerHTML = spotsHtml || `<p class="text-slate-500 text-sm italic col-span-2">Nenhum ponto de pesca cadastrado.</p>`;
 
-            // Chat
             let chatBody = '';
             db.chat.forEach(c => {
                 chatBody += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700"><div class="flex justify-between items-center mb-1"><span class="font-semibold text-xs text-blue-400">${c.sender}</span><span class="text-[10px] text-slate-500">${c.time}</span></div><p class="text-slate-300">${c.text}</p></div>`;
             });
             document.getElementById('chat-messages').innerHTML = chatBody || `<p class="text-center text-slate-500 italic mt-20">Nenhuma mensagem no mural ainda.</p>`;
 
-            // Renderizar Planta do Barco
             renderBoatSeats();
         }
 
