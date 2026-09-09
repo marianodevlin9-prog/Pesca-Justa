@@ -73,24 +73,58 @@
                             <span id="calculated-fishing-hours" class="font-bold text-blue-400">0 horas</span>
                         </div>
 
-                        <div class="border-t border-slate-700 pt-4">
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Distribuição de Bancos na Planta do Barco</label>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="border-t border-slate-700 pt-4 space-y-3">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Configuração de Bancos e Lotação</label>
+                            
+                            <!-- Popa -->
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-700/60 grid grid-cols-3 gap-2 items-center">
+                                <span class="text-xs font-medium text-blue-400">Popa (Fundo)</span>
                                 <div>
-                                    <span class="text-[11px] text-slate-400">Popa (Fundo)</span>
-                                    <input type="number" id="seats-popa" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                    <span class="text-[10px] text-slate-400 block">Qtd Bancos</span>
+                                    <input type="number" id="popa-benches" value="2" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
                                 </div>
                                 <div>
-                                    <span class="text-[11px] text-slate-400">Lado Direito</span>
-                                    <input type="number" id="seats-right" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                    <span class="text-[10px] text-slate-400 block">Pessoas/Banco</span>
+                                    <input type="number" id="popa-per" value="2" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+
+                            <!-- Lado Direito -->
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-700/60 grid grid-cols-3 gap-2 items-center">
+                                <span class="text-xs font-medium text-slate-300">Lado Direito</span>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">Qtd Bancos</span>
+                                    <input type="number" id="right-benches" value="2" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
                                 </div>
                                 <div>
-                                    <span class="text-[11px] text-slate-400">Lado Esquerdo</span>
-                                    <input type="number" id="seats-left" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                    <span class="text-[10px] text-slate-400 block">Pessoas/Banco</span>
+                                    <input type="number" id="right-per" value="2" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+
+                            <!-- Lado Esquerdo -->
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-700/60 grid grid-cols-3 gap-2 items-center">
+                                <span class="text-xs font-medium text-slate-300">Lado Esquerdo</span>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">Qtd Bancos</span>
+                                    <input type="number" id="left-benches" value="2" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
                                 </div>
                                 <div>
-                                    <span class="text-[11px] text-slate-400">Proa (Frente)</span>
-                                    <input type="number" id="seats-bow" value="2" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                    <span class="text-[10px] text-slate-400 block">Pessoas/Banco</span>
+                                    <input type="number" id="left-per" value="2" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+
+                            <!-- Proa -->
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-700/60 grid grid-cols-3 gap-2 items-center">
+                                <span class="text-xs font-medium text-emerald-400">Proa (Frente)</span>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">Qtd Bancos</span>
+                                    <input type="number" id="bow-benches" value="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">Pessoas/Banco</span>
+                                    <input type="number" id="bow-per" value="2" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-center text-sm focus:outline-none focus:border-blue-500">
                                 </div>
                             </div>
                         </div>
@@ -143,13 +177,13 @@
                         </h3>
                     </div>
                     <div id="mini-boat-preview" class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[260px] flex flex-col justify-between border border-slate-700/60">
-                        <div class="text-center pb-2 border-b border-slate-800 text-[11px] text-emerald-400 font-bold uppercase">Proa (Frente): <span id="prev-bow" class="text-white">0</span> assentos</div>
+                        <div class="text-center pb-2 border-b border-slate-800 text-[11px] text-emerald-400 font-bold uppercase">Proa: <span id="prev-bow" class="text-white">0</span> assentos</div>
                         <div class="flex justify-between items-center py-2 text-[11px] text-slate-400 font-bold">
                             <span>Esq: <span id="prev-left" class="text-white">0</span></span>
                             <span class="text-slate-600 font-normal italic">Esquema Configurado</span>
                             <span>Dir: <span id="prev-right" class="text-white">0</span></span>
                         </div>
-                        <div class="text-center pt-2 border-t border-slate-800 text-[11px] text-blue-400 font-bold uppercase">Popa (Fundo): <span id="prev-popa" class="text-white">0</span> assentos</div>
+                        <div class="text-center pt-2 border-t border-slate-800 text-[11px] text-blue-400 font-bold uppercase">Popa: <span id="prev-popa" class="text-white">0</span> assentos</div>
                     </div>
                 </div>
 
@@ -162,10 +196,8 @@
                         <span class="text-xs text-slate-400">Clique para enviar</span>
                     </div>
 
-                    <!-- Input oculto universal para upload -->
                     <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
 
-                    <!-- Foto Principal (Destaque maior à esquerda) -->
                     <div onclick="triggerImageUpload('main')" id="slot-main" class="col-span-2 row-span-2 border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-4 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[140px] relative overflow-hidden group">
                         <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-main" style="display: none;"></div>
                         <div class="z-10 flex flex-col items-center bg-slate-900/80 p-2 rounded-lg group-hover:bg-slate-900 transition">
@@ -174,19 +206,16 @@
                         </div>
                     </div>
 
-                    <!-- Foto Detalhe 1 (Popa) -->
                     <div onclick="triggerImageUpload('popa')" id="slot-popa" class="border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px] relative overflow-hidden group">
                         <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-popa" style="display: none;"></div>
                         <span class="text-[10px] text-slate-300 font-semibold z-10 bg-slate-900/80 px-1.5 py-0.5 rounded" id="text-popa">+ Popa</span>
                     </div>
 
-                    <!-- Foto Detalhe 2 (Proa) -->
                     <div onclick="triggerImageUpload('proa')" id="slot-proa" class="border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px] relative overflow-hidden group">
                         <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-proa" style="display: none;"></div>
                         <span class="text-[10px] text-slate-300 font-semibold z-10 bg-slate-900/80 px-1.5 py-0.5 rounded" id="text-proa">+ Proa</span>
                     </div>
 
-                    <!-- Foto Detalhe 3 (Interior) -->
                     <div onclick="triggerImageUpload('interior')" id="slot-interior" class="col-span-2 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center p-2 bg-slate-900 hover:bg-slate-900/80 transition cursor-pointer min-h-[65px] relative overflow-hidden group">
                         <div class="absolute inset-0 bg-cover bg-center opacity-80" id="img-preview-interior" style="display: none;"></div>
                         <span class="text-[10px] text-slate-300 font-semibold z-10 bg-slate-900/80 px-1.5 py-0.5 rounded" id="text-interior">+ Interior / Detalhes</span>
@@ -222,32 +251,32 @@
         <section id="tab-sorteio" class="hidden space-y-6">
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center">
                 <h2 class="text-xl font-bold text-white mb-2">Sorteio de Assentos & Planta do Barco</h2>
-                <p class="text-sm text-slate-400 mb-6">Distribuição visual interativa dos assentos informados na configuração do barco.</p>
+                <p class="text-sm text-slate-400 mb-6">Distribuição visual agrupada por bancos conforme configuração.</p>
                 <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-amber-600/30">
                     <i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio nos Bancos
                 </button>
             </div>
 
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <h3 class="text-base font-semibold text-white mb-4 text-center"><i class="fa-solid fa-ship text-blue-400 mr-2"></i> Planta Esquemática do Barco</h3>
+                <h3 class="text-base font-semibold text-white mb-4 text-center"><i class="fa-solid fa-ship text-blue-400 mr-2"></i> Planta Esquemática por Bancos</h3>
                 <div class="max-w-3xl mx-auto bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 space-y-6 relative">
                     <div class="text-center">
                         <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Proa (Frente)</span>
-                        <div id="boat-bow" class="grid grid-cols-2 sm:flex sm:justify-center gap-3"></div>
+                        <div id="boat-bow" class="flex flex-wrap justify-center gap-3"></div>
                     </div>
-                    <div class="grid grid-cols-2 gap-8 border-y border-slate-800 py-6">
-                        <div class="text-center border-r border-slate-800 pr-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 border-y border-slate-800 py-6">
+                        <div class="text-center sm:border-r border-slate-800 sm:pr-4">
                             <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Lado Esquerdo</span>
-                            <div id="boat-left" class="space-y-2"></div>
+                            <div id="boat-left" class="space-y-3"></div>
                         </div>
-                        <div class="text-center pl-4">
+                        <div class="text-center sm:pl-4">
                             <span class="text-xs uppercase tracking-widest text-slate-500 block mb-2 font-bold">Lado Direito</span>
-                            <div id="boat-right" class="space-y-2"></div>
+                            <div id="boat-right" class="space-y-3"></div>
                         </div>
                     </div>
                     <div class="text-center">
                         <span class="text-xs uppercase tracking-widest text-blue-400 block mb-2 font-bold"><i class="fa-solid fa-anchor mr-1"></i> Popa (Fundo do Barco)</span>
-                        <div id="boat-popa" class="grid grid-cols-2 sm:flex sm:justify-center gap-3"></div>
+                        <div id="boat-popa" class="flex flex-wrap justify-center gap-3"></div>
                     </div>
                 </div>
             </div>
@@ -256,7 +285,6 @@
         <!-- ABA 3: DESPESAS & RATEIO -->
         <section id="tab-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Lançar Despesa -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-receipt text-blue-500"></i> Registrar Gasto / Pagamento
@@ -265,7 +293,6 @@
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
                             <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                                <!-- Preenchido via JS -->
                             </select>
                         </div>
                         <div>
@@ -279,16 +306,13 @@
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem desembolsou / pagou?</label>
                             <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                                <!-- Preenchido via JS -->
                             </select>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-blue-600/20">Registrar Despesa</button>
                     </form>
                 </div>
 
-                <!-- Demonstrativo, Extrato Geral e Histórico Individual -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-6">
-                    <!-- Resumo Geral em Cards de Destaque -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-700 pb-4">
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60">
                             <p class="text-xs text-slate-400 uppercase font-semibold">Montante Total de Gastos</p>
@@ -300,7 +324,6 @@
                         </div>
                     </div>
 
-                    <!-- Extrato Geral Resumido -->
                     <div>
                         <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato Geral de Gastos</h4>
                         <div class="overflow-x-auto max-h-40 overflow-y-auto">
@@ -314,16 +337,14 @@
                                     </tr>
                                 </thead>
                                 <tbody id="expenses-table-body" class="divide-y divide-slate-700">
-                                    <!-- Preenchido via JS -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Balanço e Histórico Individual -->
                     <div>
                         <h4 class="text-sm font-semibold text-slate-300 mb-1">Balanço e Histórico Individual (Saldo / Acerto)</h4>
-                        <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio, indicando o crédito ou o valor restante que falta pagar.</p>
+                        <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio.</p>
                         <div class="overflow-x-auto max-h-48 overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
@@ -334,7 +355,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="individual-balance-body" class="divide-y divide-slate-700">
-                                    <!-- Preenchido via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -372,7 +392,6 @@
                         <i class="fa-solid fa-compass text-blue-500"></i> Pontos de Pesca Cadastrados
                     </h2>
                     <div id="spots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Preenchido via JS -->
                     </div>
                 </div>
             </div>
@@ -385,7 +404,6 @@
                     <i class="fa-solid fa-comments text-blue-500"></i> Mural / Ponto de Encontro & Caronas
                 </h2>
                 <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm">
-                    <!-- Preenchido via JS -->
                 </div>
                 <form id="chat-form" class="flex gap-2" onsubmit="addChatMessage(event)">
                     <input type="text" id="chat-sender" placeholder="Seu Nome" required class="w-1/3 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
@@ -397,24 +415,19 @@
 
     </main>
 
-    <!-- Script Principal com Gestão de Imagens e Diagrama Ativos -->
+    <!-- Script Principal com Gestão por Bancos e Pessoas -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v4')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v5')) || {
             trip: {
                 location: "Atlanticus - Ilha da Vitória",
                 departure: "2026-09-15T05:00",
                 return: "2026-09-15T17:00",
-                popa: 4,
-                right: 4,
-                left: 4,
-                bow: 2
+                popa: { benches: 2, per: 2 },
+                right: { benches: 2, per: 2 },
+                left: { benches: 2, per: 2 },
+                bow: { benches: 1, per: 2 }
             },
-            images: {
-                main: "",
-                popa: "",
-                proa: "",
-                interior: ""
-            },
+            images: { main: "", popa: "", proa: "", interior: "" },
             participants: [],
             expenseTypes: ["Taxa do Barco", "Iscas", "Combustível", "Alimentação / Churrasco", "Gelo"],
             expenses: [],
@@ -426,7 +439,7 @@
         let currentImageSlot = null;
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v4', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v5', JSON.stringify(db));
             renderAll();
         }
 
@@ -447,12 +460,14 @@
             db.trip.location = document.getElementById('trip-location').value;
             db.trip.departure = document.getElementById('trip-departure').value;
             db.trip.return = document.getElementById('trip-return').value;
-            db.trip.popa = parseInt(document.getElementById('seats-popa').value) || 0;
-            db.trip.right = parseInt(document.getElementById('seats-right').value) || 0;
-            db.trip.left = parseInt(document.getElementById('seats-left').value) || 0;
-            db.trip.bow = parseInt(document.getElementById('seats-bow').value) || 0;
+            
+            db.trip.popa = { benches: parseInt(document.getElementById('popa-benches').value) || 0, per: parseInt(document.getElementById('popa-per').value) || 0 };
+            db.trip.right = { benches: parseInt(document.getElementById('right-benches').value) || 0, per: parseInt(document.getElementById('right-per').value) || 0 };
+            db.trip.left = { benches: parseInt(document.getElementById('left-benches').value) || 0, per: parseInt(document.getElementById('left-per').value) || 0 };
+            db.trip.bow = { benches: parseInt(document.getElementById('bow-benches').value) || 0, per: parseInt(document.getElementById('bow-per').value) || 0 };
+            
             saveData();
-            alert('Configurações da viagem e assentos salvas com sucesso!');
+            alert('Configurações de bancos e viagem salvas com sucesso!');
         }
 
         function triggerImageUpload(slot) {
@@ -470,7 +485,7 @@
                 saveData();
             };
             reader.readAsDataURL(file);
-            e.target.value = ''; // Limpa o input
+            e.target.value = '';
         }
 
         function addParticipant(e) {
@@ -548,47 +563,54 @@
                 return;
             }
             let shuffled = [...db.participants].sort(() => Math.random() - 0.5);
-            let pPopa = db.trip.popa;
-            let pRight = db.trip.right;
-            let pLeft = db.trip.left;
-            let pBow = db.trip.bow;
+            
+            let totalPopaSeats = db.trip.popa.benches * db.trip.popa.per;
+            let totalRightSeats = db.trip.right.benches * db.trip.right.per;
+            let totalLeftSeats = db.trip.left.benches * db.trip.left.per;
+            let totalBowSeats = db.trip.bow.benches * db.trip.bow.per;
 
-            db.lottery.popa = shuffled.splice(0, pPopa);
-            db.lottery.right = shuffled.splice(0, pRight);
-            db.lottery.left = shuffled.splice(0, pLeft);
-            db.lottery.bow = shuffled.splice(0, pBow);
+            db.lottery.popa = shuffled.splice(0, totalPopaSeats);
+            db.lottery.right = shuffled.splice(0, totalRightSeats);
+            db.lottery.left = shuffled.splice(0, totalLeftSeats);
+            db.lottery.bow = shuffled.splice(0, totalBowSeats);
 
             saveData();
         }
 
         function renderBoatSeats() {
-            let popaHtml = '';
-            for(let i=0; i<db.trip.popa; i++) {
-                let p = db.lottery.popa && db.lottery.popa[i];
-                popaHtml += `<div class="bg-slate-950 border border-blue-500/40 rounded-xl p-3 text-center min-w-[110px]"><span class="text-[10px] text-blue-400 block font-bold mb-1">Popa #${i+1}</span><span class="text-xs font-semibold text-white">${p ? p.name : '<span class="text-slate-500 italic font-normal">Disponível</span>'}</span></div>`;
+            // Helper function to render grouped by benches
+            function renderSectionBenches(zoneConfig, lotteryList, zoneName, borderColor) {
+                if (zoneConfig.benches <= 0 || zoneConfig.per <= 0) {
+                    return `<span class="text-slate-500 text-xs italic">Nenhum banco configurado.</span>`;
+                }
+                let html = '';
+                let participantIndex = 0;
+                for (let b = 1; b <= zoneConfig.benches; b++) {
+                    let benchPeopleHtml = '';
+                    for (let p = 1; p <= zoneConfig.per; p++) {
+                        let participant = lotteryList && lotteryList[participantIndex];
+                        benchPeopleHtml += `<div class="bg-slate-950 px-2 py-1 rounded text-xs flex justify-between items-center my-1"><span class="text-[10px] text-slate-400">Assento ${p}:</span> <span class="font-semibold text-white">${participant ? participant.name : '<span class="text-slate-500 italic font-normal">Disponível</span>'}</span></div>`;
+                        participantIndex++;
+                    }
+                    html += `<div class="bg-slate-950/60 border border-${borderColor}-500/30 rounded-xl p-2.5 text-left mb-2"><strong class="text-[11px] text-${borderColor}-400 block mb-1">Banco ${b} (${zoneConfig.per} vagas)</strong>${benchPeopleHtml}</div>`;
+                }
+                return html;
             }
-            document.getElementById('boat-popa').innerHTML = popaHtml || '<span class="text-slate-500 text-xs">Nenhum banco configurado na popa.</span>';
 
-            let bowHtml = '';
-            for(let i=0; i<db.trip.bow; i++) {
-                let p = db.lottery.bow && db.lottery.bow[i];
-                bowHtml += `<div class="bg-slate-950 border border-emerald-500/40 rounded-xl p-3 text-center min-w-[110px]"><span class="text-[10px] text-emerald-400 block font-bold mb-1">Proa #${i+1}</span><span class="text-xs font-semibold text-white">${p ? p.name : '<span class="text-slate-500 italic font-normal">Disponível</span>'}</span></div>`;
-            }
-            document.getElementById('boat-bow').innerHTML = bowHtml || '<span class="text-slate-500 text-xs">Nenhum banco configurado na proa.</span>';
+            let totalPopa = db.trip.popa.benches * db.trip.popa.per;
+            let totalBow = db.trip.bow.benches * db.trip.bow.per;
+            let totalLeft = db.trip.left.benches * db.trip.left.per;
+            let totalRight = db.trip.right.benches * db.trip.right.per;
 
-            let leftHtml = '';
-            for(let i=0; i<db.trip.left; i++) {
-                let p = db.lottery.left && db.lottery.left[i];
-                leftHtml += `<div class="bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs flex justify-between items-center"><span class="text-[10px] text-slate-400 mr-2">Esq #${i+1}</span><span class="font-medium text-white truncate">${p ? p.name : '<span class="text-slate-500 italic">Disponível</span>'}</span></div>`;
-            }
-            document.getElementById('boat-left').innerHTML = leftHtml || '<span class="text-slate-500 text-xs">Nenhum assento.</span>';
+            document.getElementById('prev-popa').innerText = totalPopa;
+            document.getElementById('prev-bow').innerText = totalBow;
+            document.getElementById('prev-left').innerText = totalLeft;
+            document.getElementById('prev-right').innerText = totalRight;
 
-            let rightHtml = '';
-            for(let i=0; i<db.trip.right; i++) {
-                let p = db.lottery.right && db.lottery.right[i];
-                rightHtml += `<div class="bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs flex justify-between items-center"><span class="font-medium text-white truncate">${p ? p.name : '<span class="text-slate-500 italic">Disponível</span>'}</span><span class="text-[10px] text-slate-400 ml-2">Dir #${i+1}</span></div>`;
-            }
-            document.getElementById('boat-right').innerHTML = rightHtml || '<span class="text-slate-500 text-xs">Nenhum assento.</span>';
+            document.getElementById('boat-popa').innerHTML = renderSectionBenches(db.trip.popa, db.lottery.popa, 'Popa', 'blue');
+            document.getElementById('boat-bow').innerHTML = renderSectionBenches(db.trip.bow, db.lottery.bow, 'Proa', 'emerald');
+            document.getElementById('boat-left').innerHTML = renderSectionBenches(db.trip.left, db.lottery.left, 'Esq', 'slate');
+            document.getElementById('boat-right').innerHTML = renderSectionBenches(db.trip.right, db.lottery.right, 'Dir', 'slate');
         }
 
         function renderImages() {
@@ -617,15 +639,15 @@
             document.getElementById('trip-location').value = db.trip.location;
             document.getElementById('trip-departure').value = db.trip.departure;
             document.getElementById('trip-return').value = db.trip.return;
-            document.getElementById('seats-popa').value = db.trip.popa;
-            document.getElementById('seats-right').value = db.trip.right;
-            document.getElementById('seats-left').value = db.trip.left;
-            document.getElementById('seats-bow').value = db.trip.bow;
 
-            document.getElementById('prev-popa').innerText = db.trip.popa;
-            document.getElementById('prev-right').innerText = db.trip.right;
-            document.getElementById('prev-left').innerText = db.trip.left;
-            document.getElementById('prev-bow').innerText = db.trip.bow;
+            document.getElementById('popa-benches').value = db.trip.popa.benches;
+            document.getElementById('popa-per').value = db.trip.popa.per;
+            document.getElementById('right-benches').value = db.trip.right.benches;
+            document.getElementById('right-per').value = db.trip.right.per;
+            document.getElementById('left-benches').value = db.trip.left.benches;
+            document.getElementById('left-per').value = db.trip.left.per;
+            document.getElementById('bow-benches').value = db.trip.bow.benches;
+            document.getElementById('bow-per').value = db.trip.bow.per;
 
             if(db.trip.departure && db.trip.return) {
                 let d1 = new Date(db.trip.departure);
