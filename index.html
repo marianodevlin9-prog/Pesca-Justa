@@ -154,7 +154,7 @@
 
                     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
                         <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-tags text-blue-500"></i> Tipos de Despesa
+                            <i class="fa-solid fa-tags text-blue-500"></i> Tipos de Despesa Geral
                         </h2>
                         <form id="expense-type-form" class="flex gap-2 mb-3" onsubmit="addExpenseType(event)">
                             <input type="text" id="et-name" placeholder="Ex: Iscas, Combustível..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
@@ -285,33 +285,64 @@
         <!-- ABA 3: DESPESAS & RATEIO -->
         <section id="tab-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-receipt text-blue-500"></i> Registrar Gasto / Pagamento
-                    </h2>
-                    <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
-                            <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
-                            <input type="text" id="exp-desc" placeholder="Ex: Aluguel do Barco / Iscas" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor do Gasto (R$)</label>
-                            <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem desembolsou / pagou?</label>
-                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-blue-600/20">Registrar Despesa</button>
-                    </form>
+                <!-- Módulo 1: Cadastro de Despesas Gerais -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1 space-y-6">
+                    <div>
+                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-blue-500"></i> Cadastro de Despesas Gerais
+                        </h2>
+                        <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
+                                <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
+                                <input type="text" id="exp-desc" placeholder="Ex: Aluguel do Barco / Iscas" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Total do Gasto (R$)</label>
+                                <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem desembolsou / pagou?</label>
+                                <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-blue-600/20">Registrar Despesa Geral</button>
+                        </form>
+                    </div>
+
+                    <!-- Módulo 2: Cadastro / Controle de Pagamentos Individuais por Pescador -->
+                    <div class="border-t border-slate-700 pt-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-emerald-500"></i> Pagamento por Pescador
+                        </h2>
+                        <form id="payment-form" class="space-y-4" onsubmit="addOrUpdateFishermanPayment(event)">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pescador</label>
+                                <select id="pay-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Quitado / Pago (R$)</label>
+                                <input type="number" step="0.01" id="pay-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Status do Pagamento</label>
+                                <select id="pay-status" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Parcial">Parcial</option>
+                                    <option value="Pago">Pago</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-emerald-600/20">Salvar Status / Pagamento</button>
+                        </form>
+                    </div>
                 </div>
 
+                <!-- Painéis Visuais de Despesas, Extrato e Controle de Pescadores -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-700 pb-4">
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60">
@@ -343,15 +374,16 @@
                     </div>
 
                     <div>
-                        <h4 class="text-sm font-semibold text-slate-300 mb-1">Balanço e Histórico Individual (Saldo / Acerto)</h4>
-                        <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio.</p>
+                        <h4 class="text-sm font-semibold text-slate-300 mb-1">Controle de Pagamentos Individuais (Status & Acerto)</h4>
+                        <p class="text-xs text-slate-400 mb-3">Monitora o status e o balanço financeiro individual de cada pescador na expedição.</p>
                         <div class="overflow-x-auto max-h-48 overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
                                     <tr>
                                         <th class="p-2.5">Pescador</th>
-                                        <th class="p-2.5">Total Pago</th>
-                                        <th class="p-2.5">Diferença / Acerto</th>
+                                        <th class="p-2.5">Valor Quitado</th>
+                                        <th class="p-2.5">Status</th>
+                                        <th class="p-2.5">Balanço / Diferença</th>
                                     </tr>
                                 </thead>
                                 <tbody id="individual-balance-body" class="divide-y divide-slate-700">
@@ -415,9 +447,9 @@
 
     </main>
 
-    <!-- Script Principal com Gestão por Bancos e Pessoas -->
+    <!-- Script Principal com Gestão Unificada de Despesas e Pagamentos Individuais -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v5')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v6')) || {
             trip: {
                 location: "Atlanticus - Ilha da Vitória",
                 departure: "2026-09-15T05:00",
@@ -431,6 +463,7 @@
             participants: [],
             expenseTypes: ["Taxa do Barco", "Iscas", "Combustível", "Alimentação / Churrasco", "Gelo"],
             expenses: [],
+            fishermanPayments: {}, // Armazena { [nomePescador]: { paidValue, status } }
             spots: [],
             chat: [],
             lottery: { popa: [], right: [], left: [], bow: [] }
@@ -439,7 +472,7 @@
         let currentImageSlot = null;
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v5', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v6', JSON.stringify(db));
             renderAll();
         }
 
@@ -490,15 +523,26 @@
 
         function addParticipant(e) {
             e.preventDefault();
-            const name = document.getElementById('p-name').value;
+            const name = document.getElementById('p-name').value.trim();
             const phone = document.getElementById('p-phone').value || "Não informado";
-            db.participants.push({ id: Date.now(), name, phone });
-            document.getElementById('participant-form').reset();
-            saveData();
+            if(name && !db.participants.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                db.participants.push({ id: Date.now(), name, phone });
+                if(!db.fishermanPayments[name]) {
+                    db.fishermanPayments[name] = { paidValue: 0, status: "Pendente" };
+                }
+                document.getElementById('participant-form').reset();
+                saveData();
+            } else {
+                alert('Participante já cadastrado ou nome inválido.');
+            }
         }
 
         function removeParticipant(id) {
-            db.participants = db.participants.filter(p => p.id !== id);
+            const p = db.participants.find(item => item.id === id);
+            if(p) {
+                delete db.fishermanPayments[p.name];
+            }
+            db.participants = db.participants.filter(item => item.id !== id);
             saveData();
         }
 
@@ -531,6 +575,20 @@
         function removeExpense(id) {
             db.expenses = db.expenses.filter(ex => ex.id !== id);
             saveData();
+        }
+
+        function addOrUpdateFishermanPayment(e) {
+            e.preventDefault();
+            const fishermanName = document.getElementById('pay-fisherman').value;
+            const paidValue = parseFloat(document.getElementById('pay-value').value) || 0;
+            const status = document.getElementById('pay-status').value;
+
+            if(fishermanName) {
+                db.fishermanPayments[fishermanName] = { paidValue, status };
+                document.getElementById('payment-form').reset();
+                saveData();
+                alert('Pagamento individual atualizado com sucesso!');
+            }
         }
 
         function addFishingSpot(e) {
@@ -578,7 +636,6 @@
         }
 
         function renderBoatSeats() {
-            // Helper function to render grouped by benches
             function renderSectionBenches(zoneConfig, lotteryList, zoneName, borderColor) {
                 if (zoneConfig.benches <= 0 || zoneConfig.per <= 0) {
                     return `<span class="text-slate-500 text-xs italic">Nenhum banco configurado.</span>`;
@@ -662,14 +719,21 @@
             document.getElementById('participant-count').innerText = db.participants.length;
             let pBody = '';
             let payerSelect = '';
-            let defaultPayer = db.participants.length > 0 ? db.participants[0].name : "Geral";
+            let paymentFishermanSelect = '';
             
             db.participants.forEach(p => {
                 pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400">${p.phone}</td><td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 payerSelect += `<option value="${p.name}">${p.name}</option>`;
+                paymentFishermanSelect += `<option value="${p.name}">${p.name}</option>`;
+
+                if(!db.fishermanPayments[p.name]) {
+                    db.fishermanPayments[p.name] = { paidValue: 0, status: "Pendente" };
+                }
             });
+
             document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
             document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="Geral">Cadastre um participante</option>`;
+            document.getElementById('pay-fisherman').innerHTML = paymentFishermanSelect || `<option value="">Cadastre um participante</option>`;
 
             let etHtml = '';
             let typeSelect = '';
@@ -682,15 +746,11 @@
 
             let totalExp = 0;
             let eBody = '';
-            let paidMap = {};
-            db.participants.forEach(p => { paidMap[p.name] = 0; });
+            let defaultPayer = db.participants.length > 0 ? db.participants[0].name : "Geral";
 
             db.expenses.forEach(ex => {
                 let actualPayer = ex.payer && ex.payer.trim() !== "" ? ex.payer : defaultPayer;
                 totalExp += ex.value;
-                if(paidMap[actualPayer] !== undefined) {
-                    paidMap[actualPayer] += ex.value;
-                }
                 eBody += `<tr><td class="p-2.5"><span class="text-xs bg-slate-900 px-2 py-0.5 rounded text-blue-400 border border-slate-700 mr-1">${ex.type}</span> ${ex.description}</td><td class="p-2.5">R$ ${ex.value.toFixed(2)}</td><td class="p-2.5 text-slate-400">${actualPayer}</td><td class="p-2.5 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
@@ -700,12 +760,21 @@
 
             let indBody = '';
             db.participants.forEach(p => {
-                let pPaid = paidMap[p.name] || 0;
-                let diff = pPaid - perPerson;
-                let diffFormatted = diff >= 0 ? `<span class="text-emerald-400 font-semibold">+ R$ ${diff.toFixed(2)} (Crédito)</span>` : `<span class="text-rose-400 font-semibold">- R$ ${Math.abs(diff).toFixed(2)} (Deve)</span>`;
-                indBody += `<tr><td class="p-2.5 font-medium text-white">${p.name}</td><td class="p-2.5">R$ ${pPaid.toFixed(2)}</td><td class="p-2.5">${diffFormatted}</td></tr>`;
+                let pData = db.fishermanPayments[p.name] || { paidValue: 0, status: "Pendente" };
+                let diff = pData.paidValue - perPerson;
+                let statusBadge = '';
+                if(pData.status === 'Pago') {
+                    statusBadge = `<span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs font-semibold">Pago</span>`;
+                } else if(pData.status === 'Parcial') {
+                    statusBadge = `<span class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded text-xs font-semibold">Parcial</span>`;
+                } else {
+                    statusBadge = `<span class="bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded text-xs font-semibold">Pendente</span>`;
+                }
+
+                let diffFormatted = diff >= 0 ? `<span class="text-emerald-400 font-semibold">+ R$ ${diff.toFixed(2)} (Crédito)</span>` : `<span class="text-rose-400 font-semibold">- R$ ${Math.abs(diff).toFixed(2)} (Falta)</span>`;
+                indBody += `<tr><td class="p-2.5 font-medium text-white">${p.name}</td><td class="p-2.5">R$ ${pData.paidValue.toFixed(2)}</td><td class="p-2.5">${statusBadge}</td><td class="p-2.5">${diffFormatted}</td></tr>`;
             });
-            document.getElementById('individual-balance-body').innerHTML = indBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Cadastre participantes para ver o balanço individual.</td></tr>`;
+            document.getElementById('individual-balance-body').innerHTML = indBody || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Cadastre participantes para ver o controle individual de pagamentos.</td></tr>`;
 
             let spotsHtml = '';
             db.spots.forEach(s => {
