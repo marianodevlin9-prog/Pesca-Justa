@@ -28,7 +28,10 @@
         </div>
       </div>
       <div class="flex items-center gap-2 no-print">
-        <button onclick="exportarPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
+        <button onclick="gerarResumoWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
+          <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+        </button>
+        <button onclick="exportarPDF()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
           <i class="fa-solid fa-file-pdf"></i> PDF
         </button>
         <button onclick="limparDados()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow transition flex items-center gap-2">
@@ -96,7 +99,7 @@
           </div>
         </div>
 
-        <!-- Cadastro de Pescadores (Com Edição) -->
+        <!-- Cadastro de Pescadores -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
             <i class="fa-solid fa-users text-indigo-600"></i> Participantes / Pescadores
@@ -153,12 +156,18 @@
                   <option value="">Itens Salvos...</option>
                 </select>
               </div>
-              <p class="text-[10px] text-slate-400 mt-1">Novos itens digitados aqui são salvos automaticamente para uso futuro.</p>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Valor Total (R$)</label>
               <input type="number" step="0.01" min="0.01" id="despesa-valor" placeholder="0.00" required 
                      class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Tipo de Rateio</label>
+              <select id="despesa-tipo" class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white">
+                <option value="geral">Geral (Rateado entre todos os pescadores)</option>
+                <option value="opcional">Opcional / Por Consumo (Apenas para quem aderir)</option>
+              </select>
             </div>
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
               <i class="fa-solid fa-plus mr-1"></i> Lançar Despesa
@@ -172,6 +181,7 @@
                 <thead class="bg-slate-100 text-slate-600 uppercase">
                   <tr>
                     <th class="p-2.5 border-b">Item</th>
+                    <th class="p-2.5 border-b">Tipo</th>
                     <th class="p-2.5 border-b">Valor</th>
                     <th class="p-2.5 border-b text-center no-print">Ação</th>
                   </tr>
@@ -188,7 +198,7 @@
         <div class="lg:col-span-7 space-y-6">
           <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
             <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3 mb-4">
-              <i class="fa-solid fa-hand-holding-dollar text-indigo-600"></i> Abatimento Individual por Participante
+              <i class="fa-solid fa-hand-holding-dollar text-indigo-600"></i> Abatimento Individual & Consumo por Participante
             </h2>
             <div id="container-abatimentos" class="space-y-3 max-h-72 overflow-y-auto pr-1">
               <!-- Renderizado via JS -->
@@ -205,7 +215,7 @@
                 <span id="resumo-total-despesas" class="text-sm font-bold text-slate-800">R$ 0,00</span>
               </div>
               <div class="bg-slate-50 p-3 rounded-xl border text-center">
-                <span class="block text-[11px] text-slate-500">Cota / Pessoa</span>
+                <span class="block text-[11px] text-slate-500">Média / Pessoa</span>
                 <span id="resumo-cota-pessoa" class="text-sm font-bold text-indigo-600">R$ 0,00</span>
               </div>
               <div class="bg-slate-50 p-3 rounded-xl border text-center">
@@ -222,8 +232,8 @@
                 <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
                   <tr>
                     <th class="p-2.5">Pescador</th>
-                    <th class="p-2.5">Cota-Parte</th>
-                    <th class="p-2.5">Abatido</th>
+                    <th class="p-2.5">Sua Cota</th>
+                    <th class="p-2.5">Pago</th>
                     <th class="p-2.5">Saldo</th>
                     <th class="p-2.5">Situação</th>
                   </tr>
@@ -290,32 +300,39 @@
         
         <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 border-b pb-3">
-            <i class="fa-solid fa-car-side text-indigo-600"></i> Grupos de Viagem & Caronas
+            <i class="fa-solid fa-car-side text-indigo-600"></i> Caronas & Grupos de Viagem
           </h2>
           <form id="form-grupo" onsubmit="criarGrupoViagem(event)" class="space-y-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome do Grupo / Carro</label>
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome do Carro / Motorista</label>
               <input type="text" id="grupo-nome" placeholder="Ex: Carro do João (Saindo de SBC)" required 
                      class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Ponto de Encontro Marcado</label>
-              <input type="text" id="grupo-ponto" placeholder="Ex: Posto Petrobras - Rod. Anchieta km 14" required 
-                     class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Horário de Saída</label>
+                <input type="time" id="grupo-horario" required 
+                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Vagas Totais</label>
+                <input type="number" id="grupo-vagas" min="1" max="10" value="4" required 
+                       class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+              </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Horário de Saída</label>
-              <input type="time" id="grupo-horario" required 
+              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Ponto de Encontro</label>
+              <input type="text" id="grupo-ponto" placeholder="Ex: Posto Petrobras - Anchieta km 14" required 
                      class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
             </div>
             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm transition shadow-sm">
-              <i class="fa-solid fa-users-rectangle mr-1"></i> Criar Grupo de Viagem
+              <i class="fa-solid fa-users-rectangle mr-1"></i> Criar Grupo de Carona
             </button>
           </form>
 
           <div class="mt-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Grupos Ativos</h3>
-            <div id="lista-grupos" class="space-y-2 max-h-60 overflow-y-auto">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Carros Disponíveis</h3>
+            <div id="lista-grupos" class="space-y-3 max-h-60 overflow-y-auto">
               <!-- Renderizado via JS -->
             </div>
           </div>
@@ -398,6 +415,65 @@
       window.print();
     }
 
+    // --- Compartilhamento WhatsApp ---
+    function gerarResumoWhatsApp() {
+      if (pescadores.length === 0 || despesas.length === 0) {
+        alert("Cadastre pescadores e despesas primeiro.");
+        return;
+      }
+      
+      const totalDespesas = despesas.reduce((acc, d) => acc + d.valor, 0);
+      let totalGeralPago = 0;
+      
+      // Cálculo simplificado para o resumo do zap
+      let texto = `🎣 *RESUMO DA PESCARIA - ${configBarco.local || 'Pesca-Justa'}* 🎣\n`;
+      if(configBarco.inicio) texto += `📅 Data: ${new Date(configBarco.inicio).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'short'})}\n`;
+      texto += `💰 *Custo Total:* ${formatarMoeda(totalDespesas)}\n\n`;
+      
+      texto += `📋 *Situação Financeira:*\n`;
+      pescadores.forEach(p => {
+        let pagoPescador = 0;
+        if (p.pagamentos) Object.values(p.pagamentos).forEach(v => pagoPescador += parseFloat(v) || 0);
+        totalGeralPago += pagoPescador;
+        
+        // Cota específica do pescador considerando opcionais
+        let cotaPescador = 0;
+        despesas.forEach(d => {
+          if (d.tipo === 'geral') {
+            cotaPescador += d.valor / pescadores.length;
+          } else if (d.tipo === 'opcional') {
+            const aderiu = d.aderentes && d.aderentes.includes(p.id);
+            const qtdAderentes = (d.aderentes || []).length;
+            if (aderiu && qtdAderentes > 0) cotaPescador += d.valor / qtdAderentes;
+          }
+        });
+
+        const saldo = cotaPescador - pagoPescador;
+        const status = Math.abs(saldo) < 0.01 ? "✅ Quitado" : (saldo > 0 ? `⚠️ Deve ${formatarMoeda(saldo)}` : `🔵 Crédito ${formatarMoeda(Math.abs(saldo))}`);
+        texto += `- ${p.nome}: ${status}\n`;
+      });
+
+      if (resultadoSorteio && resultadoSorteio.popa) {
+        texto += `\n🎲 *Sorteio das Posições:*\n`;
+        resultadoSorteio.popa.forEach((p, i) => texto += `⭐ Popa ${i+1}: ${p.nome}\n`);
+        resultadoSorteio.laterais.forEach((p, i) => texto += `⚓ Lateral ${i+1}: ${p.nome}\n`);
+      }
+
+      if (gruposViagem.length > 0) {
+        texto += `\n🚗 *Caronas e Veículos:*\n`;
+        gruposViagem.forEach(g => {
+          const membrosNomes = (g.membros || []).map(id => {
+            const pesc = pescadores.find(p => p.id === id);
+            return pesc ? pesc.nome : '';
+          }).filter(Boolean).join(', ');
+          texto += `- *${g.nome}* (${g.horario} - ${g.ponto})\n  Passageiros: ${membrosNomes || 'Nenhum ainda'}\n`;
+        });
+      }
+
+      const urlWpp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+      window.open(urlWpp, '_blank');
+    }
+
     // --- Controle de Abas ---
     function mudarAba(abaId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -430,7 +506,7 @@
       document.getElementById('barco-vagas-popa').value = configBarco.vagasPopa || 2;
     }
 
-    // --- Pescadores (Criar, Editar, Remover) ---
+    // --- Pescadores ---
     function salvarPescador(e) {
       e.preventDefault();
       const idEditando = document.getElementById('pescador-id-editando').value;
@@ -441,7 +517,6 @@
       const telefone = telInput.value.trim();
 
       if (idEditando) {
-        // Editando existente
         const pescador = pescadores.find(p => p.id === idEditando);
         if (pescador) {
           pescador.nome = nome;
@@ -449,7 +524,6 @@
         }
         cancelarEdicaoPescador();
       } else {
-        // Novo
         const novo = {
           id: Date.now().toString(),
           nome,
@@ -491,6 +565,14 @@
 
     function removerPescador(id) {
       pescadores = pescadores.filter(p => p.id !== id);
+      // Remove de caronas e limpa sorteio se necessário
+      gruposViagem.forEach(g => {
+        if(g.membros) g.membros = g.membros.filter(mId => mId !== id);
+      });
+      if (resultadoSorteio) {
+        if (resultadoSorteio.popa) resultadoSorteio.popa = resultadoSorteio.popa.filter(p => p.id !== id);
+        if (resultadoSorteio.laterais) resultadoSorteio.laterais = resultadoSorteio.laterais.filter(p => p.id !== id);
+      }
       salvarEstado();
     }
 
@@ -505,11 +587,12 @@
       e.preventDefault();
       const descInput = document.getElementById('despesa-descricao');
       const valInput = document.getElementById('despesa-valor');
+      const tipoInput = document.getElementById('despesa-tipo');
       
       const descricao = descInput.value.trim();
       const valor = parseFloat(valInput.value) || 0;
+      const tipo = tipoInput.value;
 
-      // Salva automaticamente nos itens frequentes caso seja novo
       if (descricao && !itensPreCadastrados.includes(descricao)) {
         itensPreCadastrados.push(descricao);
       }
@@ -517,7 +600,9 @@
       const novaDespesa = {
         id: Date.now().toString(),
         descricao,
-        valor
+        valor,
+        tipo,
+        aderentes: tipo === 'opcional' ? pescadores.map(p => p.id) : [] // Por padrão todos entram, mas podem desmarcar
       };
       
       despesas.push(novaDespesa);
@@ -539,6 +624,20 @@
         const valor = parseFloat(valorStr);
         if (isNaN(valor) || valor <= 0) delete pescador.pagamentos[despesaId];
         else pescador.pagamentos[despesaId] = valor;
+        salvarEstado();
+      }
+    }
+
+    function alternarAderenciaOpcional(despesaId, pescadorId) {
+      const d = despesas.find(item => item.id === despesaId);
+      if (d && d.tipo === 'opcional') {
+        if (!d.aderentes) d.aderentes = [];
+        const index = d.aderentes.indexOf(pescadorId);
+        if (index > -1) {
+          d.aderentes.splice(index, 1);
+        } else {
+          d.aderentes.push(pescadorId);
+        }
         salvarEstado();
       }
     }
@@ -569,25 +668,50 @@
       salvarEstado();
     }
 
-    // --- Grupos e Chat ---
+    // --- Grupos / Caronas & Chat ---
     function criarGrupoViagem(e) {
       e.preventDefault();
       const nome = document.getElementById('grupo-nome').value.trim();
       const ponto = document.getElementById('grupo-ponto').value.trim();
       const horario = document.getElementById('grupo-horario').value;
+      const vagas = parseInt(document.getElementById('grupo-vagas').value) || 4;
 
-      const novoGrupo = { id: Date.now().toString(), nome, ponto, horario, membros: [] };
+      const novoGrupo = { id: Date.now().toString(), nome, ponto, horario, vagas, membros: [] };
       gruposViagem.push(novoGrupo);
       
       document.getElementById('grupo-nome').value = '';
       document.getElementById('grupo-ponto').value = '';
       document.getElementById('grupo-horario').value = '';
+      document.getElementById('grupo-vagas').value = '4';
+      salvarEstado();
+    }
+
+    function entrarNoCarro(grupoId, pescadorId) {
+      const grupo = gruposViagem.find(g => g.id === grupoId);
+      if (!grupo) return;
+      if (!grupo.membros) grupo.membros = [];
+      
+      const idx = grupo.membros.indexOf(pescadorId);
+      if (idx > -1) {
+        grupo.membros.splice(idx, 1);
+      } else {
+        if (grupo.membros.length >= grupo.vagas) {
+          alert("Este carro já está lotado!");
+          return;
+        }
+        grupo.membros.push(pescadorId);
+      }
+      salvarEstado();
+    }
+
+    function removerGrupoViagem(id) {
+      gruposViagem = gruposViagem.filter(g => g.id !== id);
       salvarEstado();
     }
 
     function selecionarGrupoChat(nomeGrupo) {
       grupoAtivo = nomeGrupo;
-      document.getElementById('chat-grupo-ativo-titulo').innerText = nomeGrupo === 'Geral' ? 'Geral da Pescaria' : `Grupo: ${nomeGrupo}`;
+      document.getElementById('chat-grupo-ativo-titulo').innerText = nomeGrupo === 'Geral' ? 'Geral da Pescaria' : `Carro: ${nomeGrupo}`;
       renderizarChat();
     }
 
@@ -664,12 +788,13 @@
     function renderizarTabelaDespesas() {
       const tbody = document.getElementById('tabela-despesas-cadastradas');
       if (despesas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-slate-400 text-center text-xs">Nenhuma despesa.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-slate-400 text-center text-xs">Nenhuma despesa.</td></tr>`;
         return;
       }
       tbody.innerHTML = despesas.map(d => `
         <tr class="hover:bg-slate-50">
           <td class="p-2 font-medium text-slate-700">${d.descricao}</td>
+          <td class="p-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${d.tipo === 'opcional' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-800'}">${d.tipo === 'opcional' ? 'Opcional' : 'Geral'}</span></td>
           <td class="p-2 text-indigo-600 font-semibold">${formatarMoeda(d.valor)}</td>
           <td class="p-2 text-center no-print">
             <button onclick="removerDespesa('${d.id}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-xmark"></i></button>
@@ -681,7 +806,7 @@
     function renderizarAbatimentos() {
       const container = document.getElementById('container-abatimentos');
       if (pescadores.length === 0 || despesas.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-xs text-center py-4">Cadastre pescadores e despesas para gerenciar abatimentos.</p>`;
+        container.innerHTML = `<p class="text-slate-400 text-xs text-center py-4">Cadastre pescadores e despesas para gerenciar abatimentos e consumo.</p>`;
         return;
       }
       container.innerHTML = pescadores.map(p => {
@@ -689,15 +814,30 @@
         const inputs = despesas.map(d => {
           const pago = (p.pagamentos && p.pagamentos[d.id]) ? p.pagamentos[d.id] : '';
           if (pago) totalPagoPescador += parseFloat(pago);
+
+          let opcionalHTML = '';
+          if (d.tipo === 'opcional') {
+            const aderiu = d.aderentes && d.aderentes.includes(p.id);
+            opcionalHTML = `
+              <label class="flex items-center gap-1.5 text-[11px] text-slate-500 cursor-pointer">
+                <input type="checkbox" ${aderiu ? 'checked' : ''} onchange="alternarAderenciaOpcional('${d.id}', '${p.id}')" class="rounded text-indigo-600 focus:ring-indigo-500">
+                Consome este item
+              </label>
+            `;
+          }
+
           return `
-            <div class="flex justify-between items-center text-xs py-1 border-b border-slate-100">
-              <span class="text-slate-600">${d.descricao}</span>
-              <div class="flex items-center gap-1">
-                <span class="text-slate-400">R$</span>
-                <input type="number" step="0.01" min="0" placeholder="0,00" value="${pago}"
-                       onchange="atualizarAbatimento('${p.id}', '${d.id}', this.value)"
-                       class="w-24 px-2 py-1 border rounded-lg text-right focus:ring-1 focus:ring-indigo-500 outline-none">
+            <div class="flex flex-col gap-1 py-1.5 border-b border-slate-100 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600 font-medium">${d.descricao}</span>
+                <div class="flex items-center gap-1">
+                  <span class="text-slate-400">R$ pago:</span>
+                  <input type="number" step="0.01" min="0" placeholder="0,00" value="${pago}"
+                         onchange="atualizarAbatimento('${p.id}', '${d.id}', this.value)"
+                         class="w-24 px-2 py-1 border rounded-lg text-right focus:ring-1 focus:ring-indigo-500 outline-none">
+                </div>
               </div>
+              ${opcionalHTML}
             </div>
           `;
         }).join('');
@@ -706,7 +846,7 @@
           <div class="p-3 border rounded-xl bg-slate-50/50 space-y-2">
             <div class="flex justify-between items-center">
               <span class="font-bold text-slate-800 text-sm">${p.nome}</span>
-              <span class="text-xs font-semibold text-emerald-600">Pago: ${formatarMoeda(totalPagoPescador)}</span>
+              <span class="text-xs font-semibold text-emerald-600">Total Pago: ${formatarMoeda(totalPagoPescador)}</span>
             </div>
             <div class="bg-white p-2.5 rounded-xl border space-y-1">${inputs}</div>
           </div>
@@ -716,14 +856,28 @@
 
     function renderizarDemonstrativo() {
       const totalDespesas = despesas.reduce((acc, d) => acc + d.valor, 0);
-      const cotaParte = pescadores.length > 0 ? (totalDespesas / pescadores.length) : 0;
       let totalGeralPago = 0;
 
       const linhas = pescadores.map(p => {
         let pagoPescador = 0;
         if (p.pagamentos) Object.values(p.pagamentos).forEach(v => pagoPescador += parseFloat(v) || 0);
         totalGeralPago += pagoPescador;
-        const saldo = cotaParte - pagoPescador;
+
+        // Calcular cota individual considerando despesas gerais e opcionais
+        let cotaPescador = 0;
+        despesas.forEach(d => {
+          if (d.tipo === 'geral') {
+            if (pescadores.length > 0) cotaPescador += d.valor / pescadores.length;
+          } else if (d.tipo === 'opcional') {
+            const aderiu = d.aderentes && d.aderentes.includes(p.id);
+            const qtdAderentes = (d.aderentes || []).length;
+            if (aderiu && qtdAderentes > 0) {
+              cotaPescador += d.valor / qtdAderentes;
+            }
+          }
+        });
+
+        const saldo = cotaPescador - pagoPescador;
 
         let badge = Math.abs(saldo) < 0.01 ? `<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Quitado</span>` :
                     (saldo > 0 ? `<span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">Deve ${formatarMoeda(saldo)}</span>` :
@@ -732,7 +886,7 @@
         return `
           <tr class="hover:bg-slate-50">
             <td class="p-2.5 font-medium text-slate-800">${p.nome}</td>
-            <td class="p-2.5 text-slate-600">${formatarMoeda(cotaParte)}</td>
+            <td class="p-2.5 text-slate-600">${formatarMoeda(cotaPescador)}</td>
             <td class="p-2.5 text-emerald-600 font-semibold">${formatarMoeda(pagoPescador)}</td>
             <td class="p-2.5 font-semibold ${saldo > 0 ? 'text-amber-600' : 'text-blue-600'}">${formatarMoeda(saldo)}</td>
             <td class="p-2.5">${badge}</td>
@@ -741,7 +895,7 @@
       }).join('');
 
       document.getElementById('resumo-total-despesas').innerText = formatarMoeda(totalDespesas);
-      document.getElementById('resumo-cota-pessoa').innerText = formatarMoeda(cotaParte);
+      document.getElementById('resumo-cota-pessoa').innerText = pescadores.length > 0 ? formatarMoeda(totalDespesas / pescadores.length) : 'R$ 0,00';
       document.getElementById('resumo-total-pago').innerText = formatarMoeda(totalGeralPago);
       document.getElementById('resumo-saldo-pendente').innerText = formatarMoeda(totalDespesas - totalGeralPago);
       document.getElementById('tabela-demonstrativo').innerHTML = pescadores.length === 0 ? `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">Sem participantes.</td></tr>` : linhas;
@@ -776,15 +930,35 @@
       let html = `
         <div onclick="selecionarGrupoChat('Geral')" class="p-3 border rounded-xl cursor-pointer transition ${grupoAtivo === 'Geral' ? 'bg-indigo-50 border-indigo-300' : 'bg-slate-50 hover:bg-slate-100'}">
           <span class="font-bold text-xs text-indigo-900 block"><i class="fa-solid fa-comments mr-1"></i> Geral da Pescaria</span>
-          <span class="text-[11px] text-slate-500">Canal principal para todos</span>
+          <span class="text-[11px] text-slate-500">Canal principal para conversas</span>
         </div>
       `;
-      html += gruposViagem.map(g => `
-        <div onclick="selecionarGrupoChat('${g.nome}')" class="p-3 border rounded-xl cursor-pointer transition ${grupoAtivo === g.nome ? 'bg-indigo-50 border-indigo-300' : 'bg-slate-50 hover:bg-slate-100'}">
-          <span class="font-bold text-xs text-slate-800 block"><i class="fa-solid fa-car mr-1"></i> ${g.nome}</span>
-          <span class="text-[11px] text-slate-500 block"><i class="fa-solid fa-location-dot"></i> ${g.ponto} às ${g.horario}</span>
-        </div>
-      `).join('');
+      html += gruposViagem.map(g => {
+        const membrosNomes = (g.membros || []).map(id => {
+          const p = pescadores.find(item => item.id === id);
+          return p ? p.nome : '';
+        }).filter(Boolean).join(', ');
+
+        return `
+          <div class="p-3 border rounded-xl bg-slate-50 space-y-2">
+            <div class="flex justify-between items-start">
+              <div onclick="selecionarGrupoChat('${g.nome}')" class="cursor-pointer flex-1">
+                <span class="font-bold text-xs text-slate-800 block"><i class="fa-solid fa-car mr-1"></i> ${g.nome}</span>
+                <span class="text-[11px] text-slate-500 block"><i class="fa-solid fa-location-dot"></i> ${g.ponto} às ${g.horario}</span>
+                <span class="text-[10px] text-indigo-600 font-semibold block mt-1">Vagas: ${(g.membros || []).length}/${g.vagas} (Passageiros: ${membrosNomes || 'Nenhum'})</span>
+              </div>
+              <button onclick="removerGrupoViagem('${g.id}')" class="text-rose-500 hover:text-rose-700 text-xs p-1 no-print"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <div class="pt-2 border-t border-slate-200 flex flex-wrap gap-1">
+              <span class="text-[10px] font-semibold text-slate-500 self-center mr-1">Entrar no carro:</span>
+              ${pescadores.map(p => {
+                const noCarro = g.membros && g.membros.includes(p.id);
+                return `<button onclick="entrarNoCarro('${g.id}', '${p.id}')" class="text-[10px] px-2 py-0.5 rounded-full border transition ${noCarro ? 'bg-emerald-600 text-white border-emerald-600 font-bold' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'}">${p.nome}</button>`;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
       div.innerHTML = html;
     }
 
