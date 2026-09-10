@@ -40,7 +40,7 @@
                 <div>
                     <label id="password-label" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha do Administrador</label>
                     <input type="password" id="login-password" placeholder="Digite a senha..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                    <p id="password-hint" class="text-[10px] text-slate-500 mt-1">Senha : <strong class="text-slate-300"></strong></p>
+                    <p id="password-hint" class="text-[10px] text-slate-500 mt-1">Senha padrão : <strong class="text-slate-300">pesca2026</strong></p>
                 </div>
 
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm">Entrar no Sistema</button>
@@ -72,7 +72,7 @@
                 </button>
             </div>
 
-            <!-- Navegação por Abas (Atualizada com a Aba de IA) -->
+            <!-- Navegação por Abas -->
             <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
                 <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow">
                     <i class="fa-solid fa-users-gear mr-1.5"></i>Cadastros
@@ -80,8 +80,14 @@
                 <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
                     <i class="fa-solid fa-dice mr-1.5"></i>Sorteio & Planta
                 </button>
+                <button onclick="switchTab('capturas')" id="btn-capturas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-fish mr-1.5 text-emerald-400"></i>Capturas
+                </button>
+                <button onclick="switchTab('relatorios')" id="btn-relatorios" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-chart-pie mr-1.5 text-amber-400"></i>Relatórios
+                </button>
                 <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-wallet mr-1.5"></i>Despesas & Rateio
+                    <i class="fa-solid fa-wallet mr-1.5"></i>Despesas
                 </button>
                 <button onclick="switchTab('pontos')" id="btn-pontos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
                     <i class="fa-solid fa-map-location-dot mr-1.5"></i>Pontos
@@ -90,7 +96,7 @@
                     <i class="fa-solid fa-comments mr-1.5"></i>Encontro
                 </button>
                 <button onclick="switchTab('ia')" id="btn-ia" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-robot mr-1.5 text-blue-400"></i>Especialista IA
+                    <i class="fa-solid fa-robot mr-1.5 text-blue-400"></i>IA
                 </button>
             </nav>
         </div>
@@ -131,8 +137,8 @@
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Distribuição de Bancos na Planta do Barco</label>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 <div>
-                                    <span class="text-[11px] text-slate-400">Popa (Fundo)</span>
-                                    <input type="number" id="seats-popa" value="4" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
+                                    <span class="text-[11px] text-blue-400 font-bold">Popa (Fundo - Premium)</span>
+                                    <input type="number" id="seats-popa" value="4" min="0" class="w-full bg-slate-900 border border-blue-500/50 rounded-lg px-3 py-2 text-white text-center focus:outline-none focus:border-blue-500">
                                 </div>
                                 <div>
                                     <span class="text-[11px] text-slate-400">Lado Direito</span>
@@ -212,11 +218,11 @@
             </div>
         </section>
 
-        <!-- ABA 2: SORTEIO & PLANTA DO BARCO -->
+        <!-- ABA 2: SORTEIO & PLANTA DO BARCO (Com Vaga Premium na Popa) -->
         <section id="tab-sorteio" class="hidden space-y-6">
             <div id="lottery-action-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center">
                 <h2 class="text-xl font-bold text-white mb-2">Sorteio de Assentos & Planta do Barco</h2>
-                <p class="text-sm text-slate-400 mb-6">Distribuição visual interativa dos assentos informados na configuração do barco.</p>
+                <p class="text-sm text-slate-400 mb-6">Distribuição visual interativa dos assentos com destaque especial para a Popa (Vagas Premium).</p>
                 <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-amber-600/30">
                     <i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio nos Bancos
                 </button>
@@ -240,17 +246,115 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <span class="text-xs uppercase tracking-widest text-blue-400 block mb-2 font-bold"><i class="fa-solid fa-anchor mr-1"></i> Popa (Fundo do Barco)</span>
+                        <!-- DESTAQUE VISUAL VAGA PREMIUM NA POPA -->
+                        <div class="inline-block bg-blue-600/20 border border-blue-500/50 px-4 py-1 rounded-full mb-2">
+                            <span class="text-xs uppercase tracking-widest text-blue-300 font-extrabold"><i class="fa-solid fa-star mr-1 text-amber-400"></i> Vaga Premium — Popa (Fundo do Barco)</span>
+                        </div>
                         <div id="boat-popa" class="grid grid-cols-2 sm:flex sm:justify-center gap-3"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ABA 3: DESPESAS & RATEIO -->
+        <!-- ABA 3: LANÇAMENTO DE CAPTURAS -->
+        <section id="tab-capturas" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-fish-fins text-emerald-400"></i> Registrar Captura
+                    </h2>
+                    <form id="catch-form" class="space-y-4" onsubmit="addCatch(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pescador</label>
+                            <select id="catch-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Espécie do Peixe</label>
+                            <input type="text" id="catch-species" placeholder="Ex: Garoupa, Pargo, Olho-de-cão" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Peso (kg)</label>
+                            <input type="number" step="0.01" id="catch-weight" placeholder="Ex: 3.50" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg shadow-emerald-600/20">Salvar Captura</button>
+                    </form>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-4">
+                    <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-blue-400"></i> Histórico de Capturas Lançadas
+                    </h2>
+                    <div class="overflow-x-auto max-h-[380px] overflow-y-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
+                                <tr>
+                                    <th class="p-3">Pescador</th>
+                                    <th class="p-3">Espécie</th>
+                                    <th class="p-3">Peso</th>
+                                    <th class="p-3 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catches-table-body" class="divide-y divide-slate-700">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 4: CENTRAL DE RELATÓRIOS -->
+        <section id="tab-relatorios" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Ranking de Capturas por Peso Total -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> Ranking de Capturas (Peso Total)
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900 uppercase text-xs text-slate-400">
+                                <tr>
+                                    <th class="p-3">Pos.</th>
+                                    <th class="p-3">Pescador</th>
+                                    <th class="p-3 text-right">Total (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ranking-table-body" class="divide-y divide-slate-700">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Resumo Estatístico Geral da Pescaria -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-bar text-blue-400"></i> Resumo Geral da Viagem
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                            <span class="text-xs text-slate-400 block uppercase font-semibold">Total de Peixes</span>
+                            <span id="rep-total-fish" class="text-2xl font-bold text-white mt-1 block">0</span>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                            <span class="text-xs text-slate-400 block uppercase font-semibold">Peso Acumulado</span>
+                            <span id="rep-total-weight" class="text-2xl font-bold text-emerald-400 mt-1 block">0.00 kg</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <span class="text-xs text-slate-400 block uppercase font-semibold">Maior Peixe Pego</span>
+                        <div id="rep-biggest-fish" class="text-sm font-medium text-white italic">Nenhuma captura registrada ainda.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 5: DESPESAS & RATEIO -->
         <section id="tab-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Lançar Despesa -->
                 <div id="expense-register-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-receipt text-blue-500"></i> Registrar Gasto / Pagamento
@@ -280,9 +384,7 @@
                     </form>
                 </div>
 
-                <!-- Demonstrativo, Extrato Geral e Histórico Individual -->
                 <div id="expense-view-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3 space-y-6 transition-all">
-                    <!-- Resumo Geral em Cards de Destaque -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-700 pb-4">
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/60">
                             <p class="text-xs text-slate-400 uppercase font-semibold">Montante Total de Gastos</p>
@@ -294,7 +396,6 @@
                         </div>
                     </div>
 
-                    <!-- Extrato Geral Resumido -->
                     <div>
                         <h4 class="text-sm font-semibold text-slate-300 mb-3">Extrato Geral de Gastos</h4>
                         <div class="overflow-x-auto max-h-40 overflow-y-auto">
@@ -314,10 +415,9 @@
                         </div>
                     </div>
 
-                    <!-- Balanço e Histórico Individual -->
                     <div>
                         <h4 class="text-sm font-semibold text-slate-300 mb-1">Balanço e Histórico Individual (Saldo / Acerto)</h4>
-                        <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio, indicando o crédito ou o valor restante que falta pagar.</p>
+                        <p class="text-xs text-slate-400 mb-3">Demonstra o montante que cada pescador pagou, abatido do rateio, indicando o crédito ou o valor restante.</p>
                         <div class="overflow-x-auto max-h-48 overflow-y-auto">
                             <table class="w-full text-left text-sm text-slate-300">
                                 <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
@@ -337,7 +437,7 @@
             </div>
         </section>
 
-        <!-- ABA 4: PONTOS DE PESCA -->
+        <!-- ABA 6: PONTOS DE PESCA -->
         <section id="tab-pontos" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div id="spot-register-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
@@ -372,7 +472,7 @@
             </div>
         </section>
 
-        <!-- ABA 5: CHAT & PONTO DE ENCONTRO -->
+        <!-- ABA 7: CHAT & PONTO DE ENCONTRO -->
         <section id="tab-chat" class="hidden space-y-6">
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-2xl mx-auto flex flex-col h-[500px]">
                 <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-slate-700 pb-3">
@@ -389,14 +489,13 @@
             </div>
         </section>
 
-        <!-- ABA 6: ESPECIALISTA IA EM PESCA -->
+        <!-- ABA 8: ESPECIALISTA IA EM PESCA -->
         <section id="tab-ia" class="hidden space-y-6">
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-4xl mx-auto flex flex-col h-[550px]">
                 <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-slate-700 pb-3">
                     <i class="fa-solid fa-robot text-blue-500"></i> Especialista IA em Pesca & Dicas
                 </h2>
                 
-                <!-- Histórico de Mensagens do Chat -->
                 <div id="ai-chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm">
                     <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
                         <span class="font-semibold text-xs text-blue-400 block mb-1">Assistente IA</span>
@@ -404,7 +503,6 @@
                     </div>
                 </div>
 
-                <!-- Formulário de Envio -->
                 <form id="ai-chat-form" class="flex gap-2" onsubmit="askFishingAI(event)">
                     <input type="text" id="ai-chat-input" placeholder="Ex: Qual a melhor isca para robalo ou profundidade da Ilha da Vitória?" required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                     <button type="submit" id="ai-send-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl transition-all"><i class="fa-solid fa-paper-plane"></i></button>
@@ -414,15 +512,12 @@
 
     </main>
 
-    <!-- Script Principal com Regra de Senha e Acessos -->
+    <!-- Script Principal Integrado -->
     <script>
-        // CHAVE DA API CONFIGURADA A PARTIR DO SEU GOOGLE AI STUDIO
         const GEMINI_API_KEY = "AQ.Ab8RN6K1_hQaCGQatyLohCYV58e24CwlbghAzwJYHIYIL4OZ5Q";
-
-        // SENHA DO ADMINISTRADOR DEFINIDA DIRETAMENTE NO CÓDIGO
         const ADMIN_PASSWORD_FIXED = "pesca2026";
 
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v5')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v6')) || {
             auth: { logged: false, role: "convidado", name: "" },
             trip: {
                 location: "Atlanticus - Ilha da Vitória",
@@ -435,15 +530,15 @@
             expenses: [],
             spots: [],
             chat: [],
+            catches: [],
             lottery: { popa: [], right: [], left: [], bow: [] }
         };
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v5', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v6', JSON.stringify(db));
             renderAll();
         }
 
-        // Controle da Tela de Login
         function toggleLoginFields() {
             const loginType = document.getElementById('login-type').value;
             const pescadorBox = document.getElementById('pescador-select-box');
@@ -501,7 +596,6 @@
                     return;
                 }
 
-                // Extrair os 4 últimos dígitos do telefone cadastrado (removendo caracteres especiais)
                 const cleanPhone = pescador.phone.replace(/\D/g, '');
                 const last4Digits = cleanPhone.slice(-4);
 
@@ -613,6 +707,21 @@
             saveData();
         }
 
+        function addCatch(e) {
+            e.preventDefault();
+            const fisherman = document.getElementById('catch-fisherman').value;
+            const species = document.getElementById('catch-species').value;
+            const weight = parseFloat(document.getElementById('catch-weight').value);
+            db.catches.push({ id: Date.now(), fisherman, species, weight });
+            document.getElementById('catch-form').reset();
+            saveData();
+        }
+
+        function removeCatch(id) {
+            db.catches = db.catches.filter(c => c.id !== id);
+            saveData();
+        }
+
         function addChatMessage(e) {
             e.preventDefault();
             const sender = db.auth.name;
@@ -622,8 +731,7 @@
             saveData();
         }
 
-        // Função de integração do Chat IA de Pesca
-       async function askFishingAI(e) {
+        async function askFishingAI(e) {
             e.preventDefault();
             const inputField = document.getElementById('ai-chat-input');
             const sendBtn = document.getElementById('ai-send-btn');
@@ -694,6 +802,7 @@
             inputField.focus();
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
+
         function escapeHtml(text) {
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
@@ -716,7 +825,7 @@
             let popaHtml = '';
             for(let i=0; i<db.trip.popa; i++) {
                 let p = db.lottery.popa && db.lottery.popa[i];
-                popaHtml += `<div class="bg-slate-950 border border-blue-500/40 rounded-xl p-3 text-center min-w-[110px]"><span class="text-[10px] text-blue-400 block font-bold mb-1">Popa #${i+1}</span><span class="text-xs font-semibold text-white">${p ? p.name : '<span class="text-slate-500 italic font-normal">Disponível</span>'}</span></div>`;
+                popaHtml += `<div class="bg-blue-950/60 border-2 border-blue-500 rounded-xl p-3 text-center min-w-[110px] shadow-lg shadow-blue-500/20"><span class="text-[10px] text-amber-400 block font-bold mb-1"><i class="fa-solid fa-star"></i> Popa #${i+1}</span><span class="text-xs font-semibold text-white">${p ? p.name : '<span class="text-slate-500 italic font-normal">Disponível</span>'}</span></div>`;
             }
             document.getElementById('boat-popa').innerHTML = popaHtml || '<span class="text-slate-500 text-xs">Nenhum banco configurado na popa.</span>';
 
@@ -761,16 +870,6 @@
                 else el.classList.add('hidden');
             });
 
-            const expenseViewBox = document.getElementById('expense-view-box');
-            const spotsViewBox = document.getElementById('spots-view-box');
-            if(isAdmin) {
-                expenseViewBox.className = "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-6";
-                spotsViewBox.className = "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2";
-            } else {
-                expenseViewBox.className = "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3 space-y-6";
-                spotsViewBox.className = "bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-3";
-            }
-
             document.querySelectorAll('.action-col').forEach(col => {
                 if(isAdmin) col.classList.remove('hidden');
                 else col.classList.add('hidden');
@@ -791,14 +890,16 @@
             }
 
             document.getElementById('participant-count').innerText = db.participants.length;
-            let pBody = '', payerSelect = '';
+            let pBody = '', payerSelect = '', catchFishermanSelect = '';
             db.participants.forEach(p => {
                 let actionBtn = isAdmin ? `<td class="p-3 text-center action-col"><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : `<td class="p-3 text-center action-col hidden"></td>`;
                 pBody += `<tr><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400">${p.phone}</td>${actionBtn}</tr>`;
                 payerSelect += `<option value="${p.name}">${p.name}</option>`;
+                catchFishermanSelect += `<option value="${p.name}">${p.name}</option>`;
             });
             document.getElementById('participants-table-body').innerHTML = pBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante cadastrado.</td></tr>`;
             document.getElementById('exp-payer').innerHTML = payerSelect || `<option value="">Cadastre um participante</option>`;
+            document.getElementById('catch-fisherman').innerHTML = catchFishermanSelect || `<option value="">Cadastre um participante</option>`;
 
             let etHtml = '', typeSelect = '';
             db.expenseTypes.forEach(t => {
@@ -830,6 +931,35 @@
                 indBody += `<tr><td class="p-2.5 font-medium text-white">${p.name}</td><td class="p-2.5">R$ ${pPaid.toFixed(2)}</td><td class="p-2.5">${diffFormatted}</td></tr>`;
             });
             document.getElementById('individual-balance-body').innerHTML = indBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Cadastre participantes para ver o balanço individual.</td></tr>`;
+
+            // Renderização de Capturas e Relatórios
+            let catchesBody = '', userTotals = {}, totalWeight = 0, biggestFish = null;
+            db.participants.forEach(p => { userTotals[p.name] = 0; });
+            db.catches.forEach(c => {
+                totalWeight += c.weight;
+                if(userTotals[c.fisherman] !== undefined) userTotals[c.fisherman] += c.weight;
+                if(!biggestFish || c.weight > biggestFish.weight) biggestFish = c;
+
+                catchesBody += `<tr><td class="p-3 font-medium text-white">${c.fisherman}</td><td class="p-3 text-slate-300">${c.species}</td><td class="p-3 text-emerald-400 font-semibold">${c.weight.toFixed(2)} kg</td><td class="p-3 text-center"><button onclick="removeCatch(${c.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            });
+            document.getElementById('catches-table-body').innerHTML = catchesBody || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma captura registrada.</td></tr>`;
+
+            // Ranking
+            let sortedRanking = Object.entries(userTotals).sort((a,b) => b[1] - a[1]);
+            let rankingBody = '';
+            sortedRanking.forEach(([name, weight], idx) => {
+                let medal = idx === 0 ? '<i class="fa-solid fa-medal text-amber-400 mr-1"></i>' : idx === 1 ? '<i class="fa-solid fa-medal text-slate-300 mr-1"></i>' : idx === 2 ? '<i class="fa-solid fa-medal text-amber-700 mr-1"></i>' : '';
+                rankingBody += `<tr><td class="p-3 font-bold text-slate-400">${idx+1}º</td><td class="p-3 font-medium text-white">${medal}${name}</td><td class="p-3 text-right font-bold text-emerald-400">${weight.toFixed(2)} kg</td></tr>`;
+            });
+            document.getElementById('ranking-table-body').innerHTML = rankingBody || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Sem dados para o ranking.</td></tr>`;
+
+            document.getElementById('rep-total-fish').innerText = db.catches.length;
+            document.getElementById('rep-total-weight').innerText = `${totalWeight.toFixed(2)} kg`;
+            if(biggestFish) {
+                document.getElementById('rep-biggest-fish').innerHTML = `<span class="text-amber-400 font-bold">${biggestFish.species} (${biggestFish.weight.toFixed(2)} kg)</span> pescado por <span class="text-white">${biggestFish.fisherman}</span>`;
+            } else {
+                document.getElementById('rep-biggest-fish').innerText = "Nenhuma captura registrada ainda.";
+            }
 
             let spotsHtml = '';
             db.spots.forEach(s => {
