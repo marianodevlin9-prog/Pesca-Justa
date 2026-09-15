@@ -86,67 +86,105 @@
         <!-- CADASTROS -->
         <section id="tab-cadastros" class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Cadastro de Barcos (Permanente) -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                    <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar Novo Barco na Memória</h2>
-                    <form id="boat-form" class="space-y-4" onsubmit="saveNewBoat(event)">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Barco / Embarcação</label>
-                            <input type="text" id="boat-name" placeholder="Ex: Atlanticus I" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Barqueiro</label>
-                                <input type="text" id="boat-owner" placeholder="Nome" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone</label>
-                                <input type="text" id="boat-phone" placeholder="Contato" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ajudante?</label>
-                                <select id="boat-helper" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- VAGAS E OCUPAÇÃO DE POSIÇÕES NO BARCO -->
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/80 space-y-3">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-chair mr-1"></i> Vagas por Setor da Embarcação</h3>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <div>
-                                    <label class="block text-[10px] uppercase text-slate-400 mb-1">Popa</label>
-                                    <input type="number" min="0" id="pos-popa" value="4" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] uppercase text-slate-400 mb-1">Proa</label>
-                                    <input type="number" min="0" id="pos-proa" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] uppercase text-slate-400 mb-1">Lado Esq (LE)</label>
-                                    <input type="number" min="0" id="pos-le" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] uppercase text-slate-400 mb-1">Lado Dir (LD)</label>
-                                    <input type="number" min="0" id="pos-ld" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg text-sm">Salvar Barco na Memória</button>
-                    </form>
-                </div>
-
-                <!-- Lista de Barcos Salvos e Seleção para a Viagem -->
+                <!-- Coluna Esquerda: Cadastro do Barco na Memória & Dados da Viagem -->
                 <div class="space-y-6">
+                    <!-- Gerenciar / Cadastrar Novo Barco -->
                     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Barcos Cadastrados (<span id="boat-count">0</span>)</h2>
-                        <p class="text-xs text-slate-400">Selecione o barco que será utilizado na pescaria ativa ou remova os antigos.</p>
-                        <div id="boats-list-container" class="space-y-3 max-h-[300px] overflow-y-auto pr-1"></div>
+                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar Novo Barco na Memória</h2>
+                        <form id="boat-form" class="space-y-4" onsubmit="saveNewBoat(event)">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Barco / Embarcação</label>
+                                <input type="text" id="boat-name" placeholder="Ex: Atlanticus I" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Barqueiro</label>
+                                    <input type="text" id="boat-owner" placeholder="Nome" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone</label>
+                                    <input type="text" id="boat-phone" placeholder="Contato" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ajudante?</label>
+                                    <select id="boat-helper" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
+                                        <option value="Sim">Sim</option>
+                                        <option value="Não">Não</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- VAGAS E OCUPAÇÃO DE POSIÇÕES NO BARCO -->
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/80 space-y-3">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-chair mr-1"></i> Vagas por Setor da Embarcação</h3>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <div>
+                                        <label class="block text-[10px] uppercase text-slate-400 mb-1">Popa</label>
+                                        <input type="number" min="0" id="pos-popa" value="4" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase text-slate-400 mb-1">Proa</label>
+                                        <input type="number" min="0" id="pos-proa" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase text-slate-400 mb-1">Lado Esq (LE)</label>
+                                        <input type="number" min="0" id="pos-le" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] uppercase text-slate-400 mb-1">Lado Dir (LD)</label>
+                                        <input type="number" min="0" id="pos-ld" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg text-sm">Salvar Barco na Memória</button>
+                        </form>
                     </div>
 
-                    <div id="participant-card-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <!-- Lista de Barcos Salvos -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Barcos Cadastrados (<span id="boat-count">0</span>)</h2>
+                        <div id="boats-list-container" class="space-y-3 max-h-[220px] overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Dados da Viagem (Seleção por Barco e Destino) & Participantes -->
+                <div class="space-y-6">
+                    <!-- Configuração da Viagem Atual -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-compass text-blue-500"></i> Dados da Viagem & Seleção</h2>
+                        <form id="trip-config-form" class="space-y-3" onsubmit="saveTripConfig(event)">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Barco (Selecionar)</label>
+                                <select id="trip-boat-select" onchange="onSelectBoat(this.value)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                                    <option value="">Selecione um barco cadastrado...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Destino da Pescaria</label>
+                                <select id="trip-destination-select" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                                    <option value="">Selecione o destino cadastrado...</option>
+                                </select>
+                            </div>
+
+                            <!-- Informações Automáticas do Barco Selecionado -->
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700/80 space-y-2">
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div><span class="text-slate-400 uppercase text-[10px] block">Barqueiro:</span> <strong id="info-barqueiro" class="text-white">-</strong></div>
+                                    <div><span class="text-slate-400 uppercase text-[10px] block">Telefone:</span> <strong id="info-telefone" class="text-white">-</strong></div>
+                                </div>
+                                <div class="border-t border-slate-800 pt-2 grid grid-cols-4 gap-1 text-center text-xs">
+                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">Popa</span><span id="info-vagas-popa" class="font-bold text-amber-400">0</span></div>
+                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">Proa</span><span id="info-vagas-proa" class="font-bold text-blue-400">0</span></div>
+                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">LE</span><span id="info-vagas-le" class="font-bold text-emerald-400">0</span></div>
+                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">LD</span><span id="info-vagas-ld" class="font-bold text-purple-400">0</span></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-xl transition-all text-sm shadow-lg">Salvar Configuração da Viagem</button>
+                        </form>
+                    </div>
+
+                    <!-- Adicionar Pescador -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
                         <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador</h2>
                         <form id="participant-form" class="space-y-3" onsubmit="addParticipant(event)">
                             <div>
@@ -180,7 +218,7 @@
         <section id="tab-sorteio" class="hidden space-y-6">
             <div id="lottery-action-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center space-y-3">
                 <h2 class="text-xl font-bold text-white">Sorteio de Assentos por Setores do Barco</h2>
-                <p class="text-xs text-slate-400">Barco Ativo Selecionado: <strong id="active-boat-label" class="text-blue-400">Nenhum</strong></p>
+                <p class="text-xs text-slate-400">Barco Ativo Selecionado: <strong id="active-boat-label" class="text-blue-400">Nenhum</strong> | Destino: <strong id="active-dest-label" class="text-emerald-400">Não definido</strong></p>
                 <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg"><i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio Completo nos Setores</button>
             </div>
             
@@ -336,25 +374,25 @@
         <section id="tab-pontos" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div id="spot-register-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-map-pin text-blue-500"></i> Ponto & Estacionamento</h2>
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-map-pin text-blue-500"></i> Ponto & Destino</h2>
                     <form id="spot-form" class="space-y-4" onsubmit="addFishingSpot(event)">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Local / Ponto & Estacionamento</label>
-                            <input type="text" id="spot-name" placeholder="Ex: Marina / Pier" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Destino / Ponto</label>
+                            <input type="text" id="spot-name" placeholder="Ex: Ilha da Vitória / Píer" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Espécies & Profundidade</label>
                             <input type="text" id="spot-species" placeholder="Ex: Garoupa (35m)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Observações do Estacionamento</label>
-                            <textarea id="spot-obs" placeholder="Ex: Estacionamento seguro 24h na marina." rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Observações do Estacionamento/Local</label>
+                            <textarea id="spot-obs" placeholder="Ex: Estacionamento seguro 24h." rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm">Salvar Ponto</button>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm">Salvar Destino/Ponto</button>
                     </form>
                 </div>
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2">
-                    <h2 class="text-lg font-semibold text-white mb-4">Locais Cadastrados</h2>
+                    <h2 class="text-lg font-semibold text-white mb-4">Destinos & Pontos Cadastrados</h2>
                     <div id="spots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
             </div>
@@ -393,23 +431,27 @@
         const GEMINI_API_KEY = "AQ.Ab8RN6K1_hQaCGQatyLohCYV58e24CwlbghAzwJYHIYIL4OZ5Q";
         const ADMIN_PASSWORD_FIXED = "pesca2026";
 
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v8')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v9')) || {
             auth: { logged: false, role: "convidado", name: "" },
             boats: [
                 { id: 1, name: "Atlanticus I", owner: "João Barqueiro", phone: "(13) 99999-1111", helper: "Sim", positions: { popa: 4, proa: 2, le: 2, ld: 2 } }
             ],
             activeBoatId: 1,
-            participants: [], expenses: [], payers: [], spots: [], chat: [], catches: [], 
+            activeDestination: "",
+            participants: [], expenses: [], payers: [], spots: [
+                { id: 1, name: "Atlanticus - Ilha da Vitória", species: "Garoupa, Pargo", obs: "Estacionamento 24h na marina" }
+            ], chat: [], catches: [], 
             lottery: { popa: [], proa: [], le: [], ld: [] }
         };
 
         if(!db.boats) db.boats = [];
         if(!db.activeBoatId && db.boats.length) db.activeBoatId = db.boats[0].id;
+        if(!db.spots) db.spots = [];
         if(!db.lottery) db.lottery = { popa: [], proa: [], le: [], ld: [] };
         if(!db.payers) db.payers = [];
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v8', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v9', JSON.stringify(db));
             renderAll();
         }
 
@@ -472,16 +514,43 @@
             alert('Barco cadastrado e salvo na memória com sucesso!');
         }
 
-        function setActiveBoat(boatId) {
-            db.activeBoatId = boatId;
-            saveData();
-        }
-
         function removeBoat(boatId) {
             if(db.boats.length <= 1) return alert('Você deve manter ao menos um barco cadastrado.');
             db.boats = db.boats.filter(b => b.id !== boatId);
             if(db.activeBoatId === boatId) db.activeBoatId = db.boats[0].id;
             saveData();
+        }
+
+        function onSelectBoat(boatId) {
+            db.activeBoatId = boatId ? parseInt(boatId) : null;
+            updateBoatPreviewInfo();
+            saveData();
+        }
+
+        function updateBoatPreviewInfo() {
+            const boat = db.boats.find(b => b.id === db.activeBoatId);
+            if (boat) {
+                document.getElementById('info-barqueiro').innerText = boat.owner;
+                document.getElementById('info-telefone').innerText = boat.phone;
+                document.getElementById('info-vagas-popa').innerText = boat.positions.popa;
+                document.getElementById('info-vagas-proa').innerText = boat.positions.proa;
+                document.getElementById('info-vagas-le').innerText = boat.positions.le;
+                document.getElementById('info-vagas-ld').innerText = boat.positions.ld;
+            } else {
+                document.getElementById('info-barqueiro').innerText = '-';
+                document.getElementById('info-telefone').innerText = '-';
+                document.getElementById('info-vagas-popa').innerText = '0';
+                document.getElementById('info-vagas-proa').innerText = '0';
+                document.getElementById('info-vagas-le').innerText = '0';
+                document.getElementById('info-vagas-ld').innerText = '0';
+            }
+        }
+
+        function saveTripConfig(e) {
+            e.preventDefault();
+            db.activeDestination = document.getElementById('trip-destination-select').value;
+            saveData();
+            alert('Configuração da viagem salva com sucesso!');
         }
 
         function addParticipant(e) {
@@ -515,6 +584,11 @@
             document.getElementById('spot-form').reset();
             saveData();
         }
+        function removeSpot(id) {
+            db.spots = db.spots.filter(s => s.id !== id);
+            saveData();
+        }
+
         function addCatch(e) {
             e.preventDefault();
             db.catches.push({ id: Date.now(), fisherman: document.getElementById('catch-fisherman').value, species: document.getElementById('catch-species').value, weight: parseFloat(document.getElementById('catch-weight').value) });
@@ -522,6 +596,7 @@
             saveData();
         }
         function removeCatch(id) { db.catches = db.catches.filter(c => c.id !== id); saveData(); }
+        
         function addChatMessage(e) {
             e.preventDefault();
             db.chat.push({ sender: db.auth.name, text: document.getElementById('chat-text').value, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
@@ -549,7 +624,7 @@
         function runLottery() {
             if (!db.participants.length) return alert('Cadastre participantes.');
             const activeBoat = db.boats.find(b => b.id === db.activeBoatId);
-            if (!activeBoat) return alert('Selecione um barco ativo.');
+            if (!activeBoat) return alert('Selecione um barco ativo na viagem.');
 
             let shuffled = [...db.participants].sort(() => Math.random() - 0.5);
 
@@ -567,13 +642,16 @@
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
             document.getElementById('chat-sender').value = db.auth.name;
 
-            // Renderizar Lista de Barcos na Memória
+            // Renderizar Seletor de Barcos e Lista
             document.getElementById('boat-count').innerText = db.boats.length;
+            let boatSelectHtml = '<option value="">Selecione um barco cadastrado...</option>';
             let boatsHtml = '';
             let activeBoatName = 'Nenhum';
+
             db.boats.forEach(b => {
                 let isActive = b.id === db.activeBoatId;
                 if(isActive) activeBoatName = b.name;
+                boatSelectHtml += `<option value="${b.id}" ${isActive ? 'selected' : ''}>${b.name} (Barqueiro: ${b.owner})</option>`;
                 boatsHtml += `
                     <div class="bg-slate-900 border ${isActive ? 'border-blue-500 shadow-md shadow-blue-500/10' : 'border-slate-700'} p-3 rounded-xl flex items-center justify-between text-xs">
                         <div>
@@ -582,14 +660,36 @@
                             <span class="text-slate-400">Vagas: Popa (${b.positions.popa}) | Proa (${b.positions.proa}) | LE (${b.positions.le}) | LD (${b.positions.ld})</span>
                         </div>
                         <div class="flex flex-col gap-1 items-end">
-                            ${!isActive ? `<button onclick="setActiveBoat(${b.id})" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1 rounded-lg">Usar</button>` : ''}
-                            <button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
             });
+            document.getElementById('trip-boat-select').innerHTML = boatSelectHtml;
             document.getElementById('boats-list-container').innerHTML = boatsHtml || '<span class="text-xs text-slate-500">Nenhum barco na memória.</span>';
             document.getElementById('active-boat-label').innerText = activeBoatName;
+            updateBoatPreviewInfo();
+
+            // Renderizar Seletor de Destinos (Pontos cadastrados) e Container de Pontos
+            let destSelectHtml = '<option value="">Selecione o destino cadastrado...</option>';
+            let spotsHtml = '';
+            db.spots.forEach(s => {
+                let isSelected = s.name === db.activeDestination;
+                destSelectHtml += `<option value="${s.name}" ${isSelected ? 'selected' : ''}>${s.name} - (${s.species})</option>`;
+                spotsHtml += `
+                    <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl space-y-2 text-xs">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-white text-sm"><i class="fa-solid fa-map-pin text-blue-400 mr-1"></i> ${s.name}</h4>
+                            <button onclick="removeSpot(${s.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <p class="text-slate-300"><strong>Espécies:</strong> ${s.species}</p>
+                        <p class="text-slate-400 italic">${s.obs}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('trip-destination-select').innerHTML = destSelectHtml;
+            document.getElementById('spots-container').innerHTML = spotsHtml || '<span class="text-xs text-slate-500">Nenhum destino/ponto cadastrado. Vá até a aba "Pontos & Estacionamento" para cadastrar.</span>';
+            document.getElementById('active-dest-label').innerText = db.activeDestination || 'Não definido';
 
             // Participantes
             document.getElementById('participant-count').innerText = db.participants.length;
