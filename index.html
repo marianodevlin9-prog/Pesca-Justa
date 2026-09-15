@@ -37,7 +37,7 @@
                 <div>
                     <label id="password-label" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha do Administrador</label>
                     <input type="password" id="login-password" placeholder="Digite a senha..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                    <p id="password-hint" class="text-[10px] text-slate-500 mt-1">Senha padrão : <strong class="text-slate-300">pesca2026</strong></p>
+                    <p id="password-hint" class="text-[10px] text-slate-500 mt-1">Senha padrão: <strong class="text-slate-300">pesca2026</strong></p>
                 </div>
 
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm">Entrar no Sistema</button>
@@ -227,14 +227,15 @@
             </div>
         </section>
 
-        <!-- DESPESAS & RATEIO -->
+        <!-- DESPESAS & RATEIO (SEPARADO EM QUADROS DISTINTOS) -->
         <section id="tab-despesas" class="hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div id="expense-register-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-receipt text-blue-500"></i> Registrar Gasto / Pagamento</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- QUADRO 1: REGISTRO DE DESPESAS GERAIS -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-receipt text-blue-500"></i> 1. Registro de Despesas Gerais</h2>
                     <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Despesa</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria</label>
                             <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
                                 <option value="Taxa do Barco">Taxa do Barco</option>
                                 <option value="Iscas">Iscas</option>
@@ -244,31 +245,64 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição / Detalhe</label>
-                            <input type="text" id="exp-desc" placeholder="Ex: Aluguel do Barco" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição</label>
+                            <input type="text" id="exp-desc" placeholder="Ex: Aluguel do barco" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor (R$)</label>
                             <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quem pagou?</label>
-                            <select id="exp-payer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm"></select>
-                        </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Registrar Despesa</button>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Adicionar Despesa Geral</button>
                     </form>
-                </div>
-
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-6">
-                    <h4 class="text-sm font-semibold text-slate-300">Balanço e Histórico Individual</h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-900 uppercase text-xs text-slate-400">
-                                <tr><th class="p-2.5">Pescador</th><th class="p-2.5">Total Pago</th><th class="p-2.5">Diferença / Acerto</th></tr>
+                    <div class="mt-4 max-h-[200px] overflow-y-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900 uppercase text-slate-400">
+                                <tr><th class="p-2">Tipo</th><th class="p-2">Descrição</th><th class="p-2">Valor</th><th class="p-2 text-center">Ação</th></tr>
                             </thead>
-                            <tbody id="individual-balance-body" class="divide-y divide-slate-700"></tbody>
+                            <tbody id="expenses-table-body" class="divide-y divide-slate-700"></tbody>
                         </table>
                     </div>
+                </div>
+
+                <!-- QUADRO 2: PAGAMENTOS E LANÇAMENTOS POR PESCADOR -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-user-tag text-emerald-400"></i> 2. Pagamentos por Pescador</h2>
+                    <form id="payer-form" class="space-y-4" onsubmit="addPayerPayment(event)">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Selecione o Pescador</label>
+                            <select id="pay-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição do Pagamento / Quota</label>
+                            <input type="text" id="pay-desc" placeholder="Ex: Pagou parte do barco / Iscas" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Pago (R$)</label>
+                            <input type="number" step="0.01" id="pay-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Registrar Valor Pago pelo Pescador</button>
+                    </form>
+                    <div class="mt-4 max-h-[200px] overflow-y-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900 uppercase text-slate-400">
+                                <tr><th class="p-2">Pescador</th><th class="p-2">Detalhe</th><th class="p-2">Valor</th><th class="p-2 text-center">Ação</th></tr>
+                            </thead>
+                            <tbody id="payers-table-body" class="divide-y divide-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUADRO 3: EXTRATO E ACERTO DE CONTAS FINAL -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-amber-400"></i> 3. Extrato e Rateio Final (Acerto entre Pescadores)</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900 uppercase text-xs text-slate-400">
+                            <tr><th class="p-3">Pescador</th><th class="p-3">Total Pago Individual</th><th class="p-3">Cota Parte (Rateio)</th><th class="p-3">Status / Acerto</th></tr>
+                        </thead>
+                        <tbody id="individual-balance-body" class="divide-y divide-slate-700"></tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -337,8 +371,10 @@
         let db = JSON.parse(localStorage.getItem('pesca_justa_db_v6')) || {
             auth: { logged: false, role: "convidado", name: "" },
             trip: { location: "Atlanticus - Ilha da Vitória", boatOwner: "", boatPhone: "", helper: "Sim", departure: "", return: "", travelTime: 2.0, popa: 4 },
-            participants: [], expenses: [], spots: [], chat: [], catches: [], lottery: { popa: [] }
+            participants: [], expenses: [], payers: [], spots: [], chat: [], catches: [], lottery: { popa: [] }
         };
+
+        if(!db.payers) db.payers = [];
 
         const speciesTable = {
             "Olho-de-boi": { max: 1000, pts: 100 }, "Garoupa": { max: 1000, pts: 120 }, "Badejo": { max: 1000, pts: 120 },
@@ -408,12 +444,23 @@
         }
 
         function removeParticipant(id) { db.participants = db.participants.filter(p => p.id !== id); saveData(); }
+        
         function addExpense(e) {
             e.preventDefault();
-            db.expenses.push({ id: Date.now(), type: document.getElementById('exp-type').value, description: document.getElementById('exp-desc').value, value: parseFloat(document.getElementById('exp-value').value), payer: document.getElementById('exp-payer').value });
+            db.expenses.push({ id: Date.now(), type: document.getElementById('exp-type').value, description: document.getElementById('exp-desc').value, value: parseFloat(document.getElementById('exp-value').value) });
             document.getElementById('expense-form').reset();
             saveData();
         }
+        function removeExpense(id) { db.expenses = db.expenses.filter(ex => ex.id !== id); saveData(); }
+
+        function addPayerPayment(e) {
+            e.preventDefault();
+            db.payers.push({ id: Date.now(), fisherman: document.getElementById('pay-fisherman').value, description: document.getElementById('pay-desc').value, value: parseFloat(document.getElementById('pay-value').value) });
+            document.getElementById('payer-form').reset();
+            saveData();
+        }
+        function removePayer(id) { db.payers = db.payers.filter(p => p.id !== id); saveData(); }
+
         function addFishingSpot(e) {
             e.preventDefault();
             db.spots.push({ id: Date.now(), name: document.getElementById('spot-name').value, species: document.getElementById('spot-species').value, obs: document.getElementById('spot-obs').value });
@@ -462,7 +509,7 @@
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
             document.getElementById('chat-sender').value = db.auth.name;
 
-            // Preenchimento de inputs e tabelas
+            // Participantes
             document.getElementById('participant-count').innerText = db.participants.length;
             let pHtml = '', payerOpts = '', catchOpts = '';
             db.participants.forEach(p => {
@@ -471,8 +518,8 @@
                 catchOpts += `<option value="${p.name}">${p.name}</option>`;
             });
             document.getElementById('participants-table-body').innerHTML = pHtml || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante.</td></tr>`;
-            document.getElementById('exp-payer').innerHTML = payerOpts;
-            document.getElementById('catch-fisherman').innerHTML = catchOpts;
+            document.getElementById('pay-fisherman').innerHTML = payerOpts || '<option value="">Cadastre pescadores</option>';
+            document.getElementById('catch-fisherman').innerHTML = catchOpts || '<option value="">Cadastre pescadores</option>';
 
             // Tempo real pescando
             if(db.trip.departure && db.trip.return) {
@@ -481,40 +528,48 @@
                 document.getElementById('calculated-fishing-hours').innerText = `${realH.toFixed(1)} horas`;
             }
 
-            // Capturas e Ranking com Emoji para quem não pegou
-            let catchesHtml = '', userHasFish = {};
-            db.participants.forEach(p => { userHasFish[p.name] = false; });
-            db.catches.forEach(c => {
-                userHasFish[c.fisherman] = true;
-                let specData = speciesTable[c.species] || { max: 500, pts: 100 };
-                let pts = Math.min(c.weight * specData.pts, specData.max);
-                catchesHtml += `<tr><td class="p-3">${c.fisherman}</td><td class="p-3">${c.species}</td><td class="p-3 text-emerald-400">${c.weight} kg (${pts.pts || pts} pts)</td><td class="p-3 text-center"><button onclick="removeCatch(${c.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            // Quadro 1: Tabela de Despesas Gerais
+            let expHtml = '';
+            db.expenses.forEach(ex => {
+                expHtml += `<tr><td class="p-2">${ex.type}</td><td class="p-2">${ex.description}</td><td class="p-2 font-semibold text-blue-400">R$ ${ex.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
-            db.participants.forEach(p => {
-                if(!userHasFish[p.name]) {
-                    catchesHtml += `<tr class="opacity-60"><td class="p-3">${p.name}</td><td class="p-3 italic">Sem capturas 😢</td><td class="p-3">0 kg</td><td class="p-3"></td></tr>`;
-                }
-            });
-            document.getElementById('catches-table-body').innerHTML = catchesHtml || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma captura.</td></tr>`;
+            document.getElementById('expenses-table-body').innerHTML = expHtml || `<tr><td colspan="4" class="p-3 text-center text-slate-500">Nenhuma despesa geral cadastrada.</td></tr>`;
 
-            // Balanço individual de despesas
+            // Quadro 2: Tabela de Pagamentos por Pescador
+            let payHtml = '';
+            db.payers.forEach(p => {
+                payHtml += `<tr><td class="p-2 font-medium text-emerald-400">${p.fisherman}</td><td class="p-2">${p.description}</td><td class="p-2 font-semibold">R$ ${p.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removePayer(${p.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            });
+            document.getElementById('payers-table-body').innerHTML = payHtml || `<tr><td colspan="4" class="p-3 text-center text-slate-500">Nenhum pagamento individual registrado.</td></tr>`;
+
+            // Quadro 3: Extrato e Acerto de Contas Final
             let totalExp = db.expenses.reduce((acc, ex) => acc + ex.value, 0);
-            let perPerson = db.participants.length ? totalExp / db.participants.length : 0;
+            let totalPaidByFishermen = db.payers.reduce((acc, p) => acc + p.value, 0);
+            let grandTotal = totalExp + totalPaidByFishermen; // Montante geral de custos
+            let perPerson = db.participants.length ? grandTotal / db.participants.length : 0;
+
             let paidMap = {};
             db.participants.forEach(p => { paidMap[p.name] = 0; });
-            db.expenses.forEach(ex => { if(paidMap[ex.payer] !== undefined) paidMap[ex.payer] += ex.value; });
+            db.payers.forEach(p => { if(paidMap[p.fisherman] !== undefined) paidMap[p.fisherman] += p.value; });
 
             let balHtml = '';
             db.participants.forEach(p => {
-                let diff = (paidMap[p.name] || 0) - perPerson;
-                balHtml += `<tr><td class="p-2.5">${p.name}</td><td class="p-2.5">R$ ${(paidMap[p.name]||0).toFixed(2)}</td><td class="p-2.5">${diff >= 0 ? `+R$ ${diff.toFixed(2)} (Crédito)` : `-R$ ${Math.abs(diff).toFixed(2)} (Deve)`}</td></tr>`;
+                let paid = paidMap[p.name] || 0;
+                let diff = paid - perPerson;
+                balHtml += `<tr>
+                    <td class="p-3 font-medium">${p.name}</td>
+                    <td class="p-3">R$ ${paid.toFixed(2)}</td>
+                    <td class="p-3">R$ ${perPerson.toFixed(2)}</td>
+                    <td class="p-3 font-bold ${diff >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${diff >= 0 ? `+R$ ${diff.toFixed(2)} (Crédito)` : `-R$ ${Math.abs(diff).toFixed(2)} (Deve)`}</td>
+                </tr>`;
             });
-            document.getElementById('individual-balance-body').innerHTML = balHtml || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Sem dados.</td></tr>`;
-            document.getElementById('rep-total-expenses').innerText = `R$ ${totalExp.toFixed(2)}`;
+            document.getElementById('individual-balance-body').innerHTML = balHtml || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Cadastre participantes para visualizar o rateio.</td></tr>`;
+
+            document.getElementById('rep-total-expenses').innerText = `R$ ${grandTotal.toFixed(2)}`;
             document.getElementById('rep-total-fish').innerText = db.catches.length;
             document.getElementById('rep-total-weight').innerText = `${db.catches.reduce((a,b)=>a+b.weight,0).toFixed(2)} kg`;
 
-            // Sorteio Popa Turnos Proporcionais
+            // Sorteio Popa
             let popaHtml = '';
             db.lottery.popa.forEach((p, idx) => {
                 popaHtml += `<div class="bg-blue-950 border border-blue-500 rounded-xl p-3 text-center"><span class="text-[10px] text-amber-400 block font-bold">Popa #${idx+1}</span><span class="text-xs text-white">${p.name}</span></div>`;
