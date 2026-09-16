@@ -91,11 +91,20 @@
                 <div class="space-y-6">
                     <!-- Gerenciar / Cadastrar Novo Barco -->
                     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar Novo Barco na Memória</h2>
+                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar Nova Embarcação</h2>
                         <form id="boat-form" class="space-y-4" onsubmit="saveNewBoat(event)">
                             <div>
                                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Barco / Embarcação</label>
-                                <input type="text" id="boat-name" placeholder="Ex: Atlanticus I" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                                <input type="text" id="boat-name" placeholder="Ex: Mar Caiçara" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Local de Saída</label>
+                                <select id="boat-local" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                                    <option value="São Sebastião">🛥️ São Sebastião</option>
+                                    <option value="Portinho / São Vicente">🛥️ Portinho / São Vicente</option>
+                                    <option value="Itanhaém">🛥️ Itanhaém</option>
+                                    <option value="Bertioga">🛥️ Bertioga</option>
+                                </select>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div>
@@ -104,7 +113,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone</label>
-                                    <input type="text" id="boat-phone" placeholder="Contato" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
+                                    <input type="text" id="boat-phone" placeholder="Contato" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ajudante?</label>
@@ -144,7 +153,7 @@
                     <!-- Lista de Barcos Salvos -->
                     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
                         <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Barcos Cadastrados (<span id="boat-count">0</span>)</h2>
-                        <div id="boats-list-container" class="space-y-3 max-h-[220px] overflow-y-auto pr-1"></div>
+                        <div id="boats-list-container" class="space-y-3 max-h-[260px] overflow-y-auto pr-1"></div>
                     </div>
                 </div>
 
@@ -169,7 +178,8 @@
 
                             <!-- Informações Automáticas do Barco Selecionado -->
                             <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700/80 space-y-2">
-                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="grid grid-cols-3 gap-2 text-xs">
+                                    <div><span class="text-slate-400 uppercase text-[10px] block">Local:</span> <strong id="info-local" class="text-emerald-400">-</strong></div>
                                     <div><span class="text-slate-400 uppercase text-[10px] block">Barqueiro:</span> <strong id="info-barqueiro" class="text-white">-</strong></div>
                                     <div><span class="text-slate-400 uppercase text-[10px] block">Telefone:</span> <strong id="info-telefone" class="text-white">-</strong></div>
                                 </div>
@@ -525,10 +535,11 @@
         const GEMINI_API_KEY = "AQ.Ab8RN6K1_hQaCGQatyLohCYV58e24CwlbghAzwJYHIYIL4OZ5Q";
         const ADMIN_PASSWORD_FIXED = "pesca2026";
 
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v10')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v11')) || {
             auth: { logged: false, role: "convidado", name: "" },
             boats: [
-                { id: 1, name: "Atlanticus I", owner: "João Barqueiro", phone: "(13) 99999-1111", helper: "Sim", positions: { popa: 4, proa: 2, le: 2, ld: 2 } }
+                { id: 1, name: "Mar Caiçara", local: "São Sebastião", owner: "Paulo Costa", phone: "(13) 99999-1111", helper: "Sim", positions: { popa: 4, proa: 2, le: 2, ld: 2 } },
+                { id: 2, name: "Brisa", local: "São Sebastião", owner: "Airton França", phone: "(13) 99999-2222", helper: "Sim", positions: { popa: 4, proa: 2, le: 2, ld: 2 } }
             ],
             activeBoatId: 1,
             activeDestination: "Atlanticus - Ilha da Vitória",
@@ -564,7 +575,7 @@
         if(!db.votes) db.votes = [];
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v10', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v11', JSON.stringify(db));
             renderAll();
         }
 
@@ -610,6 +621,7 @@
             const newBoat = {
                 id: Date.now(),
                 name: document.getElementById('boat-name').value,
+                local: document.getElementById('boat-local').value,
                 owner: document.getElementById('boat-owner').value,
                 phone: document.getElementById('boat-phone').value,
                 helper: document.getElementById('boat-helper').value,
@@ -624,7 +636,7 @@
             if(!db.activeBoatId) db.activeBoatId = newBoat.id;
             document.getElementById('boat-form').reset();
             saveData();
-            alert('Barco cadastrado e salvo na memória com sucesso!');
+            alert('Embarcação cadastrada e salva na memória com sucesso!');
         }
 
         function removeBoat(boatId) {
@@ -643,13 +655,15 @@
         function updateBoatPreviewInfo() {
             const boat = db.boats.find(b => b.id === db.activeBoatId);
             if (boat) {
+                document.getElementById('info-local').innerText = boat.local || 'São Sebastião';
                 document.getElementById('info-barqueiro').innerText = boat.owner;
-                document.getElementById('info-telefone').innerText = boat.phone;
+                document.getElementById('info-telefone').innerText = boat.phone || '-';
                 document.getElementById('info-vagas-popa').innerText = boat.positions.popa;
                 document.getElementById('info-vagas-proa').innerText = boat.positions.proa;
                 document.getElementById('info-vagas-le').innerText = boat.positions.le;
                 document.getElementById('info-vagas-ld').innerText = boat.positions.ld;
             } else {
+                document.getElementById('info-local').innerText = '-';
                 document.getElementById('info-barqueiro').innerText = '-';
                 document.getElementById('info-telefone').innerText = '-';
                 document.getElementById('info-vagas-popa').innerText = '0';
@@ -789,7 +803,7 @@
             db.lottery.ld = shuffled.splice(0, activeBoat.positions.ld);
 
             saveData();
-            alert(`Sorteio realizado usando o barco "${activeBoat.name}" e seus setores!`);
+            alert(`Sorteio realizado usando o barco "${activeBoat.name}" (${activeBoat.local}) e seus setores!`);
         }
 
         // --- LÓGICA DE VOTAÇÃO ---
@@ -882,7 +896,7 @@
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
             document.getElementById('chat-sender').value = db.auth.name;
 
-            // Renderizar Seletor de Barcos e Lista
+            // Renderizar Seletor de Barcos e Lista com Locais
             document.getElementById('boat-count').innerText = db.boats.length;
             let boatSelectHtml = '<option value="">Selecione um barco cadastrado...</option>';
             let boatsHtml = '';
@@ -891,13 +905,17 @@
             db.boats.forEach(b => {
                 let isActive = b.id === db.activeBoatId;
                 if(isActive) activeBoatName = b.name;
-                boatSelectHtml += `<option value="${b.id}" ${isActive ? 'selected' : ''}>${b.name} (Barqueiro: ${b.owner})</option>`;
+                let localTag = b.local || 'São Sebastião';
+                let totalVagas = (b.positions.popa || 0) + (b.positions.proa || 0) + (b.positions.le || 0) + (b.positions.ld || 0);
+
+                boatSelectHtml += `<option value="${b.id}" ${isActive ? 'selected' : ''}>🛥️ ${localTag} — ${b.name} (${totalVagas} vagas)</option>`;
                 boatsHtml += `
                     <div class="bg-slate-900 border ${isActive ? 'border-blue-500 shadow-md shadow-blue-500/10' : 'border-slate-700'} p-3 rounded-xl flex items-center justify-between text-xs">
                         <div>
-                            <span class="font-bold text-white block text-sm">${b.name} ${isActive ? '<span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">Ativo</span>' : ''}</span>
-                            <span class="text-slate-400">Barqueiro: ${b.owner} (${b.phone})</span><br>
-                            <span class="text-slate-400">Vagas: Popa (${b.positions.popa}) | Proa (${b.positions.proa}) | LE (${b.positions.le}) | LD (${b.positions.ld})</span>
+                            <span class="text-[10px] text-emerald-400 uppercase font-bold block">🛥️ ${localTag}</span>
+                            <span class="font-bold text-white block text-sm">${b.name} — ${totalVagas} vagas ${isActive ? '<span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">Ativo</span>' : ''}</span>
+                            <span class="text-slate-400">Barqueiro: ${b.owner} ${b.phone ? '(' + b.phone + ')' : ''} | Ajudante: ${b.helper || 'Sim'}</span><br>
+                            <span class="text-slate-400">Setores: Popa (${b.positions.popa}) | Proa (${b.positions.proa}) | LE (${b.positions.le}) | LD (${b.positions.ld})</span>
                         </div>
                         <div class="flex flex-col gap-1 items-end">
                             <button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir"><i class="fa-solid fa-trash"></i></button>
@@ -1002,7 +1020,7 @@
             document.getElementById('rep-total-weight').innerText = `${db.catches.reduce((a,b)=>a+b.weight,0).toFixed(2)} kg`;
 
             // Renderização dos Setores do Sorteio
-            const renderSectorList = (arr) => arr.length ? arr.map((p, i) => `<div class="bg-slate-900 border border-slate-700 p-2 rounded-lg text-xs flex justify-between"><span class="text-slate-300">#${i+1} - ${p.name}</span></div>`).join('') : '<span class="text-xs text-slate-500">Vago / Não sorteado</span>';
+            const renderSectorList = (arr) => arr.length ? arr.map((p, i) => `<div class="bg-slate-900 border border-slate-700 p-2 rounded-lg text-xs flex justify-between"><span class="text-slate-300">#${i+1} — ${p.name}</span></div>`).join('') : '<span class="text-xs text-slate-500">Vago / Não sorteado</span>';
             
             document.getElementById('sector-popa-list').innerHTML = renderSectorList(db.lottery.popa);
             document.getElementById('sector-proa-list').innerHTML = renderSectorList(db.lottery.proa);
