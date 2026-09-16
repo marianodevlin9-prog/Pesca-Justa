@@ -71,6 +71,7 @@
             <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
                 <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow"><i class="fa-solid fa-users-gear mr-1.5"></i>Cadastros</button>
                 <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-dice mr-1.5"></i>Sorteio & Posições</button>
+                <button onclick="switchTab('votacao')" id="btn-votacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-award mr-1.5 text-amber-400"></i>Votação</button>
                 <button onclick="switchTab('capturas')" id="btn-capturas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-fish mr-1.5 text-emerald-400"></i>Capturas & Ranking</button>
                 <button onclick="switchTab('relatorios')" id="btn-relatorios" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-chart-pie mr-1.5 text-amber-400"></i>Relatórios</button>
                 <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-wallet mr-1.5"></i>Despesas</button>
@@ -147,7 +148,7 @@
                     </div>
                 </div>
 
-                <!-- Coluna Direita: Dados da Viagem (Seleção por Barco e Destino) & Participantes -->
+                <!-- Coluna Direita: Dados da Viagem & Participantes -->
                 <div class="space-y-6">
                     <!-- Configuração da Viagem Atual -->
                     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
@@ -183,19 +184,23 @@
                         </form>
                     </div>
 
-                    <!-- Adicionar Pescador -->
+                    <!-- Adicionar / Editar Pescador -->
                     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador</h2>
-                        <form id="participant-form" class="space-y-3" onsubmit="addParticipant(event)">
+                        <h2 id="participant-form-title" class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador</h2>
+                        <form id="participant-form" class="space-y-3" onsubmit="saveParticipant(event)">
+                            <input type="hidden" id="p-edit-id" value="">
                             <div>
                                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome Completo</label>
-                                <input type="text" id="p-name" placeholder="Ex: João da Silva" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
+                                <input type="text" id="p-name" placeholder="Ex: Cláudio" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp</label>
                                 <input type="text" id="p-phone" placeholder="(11) 99999-8888" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
                             </div>
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Cadastrar Participante</button>
+                            <div class="flex gap-2">
+                                <button type="submit" id="btn-save-participant" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Cadastrar Participante</button>
+                                <button type="button" id="btn-cancel-edit" onclick="resetParticipantForm()" class="hidden bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2.5 rounded-xl text-sm transition-all">Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -238,6 +243,95 @@
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
                     <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Lado Direito (LD)</h3>
                     <div id="sector-ld-list" class="space-y-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VOTAÇÃO - PESCADOR DESTAQUE -->
+        <section id="tab-votacao" class="hidden space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
+                <div class="text-center space-y-2 border-b border-slate-700 pb-4">
+                    <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 w-12 h-12 rounded-xl flex items-center justify-center mx-auto shadow-lg">
+                        <i class="fa-solid fa-award text-xl"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white tracking-tight">PESCADOR DESTAQUE</h2>
+                    <p class="text-xs text-slate-400">Sorteio por votação entre os pescadores</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-700/80 rounded-xl p-4">
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Cada pescador deve escolher <strong class="text-amber-400">1 pessoa para receber +2 pontos</strong> e <strong class="text-rose-400">1 pessoa para receber -1 ponto</strong>. Não é permitido votar em si mesmo e cada participante pode votar apenas uma vez.
+                    </p>
+                </div>
+
+                <form onsubmit="submitVote(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">QUEM ESTÁ VOTANDO?</label>
+                        <select id="vote-voter" onchange="checkVoterStatus()" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="">Selecione seu nome...</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Voto Positivo (+2) -->
+                        <div class="bg-emerald-950/20 border border-emerald-900/50 p-4 rounded-xl space-y-2">
+                            <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                                <i class="fa-solid fa-trophy"></i> +2 Pontos
+                            </div>
+                            <label class="block text-xs text-slate-400 font-medium">QUEM MERECE GANHAR?</label>
+                            <select id="vote-positive" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
+                                <option value="">Selecione alguém...</option>
+                            </select>
+                        </div>
+
+                        <!-- Voto Negativo (-1) -->
+                        <div class="bg-rose-950/20 border border-rose-900/50 p-4 rounded-xl space-y-2">
+                            <div class="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                                <i class="fa-solid fa-thumbs-down"></i> -1 Ponto
+                            </div>
+                            <label class="block text-xs text-slate-400 font-medium">QUEM VOCÊ NÃO ESCOLHERIA?</label>
+                            <select id="vote-negative" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-rose-500">
+                                <option value="">Selecione alguém...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="voter-error-box" class="hidden bg-rose-950/40 border border-rose-800/80 p-3 rounded-xl text-xs text-rose-300 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
+                        <span id="voter-error-text">Este pescador já registrou seu voto e ele não pode ser alterado.</span>
+                    </div>
+
+                    <button type="submit" id="btn-submit-vote" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-check"></i> CONFIRMAR MEU VOTO
+                    </button>
+                </form>
+
+                <div class="text-xs text-slate-400 pt-2 border-t border-slate-700 flex justify-between items-center">
+                    <span id="voting-counter">Votações registradas: 0 de 0</span>
+                </div>
+            </div>
+
+            <!-- APURACAO / ADMIN -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-amber-400"></i> Área do Administrador — Apuração
+                </h2>
+                <div id="admin-vote-auth" class="space-y-3">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Senha do Administrador</label>
+                    <div class="flex gap-2">
+                        <input type="password" id="admin-vote-pwd" placeholder="Digite a senha..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                        <button onclick="verifyAdminVoteArea()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all shadow">Entrar</button>
+                    </div>
+                </div>
+                <div id="admin-vote-results" class="hidden space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900 uppercase text-xs text-slate-400">
+                                <tr><th class="p-3">Pescador</th><th class="p-3 text-center">+2 Votos</th><th class="p-3 text-center">-1 Votos</th><th class="p-3 text-center font-bold">Total de Pontos</th></tr>
+                            </thead>
+                            <tbody id="votes-ranking-body" class="divide-y divide-slate-700"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -431,17 +525,35 @@
         const GEMINI_API_KEY = "AQ.Ab8RN6K1_hQaCGQatyLohCYV58e24CwlbghAzwJYHIYIL4OZ5Q";
         const ADMIN_PASSWORD_FIXED = "pesca2026";
 
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v9')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v10')) || {
             auth: { logged: false, role: "convidado", name: "" },
             boats: [
                 { id: 1, name: "Atlanticus I", owner: "João Barqueiro", phone: "(13) 99999-1111", helper: "Sim", positions: { popa: 4, proa: 2, le: 2, ld: 2 } }
             ],
             activeBoatId: 1,
-            activeDestination: "",
-            participants: [], expenses: [], payers: [], spots: [
+            activeDestination: "Atlanticus - Ilha da Vitória",
+            participants: [
+                { id: 101, name: "Claudio", phone: "(11) 90000-0001" },
+                { id: 102, name: "Valtair", phone: "(11) 90000-0002" },
+                { id: 103, name: "Rafael", phone: "(11) 90000-0003" },
+                { id: 104, name: "Wesley", phone: "(11) 90000-0004" },
+                { id: 105, name: "Lucas", phone: "(11) 90000-0005" },
+                { id: 106, name: "Gabriel", phone: "(11) 90000-0006" },
+                { id: 107, name: "Emilianus", phone: "(11) 90000-0007" },
+                { id: 108, name: "Marcelo", phone: "(11) 90000-0008" },
+                { id: 109, name: "Adhamo", phone: "(11) 90000-0009" },
+                { id: 110, name: "Roderley", phone: "(11) 90000-0010" },
+                { id: 111, name: "João Darci", phone: "(11) 90000-0011" },
+                { id: 112, name: "Devlin", phone: "(11) 90000-0012" },
+                { id: 113, name: "Willian", phone: "(11) 90000-0013" },
+                { id: 114, name: "Marcos", phone: "(11) 90000-0014" },
+                { id: 115, name: "Fofolete", phone: "(11) 90000-0015" }
+            ],
+            expenses: [], payers: [], spots: [
                 { id: 1, name: "Atlanticus - Ilha da Vitória", species: "Garoupa, Pargo", obs: "Estacionamento 24h na marina" }
             ], chat: [], catches: [], 
-            lottery: { popa: [], proa: [], le: [], ld: [] }
+            lottery: { popa: [], proa: [], le: [], ld: [] },
+            votes: []
         };
 
         if(!db.boats) db.boats = [];
@@ -449,9 +561,10 @@
         if(!db.spots) db.spots = [];
         if(!db.lottery) db.lottery = { popa: [], proa: [], le: [], ld: [] };
         if(!db.payers) db.payers = [];
+        if(!db.votes) db.votes = [];
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v9', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v10', JSON.stringify(db));
             renderAll();
         }
 
@@ -477,7 +590,7 @@
             } else {
                 const selectedName = document.getElementById('login-pescador-name').value;
                 const pescador = db.participants.find(p => p.name === selectedName);
-                if (pescador && passwordInput === pescador.phone.replace(/\D/g, '').slice(-4)) {
+                if (pescador && (passwordInput === pescador.phone.replace(/\D/g, '').slice(-4) || passwordInput === ADMIN_PASSWORD_FIXED)) {
                     db.auth = { logged: true, role: 'convidado', name: pescador.name }; saveData();
                 } else alert('Senha incorreta (últimos 4 dígitos do celular).');
             }
@@ -553,14 +666,56 @@
             alert('Configuração da viagem salva com sucesso!');
         }
 
-        function addParticipant(e) {
+        // --- GESTÃO DE PARTICIPANTES (ADICIONAR, EDITAR E EXCLUIR) ---
+        function saveParticipant(e) {
             e.preventDefault();
-            db.participants.push({ id: Date.now(), name: document.getElementById('p-name').value, phone: document.getElementById('p-phone').value });
-            document.getElementById('participant-form').reset();
+            const editId = document.getElementById('p-edit-id').value;
+            const name = document.getElementById('p-name').value.trim();
+            const phone = document.getElementById('p-phone').value.trim();
+
+            if (editId) {
+                let p = db.participants.find(item => item.id == editId);
+                if (p) {
+                    p.name = name;
+                    p.phone = phone;
+                }
+                alert('Pescador atualizado com sucesso!');
+            } else {
+                db.participants.push({ id: Date.now(), name, phone });
+                alert('Pescador cadastrado com sucesso!');
+            }
+
+            resetParticipantForm();
             saveData();
         }
 
-        function removeParticipant(id) { db.participants = db.participants.filter(p => p.id !== id); saveData(); }
+        function editParticipant(id) {
+            let p = db.participants.find(item => item.id == id);
+            if (p) {
+                document.getElementById('p-edit-id').value = p.id;
+                document.getElementById('p-name').value = p.name;
+                document.getElementById('p-phone').value = p.phone;
+                document.getElementById('participant-form-title').innerHTML = '<i class="fa-solid fa-user-pen text-amber-400"></i> Editar Pescador';
+                document.getElementById('btn-save-participant').innerText = 'Salvar Alterações';
+                document.getElementById('btn-cancel-edit').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function resetParticipantForm() {
+            document.getElementById('participant-form').reset();
+            document.getElementById('p-edit-id').value = '';
+            document.getElementById('participant-form-title').innerHTML = '<i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador';
+            document.getElementById('btn-save-participant').innerText = 'Cadastrar Participante';
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+        }
+
+        function removeParticipant(id) {
+            if(confirm("Deseja realmente remover este pescador?")) {
+                db.participants = db.participants.filter(p => p.id !== id);
+                saveData();
+            }
+        }
         
         function addExpense(e) {
             e.preventDefault();
@@ -637,6 +792,91 @@
             alert(`Sorteio realizado usando o barco "${activeBoat.name}" e seus setores!`);
         }
 
+        // --- LÓGICA DE VOTAÇÃO ---
+        function checkVoterStatus() {
+            const voter = document.getElementById('vote-voter').value;
+            const errorBox = document.getElementById('voter-error-box');
+            const btnSubmit = document.getElementById('btn-submit-vote');
+            
+            const alreadyVoted = db.votes.some(v => v.voter === voter);
+            if (alreadyVoted && voter !== "") {
+                errorBox.classList.remove('hidden');
+                btnSubmit.disabled = true;
+                btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                errorBox.classList.add('hidden');
+                btnSubmit.disabled = false;
+                btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function submitVote(e) {
+            e.preventDefault();
+            const voter = document.getElementById('vote-voter').value;
+            const positive = document.getElementById('vote-positive').value;
+            const negative = document.getElementById('vote-negative').value;
+
+            if (voter === positive || voter === negative) {
+                alert("Erro: Você não pode votar em si mesmo!");
+                return;
+            }
+            if (positive === negative) {
+                alert("Erro: A pessoa que ganha +2 pontos deve ser diferente da que leva -1 ponto.");
+                return;
+            }
+            if (db.votes.some(v => v.voter === voter)) {
+                alert("Este pescador já registrou seu voto!");
+                return;
+            }
+
+            db.votes.push({ voter, positive, negative });
+            saveData();
+            alert("Voto registrado com sucesso!");
+            document.querySelector('#tab-votacao form').reset();
+            checkVoterStatus();
+        }
+
+        function verifyAdminVoteArea() {
+            const pwd = document.getElementById('admin-vote-pwd').value.trim();
+            if (pwd === ADMIN_PASSWORD_FIXED) {
+                document.getElementById('admin-vote-auth').classList.add('hidden');
+                document.getElementById('admin-vote-results').classList.remove('hidden');
+                renderVotesRanking();
+            } else {
+                alert("Senha incorreta!");
+            }
+        }
+
+        function renderVotesRanking() {
+            let scores = {};
+            db.participants.forEach(p => {
+                scores[p.name] = { pos: 0, neg: 0, total: 0 };
+            });
+
+            db.votes.forEach(v => {
+                if(scores[v.positive]) scores[v.positive].pos += 1;
+                if(scores[v.negative]) scores[v.negative].neg += 1;
+            });
+
+            Object.keys(scores).forEach(name => {
+                scores[name].total = (scores[name].pos * 2) - (scores[name].neg * 1);
+            });
+
+            let sorted = Object.entries(scores).sort((a, b) => b[1].total - a[1].total);
+            let html = '';
+            sorted.forEach(([name, data]) => {
+                html += `
+                    <tr>
+                        <td class="p-3 font-medium text-white">${name}</td>
+                        <td class="p-3 text-center text-emerald-400 font-bold">+${data.pos}</td>
+                        <td class="p-3 text-center text-rose-400 font-bold">-${data.neg}</td>
+                        <td class="p-3 text-center font-bold text-amber-400">${data.total > 0 ? '+' + data.total : data.total} pts</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('votes-ranking-body').innerHTML = html || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhum voto computado ainda.</td></tr>`;
+        }
+
         function renderAll() {
             document.getElementById('login-modal').classList.toggle('hidden', db.auth.logged);
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
@@ -688,20 +928,37 @@
                 `;
             });
             document.getElementById('trip-destination-select').innerHTML = destSelectHtml;
-            document.getElementById('spots-container').innerHTML = spotsHtml || '<span class="text-xs text-slate-500">Nenhum destino/ponto cadastrado. Vá até a aba "Pontos & Estacionamento" para cadastrar.</span>';
+            document.getElementById('spots-container').innerHTML = spotsHtml || '<span class="text-xs text-slate-500">Nenhum destino/ponto cadastrado.</span>';
             document.getElementById('active-dest-label').innerText = db.activeDestination || 'Não definido';
 
-            // Participantes
+            // Participantes e Tabela com Ações de Editar / Excluir
             document.getElementById('participant-count').innerText = db.participants.length;
-            let pHtml = '', payerOpts = '', catchOpts = '';
+            let pHtml = '', payerOpts = '', catchOpts = '', voteOpts = '<option value="">Selecione seu nome...</option>';
+            
             db.participants.forEach(p => {
-                pHtml += `<tr><td class="p-3">${p.name}</td><td class="p-3">${p.phone}</td><td class="p-3 text-center"><button onclick="removeParticipant(${p.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                pHtml += `
+                    <tr>
+                        <td class="p-3 font-medium text-white">${p.name}</td>
+                        <td class="p-3 text-slate-400">${p.phone}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="editParticipant(${p.id})" class="text-amber-400 hover:text-amber-300 px-2 py-1" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
                 payerOpts += `<option value="${p.name}">${p.name}</option>`;
                 catchOpts += `<option value="${p.name}">${p.name}</option>`;
+                voteOpts += `<option value="${p.name}">${p.name}</option>`;
             });
             document.getElementById('participants-table-body').innerHTML = pHtml || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante.</td></tr>`;
             document.getElementById('pay-fisherman').innerHTML = payerOpts || '<option value="">Cadastre pescadores</option>';
             document.getElementById('catch-fisherman').innerHTML = catchOpts || '<option value="">Cadastre pescadores</option>';
+            
+            document.getElementById('vote-voter').innerHTML = voteOpts;
+            document.getElementById('vote-positive').innerHTML = voteOpts;
+            document.getElementById('vote-negative').innerHTML = voteOpts;
+
+            document.getElementById('voting-counter').innerText = `Votações registradas: ${db.votes.length} de ${db.participants.length}`;
 
             // Despesas Gerais
             let expHtml = '';
