@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesca-Justa - Gestão Completa de Pescaria</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- MODAL DE LOGIN / AUTENTICAÇÃO -->
     <div id="login-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-6">
             <div class="text-center space-y-2">
                 <div class="bg-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto text-white shadow-lg shadow-blue-600/30">
                     <i class="fa-solid fa-lock text-xl"></i>
@@ -23,7 +36,7 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo de Acesso</label>
-                    <select id="login-type" onchange="toggleLoginFields()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <select id="login-type" onchange="toggleLoginFields()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                         <option value="admin">Administrador</option>
                         <option value="pescador">Convidado / Pescador</option>
                     </select>
@@ -31,12 +44,12 @@
 
                 <div id="pescador-select-box" class="hidden">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Selecione seu Nome</label>
-                    <select id="login-pescador-name" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"></select>
+                    <select id="login-pescador-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"></select>
                 </div>
 
                 <div>
                     <label id="password-label" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha do Administrador</label>
-                    <input type="password" id="login-password" placeholder="Digite a senha..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <input type="password" id="login-password" placeholder="Digite a senha..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                     <p id="password-hint" class="text-[10px] text-slate-500 mt-1">Senha padrão: <strong class="text-slate-300">pesca2026</strong></p>
                 </div>
 
@@ -46,7 +59,7 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md">
+    <header class="bg-slate-900 border-b border-slate-800 py-4 px-6 shadow-md">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-600/30">
@@ -58,17 +71,17 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-700">
+            <div class="flex items-center gap-3 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
                 <div class="text-right">
                     <span class="text-[10px] text-slate-400 font-semibold uppercase block">Logado como:</span>
                     <span id="current-user-display" class="text-xs font-bold text-blue-400">Administrador</span>
                 </div>
-                <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-rose-400 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-700 transition-all" title="Sair">
+                <button onclick="logout()" class="bg-slate-900 hover:bg-slate-800 text-rose-400 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-800 transition-all" title="Sair">
                     <i class="fa-solid fa-right-from-bracket"></i> Sair
                 </button>
             </div>
 
-            <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
+            <nav class="flex flex-wrap justify-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
                 <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow"><i class="fa-solid fa-users-gear mr-1.5"></i>Cadastros</button>
                 <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-dice mr-1.5"></i>Sorteio & Posições</button>
                 <button onclick="switchTab('votacao')" id="btn-votacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-award mr-1.5 text-amber-400"></i>Votação</button>
@@ -76,73 +89,74 @@
                 <button onclick="switchTab('relatorios')" id="btn-relatorios" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-chart-pie mr-1.5 text-amber-400"></i>Relatórios</button>
                 <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-wallet mr-1.5"></i>Despesas</button>
                 <button onclick="switchTab('pontos')" id="btn-pontos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-map-location-dot mr-1.5"></i>Pontos & Estacionamento</button>
-                <button onclick="switchTab('chat')" id="btn-chat" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-comments mr-1.5"></i>Encontro</button>
-                <button onclick="switchTab('ia')" id="btn-ia" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-robot mr-1.5 text-blue-400"></i>IA</button>
             </nav>
         </div>
     </header>
 
-    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow">
+    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow space-y-6">
 
         <!-- CADASTROS -->
         <section id="tab-cadastros" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Coluna Esquerda: Cadastro do Barco na Memória & Dados da Viagem -->
-                <div class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- COLUNA ESQUERDA: Cadastro do Barco & Diagrama Visual + Destinos (7 Colunas) -->
+                <div class="lg:col-span-7 space-y-6">
                     <!-- Gerenciar / Cadastrar Novo Barco -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar Nova Embarcação</h2>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar / Selecionar Embarcação</h2>
                         <form id="boat-form" class="space-y-4" onsubmit="saveNewBoat(event)">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Barco / Embarcação</label>
-                                <input type="text" id="boat-name" placeholder="Ex: Mar Caiçara" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Local de Saída</label>
-                                <select id="boat-local" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
-                                    <option value="São Sebastião">🛥️ São Sebastião</option>
-                                    <option value="Portinho / São Vicente">🛥️ Portinho / São Vicente</option>
-                                    <option value="Itanhaém">🛥️ Itanhaém</option>
-                                    <option value="Bertioga">🛥️ Bertioga</option>
-                                </select>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Barco / Embarcação</label>
+                                    <input type="text" id="boat-name" placeholder="Ex: Mar Caiçara" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ponto de Saída Fixo</label>
+                                    <select id="boat-local" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
+                                        <option value="São Sebastião">🛥️ São Sebastião</option>
+                                        <option value="Portinho / São Vicente">🛥️ Portinho / São Vicente</option>
+                                        <option value="Itanhaém">🛥️ Itanhaém</option>
+                                        <option value="Bertioga">🛥️ Bertioga</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Barqueiro</label>
-                                    <input type="text" id="boat-owner" placeholder="Nome" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
+                                    <input type="text" id="boat-owner" placeholder="Nome" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone</label>
-                                    <input type="text" id="boat-phone" placeholder="Contato" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
+                                    <input type="text" id="boat-phone" placeholder="Contato" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ajudante?</label>
-                                    <select id="boat-helper" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
+                                    <select id="boat-helper" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
                                         <option value="Sim">Sim</option>
                                         <option value="Não">Não</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <!-- VAGAS E OCUPAÇÃO DE POSIÇÕES NO BARCO -->
-                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/80 space-y-3">
-                                <h3 class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-chair mr-1"></i> Vagas por Setor da Embarcação</h3>
+                            <!-- VAGAS E ESQUEMA GRÁFICO DE ASSENTOS DO BARCO -->
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                                <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block"><i class="fa-solid fa-chair mr-1"></i> Vagas e Esquema Gráfico de Assentos</span>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                     <div>
-                                        <label class="block text-[10px] uppercase text-slate-400 mb-1">Popa</label>
-                                        <input type="number" min="0" id="pos-popa" value="4" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                        <label class="block text-[10px] uppercase text-slate-400 mb-1">Popa (Premium)</label>
+                                        <input type="number" min="0" id="pos-popa" value="4" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-[10px] uppercase text-slate-400 mb-1">Proa</label>
-                                        <input type="number" min="0" id="pos-proa" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                        <input type="number" min="0" id="pos-proa" value="2" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-[10px] uppercase text-slate-400 mb-1">Lado Esq (LE)</label>
-                                        <input type="number" min="0" id="pos-le" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                        <input type="number" min="0" id="pos-le" value="2" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-[10px] uppercase text-slate-400 mb-1">Lado Dir (LD)</label>
-                                        <input type="number" min="0" id="pos-ld" value="2" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                                        <input type="number" min="0" id="pos-ld" value="2" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-sm">
                                     </div>
                                 </div>
                             </div>
@@ -151,79 +165,118 @@
                     </div>
 
                     <!-- Lista de Barcos Salvos -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Barcos Cadastrados (<span id="boat-count">0</span>)</h2>
-                        <div id="boats-list-container" class="space-y-3 max-h-[260px] overflow-y-auto pr-1"></div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Lista Geral de Barcos Cadastrados (<span id="boat-count">0</span>)</h2>
+                        <div id="boats-list-container" class="space-y-3 max-h-[220px] overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <!-- CADASTRO DE DESTINOS & PRÉ-VISUALIZAÇÃO DE MAPA -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-map-pin text-emerald-400"></i> Destinos & Pontos de Pesca</h2>
+                        <form id="spot-form" class="space-y-3" onsubmit="addFishingSpot(event)">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-medium text-slate-400 mb-1">NOME DO DESTINO / PONTO</label>
+                                    <input type="text" id="spot-name" placeholder="Ex: Atlanticus - Ilha da Vitória" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-medium text-slate-400 mb-1">ESPÉCIES ALVO</label>
+                                    <input type="text" id="spot-species" placeholder="Ex: Garoupa, Pargo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300">
+                                </div>
+                            </div>
+
+                            <!-- Miniatura de Mapa Simulada -->
+                            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2">
+                                <span class="text-[10px] font-semibold text-slate-400 block">Pré-visualização do Local / GPS</span>
+                                <div class="h-24 bg-slate-900 rounded-lg border border-slate-800 flex items-center justify-center relative overflow-hidden">
+                                    <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                                    <span class="relative z-10 text-xs bg-slate-950/90 text-emerald-400 border border-emerald-900 px-3 py-1 rounded-full shadow font-mono">
+                                        📍 Navegação & Marina Ativa
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-medium text-slate-400 mb-1">OBSERVAÇÕES DE ESTACIONAMENTO & LOGÍSTICA</label>
+                                <textarea id="spot-obs" placeholder="Ex: Estacionamento 24h na marina." rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl transition text-xs shadow-lg">Cadastrar Destino & Estacionamento</button>
+                        </form>
+                        <div id="spots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"></div>
                     </div>
                 </div>
 
-                <!-- Coluna Direita: Dados da Viagem & Participantes -->
-                <div class="space-y-6">
+                <!-- COLUNA DIREITA: Seleção de Viagem Ativa & Participantes (5 Colunas) -->
+                <div class="lg:col-span-5 space-y-6">
+                    
                     <!-- Configuração da Viagem Atual -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                        <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-compass text-blue-500"></i> Dados da Viagem & Seleção</h2>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-compass text-blue-500"></i> Seleção Ativa para a Viagem</h2>
                         <form id="trip-config-form" class="space-y-3" onsubmit="saveTripConfig(event)">
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Barco (Selecionar)</label>
-                                <select id="trip-boat-select" onchange="onSelectBoat(this.value)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                                <label class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">BARCO ATIVO DA VIAGEM</label>
+                                <select id="trip-boat-select" onchange="onSelectBoat(this.value)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs">
                                     <option value="">Selecione um barco cadastrado...</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Destino da Pescaria</label>
-                                <select id="trip-destination-select" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                                <label class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">DESTINO ATIVO DA VIAGEM</label>
+                                <select id="trip-destination-select" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs">
                                     <option value="">Selecione o destino cadastrado...</option>
                                 </select>
                             </div>
 
                             <!-- Informações Automáticas do Barco Selecionado -->
-                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700/80 space-y-2">
-                                <div class="grid grid-cols-3 gap-2 text-xs">
-                                    <div><span class="text-slate-400 uppercase text-[10px] block">Local:</span> <strong id="info-local" class="text-emerald-400">-</strong></div>
-                                    <div><span class="text-slate-400 uppercase text-[10px] block">Barqueiro:</span> <strong id="info-barqueiro" class="text-white">-</strong></div>
-                                    <div><span class="text-slate-400 uppercase text-[10px] block">Telefone:</span> <strong id="info-telefone" class="text-white">-</strong></div>
+                            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                                <div class="grid grid-cols-3 gap-2 text-[11px]">
+                                    <div><span class="text-slate-500 uppercase text-[9px] block">Local:</span> <strong id="info-local" class="text-emerald-400">-</strong></div>
+                                    <div><span class="text-slate-500 uppercase text-[9px] block">Barqueiro:</span> <strong id="info-barqueiro" class="text-white">-</strong></div>
+                                    <div><span class="text-slate-500 uppercase text-[9px] block">Telefone:</span> <strong id="info-telefone" class="text-white">-</strong></div>
                                 </div>
                                 <div class="border-t border-slate-800 pt-2 grid grid-cols-4 gap-1 text-center text-xs">
-                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">Popa</span><span id="info-vagas-popa" class="font-bold text-amber-400">0</span></div>
-                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">Proa</span><span id="info-vagas-proa" class="font-bold text-blue-400">0</span></div>
-                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">LE</span><span id="info-vagas-le" class="font-bold text-emerald-400">0</span></div>
-                                    <div class="bg-slate-800 p-1.5 rounded"><span class="text-[9px] text-slate-400 block">LD</span><span id="info-vagas-ld" class="font-bold text-purple-400">0</span></div>
+                                    <div class="bg-slate-900 p-1 rounded"><span class="text-[9px] text-slate-500 block">Popa</span><span id="info-vagas-popa" class="font-bold text-amber-400">0</span></div>
+                                    <div class="bg-slate-900 p-1 rounded"><span class="text-[9px] text-slate-500 block">Proa</span><span id="info-vagas-proa" class="font-bold text-blue-400">0</span></div>
+                                    <div class="bg-slate-900 p-1 rounded"><span class="text-[9px] text-slate-500 block">LE</span><span id="info-vagas-le" class="font-bold text-emerald-400">0</span></div>
+                                    <div class="bg-slate-900 p-1 rounded"><span class="text-[9px] text-slate-500 block">LD</span><span id="info-vagas-ld" class="font-bold text-purple-400">0</span></div>
                                 </div>
                             </div>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-xl transition-all text-sm shadow-lg">Salvar Configuração da Viagem</button>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-xl transition-all text-xs shadow-lg">Salvar Configuração da Viagem</button>
                         </form>
                     </div>
 
                     <!-- Adicionar / Editar Pescador -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                        <h2 id="participant-form-title" class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador</h2>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                        <h2 id="participant-form-title" class="text-base font-semibold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador</h2>
                         <form id="participant-form" class="space-y-3" onsubmit="saveParticipant(event)">
                             <input type="hidden" id="p-edit-id" value="">
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome Completo</label>
-                                <input type="text" id="p-name" placeholder="Ex: Cláudio" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
+                                <label class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome Completo</label>
+                                <input type="text" id="p-name" placeholder="Ex: Cláudio" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp</label>
-                                <input type="text" id="p-phone" placeholder="(11) 99999-8888" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
+                                <label class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp</label>
+                                <input type="text" id="p-phone" placeholder="(11) 99999-8888" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs">
                             </div>
                             <div class="flex gap-2">
-                                <button type="submit" id="btn-save-participant" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Cadastrar Participante</button>
-                                <button type="button" id="btn-cancel-edit" onclick="resetParticipantForm()" class="hidden bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2.5 rounded-xl text-sm transition-all">Cancelar</button>
+                                <button type="submit" id="btn-save-participant" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-xs shadow-lg">Cadastrar Participante</button>
+                                <button type="button" id="btn-cancel-edit" onclick="resetParticipantForm()" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2.5 rounded-xl text-xs transition-all">Cancelar</button>
                             </div>
                         </form>
                     </div>
+
                 </div>
+
             </div>
 
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+            <!-- Tabela de Pescadores Confirmados -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Pescadores Confirmados (<span id="participant-count">0</span>)</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900 uppercase text-xs text-slate-400 border-b border-slate-700">
+                        <thead class="bg-slate-950 uppercase text-xs text-slate-400 border-b border-slate-800">
                             <tr><th class="p-3">Nome</th><th class="p-3">Telefone</th><th class="p-3 text-center action-col">Ações</th></tr>
                         </thead>
-                        <tbody id="participants-table-body" class="divide-y divide-slate-700"></tbody>
+                        <tbody id="participants-table-body" class="divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
             </div>
@@ -231,26 +284,26 @@
 
         <!-- SORTEIO & PLANTA -->
         <section id="tab-sorteio" class="hidden space-y-6">
-            <div id="lottery-action-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center space-y-3">
+            <div id="lottery-action-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-center space-y-3">
                 <h2 class="text-xl font-bold text-white">Sorteio de Assentos por Setores do Barco</h2>
                 <p class="text-xs text-slate-400">Barco Ativo Selecionado: <strong id="active-boat-label" class="text-blue-400">Nenhum</strong> | Destino: <strong id="active-dest-label" class="text-emerald-400">Não definido</strong></p>
                 <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg"><i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio Completo nos Setores</button>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                     <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Pessoas na Popa</h3>
                     <div id="sector-popa-list" class="space-y-2"></div>
                 </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                     <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Pessoas na Proa</h3>
                     <div id="sector-proa-list" class="space-y-2"></div>
                 </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                     <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Lado Esquerdo (LE)</h3>
                     <div id="sector-le-list" class="space-y-2"></div>
                 </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                     <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Lado Direito (LD)</h3>
                     <div id="sector-ld-list" class="space-y-2"></div>
                 </div>
@@ -259,8 +312,8 @@
 
         <!-- VOTAÇÃO - PESCADOR DESTAQUE -->
         <section id="tab-votacao" class="hidden space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
-                <div class="text-center space-y-2 border-b border-slate-700 pb-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                <div class="text-center space-y-2 border-b border-slate-800 pb-4">
                     <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 w-12 h-12 rounded-xl flex items-center justify-center mx-auto shadow-lg">
                         <i class="fa-solid fa-award text-xl"></i>
                     </div>
@@ -268,7 +321,7 @@
                     <p class="text-xs text-slate-400">Sorteio por votação entre os pescadores</p>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-700/80 rounded-xl p-4">
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
                     <p class="text-xs text-slate-300 leading-relaxed">
                         Cada pescador deve escolher <strong class="text-amber-400">1 pessoa para receber +2 pontos</strong> e <strong class="text-rose-400">1 pessoa para receber -1 ponto</strong>. Não é permitido votar em si mesmo e cada participante pode votar apenas uma vez.
                     </p>
@@ -277,30 +330,28 @@
                 <form onsubmit="submitVote(event)" class="space-y-5">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">QUEM ESTÁ VOTANDO?</label>
-                        <select id="vote-voter" onchange="checkVoterStatus()" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+                        <select id="vote-voter" onchange="checkVoterStatus()" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
                             <option value="">Selecione seu nome...</option>
                         </select>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Voto Positivo (+2) -->
                         <div class="bg-emerald-950/20 border border-emerald-900/50 p-4 rounded-xl space-y-2">
                             <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
                                 <i class="fa-solid fa-trophy"></i> +2 Pontos
                             </div>
                             <label class="block text-xs text-slate-400 font-medium">QUEM MERECE GANHAR?</label>
-                            <select id="vote-positive" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
+                            <select id="vote-positive" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
                                 <option value="">Selecione alguém...</option>
                             </select>
                         </div>
 
-                        <!-- Voto Negativo (-1) -->
                         <div class="bg-rose-950/20 border border-rose-900/50 p-4 rounded-xl space-y-2">
                             <div class="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
                                 <i class="fa-solid fa-thumbs-down"></i> -1 Ponto
                             </div>
                             <label class="block text-xs text-slate-400 font-medium">QUEM VOCÊ NÃO ESCOLHERIA?</label>
-                            <select id="vote-negative" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-rose-500">
+                            <select id="vote-negative" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-rose-500">
                                 <option value="">Selecione alguém...</option>
                             </select>
                         </div>
@@ -316,30 +367,30 @@
                     </button>
                 </form>
 
-                <div class="text-xs text-slate-400 pt-2 border-t border-slate-700 flex justify-between items-center">
+                <div class="text-xs text-slate-400 pt-2 border-t border-slate-800 flex justify-between items-center">
                     <span id="voting-counter">Votações registradas: 0 de 0</span>
                 </div>
             </div>
 
             <!-- APURACAO / ADMIN -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h2 class="text-lg font-semibold text-white flex items-center gap-2">
                     <i class="fa-solid fa-lock text-amber-400"></i> Área do Administrador — Apuração
                 </h2>
                 <div id="admin-vote-auth" class="space-y-3">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Senha do Administrador</label>
                     <div class="flex gap-2">
-                        <input type="password" id="admin-vote-pwd" placeholder="Digite a senha..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                        <input type="password" id="admin-vote-pwd" placeholder="Digite a senha..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         <button onclick="verifyAdminVoteArea()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all shadow">Entrar</button>
                     </div>
                 </div>
                 <div id="admin-vote-results" class="hidden space-y-4">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-900 uppercase text-xs text-slate-400">
+                            <thead class="bg-slate-950 uppercase text-xs text-slate-400">
                                 <tr><th class="p-3">Pescador</th><th class="p-3 text-center">+2 Votos</th><th class="p-3 text-center">-1 Votos</th><th class="p-3 text-center font-bold">Total de Pontos</th></tr>
                             </thead>
-                            <tbody id="votes-ranking-body" class="divide-y divide-slate-700"></tbody>
+                            <tbody id="votes-ranking-body" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
@@ -349,33 +400,33 @@
         <!-- CAPTURAS & RANKING -->
         <section id="tab-capturas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-fish-fins text-emerald-400"></i> Registrar Captura</h2>
                     <form id="catch-form" class="space-y-4" onsubmit="addCatch(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pescador</label>
-                            <select id="catch-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm"></select>
+                            <select id="catch-fisherman" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Espécie do Peixe</label>
-                            <input type="text" id="catch-species" placeholder="Ex: Garoupa, Pargo" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="text" id="catch-species" placeholder="Ex: Garoupa, Pargo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Peso (kg)</label>
-                            <input type="number" step="0.01" id="catch-weight" placeholder="Ex: 3.50" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="number" step="0.01" id="catch-weight" placeholder="Ex: 3.50" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Salvar Captura</button>
                     </form>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-4">
                     <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-400"></i> Ranking e Histórico por Pescador</h2>
                     <div class="overflow-x-auto max-h-[380px] overflow-y-auto">
                         <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-900 uppercase text-xs text-slate-400 sticky top-0">
+                            <thead class="bg-slate-950 uppercase text-xs text-slate-400 sticky top-0">
                                 <tr><th class="p-3">Pescador</th><th class="p-3">Espécie / Status</th><th class="p-3">Peso / Pontos</th><th class="p-3 text-center">Ações</th></tr>
                             </thead>
-                            <tbody id="catches-table-body" class="divide-y divide-slate-700"></tbody>
+                            <tbody id="catches-table-body" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
@@ -384,12 +435,12 @@
 
         <!-- RELATÓRIOS -->
         <section id="tab-relatorios" class="hidden space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-amber-400"></i> Relatório Geral de Viagem & Despesas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700"><span class="text-xs text-slate-400 uppercase">Total de Peixes</span><span id="rep-total-fish" class="text-2xl font-bold text-white mt-1 block">0</span></div>
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700"><span class="text-xs text-slate-400 uppercase">Peso Acumulado</span><span id="rep-total-weight" class="text-2xl font-bold text-emerald-400 mt-1 block">0.00 kg</span></div>
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700"><span class="text-xs text-slate-400 uppercase">Montante Gastos</span><span id="rep-total-expenses" class="text-2xl font-bold text-blue-400 mt-1 block">R$ 0,00</span></div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800"><span class="text-xs text-slate-400 uppercase">Total de Peixes</span><span id="rep-total-fish" class="text-2xl font-bold text-white mt-1 block">0</span></div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800"><span class="text-xs text-slate-400 uppercase">Peso Acumulado</span><span id="rep-total-weight" class="text-2xl font-bold text-emerald-400 mt-1 block">0.00 kg</span></div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800"><span class="text-xs text-slate-400 uppercase">Montante Gastos</span><span id="rep-total-expenses" class="text-2xl font-bold text-blue-400 mt-1 block">R$ 0,00</span></div>
                 </div>
             </div>
         </section>
@@ -398,12 +449,12 @@
         <section id="tab-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- QUADRO 1: REGISTRO DE DESPESAS GERAIS -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-receipt text-blue-500"></i> 1. Registro de Despesas Gerais</h2>
                     <form id="expense-form" class="space-y-4" onsubmit="addExpense(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria</label>
-                            <select id="exp-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <select id="exp-type" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                                 <option value="Taxa do Barco">Taxa do Barco</option>
                                 <option value="Iscas">Iscas</option>
                                 <option value="Combustível">Combustível</option>
@@ -413,62 +464,62 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição</label>
-                            <input type="text" id="exp-desc" placeholder="Ex: Aluguel do barco" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="text" id="exp-desc" placeholder="Ex: Aluguel do barco" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor (R$)</label>
-                            <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="number" step="0.01" id="exp-value" placeholder="0.00" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Adicionar Despesa Geral</button>
                     </form>
                     <div class="mt-4 max-h-[200px] overflow-y-auto">
                         <table class="w-full text-left text-xs text-slate-300">
-                            <thead class="bg-slate-900 uppercase text-slate-400">
+                            <thead class="bg-slate-950 uppercase text-slate-400">
                                 <tr><th class="p-2">Tipo</th><th class="p-2">Descrição</th><th class="p-2">Valor</th><th class="p-2 text-center">Ação</th></tr>
                             </thead>
-                            <tbody id="expenses-table-body" class="divide-y divide-slate-700"></tbody>
+                            <tbody id="expenses-table-body" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- QUADRO 2: PAGAMENTOS E LANÇAMENTOS POR PESCADOR -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-user-tag text-emerald-400"></i> 2. Pagamentos por Pescador</h2>
                     <form id="payer-form" class="space-y-4" onsubmit="addPayerPayment(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Selecione o Pescador</label>
-                            <select id="pay-fisherman" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm"></select>
+                            <select id="pay-fisherman" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição do Pagamento</label>
-                            <input type="text" id="pay-desc" placeholder="Ex: Quota parte" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="text" id="pay-desc" placeholder="Ex: Quota parte" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Valor Pago (R$)</label>
-                            <input type="number" step="0.01" id="pay-value" placeholder="0.00" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="number" step="0.01" id="pay-value" placeholder="0.00" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm shadow-lg">Registrar Valor Pago</button>
                     </form>
                     <div class="mt-4 max-h-[200px] overflow-y-auto">
                         <table class="w-full text-left text-xs text-slate-300">
-                            <thead class="bg-slate-900 uppercase text-slate-400">
+                            <thead class="bg-slate-950 uppercase text-slate-400">
                                 <tr><th class="p-2">Pescador</th><th class="p-2">Detalhe</th><th class="p-2">Valor</th><th class="p-2 text-center">Ação</th></tr>
                             </thead>
-                            <tbody id="payers-table-body" class="divide-y divide-slate-700"></tbody>
+                            <tbody id="payers-table-body" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
             <!-- QUADRO 3: EXTRATO E ACERTO DE CONTAS FINAL -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-amber-400"></i> 3. Extrato e Rateio Final</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900 uppercase text-xs text-slate-400">
+                        <thead class="bg-slate-950 uppercase text-xs text-slate-400">
                             <tr><th class="p-3">Pescador</th><th class="p-3">Total Pago Individual</th><th class="p-3">Cota Parte (Rateio)</th><th class="p-3">Status / Acerto</th></tr>
                         </thead>
-                        <tbody id="individual-balance-body" class="divide-y divide-slate-700"></tbody>
+                        <tbody id="individual-balance-body" class="divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
             </div>
@@ -477,62 +528,34 @@
         <!-- PONTOS DE PESCA & ESTACIONAMENTO -->
         <section id="tab-pontos" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div id="spot-register-box" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-1">
+                <div id="spot-register-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl lg:col-span-1">
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-map-pin text-blue-500"></i> Ponto & Destino</h2>
-                    <form id="spot-form" class="space-y-4" onsubmit="addFishingSpot(event)">
+                    <form id="spot-form-main" class="space-y-4" onsubmit="addFishingSpotMain(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Destino / Ponto</label>
-                            <input type="text" id="spot-name" placeholder="Ex: Ilha da Vitória / Píer" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="text" id="spot-name-main" placeholder="Ex: Ilha da Vitória / Píer" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Espécies & Profundidade</label>
-                            <input type="text" id="spot-species" placeholder="Ex: Garoupa (35m)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <input type="text" id="spot-species-main" placeholder="Ex: Garoupa (35m)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Observações do Estacionamento/Local</label>
-                            <textarea id="spot-obs" placeholder="Ex: Estacionamento seguro 24h." rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
+                            <textarea id="spot-obs-main" placeholder="Ex: Estacionamento seguro 24h." rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition-all text-sm">Salvar Destino/Ponto</button>
                     </form>
                 </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl lg:col-span-2">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl lg:col-span-2">
                     <h2 class="text-lg font-semibold text-white mb-4">Destinos & Pontos Cadastrados</h2>
-                    <div id="spots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    <div id="spots-container-main" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
-            </div>
-        </section>
-
-        <!-- CHAT -->
-        <section id="tab-chat" class="hidden space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-2xl mx-auto flex flex-col h-[500px]">
-                <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-3">Mural / Encontro & Caronas</h2>
-                <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm"></div>
-                <form id="chat-form" class="flex gap-2" onsubmit="addChatMessage(event)">
-                    <input type="text" id="chat-sender" readonly class="w-1/3 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-blue-400 text-sm font-semibold">
-                    <input type="text" id="chat-text" placeholder="Escreva sobre caronas e horários..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
-                </form>
-            </div>
-        </section>
-
-        <!-- IA -->
-        <section id="tab-ia" class="hidden space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-4xl mx-auto flex flex-col h-[550px]">
-                <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-3">Especialista IA em Pesca</h2>
-                <div id="ai-chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-sm">
-                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-700"><span class="font-semibold text-xs text-blue-400 block mb-1">Assistente IA</span><p class="text-slate-300">Olá! Pergunte sobre espécies, iscas, marés ou pontos no litoral de SP.</p></div>
-                </div>
-                <form id="ai-chat-form" class="flex gap-2" onsubmit="askFishingAI(event)">
-                    <input type="text" id="ai-chat-input" placeholder="Ex: Qual a melhor isca para robalo?" required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
-                </form>
             </div>
         </section>
 
     </main>
 
     <script>
-        const GEMINI_API_KEY = "AQ.Ab8RN6K1_hQaCGQatyLohCYV58e24CwlbghAzwJYHIYIL4OZ5Q";
         const ADMIN_PASSWORD_FIXED = "pesca2026";
 
         let db = JSON.parse(localStorage.getItem('pesca_justa_db_v11')) || {
@@ -562,7 +585,7 @@
             ],
             expenses: [], payers: [], spots: [
                 { id: 1, name: "Atlanticus - Ilha da Vitória", species: "Garoupa, Pargo", obs: "Estacionamento 24h na marina" }
-            ], chat: [], catches: [], 
+            ], catches: [], 
             lottery: { popa: [], proa: [], le: [], ld: [] },
             votes: []
         };
@@ -680,7 +703,6 @@
             alert('Configuração da viagem salva com sucesso!');
         }
 
-        // --- GESTÃO DE PARTICIPANTES (ADICIONAR, EDITAR E EXCLUIR) ---
         function saveParticipant(e) {
             e.preventDefault();
             const editId = document.getElementById('p-edit-id').value;
@@ -753,6 +775,14 @@
             document.getElementById('spot-form').reset();
             saveData();
         }
+
+        function addFishingSpotMain(e) {
+            e.preventDefault();
+            db.spots.push({ id: Date.now(), name: document.getElementById('spot-name-main').value, species: document.getElementById('spot-species-main').value, obs: document.getElementById('spot-obs-main').value });
+            document.getElementById('spot-form-main').reset();
+            saveData();
+        }
+
         function removeSpot(id) {
             db.spots = db.spots.filter(s => s.id !== id);
             saveData();
@@ -765,30 +795,6 @@
             saveData();
         }
         function removeCatch(id) { db.catches = db.catches.filter(c => c.id !== id); saveData(); }
-        
-        function addChatMessage(e) {
-            e.preventDefault();
-            db.chat.push({ sender: db.auth.name, text: document.getElementById('chat-text').value, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-            document.getElementById('chat-text').value = '';
-            saveData();
-        }
-
-        async function askFishingAI(e) {
-            e.preventDefault();
-            const input = document.getElementById('ai-chat-input');
-            const q = input.value; input.value = '';
-            const container = document.getElementById('ai-chat-messages');
-            container.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700"><b>Você:</b> ${q}</div>`;
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({contents: [{parts: [{text: `Guia de pesca em SP: ${q}`}]}]})
-                });
-                const data = await res.json();
-                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta.";
-                container.innerHTML += `<div class="bg-slate-900 p-3 rounded-xl border border-slate-700 text-blue-300"><b>IA:</b> ${reply}</div>`;
-            } catch(err) { console.error(err); }
-        }
 
         function runLottery() {
             if (!db.participants.length) return alert('Cadastre participantes.');
@@ -806,7 +812,6 @@
             alert(`Sorteio realizado usando o barco "${activeBoat.name}" (${activeBoat.local}) e seus setores!`);
         }
 
-        // --- LÓGICA DE VOTAÇÃO ---
         function checkVoterStatus() {
             const voter = document.getElementById('vote-voter').value;
             const errorBox = document.getElementById('voter-error-box');
@@ -894,9 +899,7 @@
         function renderAll() {
             document.getElementById('login-modal').classList.toggle('hidden', db.auth.logged);
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
-            document.getElementById('chat-sender').value = db.auth.name;
 
-            // Renderizar Seletor de Barcos e Lista com Locais
             document.getElementById('boat-count').innerText = db.boats.length;
             let boatSelectHtml = '<option value="">Selecione um barco cadastrado...</option>';
             let boatsHtml = '';
@@ -910,7 +913,7 @@
 
                 boatSelectHtml += `<option value="${b.id}" ${isActive ? 'selected' : ''}>🛥️ ${localTag} — ${b.name} (${totalVagas} vagas)</option>`;
                 boatsHtml += `
-                    <div class="bg-slate-900 border ${isActive ? 'border-blue-500 shadow-md shadow-blue-500/10' : 'border-slate-700'} p-3 rounded-xl flex items-center justify-between text-xs">
+                    <div class="bg-slate-950 border ${isActive ? 'border-blue-500 shadow-md shadow-blue-500/10' : 'border-slate-800'} p-3 rounded-xl flex items-center justify-between text-xs">
                         <div>
                             <span class="text-[10px] text-emerald-400 uppercase font-bold block">🛥️ ${localTag}</span>
                             <span class="font-bold text-white block text-sm">${b.name} — ${totalVagas} vagas ${isActive ? '<span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">Ativo</span>' : ''}</span>
@@ -928,28 +931,27 @@
             document.getElementById('active-boat-label').innerText = activeBoatName;
             updateBoatPreviewInfo();
 
-            // Renderizar Seletor de Destinos (Pontos cadastrados) e Container de Pontos
             let destSelectHtml = '<option value="">Selecione o destino cadastrado...</option>';
             let spotsHtml = '';
             db.spots.forEach(s => {
                 let isSelected = s.name === db.activeDestination;
                 destSelectHtml += `<option value="${s.name}" ${isSelected ? 'selected' : ''}>${s.name} - (${s.species})</option>`;
                 spotsHtml += `
-                    <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl space-y-2 text-xs">
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl space-y-1.5 text-xs">
                         <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-white text-sm"><i class="fa-solid fa-map-pin text-blue-400 mr-1"></i> ${s.name}</h4>
+                            <h4 class="font-bold text-white text-xs"><i class="fa-solid fa-map-pin text-blue-400 mr-1"></i> ${s.name}</h4>
                             <button onclick="removeSpot(${s.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button>
                         </div>
                         <p class="text-slate-300"><strong>Espécies:</strong> ${s.species}</p>
-                        <p class="text-slate-400 italic">${s.obs}</p>
+                        <p class="text-slate-400 italic text-[11px]">${s.obs}</p>
                     </div>
                 `;
             });
             document.getElementById('trip-destination-select').innerHTML = destSelectHtml;
-            document.getElementById('spots-container').innerHTML = spotsHtml || '<span class="text-xs text-slate-500">Nenhum destino/ponto cadastrado.</span>';
+            document.getElementById('spots-container').innerHTML = spotsHtml;
+            document.getElementById('spots-container-main').innerHTML = spotsHtml;
             document.getElementById('active-dest-label').innerText = db.activeDestination || 'Não definido';
 
-            // Participantes e Tabela com Ações de Editar / Excluir
             document.getElementById('participant-count').innerText = db.participants.length;
             let pHtml = '', payerOpts = '', catchOpts = '', voteOpts = '<option value="">Selecione seu nome...</option>';
             
@@ -978,21 +980,18 @@
 
             document.getElementById('voting-counter').innerText = `Votações registradas: ${db.votes.length} de ${db.participants.length}`;
 
-            // Despesas Gerais
             let expHtml = '';
             db.expenses.forEach(ex => {
                 expHtml += `<tr><td class="p-2">${ex.type}</td><td class="p-2">${ex.description}</td><td class="p-2 font-semibold text-blue-400">R$ ${ex.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('expenses-table-body').innerHTML = expHtml || `<tr><td colspan="4" class="p-3 text-center text-slate-500">Nenhuma despesa geral.</td></tr>`;
 
-            // Pagamentos por Pescador
             let payHtml = '';
             db.payers.forEach(p => {
                 payHtml += `<tr><td class="p-2 font-medium text-emerald-400">${p.fisherman}</td><td class="p-2">${p.description}</td><td class="p-2 font-semibold">R$ ${p.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removePayer(${p.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('payers-table-body').innerHTML = payHtml || `<tr><td colspan="4" class="p-3 text-center text-slate-500">Nenhum pagamento individual.</td></tr>`;
 
-            // Extrato e Rateio Final
             let totalExp = db.expenses.reduce((acc, ex) => acc + ex.value, 0);
             let totalPaidByFishermen = db.payers.reduce((acc, p) => acc + p.value, 0);
             let grandTotal = totalExp + totalPaidByFishermen;
@@ -1019,8 +1018,7 @@
             document.getElementById('rep-total-fish').innerText = db.catches.length;
             document.getElementById('rep-total-weight').innerText = `${db.catches.reduce((a,b)=>a+b.weight,0).toFixed(2)} kg`;
 
-            // Renderização dos Setores do Sorteio
-            const renderSectorList = (arr) => arr.length ? arr.map((p, i) => `<div class="bg-slate-900 border border-slate-700 p-2 rounded-lg text-xs flex justify-between"><span class="text-slate-300">#${i+1} — ${p.name}</span></div>`).join('') : '<span class="text-xs text-slate-500">Vago / Não sorteado</span>';
+            const renderSectorList = (arr) => arr.length ? arr.map((p, i) => `<div class="bg-slate-950 border border-slate-800 p-2 rounded-lg text-xs flex justify-between"><span class="text-slate-300">#${i+1} — ${p.name}</span></div>`).join('') : '<span class="text-xs text-slate-500">Vago / Não sorteado</span>';
             
             document.getElementById('sector-popa-list').innerHTML = renderSectorList(db.lottery.popa);
             document.getElementById('sector-proa-list').innerHTML = renderSectorList(db.lottery.proa);
