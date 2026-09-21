@@ -82,7 +82,8 @@
             </div>
 
             <nav class="flex flex-wrap justify-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow"><i class="fa-solid fa-users-gear mr-1.5"></i>Cadastros & Apresentação</button>
+                <button onclick="switchTab('apresentacao')" id="btn-apresentacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow"><i class="fa-solid fa-compass mr-1.5 text-blue-300"></i>Apresentação</button>
+                <button onclick="switchTab('cadastros')" id="btn-cadastros" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-users-gear mr-1.5"></i>Cadastros</button>
                 <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-dice mr-1.5"></i>Sorteio & Posições</button>
                 <button onclick="switchTab('votacao')" id="btn-votacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-award mr-1.5 text-amber-400"></i>Votação</button>
                 <button onclick="switchTab('capturas')" id="btn-capturas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-fish mr-1.5 text-emerald-400"></i>Capturas & Ranking</button>
@@ -95,57 +96,78 @@
 
     <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow space-y-6">
 
-        <!-- CADASTROS & PRIMEIRA PÁGINA (APRESENTAÇÃO) -->
-        <section id="tab-cadastros" class="space-y-6">
-            
-            <!-- PAINEL / CARD DE APRESENTAÇÃO DA PESCARIA (PRIMEIRA PÁGINA) -->
-            <div class="bg-gradient-to-r from-blue-950/40 via-slate-900 to-slate-900 border border-blue-500/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <!-- APRESENTAÇÃO OFICIAL DA EXPEDIÇÃO -->
+        <section id="tab-apresentacao" class="space-y-6">
+            <div class="bg-gradient-to-r from-blue-950/60 via-slate-900 to-slate-900 border border-blue-500/40 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
                 <div class="absolute -right-10 -bottom-10 text-blue-600/10 text-9xl pointer-events-none">
                     <i class="fa-solid fa-ship"></i>
                 </div>
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 relative z-10">
-                    <div class="space-y-2">
-                        <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold uppercase px-3 py-1 rounded-full tracking-wider inline-block">
-                            <i class="fa-solid fa-compass mr-1"></i> Resumo Oficial da Próxima Saída
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 items-center">
+                    <div class="lg:col-span-7 space-y-4">
+                        <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs font-bold uppercase px-3.5 py-1.5 rounded-full tracking-wider inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-compass"></i> Painel de Apresentação da Expedição
                         </span>
-                        <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                            Embarcação: <span id="pres-boat-name" class="text-blue-400">-</span>
+                        
+                        <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight flex items-center gap-3">
+                            Barco: <span id="pres-boat-name" class="text-blue-400">-</span>
                         </h2>
-                        <div class="text-xs text-slate-300 space-y-1">
-                            <p class="flex flex-wrap items-center gap-2">
-                                <span><i class="fa-solid fa-map-pin text-emerald-400 mr-1"></i> Destino: <strong id="pres-dest-name" class="text-slate-100">-</strong></span>
-                                <span>•</span>
-                                <span><i class="fa-regular fa-calendar text-amber-400 mr-1"></i> Início: <strong id="pres-start-datetime" class="text-slate-100">-</strong></span>
-                                <span>•</span>
-                                <span><i class="fa-regular fa-clock text-blue-400 mr-1"></i> Duração: <strong id="pres-hours" class="text-slate-100">-</strong></span>
-                            </p>
-                            <p class="flex items-center gap-1.5 text-blue-300 font-medium">
-                                <i class="fa-solid fa-flag-checkered text-emerald-400"></i> Retorno Previsto: <span id="pres-return-datetime" class="font-bold text-white">-</span>
-                            </p>
-                        </div>
-                    </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full lg:w-auto">
-                        <div class="bg-slate-950/80 border border-slate-800 p-3 rounded-xl text-center">
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold block">Pessoas</span>
-                            <span id="pres-total-people" class="text-xl font-bold text-white">0</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                            <div>
+                                <span class="text-slate-400 uppercase text-[10px] font-semibold block mb-0.5">Destino Ativo:</span>
+                                <strong id="pres-dest-name" class="text-emerald-400 text-sm font-bold">-</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 uppercase text-[10px] font-semibold block mb-0.5">Barqueiro / Contato:</span>
+                                <strong id="pres-barqueiro-info" class="text-slate-200 text-sm font-medium">-</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 uppercase text-[10px] font-semibold block mb-0.5">Início da Saída:</span>
+                                <strong id="pres-start-datetime" class="text-amber-400 text-sm font-bold">-</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 uppercase text-[10px] font-semibold block mb-0.5">Retorno Previsto (<span id="pres-hours">12</span>h):</span>
+                                <strong id="pres-return-datetime" class="text-blue-300 text-sm font-bold">-</strong>
+                            </div>
                         </div>
-                        <div class="bg-slate-950/80 border border-slate-800 p-3 rounded-xl text-center">
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold block">Rateio Est.</span>
-                            <span id="pres-rateio-val" class="text-xl font-bold text-emerald-400">R$ 0,00</span>
-                        </div>
-                        <div class="bg-slate-950/80 border border-slate-800 p-3 rounded-xl text-center col-span-2 sm:col-span-1 flex flex-col justify-center">
-                            <button onclick="openEditPresentationModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition shadow">
-                                <i class="fa-solid fa-pen mr-1"></i> Editar Agenda
+
+                        <div id="pres-edit-btn-box" class="hidden pt-1">
+                            <button onclick="openEditPresentationModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold py-2 px-4 rounded-xl transition shadow-lg flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square"></i> Editar Agenda & Duração
                             </button>
                         </div>
                     </div>
+
+                    <div class="lg:col-span-5 grid grid-cols-2 gap-3">
+                        <div class="bg-slate-950/90 border border-slate-800 p-4 rounded-2xl text-center flex flex-col justify-center">
+                            <span class="text-[11px] text-slate-400 uppercase font-bold tracking-wider mb-1">Pescadores</span>
+                            <span id="pres-total-people" class="text-3xl font-black text-white">0</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Vagas Preenchidas</span>
+                        </div>
+                        <div class="bg-slate-950/90 border border-slate-800 p-4 rounded-2xl text-center flex flex-col justify-center">
+                            <span class="text-[11px] text-slate-400 uppercase font-bold tracking-wider mb-1">Rateio Estimado</span>
+                            <span id="pres-rateio-val" class="text-2xl md:text-3xl font-black text-emerald-400">R$ 0,00</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Por Participante</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-slate-800/80 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-emerald-400"></i> Lista Lateral Oficial dos Pescadores Confirmados
+                        </h3>
+                        <span id="sidebar-participant-count" class="text-xs bg-slate-950 px-2.5 py-0.5 rounded-full text-blue-400 font-bold border border-slate-800">0 Pescadores</span>
+                    </div>
+                    <div id="sidebar-participants-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 max-h-40 overflow-y-auto pr-1"></div>
                 </div>
             </div>
+        </section>
 
+        <!-- ABA DE CADASTROS (RESTRITA A ADMINISTRADORES) -->
+        <section id="tab-cadastros" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- COLUNA ESQUERDA: Cadastro do Barco & Estacionamento (7 Colunas) -->
                 <div class="lg:col-span-7 space-y-6">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <h2 id="boat-form-title" class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar / Selecionar Embarcação</h2>
@@ -184,7 +206,6 @@
                                 </div>
                             </div>
 
-                            <!-- VAGAS E ESQUEMA GRÁFICO DE ASSENTOS DO BARCO -->
                             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
                                 <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block"><i class="fa-solid fa-chair mr-1"></i> Vagas e Esquema Gráfico de Assentos</span>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -219,17 +240,13 @@
                         </form>
                     </div>
 
-                    <!-- Lista de Barcos Salvos -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Lista Geral de Barcos Cadastrados (<span id="boat-count">0</span>)</h2>
                         <div id="boats-list-container" class="space-y-3 max-h-[220px] overflow-y-auto pr-1"></div>
                     </div>
                 </div>
 
-                <!-- COLUNA DIREITA: Seleção de Viagem Ativa & Lista Lateral de Pescadores (5 Colunas) -->
                 <div class="lg:col-span-5 space-y-6">
-                    
-                    <!-- Configuração da Viagem Atual -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-compass text-blue-500"></i> Seleção Ativa para a Viagem</h2>
                         <form id="trip-config-form" class="space-y-3" onsubmit="saveTripConfig(event)">
@@ -261,16 +278,6 @@
                         </form>
                     </div>
 
-                    <!-- Lista Lateral Rápida de Nomes dos Pescadores Confirmados -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                        <h2 class="text-base font-semibold text-white flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fa-solid fa-users text-emerald-400"></i> Pescadores na Viagem</span>
-                            <span id="sidebar-participant-count" class="text-xs bg-slate-950 px-2 py-0.5 rounded-full text-blue-400 font-bold border border-slate-800">0</span>
-                        </h2>
-                        <div id="sidebar-participants-list" class="space-y-1.5 max-h-[220px] overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <!-- Adicionar / Editar Pescador -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                         <h2 id="participant-form-title" class="text-base font-semibold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador</h2>
                         <form id="participant-form" class="space-y-3" onsubmit="saveParticipant(event)">
@@ -289,14 +296,11 @@
                             </div>
                         </form>
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- Tabela Geral de Pescadores -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Gerenciamento de Pescadores Confirmados</h2>
+                <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Gerenciamento de Pescadores Confirmados (<span id="participant-count">0</span>)</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-300">
                         <thead class="bg-slate-950 uppercase text-xs text-slate-400 border-b border-slate-800">
@@ -336,7 +340,7 @@
             </div>
         </section>
 
-        <!-- VOTAÇÃO - PESCADOR DESTAQUE -->
+        <!-- VOTAÇÃO -->
         <section id="tab-votacao" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
                 <div class="text-center space-y-2 border-b border-slate-800 pb-4">
@@ -349,7 +353,7 @@
 
                 <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
                     <p class="text-xs text-slate-300 leading-relaxed">
-                        Cada pescador deve escolher <strong class="text-amber-400">1 pessoa para receber +2 pontos</strong> e <strong class="text-rose-400">1 pessoa para receber -1 ponto</strong>. Não é permitido votar em si mesmo e cada participante pode votar apenas uma vez.
+                        Cada pescador deve escolher <strong class="text-amber-400">1 pessoa para receber +2 pontos</strong> e <strong class="text-rose-400">1 pessoa para receber -1 ponto</strong>. Não é permitido votar em si mesmo.
                     </p>
                 </div>
 
@@ -392,13 +396,8 @@
                         <i class="fa-solid fa-check"></i> CONFIRMAR MEU VOTO
                     </button>
                 </form>
-
-                <div class="text-xs text-slate-400 pt-2 border-t border-slate-800 flex justify-between items-center">
-                    <span id="voting-counter">Votações registradas: 0 de 0</span>
-                </div>
             </div>
 
-            <!-- APURACAO / ADMIN -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h2 class="text-lg font-semibold text-white flex items-center gap-2">
                     <i class="fa-solid fa-lock text-amber-400"></i> Área do Administrador — Apuração
@@ -478,7 +477,6 @@
         <!-- DESPESAS & RATEIO -->
         <section id="tab-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- QUADRO 1: REGISTRO DE DESPESAS GERAIS -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 id="expense-form-title" class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-receipt text-blue-500"></i> 1. Registro de Despesas Gerais</h2>
                     <form id="expense-form" class="space-y-4" onsubmit="saveExpense(event)">
@@ -516,7 +514,6 @@
                     </div>
                 </div>
 
-                <!-- QUADRO 2: PAGAMENTOS E LANÇAMENTOS POR PESCADOR -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 id="payer-form-title" class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-user-tag text-emerald-400"></i> 2. Pagamentos por Pescador</h2>
                     <form id="payer-form" class="space-y-4" onsubmit="savePayerPayment(event)">
@@ -549,7 +546,6 @@
                 </div>
             </div>
 
-            <!-- QUADRO 3: EXTRATO E ACERTO DE CONTAS FINAL -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                 <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-amber-400"></i> 3. Extrato e Rateio Final</h2>
                 <div class="overflow-x-auto">
@@ -566,7 +562,6 @@
         <!-- PONTOS DE PESCA -->
         <section id="tab-pontos" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- COLUNA ESQUERDA: Cadastro de Pontos de Pesca (5 Colunas) -->
                 <div id="spot-register-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl lg:col-span-5 space-y-4">
                     <h2 id="spot-form-title" class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-map-pin text-blue-500"></i> Pontos de Pesca</h2>
                     <form id="spot-form-main" class="space-y-4" onsubmit="saveFishingSpot(event)">
@@ -576,7 +571,6 @@
                             <input type="text" id="spot-name-main" placeholder="Ex: Ilha da Vitória / Píer" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         
-                        <!-- Seleção e Cadastro de Espécies Alvo -->
                         <div class="space-y-2">
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Espécies Alvo da Pescaria</label>
                             <div class="flex gap-2">
@@ -599,7 +593,6 @@
                     </form>
                 </div>
 
-                <!-- COLUNA DIREITA: Tabela de Pontos Cadastrados (7 Colunas) -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl lg:col-span-7 space-y-4">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list text-emerald-400"></i> Pontos Cadastrados</h2>
                     <div class="overflow-x-auto">
@@ -621,7 +614,7 @@
 
     </main>
 
-    <!-- MODAL PARA EDITAR DADOS DA APRESENTAÇÃO (Data, Hora e Duração com Retorno Automático) -->
+    <!-- MODAL DE EDIÇÃO DE AGENDA -->
     <div id="presentation-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h2 class="text-lg font-bold text-white"><i class="fa-solid fa-pen text-blue-500 mr-2"></i> Editar Agenda & Duração</h2>
@@ -646,10 +639,11 @@
         </div>
     </div>
 
+    <!-- SCRIPT DE LÓGICA E ESTADO -->
     <script>
         const ADMIN_PASSWORD_FIXED = "pesca2026";
 
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v11')) || {
+        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v13')) || {
             auth: { logged: false, role: "convidado", name: "" },
             presentation: { date: "2026-08-22", time: "06:00", hours: 12 },
             boats: [
@@ -688,7 +682,7 @@
         if(!db.presentation.hours) db.presentation.hours = 12;
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v11', JSON.stringify(db));
+            localStorage.setItem('pesca_justa_db_v13', JSON.stringify(db));
             renderAll();
         }
 
@@ -723,6 +717,10 @@
         function logout() { db.auth.logged = false; saveData(); }
 
         function switchTab(tabId) {
+            if(tabId === 'cadastros' && db.auth.role !== 'admin') {
+                alert('Acesso negado: A aba de Cadastros é restrita apenas para administradores.');
+                return;
+            }
             document.querySelectorAll('section[id^="tab-"]').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('bg-blue-600', 'text-white', 'shadow'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
@@ -730,6 +728,7 @@
         }
 
         function openEditPresentationModal() {
+            if(db.auth.role !== 'admin') return alert('Acesso restrito a administradores.');
             document.getElementById('edit-pres-date').value = db.presentation.date || "2026-08-22";
             document.getElementById('edit-pres-time').value = db.presentation.time || "06:00";
             document.getElementById('edit-pres-hours-num').value = db.presentation.hours || 12;
@@ -749,7 +748,6 @@
             saveData();
         }
 
-        // --- GERENCIAMENTO DE BARCOS ---
         function saveNewBoat(e) {
             e.preventDefault();
             const editId = document.getElementById('boat-edit-id').value;
@@ -847,7 +845,6 @@
             alert('Configuração da viagem salva com sucesso!');
         }
 
-        // --- GERENCIAMENTO DE PESCADORES ---
         function saveParticipant(e) {
             e.preventDefault();
             const editId = document.getElementById('p-edit-id').value;
@@ -895,7 +892,6 @@
             }
         }
 
-        // --- DESPESAS, PAGAMENTOS E CAPTURAS ---
         function saveExpense(e) {
             e.preventDefault();
             const editId = document.getElementById('exp-edit-id').value;
@@ -906,6 +902,17 @@
             saveData();
         }
         function resetExpenseForm() { document.getElementById('expense-form').reset(); document.getElementById('exp-edit-id').value = ''; document.getElementById('btn-save-expense').innerText = 'Adicionar Despesa Geral'; document.getElementById('btn-cancel-exp-edit').classList.add('hidden'); }
+        function editExpense(id) {
+            let ex = db.expenses.find(item => item.id == id);
+            if(ex) {
+                document.getElementById('exp-edit-id').value = ex.id;
+                document.getElementById('exp-type').value = ex.type;
+                document.getElementById('exp-desc').value = ex.description;
+                document.getElementById('exp-value').value = ex.value;
+                document.getElementById('btn-save-expense').innerText = 'Salvar Alterações';
+                document.getElementById('btn-cancel-exp-edit').classList.remove('hidden');
+            }
+        }
         function removeExpense(id) { db.expenses = db.expenses.filter(ex => ex.id !== id); saveData(); }
 
         function savePayerPayment(e) {
@@ -918,6 +925,17 @@
             saveData();
         }
         function resetPayerForm() { document.getElementById('payer-form').reset(); document.getElementById('pay-edit-id').value = ''; document.getElementById('btn-save-payer').innerText = 'Registrar Valor Pago'; document.getElementById('btn-cancel-pay-edit').classList.add('hidden'); }
+        function editPayer(id) {
+            let p = db.payers.find(item => item.id == id);
+            if(p) {
+                document.getElementById('pay-edit-id').value = p.id;
+                document.getElementById('pay-fisherman').value = p.fisherman;
+                document.getElementById('pay-desc').value = p.description;
+                document.getElementById('pay-value').value = p.value;
+                document.getElementById('btn-save-payer').innerText = 'Salvar Alterações';
+                document.getElementById('btn-cancel-pay-edit').classList.remove('hidden');
+            }
+        }
         function removePayer(id) { db.payers = db.payers.filter(p => p.id !== id); saveData(); }
 
         function addNewSpecies() {
@@ -989,6 +1007,17 @@
             saveData();
         }
         function resetCatchForm() { document.getElementById('catch-form').reset(); document.getElementById('catch-edit-id').value = ''; document.getElementById('btn-save-catch').innerText = 'Salvar Captura'; document.getElementById('btn-cancel-catch-edit').classList.add('hidden'); }
+        function editCatch(id) {
+            let c = db.catches.find(item => item.id == id);
+            if(c) {
+                document.getElementById('catch-edit-id').value = c.id;
+                document.getElementById('catch-fisherman').value = c.fisherman;
+                document.getElementById('catch-species').value = c.species;
+                document.getElementById('catch-weight').value = c.weight;
+                document.getElementById('btn-save-catch').innerText = 'Salvar Alterações';
+                document.getElementById('btn-cancel-catch-edit').classList.remove('hidden');
+            }
+        }
         function removeCatch(id) { db.catches = db.catches.filter(c => c.id !== id); saveData(); }
 
         function runLottery() {
@@ -1077,19 +1106,34 @@
             document.getElementById('login-modal').classList.toggle('hidden', db.auth.logged);
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
 
-            // Dados da Apresentação (Início e Retorno Calculado)
+            const btnCadastros = document.getElementById('btn-cadastros');
+            if(db.auth.role === 'admin') {
+                btnCadastros.classList.remove('hidden');
+            } else {
+                btnCadastros.classList.add('hidden');
+                const activeSec = document.querySelector('section[id^="tab-"]:not(.hidden)');
+                if(activeSec && activeSec.id === 'tab-cadastros') {
+                    switchTab('apresentacao');
+                }
+            }
+
+            const editPresBtnBox = document.getElementById('pres-edit-btn-box');
+            if(db.auth.role === 'admin') {
+                editPresBtnBox.classList.remove('hidden');
+            } else {
+                editPresBtnBox.classList.add('hidden');
+            }
+
             const pDate = db.presentation.date || "2026-08-22";
             const pTime = db.presentation.time || "06:00";
             const pHours = parseInt(db.presentation.hours) || 12;
 
-            // Formatação da data de início para exibição amigável (DD/MM/AAAA)
             const [year, month, day] = pDate.split('-');
             const formattedDate = (year && month && day) ? `${day}/${month}/${year}` : pDate;
 
             document.getElementById('pres-start-datetime').innerText = `${formattedDate} às ${pTime}`;
-            document.getElementById('pres-hours').innerText = `${pHours} Horas`;
+            document.getElementById('pres-hours').innerText = pHours;
 
-            // Cálculo dinâmico da data/hora de retorno
             let startDateTime = new Date(`${pDate}T${pTime}:00`);
             if (!isNaN(startDateTime.getTime())) {
                 startDateTime.setHours(startDateTime.getHours() + pHours);
@@ -1115,10 +1159,14 @@
             let boatSelectHtml = '<option value="">Selecione um barco cadastrado...</option>';
             let boatsHtml = '';
             let activeBoatName = 'Nenhum';
+            let activeBoatOwnerInfo = '-';
 
             db.boats.forEach(b => {
                 let isActive = b.id === db.activeBoatId;
-                if(isActive) activeBoatName = b.name;
+                if(isActive) {
+                    activeBoatName = b.name;
+                    activeBoatOwnerInfo = `${b.owner} (${b.phone || 'Sem tel'})`;
+                }
                 let localTag = b.local || 'São Sebastião';
                 let totalVagas = (b.positions.popa || 0) + (b.positions.proa || 0) + (b.positions.le || 0) + (b.positions.ld || 0);
 
@@ -1141,13 +1189,18 @@
             document.getElementById('boats-list-container').innerHTML = boatsHtml || '<span class="text-xs text-slate-500">Nenhum barco na memória.</span>';
             document.getElementById('active-boat-label').innerText = activeBoatName;
             document.getElementById('pres-boat-name').innerText = activeBoatName;
+            document.getElementById('pres-barqueiro-info').innerText = activeBoatOwnerInfo;
             updateBoatPreviewInfo();
 
             let destSelectHtml = '<option value="">Selecione o destino cadastrado...</option>';
             let spotsTableHtml = '';
             db.spots.forEach(s => {
                 let isSelected = s.name === db.activeDestination;
-                if(isSelected) document.getElementById('pres-dest-name').innerText = s.name;
+                if(isSelected) {
+                    document.getElementById('pres-dest-name').innerText = s.name;
+                    const activeDestLabel = document.getElementById('active-dest-label');
+                    if(activeDestLabel) activeDestLabel.innerText = s.name; // Correção do bug do active-dest-label
+                }
                 destSelectHtml += `<option value="${s.name}" ${isSelected ? 'selected' : ''}>${s.name} - (${s.species})</option>`;
                 spotsTableHtml += `
                     <tr>
@@ -1164,8 +1217,8 @@
             document.getElementById('trip-destination-select').innerHTML = destSelectHtml;
             document.getElementById('spots-table-body').innerHTML = spotsTableHtml || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhum ponto cadastrado.</td></tr>`;
 
-            // Lista lateral e tabela de pescadores
-            document.getElementById('sidebar-participant-count').innerText = db.participants.length;
+            document.getElementById('participant-count').innerText = db.participants.length;
+            document.getElementById('sidebar-participant-count').innerText = `${db.participants.length} Pescadores`;
             let pHtml = '', sidebarHtml = '', payerOpts = '', catchOpts = '', voteOpts = '<option value="">Selecione seu nome...</option>';
             
             db.participants.forEach((p, idx) => {
@@ -1180,9 +1233,9 @@
                     </tr>
                 `;
                 sidebarHtml += `
-                    <div class="bg-slate-950 border border-slate-800/80 px-3 py-2 rounded-xl text-xs flex justify-between items-center">
-                        <span class="text-slate-200 font-medium"><strong class="text-blue-400 font-mono mr-1">#${idx+1}</strong> ${p.name}</span>
-                        <span class="text-[10px] text-slate-500">${p.phone}</span>
+                    <div class="bg-slate-950 border border-slate-800/80 px-2.5 py-1.5 rounded-xl text-xs flex justify-between items-center">
+                        <span class="text-slate-200 font-medium truncate"><strong class="text-blue-400 font-mono mr-1">#${idx+1}</strong>${p.name}</span>
+                        <span class="text-[9px] text-slate-500 ml-1">${p.phone.slice(-4)}</span>
                     </div>
                 `;
                 payerOpts += `<option value="${p.name}">${p.name}</option>`;
@@ -1190,26 +1243,23 @@
                 voteOpts += `<option value="${p.name}">${p.name}</option>`;
             });
             document.getElementById('participants-table-body').innerHTML = pHtml || `<tr><td colspan="3" class="p-4 text-center text-slate-500">Nenhum participante.</td></tr>`;
-            document.getElementById('sidebar-participants-list').innerHTML = sidebarHtml || '<span class="text-xs text-slate-500 italic">Nenhum pescador confirmado.</span>';
+            document.getElementById('sidebar-participants-list').innerHTML = sidebarHtml || '<span class="text-xs text-slate-500 italic col-span-full text-center">Nenhum pescador confirmado.</span>';
             document.getElementById('pay-fisherman').innerHTML = payerOpts;
             document.getElementById('catch-fisherman').innerHTML = catchOpts;
             document.getElementById('vote-voter').innerHTML = voteOpts;
             document.getElementById('vote-positive').innerHTML = voteOpts;
             document.getElementById('vote-negative').innerHTML = voteOpts;
 
-            document.getElementById('voting-counter').innerText = `Votações registradas: ${db.votes.length} de ${db.participants.length}`;
-
-            // Demais tabelas (Despesas, Capturas, Balanço)
             document.getElementById('expenses-table-body').innerHTML = db.expenses.map(ex => `
-                <tr><td class="p-2">${ex.type}</td><td class="p-2">${ex.description}</td><td class="p-2 font-semibold text-blue-400">R$ ${ex.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="editExpense(${ex.id})" class="text-amber-400 px-1"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="removeExpense(${ex.id})" class="text-rose-400 px-1"><i class="fa-solid fa-trash"></i></button></td></tr>
+                <tr><td class="p-2">${ex.type}</td><td class="p-2">${ex.description}</td><td class="p-2 font-semibold text-blue-400">R$ ${ex.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="editExpense(${ex.id})" class="text-amber-400 px-1" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="removeExpense(${ex.id})" class="text-rose-400 px-1" title="Excluir"><i class="fa-solid fa-trash"></i></button></td></tr>
             `).join('') || `<tr><td colspan="4" class="p-3 text-center text-slate-500">Nenhuma despesa.</td></tr>`;
 
             document.getElementById('payers-table-body').innerHTML = db.payers.map(p => `
-                <tr><td class="p-2 font-medium text-emerald-400">${p.fisherman}</td><td class="p-2">${p.description}</td><td class="p-2 font-semibold">R$ ${p.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="editPayer(${p.id})" class="text-amber-400 px-1"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="removePayer(${p.id})" class="text-rose-400 px-1"><i class="fa-solid fa-trash"></i></button></td></tr>
+                <tr><td class="p-2 font-medium text-emerald-400">${p.fisherman}</td><td class="p-2">${p.description}</td><td class="p-2 font-semibold">R$ ${p.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="editPayer(${p.id})" class="text-amber-400 px-1" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="removePayer(${p.id})" class="text-rose-400 px-1" title="Excluir"><i class="fa-solid fa-trash"></i></button></td></tr>
             `).join('') || `<tr><td colspan="4" class="p-3 text-center text-slate-500">Nenhum pagamento.</td></tr>`;
 
             document.getElementById('catches-table-body').innerHTML = db.catches.map(c => `
-                <tr><td class="p-3 font-medium text-white">${c.fisherman}</td><td class="p-3 text-slate-300">${c.species}</td><td class="p-3 text-emerald-400 font-bold">${c.weight.toFixed(2)} kg</td><td class="p-3 text-center"><button onclick="editCatch(${c.id})" class="text-amber-400 px-1"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="removeCatch(${c.id})" class="text-rose-400 px-1"><i class="fa-solid fa-trash"></i></button></td></tr>
+                <tr><td class="p-3 font-medium text-white">${c.fisherman}</td><td class="p-3 text-slate-300">${c.species}</td><td class="p-3 text-emerald-400 font-bold">${c.weight.toFixed(2)} kg</td><td class="p-3 text-center"><button onclick="editCatch(${c.id})" class="text-amber-400 px-1" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="removeCatch(${c.id})" class="text-rose-400 px-1" title="Excluir"><i class="fa-solid fa-trash"></i></button></td></tr>
             `).join('') || `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma captura.</td></tr>`;
 
             let paidMap = {};
