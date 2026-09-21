@@ -22,6 +22,42 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
 
+    <!-- MODAL DE BLOQUEIO POR VALIDADE EXPIRADA -->
+    <div id="expired-modal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-rose-500/50 rounded-2xl p-6 max-w-md w-full shadow-2xl text-center space-y-4">
+            <div class="bg-rose-600/20 text-rose-500 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border border-rose-500/30">
+                <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-white">Sistema Expirado</h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                O período de licenciamento e funcionamento desta versão do aplicativo Pesca-Justa expirou. Entre em contato com o administrador para renovar a validade.
+            </p>
+        </div>
+    </div>
+
+    <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
+    <div id="recovery-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div class="text-center space-y-1">
+                <div class="bg-blue-600/20 text-blue-400 w-12 h-12 rounded-xl flex items-center justify-center mx-auto border border-blue-500/30">
+                    <i class="fa-solid fa-key text-lg"></i>
+                </div>
+                <h2 class="text-lg font-bold text-white">Recuperar Senha</h2>
+                <p class="text-xs text-slate-400">Informe o e-mail cadastrado do administrador</p>
+            </div>
+            <form onsubmit="handlePasswordRecovery(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">E-mail Cadastrado</label>
+                    <input type="email" id="recovery-email" placeholder="seu-email@dominio.com" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
+                </div>
+                <div class="flex gap-2 pt-1">
+                    <button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl transition text-sm">Enviar Instruções</button>
+                    <button type="button" onclick="closeRecoveryModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-sm">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL DE LOGIN / AUTENTICAÇÃO -->
     <div id="login-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-6">
@@ -48,9 +84,12 @@
                 </div>
 
                 <div>
-                    <label id="password-label" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha do Administrador</label>
+                    <label id="password-label" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha de Acesso</label>
                     <input type="password" id="login-password" placeholder="Digite a senha..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
-                    <p id="password-hint" class="text-[10px] text-slate-500 mt-1">Senha padrão: <strong class="text-slate-300">pesca2026</strong></p>
+                </div>
+
+                <div id="admin-recovery-link" class="text-right">
+                    <button type="button" onclick="openRecoveryModal()" class="text-xs text-blue-400 hover:underline">Esqueceu sua senha?</button>
                 </div>
 
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm">Entrar no Sistema</button>
@@ -96,7 +135,7 @@
 
     <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow space-y-6">
 
-        <!-- APRESENTAÇÃO OFICIAL DA EXPEDIÇÃO -->
+        <!-- APRESENTAÇÃO OFICIAL -->
         <section id="tab-apresentacao" class="space-y-6">
             <div class="bg-gradient-to-r from-blue-950/60 via-slate-900 to-slate-900 border border-blue-500/40 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
                 <div class="absolute -right-10 -bottom-10 text-blue-600/10 text-9xl pointer-events-none">
@@ -167,6 +206,46 @@
 
         <!-- ABA DE CADASTROS (RESTRITA A ADMINISTRADORES) -->
         <section id="tab-cadastros" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-400"></i> Configurações de Licença e Administradores
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <form onsubmit="saveNewAdmin(event)" class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block"><i class="fa-solid fa-user-shield mr-1"></i> Cadastrar Novo Administrador</span>
+                        <div>
+                            <label class="block text-[10px] uppercase text-slate-400 mb-1">Nome do Administrador</label>
+                            <input type="text" id="new-admin-name" placeholder="Ex: Gestor Auxiliar" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-slate-400 mb-1">E-mail para Recuperação</label>
+                            <input type="email" id="new-admin-email" placeholder="admin@email.com" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-slate-400 mb-1">Senha de Acesso</label>
+                            <input type="password" id="new-admin-pwd" placeholder="Senha..." required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg text-xs transition">Adicionar Administrador</button>
+                    </form>
+
+                    <form onsubmit="saveSystemExpiration(event)" class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400 block"><i class="fa-solid fa-calendar-days mr-1"></i> Validade de Funcionamento do App</span>
+                        <div>
+                            <label class="block text-[10px] uppercase text-slate-400 mb-1">Data Limite de Expiração</label>
+                            <input type="date" id="system-expiration-date" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs">
+                        </div>
+                        <p class="text-[11px] text-slate-400">Após esta data, o sistema bloqueará o acesso geral de forma automática.</p>
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium py-2 rounded-lg text-xs transition">Salvar Data de Validade</button>
+                    </form>
+                </div>
+
+                <div class="pt-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Administradores Ativos no Sistema:</span>
+                    <div id="admins-list-container" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-7 space-y-6">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
@@ -317,7 +396,31 @@
             <div id="lottery-action-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-center space-y-3">
                 <h2 class="text-xl font-bold text-white">Sorteio de Assentos por Setores do Barco</h2>
                 <p class="text-xs text-slate-400">Barco Ativo Selecionado: <strong id="active-boat-label" class="text-blue-400">Nenhum</strong> | Destino: <strong id="active-dest-label" class="text-emerald-400">Não definido</strong></p>
-                <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg"><i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio Completo nos Setores</button>
+                <button onclick="runLottery()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg"><i class="fa-solid fa-shuffle mr-2"></i> Realizar Sorteio Completo nos Setores (Sem Repetições)</button>
+            </div>
+
+            <!-- PAINEL DE TURNOS DA POPA COM HORÁRIO DE INÍCIO E BOTÕES DE SORTEIO POR TURNO -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-amber-400"></i> Configuração de Turnos e Sorteio Individual para a Popa
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Horas Totais de Pesca</label>
+                        <input type="number" min="1" max="72" id="popa-total-hours" value="12" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Início do 1º Turno (Viagem)</label>
+                        <input type="time" id="popa-start-time" value="10:00" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Quantidade de Turnos</label>
+                        <input type="number" min="1" max="24" id="popa-turnos-count" value="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                    </div>
+                </div>
+                <button onclick="generatePopaTurnsStructure()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-xl transition text-sm">Gerar Estrutura de Turnos</button>
+                
+                <div id="popa-turns-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"></div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -641,10 +744,14 @@
 
     <!-- SCRIPT DE LÓGICA E ESTADO -->
     <script>
-        const ADMIN_PASSWORD_FIXED = "pesca2026";
+        const ADMIN_MASTER_PASSWORD = "pesca2026";
 
         let db = JSON.parse(localStorage.getItem('pesca_justa_db_v13')) || {
             auth: { logged: false, role: "convidado", name: "" },
+            admins: [
+                { name: "Administrador Master", email: "master@pescajusta.com", password: "pesca2026" }
+            ],
+            expirationDate: "2026-12-31",
             presentation: { date: "2026-08-22", time: "06:00", hours: 12 },
             boats: [
                 { id: 1, name: "Mar Caiçara", local: "São Sebastião", owner: "Paulo Costa", phone: "(13) 99999-1111", helper: "Sim", obs: "Estacionamento 24h na marina de São Sebastião.", positions: { popa: 4, proa: 2, le: 2, ld: 2 } },
@@ -674,12 +781,25 @@
                 { id: 1, name: "Atlanticus - Ilha da Vitória", species: "Garoupa, Pargo", obs: "Ponto produtivo para fundeio" }
             ], catches: [], 
             lottery: { popa: [], proa: [], le: [], ld: [] },
+            popaTurns: [],
             votes: []
         };
 
+        if(!db.admins) db.admins = [{ name: "Administrador Master", email: "master@pescajusta.com", password: ADMIN_MASTER_PASSWORD }];
+        db.admins.forEach(a => { if(!a.email) a.email = "admin@pescajusta.com"; });
+
+        if(!db.expirationDate) db.expirationDate = "2026-12-31";
         if(!db.presentation) db.presentation = { date: "2026-08-22", time: "06:00", hours: 12 };
-        if(!db.presentation.time) db.presentation.time = "06:00";
-        if(!db.presentation.hours) db.presentation.hours = 12;
+        if(!db.popaTurns) db.popaTurns = [];
+
+        function checkSystemExpiration() {
+            if(!db.expirationDate) return;
+            const today = new Date().toISOString().split('T')[0];
+            if (today > db.expirationDate) {
+                document.getElementById('expired-modal').classList.remove('hidden');
+                document.getElementById('login-modal').classList.add('hidden');
+            }
+        }
 
         function saveData() {
             localStorage.setItem('pesca_justa_db_v13', JSON.stringify(db));
@@ -688,13 +808,37 @@
 
         function toggleLoginFields() {
             const loginType = document.getElementById('login-type').value;
-            document.getElementById('pescador-select-box').classList.toggle('hidden', loginType === 'admin');
-            if(loginType === 'pescador') populateLoginPescadores();
+            const isPescador = loginType === 'pescador';
+            document.getElementById('pescador-select-box').classList.toggle('hidden', !isPescador);
+            document.getElementById('admin-recovery-link').classList.toggle('hidden', isPescador);
+            if(isPescador) populateLoginPescadores();
         }
 
         function populateLoginPescadores() {
             const select = document.getElementById('login-pescador-name');
             select.innerHTML = db.participants.length ? db.participants.map(p => `<option value="${p.name}">${p.name}</option>`).join('') : '<option value="">Nenhum pescador cadastrado</option>';
+        }
+
+        function openRecoveryModal() {
+            document.getElementById('recovery-email').value = '';
+            document.getElementById('recovery-modal').classList.remove('hidden');
+        }
+
+        function closeRecoveryModal() {
+            document.getElementById('recovery-modal').classList.add('hidden');
+        }
+
+        function handlePasswordRecovery(e) {
+            e.preventDefault();
+            const email = document.getElementById('recovery-email').value.trim().toLowerCase();
+            const admin = db.admins.find(a => a.email.toLowerCase() === email);
+
+            if (admin || email === "master@pescajusta.com") {
+                alert(`Instruções de recuperação enviadas com sucesso para o e-mail: ${email}\n\n[SIMULAÇÃO] A senha cadastrada para este administrador é: ${admin ? admin.password : ADMIN_MASTER_PASSWORD}`);
+                closeRecoveryModal();
+            } else {
+                alert('E-mail não encontrado na base de administradores cadastrados.');
+            }
         }
 
         function handleLogin(e) {
@@ -703,18 +847,59 @@
             const passwordInput = document.getElementById('login-password').value.trim();
 
             if (loginType === 'admin') {
-                if (passwordInput === ADMIN_PASSWORD_FIXED) { db.auth = { logged: true, role: 'admin', name: 'Administrador' }; saveData(); }
-                else alert('Senha incorreta!');
+                let validAdmin = db.admins.find(a => a.password === passwordInput) || (passwordInput === ADMIN_MASTER_PASSWORD ? {name: 'Administrador Master'} : null);
+                
+                if (validAdmin) {
+                    db.auth = { logged: true, role: 'admin', name: validAdmin.name };
+                    saveData();
+                } else {
+                    alert('Senha de administrador incorreta!');
+                }
             } else {
                 const selectedName = document.getElementById('login-pescador-name').value;
                 const pescador = db.participants.find(p => p.name === selectedName);
-                if (pescador && (passwordInput === pescador.phone.replace(/\D/g, '').slice(-4) || passwordInput === ADMIN_PASSWORD_FIXED)) {
-                    db.auth = { logged: true, role: 'convidado', name: pescador.name }; saveData();
-                } else alert('Senha incorreta (últimos 4 dígitos do celular).');
+                if (pescador && (passwordInput === pescador.phone.replace(/\D/g, '').slice(-4) || passwordInput === ADMIN_MASTER_PASSWORD)) {
+                    db.auth = { logged: true, role: 'convidado', name: pescador.name };
+                    saveData();
+                } else {
+                    alert('Senha incorreta (últimos 4 dígitos do celular).');
+                }
             }
         }
 
         function logout() { db.auth.logged = false; saveData(); }
+
+        function saveNewAdmin(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-admin-name').value.trim();
+            const email = document.getElementById('new-admin-email').value.trim();
+            const password = document.getElementById('new-admin-pwd').value.trim();
+            if(!name || !email || !password) return;
+
+            db.admins.push({ name, email, password });
+            alert(`Administrador "${name}" cadastrado com sucesso!`);
+            document.getElementById('new-admin-name').value = '';
+            document.getElementById('new-admin-email').value = '';
+            document.getElementById('new-admin-pwd').value = '';
+            saveData();
+        }
+
+        function removeAdmin(index) {
+            if(db.admins.length <= 1) return alert('Você deve manter ao menos um administrador ativo.');
+            if(confirm("Deseja remover este administrador?")) {
+                db.admins.splice(index, 1);
+                saveData();
+            }
+        }
+
+        function saveSystemExpiration(e) {
+            e.preventDefault();
+            const newDate = document.getElementById('system-expiration-date').value;
+            if(!newDate) return;
+            db.expirationDate = newDate;
+            alert(`Data de validade do sistema atualizada para: ${newDate.split('-').reverse().join('/')}`);
+            saveData();
+        }
 
         function switchTab(tabId) {
             if(tabId === 'cadastros' && db.auth.role !== 'admin') {
@@ -1015,22 +1200,92 @@
                 document.getElementById('catch-species').value = c.species;
                 document.getElementById('catch-weight').value = c.weight;
                 document.getElementById('btn-save-catch').innerText = 'Salvar Alterações';
-                document.getElementById('btn-cancel-catch-edit').classList.remove('hidden');
+                document.getElementById('btn-cancel-catch-edit').classList.add('hidden');
             }
         }
         function removeCatch(id) { db.catches = db.catches.filter(c => c.id !== id); saveData(); }
 
+        // SORTEIO SEM REPETIÇÕES ENTRE OS SETORES
         function runLottery() {
             if (!db.participants.length) return alert('Cadastre participantes.');
             const activeBoat = db.boats.find(b => b.id === db.activeBoatId);
             if (!activeBoat) return alert('Selecione um barco ativo na viagem.');
+            
+            let totalVagas = activeBoat.positions.popa + activeBoat.positions.proa + activeBoat.positions.le + activeBoat.positions.ld;
+            if (db.participants.length < totalVagas) {
+                alert(`Aviso: O barco exige ${totalVagas} vagas, mas há apenas ${db.participants.length} pescadores cadastrados. As vagas restantes ficarão vazias.`);
+            }
+
             let shuffled = [...db.participants].sort(() => Math.random() - 0.5);
+            
             db.lottery.popa = shuffled.splice(0, activeBoat.positions.popa);
             db.lottery.proa = shuffled.splice(0, activeBoat.positions.proa);
-            db.lottery.le = shuffled.splice(0, activeBoat.positions.le);
-            db.lottery.ld = shuffled.splice(0, activeBoat.positions.ld);
+            db.lottery.le   = shuffled.splice(0, activeBoat.positions.le);
+            db.lottery.ld   = shuffled.splice(0, activeBoat.positions.ld);
+
+            // Limpa os turnos da popa ao refazer o sorteio geral
+            db.popaTurns = [];
+
             saveData();
-            alert(`Sorteio realizado usando o barco "${activeBoat.name}"!`);
+            alert(`Sorteio realizado sem repetição de nomes usando o barco "${activeBoat.name}"!`);
+        }
+
+        // GERA A ESTRUTURA DOS TURNOS DA POPA
+        function generatePopaTurnsStructure() {
+            if (!db.lottery.popa || db.lottery.popa.length === 0) {
+                return alert('Realize o sorteio geral primeiro para preencher as posições da popa.');
+            }
+            const totalHours = parseFloat(document.getElementById('popa-total-hours').value) || 12;
+            const turnosCount = parseInt(document.getElementById('popa-turnos-count').value) || 4;
+            const startTimeStr = document.getElementById('popa-start-time').value || "10:00";
+
+            let [startH, startM] = startTimeStr.split(':').map(Number);
+            let hoursPerTurn = totalHours / turnosCount;
+            let currentMinutes = startH * 60 + startM;
+            let turnDurationMinutes = hoursPerTurn * 60;
+
+            db.popaTurns = [];
+            for (let i = 0; i < turnosCount; i++) {
+                let turnoStartMin = currentMinutes + Math.round(i * turnDurationMinutes);
+                let turnoEndMin = currentMinutes + Math.round((i + 1) * turnDurationMinutes);
+
+                let startFormatted = `${String(Math.floor(turnoStartMin / 60) % 24).padStart(2, '0')}:${String(turnoStartMin % 60).padStart(2, '0')}`;
+                let endFormatted = `${String(Math.floor(turnoEndMin / 60) % 24).padStart(2, '0')}:${String(turnoEndMin % 60).padStart(2, '0')}`;
+
+                db.popaTurns.push({
+                    id: i + 1,
+                    start: startFormatted,
+                    end: endFormatted,
+                    fisherman: null
+                });
+            }
+            saveData();
+        }
+
+        // SORTEIO INDIVIDUAL POR TURNO SEM REPETIÇÃO DE PESCADORES JÁ SORTEADOS
+        function drawTurnFisherman(turnId) {
+            if (!db.lottery.popa || db.lottery.popa.length === 0) {
+                return alert('Nenhum pescador sorteado na popa.');
+            }
+
+            // Pescadores já alocados em outros turnos
+            let alreadyAssigned = db.popaTurns.filter(t => t.id !== turnId && t.fisherman).map(t => t.fisherman);
+            
+            // Pescadores disponíveis da popa que ainda não pescaram
+            let available = db.lottery.popa.filter(p => !alreadyAssigned.includes(p.name));
+
+            if (available.length === 0) {
+                return alert('Todos os pescadores da popa já foram sorteados para turnos.');
+            }
+
+            let randomIndex = Math.floor(Math.random() * available.length);
+            let chosen = available[randomIndex].name;
+
+            let turn = db.popaTurns.find(t => t.id === turnId);
+            if (turn) {
+                turn.fisherman = chosen;
+                saveData();
+            }
         }
 
         function checkVoterStatus() {
@@ -1065,7 +1320,10 @@
         }
 
         function verifyAdminVoteArea() {
-            if (document.getElementById('admin-vote-pwd').value.trim() === ADMIN_PASSWORD_FIXED) {
+            const passwordInput = document.getElementById('admin-vote-pwd').value.trim();
+            let isValid = db.admins.some(a => a.password === passwordInput) || passwordInput === ADMIN_MASTER_PASSWORD;
+            
+            if (isValid) {
                 document.getElementById('admin-vote-auth').classList.add('hidden');
                 document.getElementById('admin-vote-results').classList.remove('hidden');
                 renderVotesRanking();
@@ -1103,8 +1361,24 @@
         }
 
         function renderAll() {
+            checkSystemExpiration();
             document.getElementById('login-modal').classList.toggle('hidden', db.auth.logged);
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
+
+            const adminsContainer = document.getElementById('admins-list-container');
+            if(adminsContainer) {
+                adminsContainer.innerHTML = db.admins.map((adm, idx) => `
+                    <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2">
+                        <span class="text-white font-medium"><i class="fa-solid fa-user-shield text-blue-400 mr-1"></i> ${adm.name} <span class="text-slate-400 font-normal">(${adm.email})</span></span>
+                        <button onclick="removeAdmin(${idx})" class="text-rose-400 hover:text-rose-300 ml-2" title="Remover Admin"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            const expDateInput = document.getElementById('system-expiration-date');
+            if(expDateInput && db.expirationDate) {
+                expDateInput.value = db.expirationDate;
+            }
 
             const btnCadastros = document.getElementById('btn-cadastros');
             if(db.auth.role === 'admin') {
@@ -1199,7 +1473,7 @@
                 if(isSelected) {
                     document.getElementById('pres-dest-name').innerText = s.name;
                     const activeDestLabel = document.getElementById('active-dest-label');
-                    if(activeDestLabel) activeDestLabel.innerText = s.name; // Correção do bug do active-dest-label
+                    if(activeDestLabel) activeDestLabel.innerText = s.name;
                 }
                 destSelectHtml += `<option value="${s.name}" ${isSelected ? 'selected' : ''}>${s.name} - (${s.species})</option>`;
                 spotsTableHtml += `
@@ -1281,6 +1555,32 @@
             document.getElementById('sector-proa-list').innerHTML = renderSectorList(db.lottery.proa);
             document.getElementById('sector-le-list').innerHTML = renderSectorList(db.lottery.le);
             document.getElementById('sector-ld-list').innerHTML = renderSectorList(db.lottery.ld);
+
+            // Renderizar as caixas de turnos da popa
+            const turnsContainer = document.getElementById('popa-turns-container');
+            if (turnsContainer) {
+                if (!db.popaTurns || db.popaTurns.length === 0) {
+                    turnsContainer.innerHTML = `<span class="text-xs text-slate-500 italic col-span-full">Clique em "Gerar Estrutura de Turnos" para configurar.</span>`;
+                } else {
+                    turnsContainer.innerHTML = db.popaTurns.map(t => `
+                        <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs space-y-2">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-amber-400 font-bold block">Turno ${t.id}</span>
+                                    <span class="text-slate-400 text-[11px]">${t.start} às ${t.end}</span>
+                                </div>
+                                <button onclick="drawTurnFisherman(${t.id})" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg text-[11px] transition shadow">
+                                    <i class="fa-solid fa-dice mr-1"></i> Sortear Turno
+                                </button>
+                            </div>
+                            <div class="border-t border-slate-800 pt-2 flex justify-between items-center">
+                                <span class="text-slate-400 uppercase text-[10px]">Pescador:</span>
+                                <strong class="text-white text-sm">${t.fisherman || '<span class="text-slate-600 font-normal italic">Não sorteado</span>'}</strong>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
         }
 
         renderSpeciesCheckboxes();
