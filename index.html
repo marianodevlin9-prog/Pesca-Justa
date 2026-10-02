@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesca-Justa - Gestão Completa de Pescaria</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <script>
+        window.tailwind = window.tailwind || {};
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -136,8 +136,78 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
   main{padding:10px!important}
   section{scroll-margin-top:8px}
   .pj-boat{min-width:520px}
+
+  /* Lista de barcos: cartões ocupam toda a largura no celular, sem afunilar */
+  #boats-list-container{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    padding-right:0!important;
+    box-sizing:border-box!important;
+  }
+  #boats-list-container > .boat-card{
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+  #boats-list-container > .boat-card > .boat-card-header{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    width:100%!important;
+    min-width:0!important;
+    gap:10px!important;
+  }
+  #boats-list-container > .boat-card .boat-card-info{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    overflow-wrap:anywhere!important;
+    word-break:break-word!important;
+  }
+  #boats-list-container > .boat-card .boat-card-actions{
+    width:100%!important;
+    display:flex!important;
+    justify-content:flex-end!important;
+    flex:0 0 auto!important;
+    white-space:nowrap!important;
+    border-top:1px solid rgba(148,163,184,.10);
+    padding-top:7px;
+  }
+  #boats-list-container > div > div:first-child{
+    width:100%!important;
+    min-width:0!important;
+    align-items:flex-start!important;
+  }
+  #boats-list-container > div > div:first-child > div:first-child{
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+  }
+  #boats-list-container > div > div:first-child > div:first-child span{
+    overflow-wrap:anywhere!important;
+    word-break:break-word!important;
+  }
+  #boats-list-container > div > div:first-child > div:last-child{
+    flex:0 0 auto!important;
+    white-space:nowrap!important;
+  }
 }
 </style>
+
+    <style>
+      /* Carregamento rápido e seguro em celular: conteúdo continua utilizável mesmo se uma CDN demorar. */
+      html,body{min-height:100%;-webkit-text-size-adjust:100%;}
+      #pj-loading{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#020617;color:#e2e8f0;font:600 15px system-ui,sans-serif;transition:opacity .2s ease;}
+      #pj-loading.hide{opacity:0;pointer-events:none;}
+      #pj-loading .box{text-align:center;padding:20px;}
+      #pj-loading .spin{width:28px;height:28px;margin:0 auto 10px;border:3px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:pjspin .7s linear infinite;}
+      @keyframes pjspin{to{transform:rotate(360deg)}}
+    </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
 
@@ -146,7 +216,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-6">
             <div class="text-center space-y-2">
                 <div class="bg-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto text-white shadow-lg shadow-blue-600/30">
-                    <i class="fa-solid fa-lock text-xl"></i>
+                    <span class="text-xl mr-1">🔒</span>
                 </div>
                 <h2 class="text-xl font-bold text-white">Acesso Restrito - Pesca-Justa</h2>
                 <p class="text-xs text-slate-400">Selecione seu perfil e informe a senha de acesso</p>
@@ -181,7 +251,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-600/30">
-                    <i class="fa-solid fa-ship text-xl"></i>
+                    <span class="text-xl mr-1">🚤</span>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-white">Pesca-Justa</h1>
@@ -195,20 +265,20 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                     <span id="current-user-display" class="text-xs font-bold text-blue-400">Administrador</span>
                 </div>
                 <button onclick="logout()" class="bg-slate-900 hover:bg-slate-800 text-rose-400 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-800 transition-all">
-                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+                    <span class="mr-1">🚪</span> Sair
                 </button>
             </div>
 
             <nav class="flex flex-wrap justify-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <button onclick="switchTab('apresentacao')" id="btn-apresentacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow"><i class="fa-solid fa-compass mr-1.5 text-blue-300"></i>Apresentação</button>
-                <button onclick="switchTab('viagem')" id="btn-viagem" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-calendar-days mr-1.5 text-amber-400"></i>Cadastro da Viagem</button>
-                <button onclick="switchTab('barcos')" id="btn-barcos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-ship mr-1.5 text-cyan-400"></i>Barcos & Cadastro</button>
-                <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-dice mr-1.5"></i>Sorteio & Posições</button>
-                <button onclick="switchTab('votacao')" id="btn-votacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-award mr-1.5 text-amber-400"></i>Votação</button>
-                <button onclick="switchTab('capturas')" id="btn-capturas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-fish mr-1.5 text-emerald-400"></i>Capturas & Ranking</button>
-                <button onclick="switchTab('relatorios')" id="btn-relatorios" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-chart-pie mr-1.5 text-amber-400"></i>Relatórios</button>
-                <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-wallet mr-1.5"></i>Despesas</button>
-                <button onclick="switchTab('pontos')" id="btn-pontos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-map-location-dot mr-1.5"></i>Local da Pesca</button>
+                <button onclick="switchTab('apresentacao')" id="btn-apresentacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow"><span class="mr-1.5 text-blue-300">🧭</span>Apresentação</button>
+                <button onclick="switchTab('viagem')" id="btn-viagem" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5 text-amber-400">📅</span>Cadastro da Viagem</button>
+                <button onclick="switchTab('barcos')" id="btn-barcos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5 text-cyan-400">🚤</span>Barcos & Cadastro</button>
+                <button onclick="switchTab('sorteio')" id="btn-sorteio" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5">🎲</span>Sorteio & Posições</button>
+                <button onclick="switchTab('votacao')" id="btn-votacao" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5 text-amber-400">🏆</span>Votação</button>
+                <button onclick="switchTab('capturas')" id="btn-capturas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5 text-emerald-400">🐟</span>Capturas & Ranking</button>
+                <button onclick="switchTab('relatorios')" id="btn-relatorios" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5 text-amber-400">📊</span>Relatórios</button>
+                <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5">💰</span>Despesas</button>
+                <button onclick="switchTab('pontos')" id="btn-pontos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><span class="mr-1.5">📍</span>Local da Pesca</button>
             </nav>
         </div>
     </header>
@@ -221,7 +291,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 items-center">
                     <div class="lg:col-span-7 space-y-4">
                         <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs font-bold uppercase px-3.5 py-1.5 rounded-full tracking-wider inline-flex items-center gap-1.5">
-                            <i class="fa-solid fa-compass"></i> Painel de Apresentação da Expedição
+                            <span class="mr-1">🧭</span> Painel de Apresentação da Expedição
                         </span>
                         
                         <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight flex items-center gap-3">
@@ -252,10 +322,16 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                                 </div>
                                 <div class="flex gap-2">
                                     <a id="pres-gps-link" href="#" target="_blank" class="hidden bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                                        <i class="fa-solid fa-location-arrow"></i> GPS / Rota
+                                        <span class="mr-1">📍</span> GPS / Rota
                                     </a>
+                                    <button onclick="shareFishingInvite()" class="bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                                        <span class="mr-1">📲</span> Enviar Convite
+                                    </button>
+                                    <button onclick="copyFishingInvite()" class="bg-slate-700/40 hover:bg-slate-700/60 text-slate-200 border border-slate-600/50 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                                        <span class="mr-1">🔗</span> Copiar Convite
+                                    </button>
                                     <button onclick="addToCalendar()" class="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                                        <i class="fa-solid fa-calendar-plus"></i> Adicionar à Agenda
+                                        <span class="mr-1">📅</span> Adicionar à Agenda
                                     </button>
                                 </div>
                             </div>
@@ -263,6 +339,13 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 
                         <!-- Serviços do Barco -->
                         <div id="pres-boat-services" class="flex flex-wrap gap-2 pt-2"></div>
+                        <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="text-xs"><strong class="text-white block">📍 Endereço da pescaria</strong><span id="pres-map-summary" class="text-slate-400">Local não informado</span></div>
+                            <div class="flex flex-wrap gap-2">
+                                <a id="pres-map-card-link" href="#" target="_blank" class="hidden bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold">📍 Abrir mapa</a>
+                                <button onclick="shareFishingInvite()" class="bg-green-600/20 text-green-400 border border-green-500/30 px-3 py-1.5 rounded-xl text-xs font-bold">📲 Enviar convite</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="lg:col-span-5 grid grid-cols-2 gap-3">
@@ -282,7 +365,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 <div class="mt-6 pt-6 border-t border-slate-800/80 space-y-3">
                     <div class="flex items-center justify-between">
                         <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-                            <i class="fa-solid fa-users text-emerald-400"></i> Lista Lateral Oficial dos Pescadores Confirmados
+                            <span class="text-emerald-400 mr-1">👥</span> Lista Lateral Oficial dos Pescadores Confirmados
                         </h3>
                         <span id="sidebar-participant-count" class="text-xs bg-slate-950 px-2.5 py-0.5 rounded-full text-blue-400 font-bold border border-slate-800">0 Pescadores</span>
                     </div>
@@ -296,7 +379,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
                 <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
                     <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fa-solid fa-calendar-days text-xl"></i>
+                        <span class="text-xl mr-1">📅</span>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-white">Configuração Completa da Expedição & Horas de Pesca</h2>
@@ -349,7 +432,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-7 space-y-6">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                        <h2 id="boat-form-title" class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-ship text-blue-500"></i> Cadastrar Nova Embarcação</h2>
+                        <h2 id="boat-form-title" class="text-base font-semibold text-white flex items-center gap-2"><span class="text-blue-500 mr-1">🚤</span> Cadastrar Nova Embarcação</h2>
                         <form id="boat-form" class="space-y-4" onsubmit="saveNewBoat(event)">
                             <input type="hidden" id="boat-edit-id" value="">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -378,7 +461,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                             </div>
 
                             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-cyan-400"><i class="fa-solid fa-circle-info mr-1"></i> Dados comerciais e contato</label>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-cyan-400"><span class="mr-1">ℹ️</span> Dados comerciais e contato</label>
                                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                                     <div><label class="block text-[10px] text-slate-400 mb-1">Capacidade</label><input type="number" id="boat-capacity" min="1" placeholder="Ex: 14" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
                                     <div><label class="block text-[10px] text-slate-400 mb-1">Valor 10h</label><input type="number" id="boat-price-10" min="0" step="0.01" placeholder="R$" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
@@ -392,7 +475,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                             </div>
 
                             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400"><i class="fa-solid fa-location-dot mr-1"></i> Endereço do embarque / estacionamento</label>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400"><span class="mr-1">📍</span> Endereço do embarque / estacionamento</label>
                                 <input type="text" id="boat-address" placeholder="Endereço completo do ponto de embarque" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     <input type="text" id="boat-address-ref" placeholder="Bairro / referência" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
@@ -406,7 +489,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                             </div>
 
                             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-amber-400"><i class="fa-solid fa-fish mr-1"></i> Destinos e estrutura</label>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-amber-400"><span class="mr-1">🐟</span> Destinos e estrutura</label>
                                 <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
                                     <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-dest-buzios"> Búzios</label>
                                     <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-dest-vitoria"> Vitória</label>
@@ -424,7 +507,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 
                             <!-- Configuração de Posições por Setor -->
                             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-cyan-400"><i class="fa-solid fa-chair mr-1"></i> Quantidade de Posições no Barco</label>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-cyan-400"><span class="mr-1">💺</span> Quantidade de Posições no Barco</label>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                     <div>
                                         <span class="text-[10px] text-slate-400 block mb-1">Popa</span>
@@ -447,7 +530,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 
                             <!-- Serviços Opcionais -->
                             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-amber-400"><i class="fa-solid fa-concierge-bell mr-1"></i> Serviços e Comodidades a Bordo</label>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-amber-400"><span class="mr-1">🛎️</span> Serviços e Comodidades a Bordo</label>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     <div class="flex items-center justify-between bg-slate-900 px-3 py-2 rounded-xl border border-slate-800">
                                         <span class="text-xs text-slate-300">Limpeza de Peixes</span>
@@ -474,7 +557,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                             </div>
 
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1"><i class="fa-solid fa-square-parking mr-1 text-emerald-400"></i> Estacionamento & Logística</label>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1"><span class="mr-1 text-emerald-400">🅿️</span> Estacionamento & Logística</label>
                                 <textarea id="boat-obs" placeholder="Ex: Estacionamento 24h na marina." rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300"></textarea>
                             </div>
 
@@ -486,14 +569,24 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                     </div>
 
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                        <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Lista de Barcos (<span id="boat-count">0</span>)</h2>
-                        <div id="boats-list-container" class="space-y-3 max-h-[260px] overflow-y-auto pr-1"></div>
+                        <div class="flex items-center justify-between gap-3 flex-wrap">
+                            <h2 class="text-base font-semibold text-white flex items-center gap-2"><span class="text-emerald-400 mr-1">📋</span> Lista de Barcos (<span id="boat-count">0</span>)</h2>
+                            <span id="boat-filter-count" class="text-[10px] text-slate-400"></span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <input type="search" id="boat-filter-search" oninput="renderAll()" placeholder="🔎 Buscar barco, barqueiro ou cidade..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500">
+                            <select id="boat-filter-local" onchange="renderAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"><option value="">📍 Todos os locais</option></select>
+                            <select id="boat-filter-dest" onchange="renderAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                <option value="">🎣 Todos os destinos</option><option value="buzios">Búzios</option><option value="vitoria">Ilha da Vitória</option><option value="sombrio">Sombrio</option><option value="montao">Montão</option><option value="pocao">Poção</option>
+                            </select>
+                        </div>
+                        <div id="boats-list-container" class="space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-5 space-y-6">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                        <h2 id="participant-form-title" class="text-base font-semibold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador</h2>
+                        <h2 id="participant-form-title" class="text-base font-semibold text-white mb-3 flex items-center gap-2"><span class="text-blue-500 mr-1">👤</span> Adicionar Pescador</h2>
                         <form id="participant-form" class="space-y-3" onsubmit="saveParticipant(event)">
                             <input type="hidden" id="p-edit-id" value="">
                             <div>
@@ -538,7 +631,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Pescadores Confirmados (<span id="participant-count">0</span>)</h2>
+                <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><span class="text-blue-500 mr-1">👥</span> Pescadores Confirmados (<span id="participant-count">0</span>)</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-300">
                         <thead class="bg-slate-950 uppercase text-xs text-slate-400 border-b border-slate-800">
@@ -555,14 +648,14 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             <div id="lottery-action-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-center space-y-4">
                 <h2 class="text-xl font-bold text-white">Sistema Inteligente de Rodízio da Popa</h2>
                 <p class="text-xs text-slate-400">Distribuição automática nas posições do barco selecionado. Pescadores ativos: <strong class="text-blue-400" id="dyn-total-pescadores">0</strong>.</p>
-                <button onclick="runIntelligentPopaRotation()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg"><i class="fa-solid fa-calculator mr-2"></i> Calcular e Sortear Posições & Rodízio</button>
+                <button onclick="runIntelligentPopaRotation()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-lg"><span class="mr-2">🧮</span> Calcular e Sortear Posições & Rodízio</button>
             </div>
 
             <div id="popa-rotation-results-card" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-line text-emerald-400"></i> Resumo do Rodízio</h3>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><span class="text-emerald-400 mr-1">📈</span> Resumo do Rodízio</h3>
                     <div class="bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check"></i> Sorteio Válido & Equilibrado
+                        <span class="mr-1">✅</span> Sorteio Válido & Equilibrado
                     </div>
                 </div>
 
@@ -586,7 +679,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 </div>
 
                 <div class="space-y-3 border-t border-slate-800 pt-4">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-clock-rotate-left mr-1 text-blue-400"></i> Histórico Sequencial de Trocas</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300"><span class="mr-1 text-blue-400">🕘</span> Histórico Sequencial de Trocas</h4>
                     <div id="popa-history-container" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
                 </div>
             </div>
@@ -594,7 +687,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             <!-- PLANTA VISUAL DO BARCO -->
             <div class="bg-slate-900 border border-cyan-500/20 rounded-3xl p-5 md:p-7 shadow-xl overflow-hidden">
                 <div class="flex items-center gap-2 mb-5">
-                    <span class="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-cyan-300"><i class="fa-solid fa-ship"></i></span>
+                    <span class="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-cyan-300"><span class="mr-1">🚤</span></span>
                     <div>
                         <h2 class="text-lg font-bold text-white">Planta da Embarcação com Avatares</h2>
                         <p class="text-xs text-slate-400">Visualização baseada na configuração de posições do barco ativo</p>
@@ -604,27 +697,27 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 <div id="boat-visual-plan" class="pj-boat-wrap">
                     <div class="pj-boat">
                         <div class="pj-boat-bow">
-                            <div class="pj-sector-title pj-proa-title"><i class="fa-solid fa-location-arrow"></i> PROA</div>
+                            <div class="pj-sector-title pj-proa-title"><span class="mr-1">📍</span> PROA</div>
                             <div id="boat-proa-seats" class="pj-seat-row"></div>
                         </div>
                         <div class="pj-boat-middle">
                             <div class="pj-side pj-side-left">
-                                <div class="pj-sector-title"><i class="fa-solid fa-arrow-left"></i> LADO ESQUERDO (LE)</div>
+                                <div class="pj-sector-title"><span class="mr-1">⬅️</span> LADO ESQUERDO (LE)</div>
                                 <div id="boat-le-seats" class="pj-seat-column"></div>
                             </div>
                             <div class="pj-deck">
-                                <div class="pj-console"><i class="fa-solid fa-steering-wheel"></i><span>COMANDO</span></div>
+                                <div class="pj-console"><span class="mr-1">🛞</span><span>COMANDO</span></div>
                                 <div class="pj-deck-line"></div>
                                 <div class="pj-deck-label">ÁREA DE PESCA</div>
                             </div>
                             <div class="pj-side pj-side-right">
-                                <div class="pj-sector-title"><i class="fa-solid fa-arrow-right"></i> LADO DIREITO (LD)</div>
+                                <div class="pj-sector-title"><span class="mr-1">➡️</span> LADO DIREITO (LD)</div>
                                 <div id="boat-ld-seats" class="pj-seat-column"></div>
                             </div>
                         </div>
                         <div class="pj-boat-stern">
                             <div id="boat-popa-seats" class="pj-seat-row pj-stern-row"></div>
-                            <div class="pj-sector-title pj-popa-title"><i class="fa-solid fa-anchor"></i> POPA • PREMIUM (<span id="popa-count-lbl">4</span> Posições)</div>
+                            <div class="pj-sector-title pj-popa-title"><span class="mr-1">⚓</span> POPA • PREMIUM (<span id="popa-count-lbl">4</span> Posições)</div>
                         </div>
                     </div>
                 </div>
@@ -632,19 +725,19 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                    <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Pessoas na Popa</h3>
+                    <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2"><span class="mr-1">💺</span> Pessoas na Popa</h3>
                     <div id="sector-popa-list" class="space-y-2"></div>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                    <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Pessoas na Proa</h3>
+                    <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2"><span class="mr-1">💺</span> Pessoas na Proa</h3>
                     <div id="sector-proa-list" class="space-y-2"></div>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                    <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Lado Esquerdo (LE)</h3>
+                    <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2"><span class="mr-1">💺</span> Lado Esquerdo (LE)</h3>
                     <div id="sector-le-list" class="space-y-2"></div>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                    <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-chair"></i> Lado Direito (LD)</h3>
+                    <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2"><span class="mr-1">💺</span> Lado Direito (LD)</h3>
                     <div id="sector-ld-list" class="space-y-2"></div>
                 </div>
             </div>
@@ -655,7 +748,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
                 <div class="text-center space-y-2 border-b border-slate-800 pb-4">
                     <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 w-12 h-12 rounded-xl flex items-center justify-center mx-auto shadow-lg">
-                        <i class="fa-solid fa-award text-xl"></i>
+                        <span class="text-xl mr-1">🏆</span>
                     </div>
                     <h2 class="text-xl font-bold text-white tracking-tight">PESCADOR DESTAQUE</h2>
                     <p class="text-xs text-slate-400">Sorteio por votação entre os pescadores</p>
@@ -671,13 +764,13 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-emerald-950/20 border border-emerald-900/50 p-4 rounded-xl space-y-2">
-                            <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-trophy"></i> +2 Pontos</div>
+                            <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider"><span class="mr-1">🏆</span> +2 Pontos</div>
                             <select id="vote-positive" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                                 <option value="">Selecione alguém...</option>
                             </select>
                         </div>
                         <div class="bg-rose-950/20 border border-rose-900/50 p-4 rounded-xl space-y-2">
-                            <div class="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-thumbs-down"></i> -1 Ponto</div>
+                            <div class="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider"><span class="mr-1">👎</span> -1 Ponto</div>
                             <select id="vote-negative" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                                 <option value="">Selecione alguém...</option>
                             </select>
@@ -692,7 +785,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         <section id="tab-capturas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl lg:col-span-1">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-fish-fins text-emerald-400"></i> Registrar Captura</h2>
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2"><span class="text-emerald-400 mr-1">🐟</span> Registrar Captura</h2>
                     <form id="catch-form" class="space-y-4" onsubmit="saveCatch(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pescador</label>
@@ -710,7 +803,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                     </form>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-4">
-                    <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-400"></i> Ranking e Histórico</h2>
+                    <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2"><span class="text-amber-400 mr-1">🏆</span> Ranking e Histórico</h2>
                     <div class="overflow-x-auto max-h-[380px] overflow-y-auto">
                         <table class="w-full text-left text-sm text-slate-300">
                             <thead class="bg-slate-950 uppercase text-xs text-slate-400 sticky top-0">
@@ -726,7 +819,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         <!-- RELATÓRIOS -->
         <section id="tab-relatorios" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-chart-pie text-amber-400"></i> Relatório Geral</h2>
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2"><span class="text-amber-400 mr-1">📊</span> Relatório Geral</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-slate-950 p-4 rounded-xl border border-slate-800"><span class="text-xs text-slate-400 uppercase">Total de Peixes</span><span id="rep-total-fish" class="text-2xl font-bold text-white mt-1 block">0</span></div>
                     <div class="bg-slate-950 p-4 rounded-xl border border-slate-800"><span class="text-xs text-slate-400 uppercase">Peso Acumulado</span><span id="rep-total-weight" class="text-2xl font-bold text-emerald-400 mt-1 block">0.00 kg</span></div>
@@ -739,7 +832,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         <section id="tab-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                    <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-receipt text-blue-500"></i> Despesas Gerais</h2>
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2"><span class="text-blue-500 mr-1">🧾</span> Despesas Gerais</h2>
                     <form id="expense-form" class="space-y-4" onsubmit="saveExpense(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria</label>
@@ -770,7 +863,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 </div>
 
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                    <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-user-tag text-emerald-400"></i> Pagamentos por Pescador</h2>
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2"><span class="text-emerald-400 mr-1">🏷️</span> Pagamentos por Pescador</h2>
                     <form id="payer-form" class="space-y-4" onsubmit="savePayerPayment(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pescador</label>
@@ -796,7 +889,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h2 class="text-lg font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-amber-400"></i> Extrato e Rateio Final</h2>
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2"><span class="text-amber-400 mr-1">⚖️</span> Extrato e Rateio Final</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-300">
                         <thead class="bg-slate-950 uppercase text-xs text-slate-400">
@@ -812,7 +905,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         <section id="tab-pontos" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl lg:col-span-5 space-y-4">
-                    <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-map-pin text-blue-500"></i> Cadastrar Local</h2>
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2"><span class="text-blue-500 mr-1">📍</span> Cadastrar Local</h2>
                     <form id="spot-form-main" class="space-y-4" onsubmit="saveFishingSpot(event)">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Destino</label>
@@ -823,6 +916,10 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                             <input type="text" id="spot-species" placeholder="Ex: Garoupa, Pargo, Olho de Cão" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
                         </div>
                         <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Link GPS / Google Maps</label>
+                            <input type="url" id="spot-gps" placeholder="Cole o link do Google Maps (opcional)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm">
+                        </div>
+                        <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Observações</label>
                             <textarea id="spot-obs-main" rows="2" placeholder="Ex: Ponto produtivo para fundeio" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         </div>
@@ -831,7 +928,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 </div>
 
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl lg:col-span-7 space-y-4">
-                    <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list text-emerald-400"></i> Locais Cadastrados</h2>
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2"><span class="text-emerald-400 mr-1">📋</span> Locais Cadastrados</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-slate-300">
                             <thead class="bg-slate-950 uppercase text-xs text-slate-400 border-b border-slate-800">
@@ -848,7 +945,15 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 
     <!-- SCRIPT DE LÓGICA E ESTADO -->
     <script>
-        let db = JSON.parse(localStorage.getItem('pesca_justa_db_v49')) || {
+        let db = null;
+        try {
+            const saved = localStorage.getItem('pesca_justa_db_v49');
+            db = saved ? JSON.parse(saved) : null;
+        } catch (e) {
+            console.warn('Pesca Justa: dados locais inválidos; iniciando com dados padrão.', e);
+            db = null;
+        }
+        db = db || {
             auth: { logged: false, role: "convidado", name: "" },
             trip: {
                 startDatetime: "2026-08-22T13:00",
@@ -901,8 +1006,8 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             expenses: [], 
             payers: [], 
             spots: [
-                { id: 1, name: "Atlanticus - Ilha da Vitória", species: "Garoupa, Pargo, Olho de Cão, Vermelho", obs: "Ponto produtivo para fundeio" },
-                { id: 2, name: "Laje de Santos", species: "Garoupa, Olho de Boi, Badejo, Dourado", obs: "Ponto clássico para grandes peixes" }
+                { id: 1, name: "Atlanticus - Ilha da Vitória", species: "Garoupa, Pargo, Olho de Cão, Vermelho", gps: "", obs: "Ponto produtivo para fundeio" },
+                { id: 2, name: "Laje de Santos", species: "Garoupa, Olho de Boi, Badejo, Dourado", gps: "", obs: "Ponto clássico para grandes peixes" }
             ], 
             catches: [], 
             lottery: { popa: [], proa: [], le: [], ld: [] },
@@ -985,7 +1090,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             const panel = document.getElementById('mobile-menu-panel');
             const btn = document.getElementById('mobile-menu-toggle');
             const open = panel.classList.toggle('open');
-            btn.innerHTML = open ? '<i class="fa-solid fa-xmark text-lg"></i>' : '<i class="fa-solid fa-bars text-lg"></i>';
+            btn.innerHTML = open ? '<span class="text-lg mr-1">✖️</span>' : '<span class="text-lg mr-1">☰</span>';
         }
 
         function mobileSwitchTab(tabId) {
@@ -994,7 +1099,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             const panel = document.getElementById('mobile-menu-panel');
             if (panel) panel.classList.remove('open');
             const btn = document.getElementById('mobile-menu-toggle');
-            if (btn) btn.innerHTML = '<i class="fa-solid fa-bars text-lg"></i>';
+            if (btn) btn.innerHTML = '<span class="text-lg mr-1">☰</span>';
         }
 
         document.addEventListener('click', function(e) {
@@ -1003,7 +1108,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             if (!panel || !toggle) return;
             if (panel.classList.contains('open') && !panel.contains(e.target) && !toggle.contains(e.target)) {
                 panel.classList.remove('open');
-                toggle.innerHTML = '<i class="fa-solid fa-bars text-lg"></i>';
+                toggle.innerHTML = '<span class="text-lg mr-1">☰</span>';
             }
         });
 
@@ -1108,7 +1213,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 document.getElementById('boat-srv-churrasco').value = b.services?.churrasco || 'nao';
                 document.getElementById('boat-srv-ajudante').value = b.services?.ajudante || 'sim';
 
-                document.getElementById('boat-form-title').innerHTML = '<i class="fa-solid fa-ship-pen text-amber-400"></i> Editar Embarcação';
+                document.getElementById('boat-form-title').innerHTML = '<span class="text-amber-400 mr-1">🚤</span> Editar Embarcação';
                 document.getElementById('btn-save-boat').innerText = 'Salvar Alterações';
                 document.getElementById('btn-cancel-boat').classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1118,7 +1223,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         function resetBoatForm() {
             document.getElementById('boat-form').reset();
             document.getElementById('boat-edit-id').value = '';
-            document.getElementById('boat-form-title').innerHTML = '<i class="fa-solid fa-ship text-blue-500"></i> Cadastrar Nova Embarcação';
+            document.getElementById('boat-form-title').innerHTML = '<span class="text-blue-500 mr-1">🚤</span> Cadastrar Nova Embarcação';
             document.getElementById('btn-save-boat').innerText = 'Salvar Barco';
             document.getElementById('btn-cancel-boat').classList.add('hidden');
         }
@@ -1174,7 +1279,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 document.getElementById('p-name').value = p.name;
                 document.getElementById('p-phone').value = p.phone;
                 document.getElementById('p-avatar').value = p.avatar || '👨';
-                document.getElementById('participant-form-title').innerHTML = '<i class="fa-solid fa-user-pen text-amber-400"></i> Editar Pescador';
+                document.getElementById('participant-form-title').innerHTML = '<span class="text-amber-400 mr-1">👤</span> Editar Pescador';
                 document.getElementById('btn-save-participant').innerText = 'Salvar Alterações';
                 document.getElementById('btn-cancel-participant').classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1184,7 +1289,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         function resetParticipantForm() {
             document.getElementById('participant-form').reset();
             document.getElementById('p-edit-id').value = '';
-            document.getElementById('participant-form-title').innerHTML = '<i class="fa-solid fa-user-plus text-blue-500"></i> Adicionar Pescador';
+            document.getElementById('participant-form-title').innerHTML = '<span class="text-blue-500 mr-1">👤</span> Adicionar Pescador';
             document.getElementById('btn-save-participant').innerText = 'Cadastrar Pescador';
             document.getElementById('btn-cancel-participant').classList.add('hidden');
         }
@@ -1215,7 +1320,13 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 
         function saveFishingSpot(e) {
             e.preventDefault();
-            db.spots.push({ id: Date.now(), name: document.getElementById('spot-name-main').value, species: document.getElementById('spot-species').value, obs: document.getElementById('spot-obs-main').value });
+            const name = document.getElementById('spot-name-main').value.trim();
+            const species = document.getElementById('spot-species').value.trim();
+            const gps = document.getElementById('spot-gps')?.value.trim() || '';
+            const obs = document.getElementById('spot-obs-main').value.trim();
+            if (!name || !species) return;
+            db.spots.push({ id: Date.now(), name, species, gps, obs });
+            db.activeDestination = name;
             document.getElementById('spot-form-main').reset();
             saveData();
             alert('Local cadastrado!');
@@ -1367,6 +1478,62 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             `).join('');
         }
 
+        function getFishingMapLinkForSpot(spot) {
+            if (!spot) return '';
+            if (spot.gps && /^https?:\/\//i.test(spot.gps)) return spot.gps;
+            return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name || '')}`;
+        }
+
+        function getActiveFishingSpot() {
+            return db.spots.find(s => s.name === db.activeDestination) || db.spots[0] || null;
+        }
+
+        function getActiveBoatMapLink() {
+            const boat = db.boats.find(b => b.id === db.activeBoatId) || db.boats[0];
+            if (!boat) return '';
+            const address = [boat.address, boat.addressRef, boat.local].filter(Boolean).join(', ').trim();
+            if (address) return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+            if (boat.gps && /^https?:\/\//i.test(boat.gps)) return boat.gps;
+            return '';
+        }
+
+        function getFishingMapLink() {
+            return getActiveBoatMapLink() || getFishingMapLinkForSpot(getActiveFishingSpot());
+        }
+
+        function getFishingInviteText() {
+            const boat = db.boats.find(b => b.id === db.activeBoatId) || db.boats[0];
+            const spot = getActiveFishingSpot();
+            const start = db.trip?.startDatetime ? new Date(db.trip.startDatetime).toLocaleString('pt-BR') : 'a confirmar';
+            const end = db.trip?.endDatetime ? new Date(db.trip.endDatetime).toLocaleString('pt-BR') : 'a confirmar';
+            const hours = getRealFishingHours();
+            const map = getFishingMapLink();
+            return `🎣 CONVITE – PESCARIA PESCA-JUSTA\n\n📍 Local: ${spot?.name || db.activeDestination || 'a confirmar'}\n🗺️ GPS / Rota: ${map || 'a confirmar'}\n🚤 Barco: ${boat?.name || 'a confirmar'}\n👨‍✈️ Comandante: ${boat?.owner ? 'Comandante ' + boat.owner : 'a confirmar'}\n📅 Saída: ${start}\n🏁 Retorno: ${end}\n⏱️ Horas úteis de pesca: ${hours || 0}h\n👥 Pescadores confirmados: ${db.participants.length}\n\nAcesse o Pesca-Justa para acompanhar a programação, posições, votação e demais informações da pescaria.`;
+        }
+
+        async function shareFishingInvite() {
+            const text = getFishingInviteText();
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: 'Convite – Pescaria Pesca-Justa', text });
+                    return;
+                } catch (e) {
+                    if (e?.name === 'AbortError') return;
+                }
+            }
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        async function copyFishingInvite() {
+            const text = getFishingInviteText();
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('Convite copiado. Agora você pode colar no WhatsApp ou em outro aplicativo.');
+            } catch (e) {
+                window.prompt('Copie o convite abaixo:', text);
+            }
+        }
+
         function addToCalendar() {
             const title = encodeURIComponent("Expedição Pesca-Justa: " + db.activeDestination);
             const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&location=${encodeURIComponent(db.activeDestination)}`;
@@ -1383,6 +1550,10 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             db.votes.push({ voter, positive, negative });
             saveData();
             alert("Voto registrado!");
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>\"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
         }
 
         function renderAll() {
@@ -1402,13 +1573,14 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 document.getElementById('pres-boat-name').innerText = boat.name;
                 document.getElementById('pres-barqueiro-info').innerText = `${boat.owner} (${boat.phone || 'Sem tel'})`;
                 const gpsLink = document.getElementById('pres-gps-link');
-                if (boat.gps) { gpsLink.href = boat.gps; gpsLink.classList.remove('hidden'); } else { gpsLink.classList.add('hidden'); }
+                const fishingMap = getFishingMapLink();
+                if (fishingMap) { gpsLink.href = fishingMap; gpsLink.classList.remove('hidden'); } else { gpsLink.classList.add('hidden'); }
 
                 const srv = boat.services || {limpeza: 'sim', churrasco: 'nao', ajudante: 'sim'};
                 document.getElementById('pres-boat-services').innerHTML = `
-                    <span class="bg-slate-950 px-3 py-1 rounded-xl text-xs border border-slate-800 text-slate-300"><i class="fa-solid fa-fish text-cyan-400 mr-1"></i> Limpeza: <strong>${srv.limpeza.toUpperCase()}</strong></span>
-                    <span class="bg-slate-950 px-3 py-1 rounded-xl text-xs border border-slate-800 text-slate-300"><i class="fa-solid fa-fire text-amber-500 mr-1"></i> Churrasco: <strong>${srv.churrasco.toUpperCase()}</strong></span>
-                    <span class="bg-slate-950 px-3 py-1 rounded-xl text-xs border border-slate-800 text-slate-300"><i class="fa-solid fa-user-tie text-emerald-400 mr-1"></i> Ajudante: <strong>${srv.ajudante.toUpperCase()}</strong></span>
+                    <span class="bg-slate-950 px-3 py-1 rounded-xl text-xs border border-slate-800 text-slate-300"><span class="text-cyan-400 mr-1">🐟</span> Limpeza: <strong>${srv.limpeza.toUpperCase()}</strong></span>
+                    <span class="bg-slate-950 px-3 py-1 rounded-xl text-xs border border-slate-800 text-slate-300"><span class="text-amber-500 mr-1">🔥</span> Churrasco: <strong>${srv.churrasco.toUpperCase()}</strong></span>
+                    <span class="bg-slate-950 px-3 py-1 rounded-xl text-xs border border-slate-800 text-slate-300"><span class="text-emerald-400 mr-1">🧑‍✈️</span> Ajudante: <strong>${srv.ajudante.toUpperCase()}</strong></span>
                 `;
             }
 
@@ -1421,7 +1593,14 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             }
 
             const spot = db.spots.find(s => s.name === db.activeDestination) || db.spots[0];
-            if (spot) { document.getElementById('pres-dest-name').innerText = spot.name; }
+            if (spot) {
+                document.getElementById('pres-dest-name').innerText = spot.name;
+                const map = getFishingMapLinkForSpot(spot);
+                const mapCard = document.getElementById('pres-map-card-link');
+                if (mapCard) { mapCard.href = map; mapCard.classList.toggle('hidden', !map); }
+                const mapSummary = document.getElementById('pres-map-summary');
+                if (mapSummary) mapSummary.innerText = spot.name + (spot.obs ? ' · ' + spot.obs : '');
+            }
 
             document.getElementById('pres-total-people').innerText = db.participants.length;
             document.getElementById('sidebar-participant-count').innerText = `${db.participants.length} Pescadores`;
@@ -1434,23 +1613,26 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             document.getElementById('rep-total-expenses').innerText = `R$ ${grandTotal.toFixed(2)}`;
 
             let configBoatOpts = '', boatsHtml = '';
-            db.boats.forEach(b => {
-                let isActive = b.id === db.activeBoatId;
-                configBoatOpts += `<option value="${b.id}" ${isActive ? 'selected' : ''}>${b.name} (${b.local})</option>`;
-                boatsHtml += `
-                    <div class="bg-slate-950 border ${isActive ? 'border-blue-500' : 'border-slate-800'} p-3 rounded-xl text-xs">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="min-w-0">
-                                <span class="font-bold text-white block text-sm">${b.name} <span class="text-slate-500 font-normal">${b.local ? '('+b.local+')' : ''}</span></span>
-                                <span class="text-slate-400 block mt-1">Barqueiro: ${b.owner || '-'} | Capacidade: ${b.capacity || '-'} | 10h: ${b.price10 ? 'R$ '+Number(b.price10).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '-'} | 20h: ${b.price20 ? 'R$ '+Number(b.price20).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '-'}</span>
-                                <span class="text-slate-500 block mt-1">${b.address || 'Endereço não informado'} ${b.parking && b.parking !== 'nao-informado' ? ' · 🅿️ '+b.parking : ''}</span>
-                            </div>
-                        <div class="flex gap-2">
-                            <button onclick="editBoat(${b.id})" class="text-amber-400 hover:text-amber-300 px-2 py-1" title="Editar Barco"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir Barco"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>`;
+            const search = (document.getElementById('boat-filter-search')?.value || '').trim().toLowerCase();
+            const selectedLocal = document.getElementById('boat-filter-local')?.value || '';
+            const selectedDest = document.getElementById('boat-filter-dest')?.value || '';
+            const localValues = [...new Set(db.boats.map(b => (b.local || '').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+            const localEl = document.getElementById('boat-filter-local');
+            if (localEl) { const current=localEl.value; localEl.innerHTML='<option value="">📍 Todos os locais</option>'+localValues.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join(''); if(localValues.includes(current)) localEl.value=current; }
+            db.boats.forEach(b => { const isActive=b.id===db.activeBoatId; configBoatOpts += `<option value="${b.id}" ${isActive?'selected':''}>${escapeHtml(b.name)} (${escapeHtml(b.local||'')})</option>`; });
+            const filteredBoats=db.boats.filter(b=>{
+                const hay=[b.name,b.owner,b.local,b.address,b.addressRef,b.phone].filter(Boolean).join(' ').toLowerCase();
+                const d=b.destinations||{};
+                return (!search||hay.includes(search)) && (!selectedLocal||(b.local||'')===selectedLocal) && (!selectedDest||!!d[selectedDest]);
             });
+            filteredBoats.forEach(b => {
+                const isActive=b.id===db.activeBoatId;
+                const address=[b.address,b.addressRef].filter(Boolean).join(' · ');
+                const boatMap=b.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([b.address,b.addressRef,b.local].filter(Boolean).join(', '))}` : (b.gps||'');
+                boatsHtml += `<div class="boat-card bg-slate-950 border ${isActive?'border-blue-500':'border-slate-800'} p-3 rounded-xl text-xs"><div class="boat-card-header flex items-start justify-between gap-3"><div class="boat-card-info min-w-0 flex-1"><span class="font-bold text-white block text-sm">${escapeHtml(b.name)} ${isActive?'<span class="text-blue-400 text-[10px] ml-1">● ATIVO</span>':''} <span class="text-slate-500 font-normal">${b.local?'('+escapeHtml(b.local)+')':''}</span></span><span class="text-slate-400 block mt-1">Barqueiro: ${escapeHtml(b.owner||'-')} | Capacidade: ${b.capacity||'-'} | 10h: ${b.price10?'R$ '+Number(b.price10).toLocaleString('pt-BR',{minimumFractionDigits:2}):'-'} | 20h: ${b.price20?'R$ '+Number(b.price20).toLocaleString('pt-BR',{minimumFractionDigits:2}):'-'}</span><span class="text-slate-500 block mt-1">${escapeHtml(address||'Endereço não informado')} ${b.parking&&b.parking!=='nao-informado'?' · 🅿️ '+escapeHtml(b.parking):''}</span>${boatMap?`<a href="${boatMap}" target="_blank" class="inline-flex mt-2 text-emerald-400 hover:text-emerald-300 font-semibold">📍 Abrir endereço no mapa</a>`:''}</div><div class="boat-card-actions flex gap-2 shrink-0"><button onclick="editBoat(${b.id})" class="text-amber-400 hover:text-amber-300 px-2 py-1" title="Editar Barco">✏️</button><button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir Barco">🗑️</button></div></div></div>`;
+            });
+            const filterCount=document.getElementById('boat-filter-count'); if(filterCount) filterCount.textContent=`${filteredBoats.length} de ${db.boats.length} barcos`;
+            if(!filteredBoats.length) boatsHtml='<div class="text-center text-slate-500 text-xs py-8">Nenhum barco encontrado com os filtros atuais.</div>';
             if(document.getElementById('config-boat-select')) document.getElementById('config-boat-select').innerHTML = configBoatOpts;
             document.getElementById('boats-list-container').innerHTML = boatsHtml;
             document.getElementById('boat-count').innerText = db.boats.length;
@@ -1459,14 +1641,14 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             db.spots.forEach(s => {
                 let isSelected = s.name === db.activeDestination;
                 configDestOpts += `<option value="${s.name}" ${isSelected ? 'selected' : ''}>${s.name}</option>`;
-                spotsTableHtml += `<tr><td class="p-3 font-medium text-white">${s.name}</td><td class="p-3 text-slate-300">${s.species}</td><td class="p-3 text-slate-400 text-xs">${s.obs || '-'}</td><td class="p-3 text-center"><button onclick="removeSpot(${s.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                spotsTableHtml += `<tr><td class="p-3 font-medium text-white">${s.name}</td><td class="p-3 text-slate-300">${s.species}</td><td class="p-3 text-slate-400 text-xs">${s.obs || '-'}</td><td class="p-3 text-center"><a href="${getFishingMapLinkForSpot(s)}" target="_blank" class="text-emerald-400 mr-3" title="Abrir no mapa">📍</a><button onclick="removeSpot(${s.id})" class="text-rose-400"><span class="mr-1">🗑️</span></button></td></tr>`;
             });
             if(document.getElementById('config-dest-select')) document.getElementById('config-dest-select').innerHTML = configDestOpts;
             document.getElementById('spots-table-body').innerHTML = spotsTableHtml;
 
             let pHtml = '', sidebarHtml = '', payerOpts = '', catchOpts = '', voteOpts = '<option value="">Selecione...</option>';
             db.participants.forEach((p, idx) => {
-                pHtml += `<tr><td class="p-3 text-lg">${p.avatar || '👨'}</td><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400 font-mono">${p.phone}</td><td class="p-3 text-center space-x-2"><button onclick="editParticipant(${p.id})" class="text-amber-400 hover:text-amber-300" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300" title="Excluir"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                pHtml += `<tr><td class="p-3 text-lg">${p.avatar || '👨'}</td><td class="p-3 font-medium text-white">${p.name}</td><td class="p-3 text-slate-400 font-mono">${p.phone}</td><td class="p-3 text-center space-x-2"><button onclick="editParticipant(${p.id})" class="text-amber-400 hover:text-amber-300" title="Editar"><span class="mr-1">✏️</span></button><button onclick="removeParticipant(${p.id})" class="text-rose-400 hover:text-rose-300" title="Excluir"><span class="mr-1">🗑️</span></button></td></tr>`;
                 sidebarHtml += `<div class="bg-slate-950 border border-slate-800/80 px-2.5 py-1.5 rounded-xl text-xs flex justify-between items-center"><span class="text-slate-200 font-medium"><strong class="text-blue-400 font-mono mr-1">#${idx+1}</strong>${p.avatar || '👨'} ${p.name}</span></div>`;
                 payerOpts += `<option value="${p.name}">${p.name}</option>`;
                 catchOpts += `<option value="${p.name}">${p.name}</option>`;
@@ -1480,9 +1662,9 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             document.getElementById('vote-positive').innerHTML = voteOpts;
             document.getElementById('vote-negative').innerHTML = voteOpts;
 
-            document.getElementById('expenses-table-body').innerHTML = db.expenses.map(ex => `<tr><td class="p-2">${ex.type}</td><td class="p-2">${ex.description}</td><td class="p-2 font-semibold text-blue-400">R$ ${ex.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-            document.getElementById('payers-table-body').innerHTML = db.payers.map(p => `<tr><td class="p-2 font-medium text-emerald-400">${p.fisherman}</td><td class="p-2">${p.description}</td><td class="p-2 font-semibold">R$ ${p.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removePayer(${p.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-            document.getElementById('catches-table-body').innerHTML = db.catches.map(c => `<tr><td class="p-3 font-medium text-white">${c.fisherman}</td><td class="p-3 text-slate-300">${c.species}</td><td class="p-3 text-emerald-400 font-bold">${c.weight.toFixed(2)} kg</td><td class="p-3 text-center"><button onclick="removeCatch(${c.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('expenses-table-body').innerHTML = db.expenses.map(ex => `<tr><td class="p-2">${ex.type}</td><td class="p-2">${ex.description}</td><td class="p-2 font-semibold text-blue-400">R$ ${ex.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400"><span class="mr-1">🗑️</span></button></td></tr>`).join('');
+            document.getElementById('payers-table-body').innerHTML = db.payers.map(p => `<tr><td class="p-2 font-medium text-emerald-400">${p.fisherman}</td><td class="p-2">${p.description}</td><td class="p-2 font-semibold">R$ ${p.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removePayer(${p.id})" class="text-rose-400"><span class="mr-1">🗑️</span></button></td></tr>`).join('');
+            document.getElementById('catches-table-body').innerHTML = db.catches.map(c => `<tr><td class="p-3 font-medium text-white">${c.fisherman}</td><td class="p-3 text-slate-300">${c.species}</td><td class="p-3 text-emerald-400 font-bold">${c.weight.toFixed(2)} kg</td><td class="p-3 text-center"><button onclick="removeCatch(${c.id})" class="text-rose-400"><span class="mr-1">🗑️</span></button></td></tr>`).join('');
 
             let paidMap = {};
             db.participants.forEach(p => { paidMap[p.name] = 0; });
@@ -1554,11 +1736,18 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             renderDynamicSeats('ld', 'boat-ld-seats');
         }
 
+        const pjLoading = document.getElementById('pj-loading');
+        if (pjLoading) { requestAnimationFrame(() => pjLoading.classList.add('hide')); setTimeout(() => pjLoading.remove(), 350); }
+
         if (!db.lottery.popa || db.lottery.popa.length === 0) {
             runIntelligentPopaRotation();
         } else {
             renderAll();
         }
     </script>
+<script>
+// Proteção de inicialização: erros não impedem a abertura da interface.
+window.addEventListener('error', function(e){ console.warn('Pesca Justa:', e.error || e.message); }, true);
+</script>
 </body>
 </html>
