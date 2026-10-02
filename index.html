@@ -121,6 +121,18 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 .pj-seat.occupied{border-color:rgba(16,185,129,.35);background:linear-gradient(180deg,rgba(16,185,129,.12),rgba(7,23,36,.96));box-shadow:0 6px 18px rgba(16,185,129,.07)}
 .pj-seat.empty{opacity:.72;border-style:dashed}.pj-seat:hover{transform:translateY(-2px);border-color:rgba(103,232,249,.42)}
 .pj-seat-number{font-size:8px;color:#64748b;font-weight:800}.pj-seat-avatar{font-size:16px;margin-bottom:1px}.pj-seat-name{font-size:10px;color:#e2e8f0;font-weight:700;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pj-seat.empty .pj-seat-name{color:#475569;font-weight:500}
+
+.pj-boat-directory{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:12px}
+.pj-boat-card{background:linear-gradient(180deg,rgba(4,17,27,.96),rgba(7,23,36,.96));border:1px solid rgba(148,163,184,.14);border-radius:16px;padding:14px;transition:.18s ease}
+.pj-boat-card:hover{border-color:rgba(6,182,212,.32);transform:translateY(-1px)}
+.pj-boat-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;background:rgba(15,32,47,.9);border:1px solid rgba(148,163,184,.12);font-size:10px;color:#cbd5e1}
+.pj-boat-contact{display:flex;flex-wrap:wrap;gap:7px}
+.pj-boat-contact a{font-size:11px;font-weight:700;padding:6px 9px;border-radius:9px;border:1px solid rgba(148,163,184,.14);background:#071724}
+.pj-boat-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.pj-boat-meta>div{background:#071724;border:1px solid rgba(148,163,184,.10);border-radius:10px;padding:7px}
+.pj-boat-meta span{display:block;font-size:9px;color:#64748b;text-transform:uppercase;font-weight:800}
+.pj-boat-meta strong{display:block;font-size:11px;color:#e2e8f0;margin-top:2px}
+@media(min-width:900px){.pj-boat-directory{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
@@ -412,6 +424,53 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                                 </div>
                             </div>
 
+                            <!-- Banco de contatos e informações comerciais -->
+                            <div class="bg-slate-950 p-4 rounded-xl border border-cyan-500/15 space-y-3">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-cyan-400"><i class="fa-solid fa-address-book mr-1"></i> Contato, Valores e Estrutura</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <div>
+                                        <label class="block text-[10px] text-slate-400 mb-1">Capacidade de Pescadores</label>
+                                        <input type="number" id="boat-capacity" min="1" placeholder="Ex: 10" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] text-slate-400 mb-1">Preço 10 horas (R$)</label>
+                                        <input type="number" step="0.01" id="boat-price-10h" placeholder="0,00" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] text-slate-400 mb-1">Preço 20 horas (R$)</label>
+                                        <input type="number" step="0.01" id="boat-price-20h" placeholder="0,00" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-[10px] text-slate-400 mb-1">Instagram</label>
+                                        <input type="url" id="boat-instagram" placeholder="https://instagram.com/..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] text-slate-400 mb-1">Última confirmação</label>
+                                        <input type="date" id="boat-last-confirmed" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Búzios</label><select id="boat-dest-buzios" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Vitória</label><select id="boat-dest-vitoria" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Sombrio</label><select id="boat-dest-sombrio" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Montão</label><select id="boat-dest-montao" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Poção</label><select id="boat-dest-pocao" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Isca</label><select id="boat-infra-isca" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Gelo</label><select id="boat-infra-gelo" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Comida</label><select id="boat-infra-comida" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Camas</label><select id="boat-infra-camas" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[9px] text-slate-400 mb-1">Banheiro</label><select id="boat-infra-banheiro" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">Sonar</label><select id="boat-infra-sonar" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">Observação sobre a estrutura</label><input type="text" id="boat-structure-obs" placeholder="Ex: sonar, GPS, cama, banheiro..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
+                                </div>
+                            </div>
+
                             <div>
                                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1"><i class="fa-solid fa-square-parking mr-1 text-emerald-400"></i> Estacionamento & Logística</label>
                                 <textarea id="boat-obs" placeholder="Ex: Estacionamento 24h na marina." rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300"></textarea>
@@ -425,8 +484,17 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                     </div>
 
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                        <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Lista de Barcos (<span id="boat-count">0</span>)</h2>
-                        <div id="boats-list-container" class="space-y-3 max-h-[260px] overflow-y-auto pr-1"></div>
+                        <div class="flex items-center justify-between gap-3 flex-wrap">
+                            <h2 class="text-base font-semibold text-white flex items-center gap-2"><i class="fa-solid fa-address-book text-emerald-400"></i> Banco de Barcos & Contatos (<span id="boat-count">0</span>)</h2>
+                            <span class="text-[10px] text-slate-500">Cadastro independente da lógica da pescaria</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <input id="boat-directory-search" oninput="renderBoatDirectory()" type="search" placeholder="Buscar barco, marinheiro ou local..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                            <select id="boat-directory-local" onchange="renderBoatDirectory()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                <option value="">Todos os locais</option>
+                            </select>
+                        </div>
+                        <div id="boats-list-container" class="pj-boat-directory max-h-[650px] overflow-y-auto pr-1"></div>
                     </div>
                 </div>
 
@@ -624,6 +692,17 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                     </div>
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg text-sm">CONFIRMAR MEU VOTO</button>
                 </form>
+
+                <div class="border-t border-slate-800 pt-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-ranking-star text-amber-400"></i> Ranking da Votação</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">+2 pontos para voto positivo e -1 ponto para voto negativo</p>
+                        </div>
+                        <span id="vote-total-count" class="text-[11px] font-semibold text-slate-400 bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg">0 votos</span>
+                    </div>
+                    <div id="vote-ranking-container" class="space-y-2"></div>
+                </div>
             </div>
         </section>
 
@@ -850,6 +929,80 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             votes: []
         };
 
+        // Base inicial de barcos levantada para o diretório Pesca-Justa.
+        // A rotina apenas acrescenta registros que ainda não existem e não substitui cadastros já feitos.
+        function seedBoatDirectory() {
+            const catalog = [
+                {name:'Antônio Marinheiro', local:'São Sebastião – Píer da Figueira', owner:'Antônio Marinheiro'},
+                {name:'Rogemar', local:'São Sebastião – Píer da Figueira', owner:'Rogemar'},
+                {name:'TurisMar', local:'São Sebastião – Píer da Figueira', owner:'', phone:'(11) 91018-3508'},
+                {name:'Martinelli', local:'São Sebastião – Píer da Figueira', owner:'', phone:'(11) 91018-3508'},
+                {name:'Papaléguas', local:'São Sebastião – Píer da Figueira', owner:'Papaléguas'},
+                {name:'Popeye I', local:'São Sebastião – Píer da Figueira', owner:'Marinheiro Popeye I', capacity:15, structureObs:'Até 15 pescadores; recomendado 12. Roteiros citados: Vitória/Sombrio e Búzios/Castelhanos. Preço publicado anteriormente: R$ 2.000–3.600.'},
+                {name:'Blue Fishing', local:'São Sebastião – Píer da Figueira', owner:'Blue Fishing', structureObs:'Anúncio anterior indicava 10 pessoas, com limitação de pesca a 7.'},
+                {name:'Pesquenomar / Samuray', local:'São Sebastião', owner:'Pesquenomar / Samuray', phone:'(12) 99729-1420'},
+                {name:'Nativo I', local:'São Sebastião – Prainha', owner:'Nativo I', phone:'(12) 98202-7411'},
+                {name:'Monster Fish Team', local:'São Vicente – Portinho', owner:'Monster Fish Team', phone:'(13) 97407-9961'},
+                {name:'Kleber Pesca Esportiva', local:'São Vicente – Portinho', owner:'Kleber Pesca Esportiva', phone:'(13) 99134-5184'},
+                {name:'Marina Dona Rosa', local:'São Vicente – Portinho', owner:'Marina Dona Rosa'},
+                {name:'JBM Náutica', local:'São Vicente – Portinho', owner:'JBM Náutica'},
+                {name:'Garagem de Barcos', local:'São Vicente – Portinho', owner:'Garagem de Barcos'},
+                {name:'Capitão Fish', local:'São Vicente – Portinho', owner:'Capitão Fish'},
+                {name:'PAPARYKO', local:'Itanhaém – Clube Náutico', owner:'Lélio Pereira', phone:'(11) 99863-5655', structureObs:'Também foram registrados os telefones (11) 5196-5825 e (11) 5083-3462.'},
+                {name:'PAPARYKO 2', local:'Itanhaém – Clube Náutico', owner:'Lélio Pereira / equipe'},
+                {name:'Miraguaia', local:'Itanhaém', owner:'Miraguaia', phone:'(13) 99741-2383'},
+                {name:'Mar Azul', local:'Bertioga – Marina Polygon', owner:'Guia Romeu'},
+                {name:'Netuno IV', local:'Bertioga – Marina Polygon', owner:'Guia Romeu'},
+                {name:'Netuno XX', local:'Bertioga – Marina Polygon', owner:'Guia Romeu'},
+                {name:'Gênesis', local:'Bertioga', owner:'Gênesis'},
+                {name:'Cynthia', local:'São Sebastião – Praia de São Francisco', owner:'Cynthia'},
+                {name:'Mar Caiçara – cadastro anterior', local:'São Sebastião – Praia de São Francisco', owner:'Paulo Costa', phone:'(12) 98158-9790'},
+                {name:'Brisa – cadastro anterior', local:'São Sebastião – Prainha', owner:'Airton França'},
+                {name:'Maresias', local:'São Sebastião – Praia de São Francisco', owner:'Maresias', phone:'(11) 98331-9039'},
+                {name:'Argonauta', local:'São Sebastião – Píer da Figueira', owner:'', structureObs:'Registro histórico levantado anteriormente; confirmar operação atual.'},
+                {name:'Drika', local:'São Sebastião – Píer da Figueira', owner:'', structureObs:'Registro histórico levantado anteriormente; confirmar operação atual.'},
+                {name:'Marajó 3', local:'São Sebastião – Píer da Figueira', owner:'', structureObs:'Registro histórico levantado anteriormente; confirmar operação atual.'},
+                {name:'Santa Clara I', local:'São Sebastião – Píer da Figueira', owner:'', structureObs:'Registro histórico levantado anteriormente; confirmar operação atual.'},
+                {name:'Santa Clara II', local:'São Sebastião – Píer da Figueira', owner:'', structureObs:'Registro histórico levantado anteriormente; confirmar operação atual.'},
+                {name:'5 Estrelas', local:'São Sebastião – Píer da Figueira', owner:'', structureObs:'Registro anterior indicava fora de operação.'}
+            ];
+
+            const nextId = () => {
+                const ids = db.boats.map(b => Number(b.id) || 0);
+                return Math.max(1000, ...ids) + 1;
+            };
+
+            let changed = false;
+            catalog.forEach(item => {
+                const exists = db.boats.some(b => (b.name || '').trim().toLowerCase() === item.name.trim().toLowerCase());
+                if (exists) return;
+                db.boats.push({
+                    id: nextId(),
+                    name: item.name,
+                    local: item.local || '',
+                    owner: item.owner || '',
+                    phone: item.phone || '',
+                    gps: '',
+                    obs: '',
+                    capacity: item.capacity || 0,
+                    price10h: 0,
+                    price20h: 0,
+                    instagram: '',
+                    lastConfirmed: '',
+                    destinations: {buzios:'nao',vitoria:'nao',sombrio:'nao',montao:'nao',pocao:'nao'},
+                    infrastructure: {isca:'nao',gelo:'nao',comida:'nao',camas:'nao',banheiro:'nao',sonar:'nao'},
+                    structureObs: item.structureObs || '',
+                    positions: {popa:4,proa:2,le:2,ld:2},
+                    services: {limpeza:'nao',churrasco:'nao',ajudante:'sim'}
+                });
+                changed = true;
+            });
+
+            if (changed) {
+                localStorage.setItem('pesca_justa_db_v49', JSON.stringify(db));
+            }
+        }
+
         function saveData() {
             localStorage.setItem('pesca_justa_db_v49', JSON.stringify(db));
             renderAll();
@@ -912,6 +1065,102 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             document.getElementById('btn-' + tabId).classList.add('bg-blue-600', 'text-white', 'shadow');
         }
 
+        function escapeBoatText(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+        }
+
+        function boatYesNo(value) {
+            return value === 'sim' ? 'Sim' : 'Não';
+        }
+
+        function formatBoatPrice(value) {
+            const n = Number(value);
+            return n > 0 ? `R$ ${n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}` : 'Não informado';
+        }
+
+        function renderBoatDirectory() {
+            const container = document.getElementById('boats-list-container');
+            if (!container) return;
+
+            const searchEl = document.getElementById('boat-directory-search');
+            const localEl = document.getElementById('boat-directory-local');
+            const search = (searchEl?.value || '').trim().toLowerCase();
+            const selectedLocal = localEl?.value || '';
+
+            const locals = [...new Set(db.boats.map(b => b.local).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+            if (localEl) {
+                const current = localEl.value;
+                localEl.innerHTML = '<option value="">Todos os locais</option>' + locals.map(l => `<option value="${escapeBoatText(l)}">${escapeBoatText(l)}</option>`).join('');
+                localEl.value = locals.includes(current) ? current : selectedLocal;
+            }
+
+            const filtered = db.boats.filter(b => {
+                const haystack = [b.name,b.owner,b.local,b.phone,b.obs,b.structureObs].filter(Boolean).join(' ').toLowerCase();
+                return (!search || haystack.includes(search)) && (!selectedLocal || b.local === selectedLocal);
+            });
+
+            if (!filtered.length) {
+                container.innerHTML = '<div class="sm:col-span-2 text-center text-xs text-slate-500 py-8">Nenhum barco encontrado para os filtros informados.</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(b => {
+                const active = b.id === db.activeBoatId;
+                const capacity = b.capacity || ((b.positions?.popa||0)+(b.positions?.proa||0)+(b.positions?.le||0)+(b.positions?.ld||0));
+                const phoneRaw = (b.phone || '').replace(/\D/g,'');
+                const wa = phoneRaw ? `https://wa.me/55${phoneRaw}` : '';
+                const dest = b.destinations || {};
+                const inf = b.infrastructure || {};
+                const confirmed = b.lastConfirmed ? new Date(b.lastConfirmed+'T00:00:00').toLocaleDateString('pt-BR') : 'Não informada';
+                const positions = b.positions || {};
+                const destinationChips = [
+                    ['Búzios',dest.buzios],['Vitória',dest.vitoria],['Sombrio',dest.sombrio],['Montão',dest.montao],['Poção',dest.pocao]
+                ].filter(x=>x[1]==='sim').map(x=>`<span class="pj-boat-chip text-emerald-300"><i class="fa-solid fa-location-dot"></i>${x[0]}</span>`).join('');
+                const infraChips = [
+                    ['Isca',inf.isca],['Gelo',inf.gelo],['Comida',inf.comida],['Camas',inf.camas],['Banheiro',inf.banheiro],['Sonar',inf.sonar],
+                    ['Limpeza',b.services?.limpeza],['Churrasco',b.services?.churrasco]
+                ].filter(x=>x[1]==='sim').map(x=>`<span class="pj-boat-chip"><i class="fa-solid fa-check text-emerald-400"></i>${x[0]}</span>`).join('');
+
+                return `<div class="pj-boat-card ${active ? 'ring-1 ring-cyan-500/50' : ''}">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-sm font-black text-white">${escapeBoatText(b.name)}</h3>
+                                ${active ? '<span class="pj-boat-chip text-cyan-300">BARCO ATIVO</span>' : ''}
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1"><i class="fa-solid fa-location-dot mr-1 text-cyan-400"></i>${escapeBoatText(b.local || 'Local não informado')} · <strong class="text-slate-300">${escapeBoatText(b.owner || 'Marinheiro não informado')}</strong></p>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editBoat('${String(b.id).replace(/'/g, "\\'")}')" class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-amber-300 px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5" title="Editar cadastro"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                            <button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="pj-boat-contact mt-3">
+                        ${wa ? `<a href="${wa}" target="_blank" rel="noopener" class="text-emerald-400"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp</a>` : ''}
+                        ${b.instagram ? `<a href="${escapeBoatText(b.instagram)}" target="_blank" rel="noopener" class="text-pink-300"><i class="fa-brands fa-instagram mr-1"></i> Instagram</a>` : ''}
+                        ${b.gps ? `<a href="${escapeBoatText(b.gps)}" target="_blank" rel="noopener" class="text-cyan-300"><i class="fa-solid fa-map-location-dot mr-1"></i> GPS</a>` : ''}
+                    </div>
+
+                    <div class="pj-boat-meta mt-3">
+                        <div><span>Capacidade</span><strong>${capacity || '—'} pescadores</strong></div>
+                        <div><span>Telefone</span><strong>${escapeBoatText(b.phone || 'Não informado')}</strong></div>
+                        <div><span>10 horas</span><strong>${formatBoatPrice(b.price10h)}</strong></div>
+                        <div><span>20 horas</span><strong>${formatBoatPrice(b.price20h)}</strong></div>
+                        <div><span>Posições</span><strong>Popa ${positions.popa||0} · Proa ${positions.proa||0} · LE ${positions.le||0} · LD ${positions.ld||0}</strong></div>
+                        <div><span>Última confirmação</span><strong>${confirmed}</strong></div>
+                    </div>
+
+                    ${destinationChips ? `<div class="mt-3"><div class="text-[9px] uppercase font-black tracking-wider text-slate-500 mb-1">Destinos atendidos</div><div class="pj-boat-contact">${destinationChips}</div></div>` : ''}
+                    ${infraChips ? `<div class="mt-3"><div class="text-[9px] uppercase font-black tracking-wider text-slate-500 mb-1">Estrutura / serviços</div><div class="pj-boat-contact">${infraChips}</div></div>` : ''}
+                    <div class="mt-3 text-[10px] text-slate-500">
+                        ${b.structureObs ? `<span><i class="fa-solid fa-circle-info mr-1"></i>${escapeBoatText(b.structureObs)}</span>` : ''}
+                        ${b.obs ? `<span class="block mt-1"><i class="fa-solid fa-square-parking mr-1 text-emerald-400"></i>${escapeBoatText(b.obs)}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
         function saveNewBoat(e) {
             e.preventDefault();
             const editId = document.getElementById('boat-edit-id').value;
@@ -923,6 +1172,27 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 phone: document.getElementById('boat-phone').value,
                 gps: document.getElementById('boat-gps').value,
                 obs: document.getElementById('boat-obs').value,
+                capacity: parseInt(document.getElementById('boat-capacity').value) || 0,
+                price10h: parseFloat(document.getElementById('boat-price-10h').value) || 0,
+                price20h: parseFloat(document.getElementById('boat-price-20h').value) || 0,
+                instagram: document.getElementById('boat-instagram').value.trim(),
+                lastConfirmed: document.getElementById('boat-last-confirmed').value,
+                destinations: {
+                    buzios: document.getElementById('boat-dest-buzios').value,
+                    vitoria: document.getElementById('boat-dest-vitoria').value,
+                    sombrio: document.getElementById('boat-dest-sombrio').value,
+                    montao: document.getElementById('boat-dest-montao').value,
+                    pocao: document.getElementById('boat-dest-pocao').value
+                },
+                infrastructure: {
+                    isca: document.getElementById('boat-infra-isca').value,
+                    gelo: document.getElementById('boat-infra-gelo').value,
+                    comida: document.getElementById('boat-infra-comida').value,
+                    camas: document.getElementById('boat-infra-camas').value,
+                    banheiro: document.getElementById('boat-infra-banheiro').value,
+                    sonar: document.getElementById('boat-infra-sonar').value
+                },
+                structureObs: document.getElementById('boat-structure-obs').value.trim(),
                 positions: {
                     popa: parseInt(document.getElementById('boat-pos-popa').value) || 4,
                     proa: parseInt(document.getElementById('boat-pos-proa').value) || 2,
@@ -937,7 +1207,7 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             };
 
             if (editId) {
-                let index = db.boats.findIndex(b => b.id === Number(editId));
+                let index = db.boats.findIndex(b => String(b.id) === String(editId));
                 if (index !== -1) db.boats[index] = boatData;
                 alert('Embarcação atualizada com sucesso!');
             } else {
@@ -952,7 +1222,8 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         }
 
         function editBoat(id) {
-            let b = db.boats.find(item => item.id === id);
+            const normalizedId = String(id);
+            let b = db.boats.find(item => String(item.id) === normalizedId);
             if (b) {
                 document.getElementById('boat-edit-id').value = b.id;
                 document.getElementById('boat-name').value = b.name;
@@ -961,6 +1232,23 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 document.getElementById('boat-phone').value = b.phone || '';
                 document.getElementById('boat-gps').value = b.gps || '';
                 document.getElementById('boat-obs').value = b.obs || '';
+                document.getElementById('boat-capacity').value = b.capacity || ((b.positions?.popa || 0) + (b.positions?.proa || 0) + (b.positions?.le || 0) + (b.positions?.ld || 0));
+                document.getElementById('boat-price-10h').value = b.price10h ?? '';
+                document.getElementById('boat-price-20h').value = b.price20h ?? '';
+                document.getElementById('boat-instagram').value = b.instagram || '';
+                document.getElementById('boat-last-confirmed').value = b.lastConfirmed || '';
+                document.getElementById('boat-dest-buzios').value = b.destinations?.buzios || 'nao';
+                document.getElementById('boat-dest-vitoria').value = b.destinations?.vitoria || 'nao';
+                document.getElementById('boat-dest-sombrio').value = b.destinations?.sombrio || 'nao';
+                document.getElementById('boat-dest-montao').value = b.destinations?.montao || 'nao';
+                document.getElementById('boat-dest-pocao').value = b.destinations?.pocao || 'nao';
+                document.getElementById('boat-infra-isca').value = b.infrastructure?.isca || 'nao';
+                document.getElementById('boat-infra-gelo').value = b.infrastructure?.gelo || 'nao';
+                document.getElementById('boat-infra-comida').value = b.infrastructure?.comida || 'nao';
+                document.getElementById('boat-infra-camas').value = b.infrastructure?.camas || 'nao';
+                document.getElementById('boat-infra-banheiro').value = b.infrastructure?.banheiro || 'nao';
+                document.getElementById('boat-infra-sonar').value = b.infrastructure?.sonar || 'nao';
+                document.getElementById('boat-structure-obs').value = b.structureObs || '';
                 document.getElementById('boat-pos-popa').value = b.positions?.popa || 4;
                 document.getElementById('boat-pos-proa').value = b.positions?.proa || 2;
                 document.getElementById('boat-pos-le').value = b.positions?.le || 2;
@@ -987,8 +1275,8 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         function removeBoat(boatId) {
             if(db.boats.length <= 1) return alert('Mantenha ao menos um barco.');
             if(confirm("Deseja remover esta embarcação?")) {
-                db.boats = db.boats.filter(b => b.id !== boatId);
-                if(db.activeBoatId === boatId) db.activeBoatId = db.boats[0].id;
+                db.boats = db.boats.filter(b => String(b.id) !== String(boatId));
+                if(String(db.activeBoatId) === String(boatId)) db.activeBoatId = db.boats[0].id;
                 saveData();
             }
         }
@@ -1246,6 +1534,54 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             alert("Voto registrado!");
         }
 
+        function renderVoteRanking() {
+            const container = document.getElementById('vote-ranking-container');
+            const totalEl = document.getElementById('vote-total-count');
+            if (!container) return;
+
+            const scores = {};
+            db.participants.forEach(p => {
+                scores[p.name] = { name: p.name, score: 0, positive: 0, negative: 0 };
+            });
+
+            (db.votes || []).forEach(v => {
+                if (scores[v.positive]) {
+                    scores[v.positive].score += 2;
+                    scores[v.positive].positive += 1;
+                }
+                if (scores[v.negative]) {
+                    scores[v.negative].score -= 1;
+                    scores[v.negative].negative += 1;
+                }
+            });
+
+            const ranking = Object.values(scores).sort((a,b) => b.score - a.score || b.positive - a.positive || a.name.localeCompare(b.name, 'pt-BR'));
+            const totalVotes = (db.votes || []).length;
+            if (totalEl) totalEl.textContent = `${totalVotes} ${totalVotes === 1 ? 'voto' : 'votos'}`;
+
+            if (!totalVotes) {
+                container.innerHTML = '<div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center text-sm text-slate-500">Nenhum voto registrado ainda.</div>';
+                return;
+            }
+
+            container.innerHTML = ranking.map((p, idx) => {
+                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `<span class="text-slate-500 font-mono text-xs">#${idx + 1}</span>`;
+                const scoreClass = p.score > 0 ? 'text-emerald-400' : p.score < 0 ? 'text-rose-400' : 'text-slate-400';
+                return `<div class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div class="w-8 text-center text-lg">${medal}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-white truncate">${escapeHtml(p.name)}</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5">+2: ${p.positive} &nbsp;|&nbsp; -1: ${p.negative}</div>
+                    </div>
+                    <div class="text-right"><div class="text-lg font-black ${scoreClass}">${p.score > 0 ? '+' : ''}${p.score}</div><div class="text-[9px] uppercase text-slate-600">pontos</div></div>
+                </div>`;
+            }).join('');
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+        }
+
         function renderAll() {
             document.getElementById('login-modal').classList.toggle('hidden', db.auth.logged);
             document.getElementById('current-user-display').innerText = db.auth.name || 'Convidado';
@@ -1294,25 +1630,14 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             document.getElementById('pres-rateio-val').innerText = `R$ ${perPerson.toFixed(2)}`;
             document.getElementById('rep-total-expenses').innerText = `R$ ${grandTotal.toFixed(2)}`;
 
-            let configBoatOpts = '', boatsHtml = '';
+            let configBoatOpts = '';
             db.boats.forEach(b => {
                 let isActive = b.id === db.activeBoatId;
-                configBoatOpts += `<option value="${b.id}" ${isActive ? 'selected' : ''}>${b.name} (${b.local})</option>`;
-                boatsHtml += `
-                    <div class="bg-slate-950 border ${isActive ? 'border-blue-500' : 'border-slate-800'} p-3 rounded-xl flex items-center justify-between text-xs">
-                        <div>
-                            <span class="font-bold text-white block text-sm">${b.name} (${b.local})</span>
-                            <span class="text-slate-400">Barqueiro: ${b.owner} | Popa: ${b.positions?.popa || 4}, Proa: ${b.positions?.proa || 2}, LE: ${b.positions?.le || 2}, LD: ${b.positions?.ld || 2}</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="editBoat(${b.id})" class="text-amber-400 hover:text-amber-300 px-2 py-1" title="Editar Barco"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir Barco"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>`;
+                configBoatOpts += `<option value="${b.id}" ${isActive ? 'selected' : ''}>${escapeBoatText(b.name)} (${escapeBoatText(b.local)})</option>`;
             });
             if(document.getElementById('config-boat-select')) document.getElementById('config-boat-select').innerHTML = configBoatOpts;
-            document.getElementById('boats-list-container').innerHTML = boatsHtml;
             document.getElementById('boat-count').innerText = db.boats.length;
+            renderBoatDirectory();
 
             let configDestOpts = '', spotsTableHtml = '';
             db.spots.forEach(s => {
@@ -1335,9 +1660,39 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             document.getElementById('sidebar-participants-list').innerHTML = sidebarHtml;
             document.getElementById('pay-fisherman').innerHTML = payerOpts;
             document.getElementById('catch-fisherman').innerHTML = catchOpts;
-            document.getElementById('vote-voter').innerHTML = voteOpts;
-            document.getElementById('vote-positive').innerHTML = voteOpts;
-            document.getElementById('vote-negative').innerHTML = voteOpts;
+            const voteVoterEl = document.getElementById('vote-voter');
+            const votePositiveEl = document.getElementById('vote-positive');
+            const voteNegativeEl = document.getElementById('vote-negative');
+
+            // Quando o acesso é de pescador, o sistema identifica automaticamente
+            // quem está votando pelo usuário autenticado. O Administrador continua
+            // podendo selecionar qualquer pescador manualmente.
+            if (db.auth?.role === 'convidado' && db.auth?.name) {
+                const loggedVoter = db.participants.find(p => p.name === db.auth.name);
+                if (loggedVoter) {
+                    voteVoterEl.innerHTML = `<option value="${loggedVoter.name}" selected>${loggedVoter.name}</option>`;
+                    voteVoterEl.disabled = true;
+                    voteVoterEl.classList.add('opacity-80', 'cursor-not-allowed');
+                } else {
+                    voteVoterEl.innerHTML = voteOpts;
+                    voteVoterEl.disabled = false;
+                }
+            } else {
+                voteVoterEl.innerHTML = voteOpts;
+                voteVoterEl.disabled = false;
+                voteVoterEl.classList.remove('opacity-80', 'cursor-not-allowed');
+            }
+
+            const currentVoter = voteVoterEl.value;
+            const candidateOpts = '<option value="">Selecione alguém...</option>' +
+                db.participants
+                    .filter(p => p.name !== currentVoter)
+                    .map(p => `<option value="${p.name}">${p.name}</option>`)
+                    .join('');
+
+            votePositiveEl.innerHTML = candidateOpts;
+            voteNegativeEl.innerHTML = candidateOpts;
+            renderVoteRanking();
 
             document.getElementById('expenses-table-body').innerHTML = db.expenses.map(ex => `<tr><td class="p-2">${ex.type}</td><td class="p-2">${ex.description}</td><td class="p-2 font-semibold text-blue-400">R$ ${ex.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removeExpense(${ex.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
             document.getElementById('payers-table-body').innerHTML = db.payers.map(p => `<tr><td class="p-2 font-medium text-emerald-400">${p.fisherman}</td><td class="p-2">${p.description}</td><td class="p-2 font-semibold">R$ ${p.value.toFixed(2)}</td><td class="p-2 text-center"><button onclick="removePayer(${p.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
@@ -1412,6 +1767,8 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             renderDynamicSeats('le', 'boat-le-seats');
             renderDynamicSeats('ld', 'boat-ld-seats');
         }
+
+        seedBoatDirectory();
 
         if (!db.lottery.popa || db.lottery.popa.length === 0) {
             runIntelligentPopaRotation();
