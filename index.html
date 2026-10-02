@@ -122,36 +122,20 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
 .pj-seat.empty{opacity:.72;border-style:dashed}.pj-seat:hover{transform:translateY(-2px);border-color:rgba(103,232,249,.42)}
 .pj-seat-number{font-size:8px;color:#64748b;font-weight:800}.pj-seat-avatar{font-size:16px;margin-bottom:1px}.pj-seat-name{font-size:10px;color:#e2e8f0;font-weight:700;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pj-seat.empty .pj-seat-name{color:#475569;font-weight:500}
 
-/* Navegação mobile otimizada */
-.mobile-menu-toggle,.mobile-menu-panel{display:none}
+/* Navegação mobile: mantém os atalhos, mas o cabeçalho se recolhe ao rolar */
+.mobile-menu-toggle,.mobile-menu-panel{display:none!important}
 @media (max-width: 767px){
-  header{position:sticky!important;top:0;z-index:50}
-  header .max-w-7xl{padding:10px 12px!important;gap:8px!important}
+  header{position:sticky!important;top:0;z-index:50;transition:transform .24s ease,box-shadow .24s ease}
+  header.mobile-nav-hidden{transform:translateY(-100%);box-shadow:none!important}
+  header .max-w-7xl{padding:8px 10px!important;gap:7px!important}
   header .max-w-7xl > div:first-child{width:100%;justify-content:space-between}
-  header .max-w-7xl > div:nth-child(2){width:100%;justify-content:space-between;padding:7px 9px!important}
-  header nav{display:none!important}
-  .mobile-menu-toggle{
-    display:flex;position:fixed;right:14px;bottom:16px;z-index:1000;
-    width:52px;height:52px;border-radius:18px;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#0891b2,#2563eb);color:#fff;
-    border:1px solid rgba(255,255,255,.2);box-shadow:0 12px 30px rgba(0,0,0,.4);
-  }
-  .mobile-menu-panel{
-    position:fixed;right:14px;bottom:78px;z-index:999;
-    width:min(310px,calc(100vw - 28px));max-height:70vh;overflow:auto;
-    padding:10px;border-radius:20px;
-    background:rgba(7,24,36,.98);backdrop-filter:blur(18px);
-    border:1px solid rgba(34,211,238,.18);box-shadow:0 20px 50px rgba(0,0,0,.5);
-  }
-  .mobile-menu-panel.open{display:block}
-  .mobile-menu-panel button{
-    width:100%;display:flex;align-items:center;gap:10px;text-align:left;
-    padding:12px 13px;margin:2px 0;border-radius:12px;color:#cbd5e1;
-    background:transparent;border:1px solid transparent;font-size:14px;
-  }
-  .mobile-menu-panel button.active{background:linear-gradient(135deg,rgba(8,145,178,.28),rgba(37,99,235,.28));color:#fff;border-color:rgba(34,211,238,.18)}
-  main{padding:12px!important}
-  section{scroll-margin-top:12px}
+  header .max-w-7xl > div:nth-child(2){width:100%;justify-content:space-between;padding:6px 8px!important}
+  header nav{display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;width:100%;overflow-x:auto!important;gap:6px!important;padding:4px!important;-webkit-overflow-scrolling:touch}
+  header nav .tab-btn{flex:0 0 auto;min-height:36px;padding:7px 10px!important;font-size:11px!important}
+  header nav .tab-btn i{margin-right:4px!important}
+  main{padding:10px!important}
+  section{scroll-margin-top:8px}
+  .pj-boat{min-width:520px}
 }
 </style>
 </head>
@@ -226,21 +210,6 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 <button onclick="switchTab('despesas')" id="btn-despesas" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-wallet mr-1.5"></i>Despesas</button>
                 <button onclick="switchTab('pontos')" id="btn-pontos" class="tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white"><i class="fa-solid fa-map-location-dot mr-1.5"></i>Local da Pesca</button>
             </nav>
-        </div>
-        <button type="button" class="mobile-menu-toggle" id="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Abrir atalhos">
-            <i class="fa-solid fa-bars text-lg"></i>
-        </button>
-        <div class="mobile-menu-panel" id="mobile-menu-panel" aria-label="Atalhos de navegação">
-            <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-3 pb-2 pt-1">Atalhos</div>
-            <button type="button" data-mobile-tab="apresentacao" onclick="mobileSwitchTab('apresentacao')"><i class="fa-solid fa-compass w-5 text-blue-300"></i><span>Apresentação</span></button>
-            <button type="button" data-mobile-tab="viagem" onclick="mobileSwitchTab('viagem')"><i class="fa-solid fa-calendar-days w-5 text-amber-400"></i><span>Cadastro da Viagem</span></button>
-            <button type="button" data-mobile-tab="barcos" onclick="mobileSwitchTab('barcos')"><i class="fa-solid fa-ship w-5 text-cyan-400"></i><span>Barcos & Cadastro</span></button>
-            <button type="button" data-mobile-tab="sorteio" onclick="mobileSwitchTab('sorteio')"><i class="fa-solid fa-dice w-5"></i><span>Sorteio & Posições</span></button>
-            <button type="button" data-mobile-tab="votacao" onclick="mobileSwitchTab('votacao')"><i class="fa-solid fa-award w-5 text-amber-400"></i><span>Votação</span></button>
-            <button type="button" data-mobile-tab="capturas" onclick="mobileSwitchTab('capturas')"><i class="fa-solid fa-fish w-5 text-emerald-400"></i><span>Capturas & Ranking</span></button>
-            <button type="button" data-mobile-tab="relatorios" onclick="mobileSwitchTab('relatorios')"><i class="fa-solid fa-chart-pie w-5 text-amber-400"></i><span>Relatórios</span></button>
-            <button type="button" data-mobile-tab="despesas" onclick="mobileSwitchTab('despesas')"><i class="fa-solid fa-wallet w-5"></i><span>Despesas</span></button>
-            <button type="button" data-mobile-tab="pontos" onclick="mobileSwitchTab('pontos')"><i class="fa-solid fa-map-location-dot w-5"></i><span>Local da Pesca</span></button>
         </div>
     </header>
 
@@ -399,12 +368,57 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                                     <input type="text" id="boat-owner" placeholder="Nome" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone</label>
-                                    <input type="text" id="boat-phone" placeholder="Contato" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Telefone / WhatsApp</label>
+                                    <input type="text" id="boat-phone" placeholder="(XX) 9 XXXX-XXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Link GPS (Maps)</label>
-                                    <input type="url" id="boat-gps" placeholder="https://maps..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    <input type="url" id="boat-gps" placeholder="https://maps.google.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-cyan-400"><i class="fa-solid fa-circle-info mr-1"></i> Dados comerciais e contato</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">Capacidade</label><input type="number" id="boat-capacity" min="1" placeholder="Ex: 14" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">Valor 10h</label><input type="number" id="boat-price-10" min="0" step="0.01" placeholder="R$" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">Valor 20h</label><input type="number" id="boat-price-20" min="0" step="0.01" placeholder="R$" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">Última confirmação</label><input type="date" id="boat-confirmed" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">WhatsApp</label><input type="text" id="boat-whatsapp" placeholder="(XX) 9 XXXX-XXXX" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
+                                    <div><label class="block text-[10px] text-slate-400 mb-1">Instagram</label><input type="text" id="boat-instagram" placeholder="@perfil ou link" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-emerald-400"><i class="fa-solid fa-location-dot mr-1"></i> Endereço do embarque / estacionamento</label>
+                                <input type="text" id="boat-address" placeholder="Endereço completo do ponto de embarque" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <input type="text" id="boat-address-ref" placeholder="Bairro / referência" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    <select id="boat-parking" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm"><option value="nao-informado">Estacionamento: não informado</option><option value="sim">Estacionamento disponível</option><option value="proximo">Estacionamento próximo</option><option value="marina">Na marina/píer</option><option value="nao">Sem estacionamento</option></select>
+                                    <input type="text" id="boat-parking-price" placeholder="Valor estacionamento" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <input type="text" id="boat-parking-distance" placeholder="Distância até o embarque" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                    <input type="text" id="boat-parking-notes" placeholder="Horário, segurança, portão, reserva etc." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm">
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-amber-400"><i class="fa-solid fa-fish mr-1"></i> Destinos e estrutura</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-dest-buzios"> Búzios</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-dest-vitoria"> Vitória</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-dest-sombrio"> Sombrio</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-dest-montao"> Montão</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-dest-pocao"> Poção</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-isca"> Isca</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-gelo"> Gelo</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-comida"> Comida</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-camas"> Camas</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-banheiro"> Banheiro</label>
+                                    <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg"><input type="checkbox" id="boat-sonar"> Sonar</label>
                                 </div>
                             </div>
 
@@ -897,6 +911,14 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             votes: []
         };
 
+        const catalogBoatNames = ['Antônio Marinheiro','Rogemar','TurisMar','Martinelli','Papaléguas','Popeye I','Blue Fishing','Pesquenomar / Samuray','Nativo I','Monster Fish Team','Kleber Pesca Esportiva','Marina Dona Rosa','JBM Náutica / Garagem de Barcos','Capitão Fish','PAPARYKO','PAPARYKO 2','Miraguaia','Mar Azul','Netuno IV','Netuno XX','Gênesis','Cynthia','Maresias'];
+        if (Array.isArray(db.boats)) {
+            const existingNames = new Set(db.boats.map(b => String(b.name || '').trim().toLowerCase()));
+            catalogBoatNames.forEach((name, idx) => {
+                if (!existingNames.has(name.toLowerCase())) db.boats.push({ id: 9000 + idx, name, local: '', owner: '', phone: '', gps: '', whatsapp: '', instagram: '', capacity: 0, price10: 0, price20: 0, confirmed: '', address: '', addressRef: '', parking: 'nao-informado', parkingPrice: '', parkingDistance: '', parkingNotes: '', destinations: {}, structure: {}, obs: 'Cadastro importado; dados a confirmar.', positions: {popa:4,proa:2,le:2,ld:2}, services: {limpeza:'sim',churrasco:'nao',ajudante:'sim'} });
+            });
+        }
+
         function saveData() {
             localStorage.setItem('pesca_justa_db_v49', JSON.stringify(db));
             renderAll();
@@ -985,6 +1007,21 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             }
         });
 
+        (function setupMobileHeaderAutoHide(){
+            let lastY = window.scrollY || 0, ticking = false;
+            function updateHeader(){
+                const header = document.querySelector('header');
+                if (!header || window.innerWidth > 767) return;
+                const y = window.scrollY || 0;
+                if (y <= 12) header.classList.remove('mobile-nav-hidden');
+                else if (y > lastY + 8) header.classList.add('mobile-nav-hidden');
+                else if (y < lastY - 8) header.classList.remove('mobile-nav-hidden');
+                lastY = y; ticking = false;
+            }
+            window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(updateHeader); ticking=true; } }, {passive:true});
+            window.addEventListener('resize', updateHeader);
+        })();
+
         function saveNewBoat(e) {
             e.preventDefault();
             const editId = document.getElementById('boat-edit-id').value;
@@ -995,6 +1032,20 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 owner: document.getElementById('boat-owner').value,
                 phone: document.getElementById('boat-phone').value,
                 gps: document.getElementById('boat-gps').value,
+                whatsapp: document.getElementById('boat-whatsapp').value,
+                instagram: document.getElementById('boat-instagram').value,
+                capacity: parseInt(document.getElementById('boat-capacity').value) || 0,
+                price10: parseFloat(document.getElementById('boat-price-10').value) || 0,
+                price20: parseFloat(document.getElementById('boat-price-20').value) || 0,
+                confirmed: document.getElementById('boat-confirmed').value,
+                address: document.getElementById('boat-address').value,
+                addressRef: document.getElementById('boat-address-ref').value,
+                parking: document.getElementById('boat-parking').value,
+                parkingPrice: document.getElementById('boat-parking-price').value,
+                parkingDistance: document.getElementById('boat-parking-distance').value,
+                parkingNotes: document.getElementById('boat-parking-notes').value,
+                destinations: { buzios: document.getElementById('boat-dest-buzios').checked, vitoria: document.getElementById('boat-dest-vitoria').checked, sombrio: document.getElementById('boat-dest-sombrio').checked, montao: document.getElementById('boat-dest-montao').checked, pocao: document.getElementById('boat-dest-pocao').checked },
+                structure: { isca: document.getElementById('boat-isca').checked, gelo: document.getElementById('boat-gelo').checked, comida: document.getElementById('boat-comida').checked, camas: document.getElementById('boat-camas').checked, banheiro: document.getElementById('boat-banheiro').checked, sonar: document.getElementById('boat-sonar').checked },
                 obs: document.getElementById('boat-obs').value,
                 positions: {
                     popa: parseInt(document.getElementById('boat-pos-popa').value) || 4,
@@ -1033,6 +1084,21 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 document.getElementById('boat-owner').value = b.owner;
                 document.getElementById('boat-phone').value = b.phone || '';
                 document.getElementById('boat-gps').value = b.gps || '';
+                document.getElementById('boat-whatsapp').value = b.whatsapp || b.phone || '';
+                document.getElementById('boat-instagram').value = b.instagram || '';
+                document.getElementById('boat-capacity').value = b.capacity || '';
+                document.getElementById('boat-price-10').value = b.price10 || '';
+                document.getElementById('boat-price-20').value = b.price20 || '';
+                document.getElementById('boat-confirmed').value = b.confirmed || '';
+                document.getElementById('boat-address').value = b.address || '';
+                document.getElementById('boat-address-ref').value = b.addressRef || '';
+                document.getElementById('boat-parking').value = b.parking || 'nao-informado';
+                document.getElementById('boat-parking-price').value = b.parkingPrice || '';
+                document.getElementById('boat-parking-distance').value = b.parkingDistance || '';
+                document.getElementById('boat-parking-notes').value = b.parkingNotes || '';
+                const d = b.destinations || {}, st = b.structure || {};
+                document.getElementById('boat-dest-buzios').checked = !!d.buzios; document.getElementById('boat-dest-vitoria').checked = !!d.vitoria; document.getElementById('boat-dest-sombrio').checked = !!d.sombrio; document.getElementById('boat-dest-montao').checked = !!d.montao; document.getElementById('boat-dest-pocao').checked = !!d.pocao;
+                document.getElementById('boat-isca').checked = !!st.isca; document.getElementById('boat-gelo').checked = !!st.gelo; document.getElementById('boat-comida').checked = !!st.comida; document.getElementById('boat-camas').checked = !!st.camas; document.getElementById('boat-banheiro').checked = !!st.banheiro; document.getElementById('boat-sonar').checked = !!st.sonar;
                 document.getElementById('boat-obs').value = b.obs || '';
                 document.getElementById('boat-pos-popa').value = b.positions?.popa || 4;
                 document.getElementById('boat-pos-proa').value = b.positions?.proa || 2;
@@ -1372,11 +1438,13 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                 let isActive = b.id === db.activeBoatId;
                 configBoatOpts += `<option value="${b.id}" ${isActive ? 'selected' : ''}>${b.name} (${b.local})</option>`;
                 boatsHtml += `
-                    <div class="bg-slate-950 border ${isActive ? 'border-blue-500' : 'border-slate-800'} p-3 rounded-xl flex items-center justify-between text-xs">
-                        <div>
-                            <span class="font-bold text-white block text-sm">${b.name} (${b.local})</span>
-                            <span class="text-slate-400">Barqueiro: ${b.owner} | Popa: ${b.positions?.popa || 4}, Proa: ${b.positions?.proa || 2}, LE: ${b.positions?.le || 2}, LD: ${b.positions?.ld || 2}</span>
-                        </div>
+                    <div class="bg-slate-950 border ${isActive ? 'border-blue-500' : 'border-slate-800'} p-3 rounded-xl text-xs">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <span class="font-bold text-white block text-sm">${b.name} <span class="text-slate-500 font-normal">${b.local ? '('+b.local+')' : ''}</span></span>
+                                <span class="text-slate-400 block mt-1">Barqueiro: ${b.owner || '-'} | Capacidade: ${b.capacity || '-'} | 10h: ${b.price10 ? 'R$ '+Number(b.price10).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '-'} | 20h: ${b.price20 ? 'R$ '+Number(b.price20).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '-'}</span>
+                                <span class="text-slate-500 block mt-1">${b.address || 'Endereço não informado'} ${b.parking && b.parking !== 'nao-informado' ? ' · 🅿️ '+b.parking : ''}</span>
+                            </div>
                         <div class="flex gap-2">
                             <button onclick="editBoat(${b.id})" class="text-amber-400 hover:text-amber-300 px-2 py-1" title="Editar Barco"><i class="fa-solid fa-pen-to-square"></i></button>
                             <button onclick="removeBoat(${b.id})" class="text-rose-400 hover:text-rose-300 px-2 py-1" title="Excluir Barco"><i class="fa-solid fa-trash"></i></button>
