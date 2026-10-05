@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesca-Justa - Gestão Completa de Pescaria</title>
-    <script src="https://cdn.tailwindcss.com" defer></script>
+   <script src="https://cdn.tailwindcss.com"></script>
     <script>
         window.tailwind = window.tailwind || {};
         tailwind.config = {
@@ -1025,9 +1025,12 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         }
 
         function saveData() {
-            localStorage.setItem('pesca_justa_db_v49', JSON.stringify(db));
-            renderAll();
-        }
+localStorage.setItem(
+'pesca_justa_db_v49',
+JSON.stringify(db)
+);
+renderAll();
+}
 
         function maskPhoneInput(input) {
             let v = input.value.replace(/\D/g, '');
@@ -1059,8 +1062,9 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             const passwordInput = document.getElementById('login-password').value.trim();
 
             if (loginType === 'admin') {
-                if (passwordInput === "pesca2026") {
-                    db.auth = { logged: true, role: 'admin', name: "Administrador" };
+               const ADMIN_PASSWORD = 'pesca2026';
+                if (passwordInput === ADMIN_PASSWORD)
+                                  db.auth = { logged: true, role: 'admin', name: "Administrador" };
                     saveData();
                 } else {
                     alert('Senha incorreta! Use: pesca2026');
@@ -1331,7 +1335,29 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             saveData();
             alert('Local cadastrado!');
         }
-        function removeSpot(id) { db.spots = db.spots.filter(s => s.id !== id); saveData(); }
+        function removeSpot(id) {
+ 
+const spot =
+db.spots.find(
+s => s.id === id
+);
+ 
+if (
+spot &&
+spot.name === db.activeDestination
+) {
+return alert(
+'Não é possível excluir o destino ativo.'
+);
+}
+ 
+db.spots =
+db.spots.filter(
+s => s.id !== id
+);
+ 
+saveData();
+}
 
         function saveCatch(e) {
             e.preventDefault();
@@ -1371,7 +1397,27 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             if (N < popaSeatsCount) return;
 
             let realHours = getRealFishingHours();
-            let shuffledFishermen = [...db.participants].sort(() => Math.random() - 0.5);
+            let shuffledFishermen =
+[...db.participants];
+ 
+for (
+let i = shuffledFishermen.length - 1;
+i > 0;
+i--
+) {
+const j =
+Math.floor(
+Math.random() * (i + 1)
+);
+ 
+[
+shuffledFishermen[i],
+shuffledFishermen[j]
+] = [
+shuffledFishermen[j],
+shuffledFishermen[i]
+];
+}
 
             let startDate = new Date(db.trip.startDatetime || "2026-08-22T13:00");
             let startMin = startDate.getHours() * 60 + startDate.getMinutes();
@@ -1521,8 +1567,18 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
                     if (e?.name === 'AbortError') return;
                 }
             }
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-        }
+           try {
+window.open(
+`https://wa.me/?text=${encodeURIComponent(text)}`,
+'_blank'
+);
+} catch (err) {
+console.error(err);
+alert(
+'Não foi possível abrir o WhatsApp.'
+);
+}
+``
 
         async function copyFishingInvite() {
             const text = getFishingInviteText();
@@ -1547,6 +1603,14 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             const negative = document.getElementById('vote-negative').value;
             if (voter === positive || voter === negative) return alert("Erro: Não pode votar em si mesmo!");
             if (positive === negative) return alert("Erro: Votos devem ser diferentes.");
+            if (
+db.votes.some(v => v.voter === voter)
+) {
+return alert(
+'Você já registrou seu voto.'
+);
+}
+``
             db.votes.push({ voter, positive, negative });
             saveData();
             alert("Voto registrado!");
