@@ -1025,10 +1025,24 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
         }
 
         function saveData() {
+function saveData() {
+ 
+try {
+ 
 localStorage.setItem(
 'pesca_justa_db_v49',
 JSON.stringify(db)
 );
+ 
+} catch(err) {
+ 
+console.error(
+'Erro salvando dados',
+err
+);
+ 
+}
+ 
 renderAll();
 }
 
@@ -1063,13 +1077,18 @@ renderAll();
 
             if (loginType === 'admin') {
                const ADMIN_PASSWORD = 'pesca2026';
-                if (passwordInput === ADMIN_PASSWORD)
-                                  db.auth = { logged: true, role: 'admin', name: "Administrador" };
-                    saveData();
-                } else {
-                    alert('Senha incorreta! Use: pesca2026');
-                }
-            } else {
+ 
+if (passwordInput === ADMIN_PASSWORD) {
+db.auth = {
+logged: true,
+role: 'admin',
+name: 'Administrador'
+};
+ 
+saveData();
+} else {
+alert('Senha incorreta!');
+}
                 const selectedName = document.getElementById('login-pescador-name').value;
                 const pescador = db.participants.find(p => p.name === selectedName);
                 if (pescador && (passwordInput === pescador.phone.replace(/\D/g, '').slice(-4) || passwordInput === "pesca2026")) {
@@ -1580,15 +1599,38 @@ alert(
 }
 ``
 
-        async function copyFishingInvite() {
-            const text = getFishingInviteText();
-            try {
-                await navigator.clipboard.writeText(text);
-                alert('Convite copiado. Agora você pode colar no WhatsApp ou em outro aplicativo.');
-            } catch (e) {
-                window.prompt('Copie o convite abaixo:', text);
-            }
-        }
+        async function shareFishingInvite() {
+ 
+const text = getFishingInviteText();
+ 
+if (navigator.share) {
+try {
+await navigator.share({
+title: 'Convite – Pescaria Pesca-Justa',
+text
+});
+ 
+return;
+} catch(e) {
+if (e?.name === 'AbortError') {
+return;
+}
+}
+}
+ 
+try {
+window.open(
+`https://wa.me/?text=${encodeURIComponent(text)}`,
+'_blank'
+);
+} catch(err) {
+console.error(err);
+ 
+alert(
+'Não foi possível abrir o WhatsApp.'
+);
+}
+}
 
         function addToCalendar() {
             const title = encodeURIComponent("Expedição Pesca-Justa: " + db.activeDestination);
@@ -1603,18 +1645,21 @@ alert(
             const negative = document.getElementById('vote-negative').value;
             if (voter === positive || voter === negative) return alert("Erro: Não pode votar em si mesmo!");
             if (positive === negative) return alert("Erro: Votos devem ser diferentes.");
-            if (
-db.votes.some(v => v.voter === voter)
+           if (
+db.votes.some(
+v => v.voter === voter
+)
 ) {
 return alert(
 'Você já registrou seu voto.'
 );
 }
-``
-            db.votes.push({ voter, positive, negative });
-            saveData();
-            alert("Voto registrado!");
-        }
+ 
+db.votes.push({
+voter,
+positive,
+negative
+});
 
         function escapeHtml(value) {
             return String(value ?? '').replace(/[&<>\"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
