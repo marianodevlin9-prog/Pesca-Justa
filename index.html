@@ -1024,23 +1024,17 @@ table tbody tr:hover{background:rgba(6,182,212,.035)}
             });
         }
 
-        function saveData() {
-function saveData() {
- 
+        ffunction saveData() {
 try {
- 
 localStorage.setItem(
 'pesca_justa_db_v49',
 JSON.stringify(db)
 );
- 
-} catch(err) {
- 
+} catch (err) {
 console.error(
 'Erro salvando dados',
 err
 );
- 
 }
  
 renderAll();
@@ -1070,15 +1064,22 @@ renderAll();
             select.innerHTML = db.participants.length ? db.participants.map(p => `<option value="${p.name}">${p.name}</option>`).join('') : '<option value="">Nenhum pescador</option>';
         }
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const loginType = document.getElementById('login-type').value;
-            const passwordInput = document.getElementById('login-password').value.trim();
-
-            if (loginType === 'admin') {
-               const ADMIN_PASSWORD = 'pesca2026';
+        ffunction handleLogin(e) {
+e.preventDefault();
+ 
+const loginType =
+document.getElementById('login-type').value;
+ 
+const passwordInput =
+document.getElementById('login-password')
+.value.trim();
+ 
+const ADMIN_PASSWORD = 'pesca2026';
+ 
+if (loginType === 'admin') {
  
 if (passwordInput === ADMIN_PASSWORD) {
+ 
 db.auth = {
 logged: true,
 role: 'admin',
@@ -1086,8 +1087,52 @@ name: 'Administrador'
 };
  
 saveData();
+ 
 } else {
+ 
 alert('Senha incorreta!');
+ 
+}
+ 
+return;
+}
+ 
+const selectedName =
+document.getElementById(
+'login-pescador-name'
+).value;
+ 
+const pescador =
+db.participants.find(
+p => p.name === selectedName
+);
+ 
+if (
+pescador &&
+(
+passwordInput ===
+pescador.phone
+.replace(/\D/g,'')
+.slice(-4)
+||
+passwordInput === ADMIN_PASSWORD
+)
+) {
+ 
+db.auth = {
+logged: true,
+role: 'convidado',
+name: pescador.name
+};
+ 
+saveData();
+ 
+} else {
+ 
+alert(
+'Senha incorreta (últimos 4 dígitos do celular).'
+);
+}
 }
                 const selectedName = document.getElementById('login-pescador-name').value;
                 const pescador = db.participants.find(p => p.name === selectedName);
@@ -1639,13 +1684,40 @@ alert(
         }
 
         function submitVote(e) {
-            e.preventDefault();
-            const voter = document.getElementById('vote-voter').value;
-            const positive = document.getElementById('vote-positive').value;
-            const negative = document.getElementById('vote-negative').value;
-            if (voter === positive || voter === negative) return alert("Erro: Não pode votar em si mesmo!");
-            if (positive === negative) return alert("Erro: Votos devem ser diferentes.");
-           if (
+ 
+e.preventDefault();
+ 
+const voter =
+document.getElementById(
+'vote-voter'
+).value;
+ 
+const positive =
+document.getElementById(
+'vote-positive'
+).value;
+ 
+const negative =
+document.getElementById(
+'vote-negative'
+).value;
+ 
+if (
+voter === positive ||
+voter === negative
+) {
+return alert(
+'Erro: Não pode votar em si mesmo!'
+);
+}
+ 
+if (positive === negative) {
+return alert(
+'Erro: Votos devem ser diferentes.'
+);
+}
+ 
+if (
 db.votes.some(
 v => v.voter === voter
 )
@@ -1660,10 +1732,23 @@ voter,
 positive,
 negative
 });
+ 
+saveData();
+ 
+alert('Voto registrado!');
+}
 
         function escapeHtml(value) {
-            return String(value ?? '').replace(/[&<>\"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
-        }
+ 
+return String(value ?? '')
+.replace(/[&<>"']/g, ch => ({
+'&': '&amp;',
+'<': '&lt;',
+'>': '&gt;',
+'"': '&quot;',
+"'": '&#39;'
+})[ch]);
+}
 
         function renderAll() {
             document.getElementById('login-modal').classList.toggle('hidden', db.auth.logged);
