@@ -1732,6 +1732,15 @@ voter,
 positive,
 negative
 });
+if (
+db.votes.some(
+v => v.voter === voter
+)
+){
+return alert(
+'Você já votou.'
+);
+}            
  
 saveData();
  
